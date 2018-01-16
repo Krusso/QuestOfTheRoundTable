@@ -1,2 +1,2 @@
 # QuestOfTheRoundTable
-COMP3004B Term Project 
+COMP3004B 2018 Term Project
