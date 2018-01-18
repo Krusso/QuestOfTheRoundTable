@@ -3,21 +3,21 @@ package src.game_logic;
 public class DeckManager {
 	
 	private StoryDeck storyDeck;
-	private RankDeck rankDeck;
 	private AdventureDeck adventureDeck;
 	
 	public DeckManager() {
 		this.storyDeck = new StoryDeck();
-		this.rankDeck = new RankDeck();
 		this.adventureDeck = new AdventureDeck();
+		storyDeck.populate();
+		adventureDeck.populate();
 	}
 	
-	public Card nextStoryCard() {
-		return null;
+	public Card[] getStoryCard(int n) {
+		return storyDeck.drawCards(n);
 	}
 	
-	public Card nextAdventureCard() {
-		return null;
+	public Card[] getAdventureCard(int n) {
+		return adventureDeck.drawCards(n);
 	}
 	
 }

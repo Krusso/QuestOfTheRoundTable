@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -24,14 +25,8 @@ public class Server {
 	private static final ArrayList<ClientRead> threads = new ArrayList<ClientRead>(4);
 
 	public static void main(String args[]) {
+		int portNumber = 2223;
 
-		// The default port number.
-		int portNumber = 2222;
-
-		/*
-		 * Open a server socket on the portNumber (default 2222). Note that we can
-		 * not choose a port less than 1023 if we are not privileged users (root).
-		 */
 		try {
 			serverSocket = new ServerSocket(portNumber);
 		} catch (IOException e) {
@@ -43,15 +38,26 @@ public class Server {
 		 * thread.
 		 */
 		
-		LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
-		InputController input = new InputController(queue);
-		input.start();
+		LinkedBlockingQueue<String> inputQueue = new LinkedBlockingQueue<String>();
+		LinkedBlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
+
+
 		while (true) {
 			try {
 				clientSocket = serverSocket.accept();
-				ClientRead thread = new ClientRead(clientSocket, threads, queue);
-				threads.add(thread);
-				thread.start();
+				ClientRead readThread = new ClientRead(clientSocket, inputQueue);
+				ClientWrite writeThread = new ClientWrite(clientSocket, outputQueue);
+				threads.add(readThread);
+				readThread.start();
+				writeThread.start();
+				
+				GameModel gm = new GameModel();
+
+				OutputController output = new OutputController(outputQueue);
+				Game game = new Game(output, gm);
+				InputController input = new InputController(inputQueue, game, gm);
+				input.start();
+				output.start();
 			} catch (IOException e) {
 				System.out.println(e);
 			}
@@ -63,7 +69,7 @@ class ClientWrite extends Thread {
 	private Socket clientSocket = null;
 	private LinkedBlockingQueue<String> queue = null;
 	
-	public ClientWrite(Socket clientSocket, ArrayList<ClientRead> threads, LinkedBlockingQueue<String> queue) {
+	public ClientWrite(Socket clientSocket, LinkedBlockingQueue<String> queue) {
 		this.clientSocket = clientSocket;
 		this.queue = queue;
 	}
@@ -99,7 +105,7 @@ class ClientRead extends Thread {
 	private Socket clientSocket = null;
 	private LinkedBlockingQueue<String> queue = null;
 
-	public ClientRead(Socket clientSocket, ArrayList<ClientRead> threads, LinkedBlockingQueue<String> queue) {
+	public ClientRead(Socket clientSocket, LinkedBlockingQueue<String> queue) {
 		this.clientSocket = clientSocket;
 		this.queue = queue;
 	}
@@ -117,6 +123,7 @@ class ClientRead extends Thread {
 
 			Stream<String> stream = Stream.generate(socketInput);
 			stream.map(s -> {
+				System.out.println("Socket recieved: " + s);
 				queue.add(s);
 				return s;
 			})
