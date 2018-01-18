@@ -7,5 +7,6 @@ public class StoryDeck extends Deck {
 	}
 	
 	void populate() {
+		addCard(new QuestCard("Search for the Holy Grail",5,"All"),1);
 	}
 }
