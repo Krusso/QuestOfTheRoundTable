@@ -12,12 +12,12 @@ public class DeckManager {
 		adventureDeck.populate();
 	}
 	
-	public Card nextStoryCard() {
-		return storyDeck.getNextCard();
+	public Card[] getStoryCard(int n) {
+		return storyDeck.drawCards(n);
 	}
 	
-	public Card nextAdventureCard() {
-		return adventureDeck.getNextCard();
+	public Card[] getAdventureCard(int n) {
+		return adventureDeck.drawCards(n);
 	}
 	
 }

@@ -17,6 +17,7 @@ public class InputController extends Thread {
 	}
 
 	public void run() {
+		System.out.println("Waiting");
 		Supplier<String> socketOutput = () -> {
 			try {
 				return queue.take();
@@ -29,12 +30,15 @@ public class InputController extends Thread {
 		stream.map(s -> {
 			handle(s);
 			return s;
-		});
+		}) .allMatch(s -> s != null);
+		
+		System.out.println("Done waiting");
 	}
 	
 	public void handle(String message) {
+		System.out.println("Received: " + message);
 		// TODO change to some regex
-		if("game start: 2".equals(message)) {
+		if("game start:2".equals(message)) {
 			gm.setNumPlayers(2);
 			game.start();
 		}

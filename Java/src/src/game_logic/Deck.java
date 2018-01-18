@@ -19,7 +19,7 @@ public abstract class Deck {
 		}
 	}
 	
-	public Card getNextCard() {
+	private Card getNextCard() {
 		return deck.remove((int)(Math.random() * deck.size()));
 	}
 	

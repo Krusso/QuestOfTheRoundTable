@@ -7,6 +7,7 @@ public class Player {
 	
 	public Player() {
 		rank = Rank.RANKS.Squire;
+		advDeck = new AdventureDeck();
 	}
 	
 	public void increaseLevel() {
@@ -17,4 +18,13 @@ public class Player {
 		}
 	}
 	
+	public void addCards(Card[] cards) {
+		for(Card card: cards) {
+			advDeck.addCard(card, 1);
+		}
+	}
+
+	public String hand() {
+		return advDeck.toString();
+	}
 }

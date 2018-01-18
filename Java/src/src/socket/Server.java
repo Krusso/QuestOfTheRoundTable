@@ -25,7 +25,7 @@ public class Server {
 	private static final ArrayList<ClientRead> threads = new ArrayList<ClientRead>(4);
 
 	public static void main(String args[]) {
-		int portNumber = 2222;
+		int portNumber = 2223;
 
 		try {
 			serverSocket = new ServerSocket(portNumber);
@@ -123,6 +123,7 @@ class ClientRead extends Thread {
 
 			Stream<String> stream = Stream.generate(socketInput);
 			stream.map(s -> {
+				System.out.println("Socket recieved: " + s);
 				queue.add(s);
 				return s;
 			})
