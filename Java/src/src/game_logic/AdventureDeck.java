@@ -4,7 +4,6 @@ public class AdventureDeck extends Deck {
 	
 	public AdventureDeck() {
 		super();
-		populate();
 	}
 	
 	void populate() {

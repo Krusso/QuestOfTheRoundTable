@@ -4,22 +4,18 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class InputController extends Thread {
-	
+public class OutputController extends Thread {
 	private LinkedBlockingQueue<String> queue;
-	private Game game;
-	private GameModel gm;
+	private LinkedBlockingQueue<String> internalQueue;
 
-	public InputController(LinkedBlockingQueue<String> queue, Game game, GameModel gm) {
+	public OutputController(LinkedBlockingQueue<String> queue) {
 		this.queue = queue;
-		this.game = game;
-		this.gm = gm;
 	}
 
 	public void run() {
 		Supplier<String> socketOutput = () -> {
 			try {
-				return queue.take();
+				return internalQueue.take();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				return null;
@@ -27,16 +23,13 @@ public class InputController extends Thread {
 		};
 		Stream<String> stream = Stream.generate(socketOutput);
 		stream.map(s -> {
-			handle(s);
+			queue.add(s);
 			return s;
 		});
 	}
 	
-	public void handle(String message) {
-		// TODO change to some regex
-		if("game start: 2".equals(message)) {
-			gm.setNumPlayers(2);
-			game.start();
-		}
+	
+	public synchronized void sendMessage(String message) {
+		queue.add(message);
 	}
 }
