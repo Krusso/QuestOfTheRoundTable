@@ -20,4 +20,12 @@ public class DeckManager {
 		return adventureDeck.drawCards(n);
 	}
 	
+	public int storySize() {
+		return storyDeck.size();
+	}
+	
+	public int adventureSize() {
+		return adventureDeck.size();
+	}
+	
 }
