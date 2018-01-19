@@ -20,6 +20,9 @@ public abstract class Deck {
 	}
 	
 	private Card getNextCard() {
+		if(deck.size() == 0) {
+			return null;
+		}
 		return deck.remove((int)(Math.random() * deck.size()));
 	}
 	
@@ -29,6 +32,7 @@ public abstract class Deck {
 		return cards;
 	}
 	
-	// TO-DO
-	public void shuffle() {}
+	public int size() {
+		return deck.size();
+	}
 }

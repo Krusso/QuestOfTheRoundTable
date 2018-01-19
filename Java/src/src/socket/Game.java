@@ -33,9 +33,11 @@ public class Game extends Thread{
 			if(playerTurn == gm.getNumPlayers()) playerTurn = 0;
 			output.sendMessage("turn next:" + playerTurn);
 			output.sendMessage("hand show:" + players[playerTurn].hand());
-			
+			System.out.println("deck size: " + dm.storySize());
 			Card card = dm.getStoryCard(1)[0];
-			
+			if(dm.storySize() == 0) {
+				break;
+			}
 			
 		}
 		
