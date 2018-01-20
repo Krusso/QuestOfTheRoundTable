@@ -25,7 +25,11 @@ public class Player {
 	}
 
 	public String hand() {
-		return advDeck.toString();
+		String hand = "";
+		for(int i=advDeck.size();i>0;i--) {
+			hand += advDeck.drawCards(1)[0].getName();
+		}
+		return hand;
 	}
 
 }
