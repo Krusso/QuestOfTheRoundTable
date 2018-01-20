@@ -1,8 +1,10 @@
 package src.game_logic;
 
+import src.game_logic.Rank.RANKS;
+
 public class Player {
 
-	private Rank.RANKS rank;
+	private RANKS rank;
 	private AdventureDeck advDeck;
 	
 	public Player() {
