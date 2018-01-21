@@ -18,30 +18,19 @@ public class Client {
             out.println("game start:2");
             while(true) {
             	String x = br.readLine();
-            	System.out.println(x);
+            	System.out.println("Client Received: " + x);
             	if("quit".equals(x)) {
             		break;
             	}
+            	if("tournament accept: player 0".equals(x)) {
+            		out.println("game tournament accept: player 0");
+            	}
+            	if("tournament accept: player 1".equals(x)) {
+            		out.println("game tournament accept: player 1");
+            	}
             }
-//            Scanner scanner = new Scanner(System.in);
-//            
-//            Supplier<String> scannerInput = () -> scanner.nextLine();
-//            
-//            System.out.print("Enter text: ");
-//            Stream.generate(scannerInput)
-//                    .map(s -> {
-//                        out.println(s);
-//                        System.out.println("User input: " + s);
-//                        if(!"quit".equalsIgnoreCase(s)){
-//                            System.out.println("Enter text: ");
-//                        }
-//                        return s;
-//                    })
-//                    .allMatch(s -> !"quit".equalsIgnoreCase(s));
-            
+
             echoSocket.close();
-            //scanner.close();
-            
         }
 
         catch (Exception e) {

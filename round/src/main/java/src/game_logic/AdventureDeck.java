@@ -1,6 +1,6 @@
 package src.game_logic;
 
-public class AdventureDeck extends Deck {
+public class AdventureDeck extends Deck<AdventureCard> {
 	
 	public AdventureDeck() {
 		super();

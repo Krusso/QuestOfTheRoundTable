@@ -1,46 +1,54 @@
 package src.socket;
 
 
-import src.game_logic.Card;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import src.game_logic.DeckManager;
-import src.game_logic.Player;
+import src.game_logic.StoryCard;
+import src.player.PlayerManager;
+import src.sequence.GameSequenceManager;
+import src.sequence.SequenceManager;
+import src.views.PlayerView;
+import src.views.PlayersView;
 
 public class Game extends Thread{
 
 	private OutputController output;
 	private GameModel gm;
-	private Player[] players;
-	
+	private LinkedBlockingQueue<String> actions;
+
 	public Game(OutputController output, GameModel gm) {
 		this.output = output;
 		this.gm = gm;
 	}
 
 	public void run() {
-		players = new Player[gm.getNumPlayers()];
+		
 		DeckManager dm = new DeckManager();
-		for(int i = gm.getNumPlayers(); i > 0; i--) {
-			players[i - 1] = new Player();
-			players[i - 1].addCards(dm.getAdventureCard(12));
-		}
+		PlayerManager pm = new PlayerManager(gm.getNumPlayers(), dm);
+		PlayersView pvs = new PlayersView(output);
+		pm.subscribe(pvs);
+		PlayerView pv = new PlayerView(output);
+		pm.subscribe(pv);
 		
-		output.sendMessage("hand add:all players 12");
-		output.sendMessage("rank set:all knight");
-		
-		int playerTurn = -1;
+		pm.start();
+
+		GameSequenceManager gsm = new GameSequenceManager();
 		while(true) {
-			playerTurn++;
-			if(playerTurn == gm.getNumPlayers()) playerTurn = 0;
-			output.sendMessage("turn next:" + playerTurn);
-			output.sendMessage("hand show:" + players[playerTurn].hand());
-			System.out.println("deck size: " + dm.storySize());
-			Card card = dm.getStoryCard(1)[0];
+			pm.nextTurn();
+			//System.out.println("deck size: " + dm.storySize());
+			StoryCard card = dm.getStoryCard(1).get(0);
 			if(dm.storySize() == 0) {
 				break;
 			}
-			
+			SequenceManager sm = gsm.createStoryManager(card);
+			sm.start(actions, pm);
 		}
-		
+
+	}
+
+	public void setActionQueue(LinkedBlockingQueue<String> actionQueue) {
+		this.actions = actionQueue;
 	}
 
 }
