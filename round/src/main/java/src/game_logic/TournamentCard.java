@@ -6,6 +6,7 @@ public class TournamentCard extends StoryCard {
 	public TournamentCard(String name, int shields) {
 		super(name);
 		this.shields = shields;
+		this.type = TYPE.Tournament;
 	}
 	
 	public int getShields() { return this.shields; }
