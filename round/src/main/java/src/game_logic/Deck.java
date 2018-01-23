@@ -13,6 +13,15 @@ public abstract class Deck<E> {
 	
 	abstract void populate();
 	
+	@Override
+	public String toString() {
+		String toReturn = "";
+		for(E card: deck) {
+			toReturn += card + " ";
+		}
+		return toReturn;
+	}
+	
 	public void addCard(E card, int quantity) {
 		for(int i=0; i<quantity; i++) {
 			deck.add(card);

@@ -52,12 +52,10 @@ public class TournamentSequenceManager extends SequenceManager {
 				String string;
 				try {
 					string = actions.take();
+					String[] cards = string.split(" ");
+					
 					System.out.println("Action recieved: " + string);
-					if("game tournament accept: player 0".equals(string)) {
-						pm.currentAcceptTournament();
-					} else if("game tournament decline: player 0".equals(string)) {
-						pm.currentDeclineTournament();
-					}
+					
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} 
