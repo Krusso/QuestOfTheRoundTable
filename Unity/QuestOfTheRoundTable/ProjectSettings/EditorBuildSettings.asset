@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/QuestOfRoundTable/Scenes/TitleScreen.unity
+    path: Assets/Scenes/TitleScreen.unity
     guid: 9f37b97d2b233b04d8a79131e5c3a9ad
   - enabled: 1
     path: Assets/Unity UI Sample/Scenes/Controls.unity
