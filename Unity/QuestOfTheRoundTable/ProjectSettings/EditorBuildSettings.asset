@@ -9,5 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/TitleScreen.unity
     guid: 9f37b97d2b233b04d8a79131e5c3a9ad
   - enabled: 1
+    path: Assets/Unity UI Sample/Scenes/Lighting.unity
+    guid: f7590198924b11e47b1b33cdd7ec91ac
+  - enabled: 1
     path: Assets/Unity UI Sample/Scenes/Controls.unity
     guid: e31151469f9db41bb99384b804f43c3d
