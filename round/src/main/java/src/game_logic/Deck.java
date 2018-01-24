@@ -1,9 +1,10 @@
 package src.game_logic;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
-public abstract class Deck<E> {
+public abstract class Deck<E extends Card> {
 	
 	protected ArrayList<E> deck;
 	
@@ -22,10 +23,24 @@ public abstract class Deck<E> {
 		return toReturn;
 	}
 	
+	public void addCards(List<E> cards) {
+		cards.forEach(i -> deck.add(i));
+	}
+	
 	public void addCard(E card, int quantity) {
 		for(int i=0; i<quantity; i++) {
 			deck.add(card);
 		}
+	}
+	
+	public E findCard(String toFind) {
+		for(E card: deck) {
+			if(card.getName().equals(toFind)) {
+				deck.remove(card);
+				return card;
+			}
+		}
+		return null;
 	}
 	
 	private E getNextCard() {

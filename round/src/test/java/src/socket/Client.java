@@ -28,6 +28,12 @@ public class Client {
             	if("tournament accept: player 1".equals(x)) {
             		out.println("game tournament accept: player 1");
             	}
+            	if("tournament picking: player 0".equals(x)){
+            		out.println("game tournament picked: player 0 Excalibur,Lance,Lance,Battle-ax");
+            	}
+            	if("tournament picking: player 1".equals(x)) {
+            		out.println("game tournament picked: player 1 Dagger,Dagger,Horse,Sword");
+            	}
             }
 
             echoSocket.close();

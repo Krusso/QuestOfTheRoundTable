@@ -1,8 +1,10 @@
 package src.views;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureDeck;
 import src.game_logic.Rank.RANKS;
 import src.player.Player;
 import src.player.Player.STATE;
@@ -30,6 +32,14 @@ public class PlayerView {
 		} else if(question == Player.STATE.PICKING) {
 			output.sendMessage("tournament picking: player " + ID);
 		}
+	}
+
+	public void updateFaceDown(List<AdventureCard> list, int ID) {
+		output.sendMessage("face down: player " + ID + " " + list);
+	}
+
+	public void updateFaceUp(AdventureDeck faceUp, int ID) {
+		output.sendMessage("face up: player " + ID + " " + faceUp);
 	}
 
 }

@@ -4,8 +4,8 @@ public class AmourCard extends AdventureCard {
 	
 	private int bids;
 	
-	public AmourCard(String name, int battlePoints, int bids) {
-		super(name, battlePoints);
+	public AmourCard(String name, int battlePoints, int bids, TYPE type) {
+		super(name, battlePoints, type);
 		this.bids = bids;
 	}
 	

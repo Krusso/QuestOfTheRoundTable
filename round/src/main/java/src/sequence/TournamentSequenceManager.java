@@ -3,8 +3,11 @@ package src.sequence;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import src.game_logic.TournamentCard;
+import src.player.BattlePointerCalculator;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -52,8 +55,11 @@ public class TournamentSequenceManager extends SequenceManager {
 				String string;
 				try {
 					string = actions.take();
-					String[] cards = string.split(" ");
-					
+					Pattern p = Pattern.compile("game tournament picked: player (\\d+) (.*)");
+				    Matcher m = p.matcher(string);
+				    m.find();
+				    String cards = m.group(2);
+					pm.currentFaceDown(cards);
 					System.out.println("Action recieved: " + string);
 					
 				} catch (InterruptedException e) {
@@ -61,6 +67,26 @@ public class TournamentSequenceManager extends SequenceManager {
 				} 
 			}
 		}
+		
+		players = participants.iterator();
+		while(players.hasNext()) {
+			pm.flipCards(players.next());	
+		}
+		BattlePointerCalculator bpc = new BattlePointerCalculator();
+		List<Player> winners = bpc.calculatePoints(participants);
+		if(winners.size() != 1) {
+			// TODO: handle second round
+		} else {
+			pm.winTournament(winners, card.getShields() + participants.size());
+			pm.discardCards(participants);
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+		}
+		//System.exit(0);
 		
 	}
 }

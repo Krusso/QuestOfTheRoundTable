@@ -43,6 +43,9 @@ public class Game extends Thread{
 			}
 			SequenceManager sm = gsm.createStoryManager(card);
 			sm.start(actions, pm);
+			//System.exit(0);
+			pm.nextTurn();
+			System.exit(0);
 		}
 
 	}

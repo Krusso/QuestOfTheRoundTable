@@ -9,7 +9,10 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import src.game_logic.AdventureCard;
 import src.game_logic.DeckManager;
+import src.game_logic.WeaponCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
@@ -35,7 +38,26 @@ public class PlayerManager {
 	// Used just so there is an animation at the start of all players getting cards
 	public void start() {
 		for(int i = players.length; i > 0; i--) {
-			players[i - 1].addCards(dm.getAdventureCard(12));
+			/**
+			 *  RIGGING the game needs to be removed/be triggered another way
+			 *  maybe a message?
+			 *  game deck: rigged?
+			 */
+			ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+			cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+			cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+			//players[i - 1].addCards(dm.getAdventureCard(12));
+			players[i - 1].addCards(cards);
 		}
 	}
 
@@ -61,8 +83,12 @@ public class PlayerManager {
 	public void nextTurn() {
 		// TODO: probably need to reset some attributes there
 		// like questioning etc
-		nextPlayer();
-		actualPlayer = currentPlayer;
+		actualPlayer++;
+		if(actualPlayer >= players.length) {
+			actualPlayer = 0;
+		}
+		currentPlayer = actualPlayer;
+		pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand()));
 	}
 
 
@@ -111,5 +137,26 @@ public class PlayerManager {
 		player.addShields(shields);
 	}
 
+	public void currentFaceDown(String cards) {
+		players[currentPlayer].setFaceDown(cards.split(","));
+	}
+
+	public void flipCards(Player next) {
+		// TODO: should be its own method imo
+		for(int i = 0; i < players.length; i++) {
+			if(players[i]== next) {
+				players[i].flipCards();
+				return;
+			}
+		}
+	}
+
+	public void winTournament(List<Player> winners, int shields) {
+		winners.forEach(i -> i.addShields(shields));
+	}
+
+	public void discardCards(List<Player> participants) {
+		participants.forEach(i -> i.discard());
+	}
 }
 
