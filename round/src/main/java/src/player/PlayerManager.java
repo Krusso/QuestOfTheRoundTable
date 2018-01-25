@@ -133,10 +133,6 @@ public class PlayerManager {
 				.collect(Collectors.toList());
 	}
 
-	public void tournamentWin(Player player, int shields) {
-		player.addShields(shields);
-	}
-
 	public void currentFaceDown(String cards) {
 		players[currentPlayer].setFaceDown(cards.split(","));
 	}
@@ -156,7 +152,16 @@ public class PlayerManager {
 	}
 
 	public void discardCards(List<Player> participants) {
-		participants.forEach(i -> i.discard());
+		participants.forEach(i -> {
+			i.discardWeapons();
+			i.discardAmours();
+		});
+	}
+
+	public void discardWeapons(List<Player> participants) {
+		participants.forEach(i -> {
+			i.discardWeapons();
+		});
 	}
 }
 

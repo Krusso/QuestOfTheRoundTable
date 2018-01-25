@@ -16,7 +16,7 @@ public class Player {
 	};
 	
 	private RANKS rank;
-	private AdventureDeck advDeck;
+	private AdventureDeck hand;
 	private AdventureDeck faceDown;
 	private AdventureDeck faceUp;
 	private PlayerView pv;
@@ -26,7 +26,7 @@ public class Player {
 	
 	public Player(int id) {
 		rank = Rank.RANKS.SQUIRE;
-		advDeck = new AdventureDeck();
+		hand = new AdventureDeck();
 		faceDown = new AdventureDeck();
 		faceUp = new AdventureDeck();
 		ID = id;
@@ -50,13 +50,13 @@ public class Player {
 	
 	protected void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
-			advDeck.addCard(card, 1);
+			hand.addCard(card, 1);
 		}
 		pv.updateCards(cards, ID);
 	}
 
 	protected String hand() {
-		return advDeck.toString();
+		return hand.toString();
 	}
 
 	protected void subscribe(PlayerView pv) {
@@ -79,7 +79,7 @@ public class Player {
 	protected void setFaceDown(String[] cards) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();
 		for(String card: cards) {
-			list.add(advDeck.findCard(card));
+			list.add(hand.getCardByName(card));
 		}
 		faceDown.addCards(list);
 		pv.updateFaceDown(list, ID);
@@ -98,8 +98,12 @@ public class Player {
 		return this.faceUp;
 	}
 
-	public void discard() {
-		faceUp.clean();
+	public void discardWeapons() {
+		faceUp.discardWeapons();
+	}
+	
+	public void discardAmours() {
+		faceUp.discardAmours();
 	}
 
 }

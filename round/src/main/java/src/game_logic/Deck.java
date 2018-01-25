@@ -33,7 +33,7 @@ public abstract class Deck<E extends Card> {
 		}
 	}
 	
-	public E findCard(String toFind) {
+	public E getCardByName(String toFind) {
 		for(E card: deck) {
 			if(card.getName().equals(toFind)) {
 				deck.remove(card);

@@ -46,36 +46,28 @@ public class TournamentSequenceManager extends SequenceManager {
 		if(participants.size() == 0) {
 			return;
 		} else if(participants.size() == 1) {
-			pm.tournamentWin(participants.get(0), card.getShields() + 1);
+			pm.winTournament(participants, card.getShields() + 1);
 		} else {
 			players = participants.iterator();
-			while(players.hasNext()) {
-				pm.setPlayer(players.next());
-				pm.currentQuestionTournCards();
-				String string;
-				try {
-					string = actions.take();
-					Pattern p = Pattern.compile("game tournament picked: player (\\d+) (.*)");
-				    Matcher m = p.matcher(string);
-				    m.find();
-				    String cards = m.group(2);
-					pm.currentFaceDown(cards);
-					System.out.println("Action recieved: " + string);
-					
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} 
-			}
+			questionPlayers(players, pm, actions);
 		}
 		
 		players = participants.iterator();
 		while(players.hasNext()) {
 			pm.flipCards(players.next());	
 		}
+		
 		BattlePointerCalculator bpc = new BattlePointerCalculator();
 		List<Player> winners = bpc.calculatePoints(participants);
 		if(winners.size() != 1) {
-			// TODO: handle second round
+			pm.discardWeapons(participants);
+			players = winners.iterator();
+			questionPlayers(players, pm, actions);
+			
+			winners = bpc.calculatePoints(winners);
+			pm.winTournament(winners, card.getShields() + participants.size());
+			pm.discardCards(participants);
+			
 		} else {
 			pm.winTournament(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
@@ -88,5 +80,24 @@ public class TournamentSequenceManager extends SequenceManager {
 		}
 		//System.exit(0);
 		
+	}
+
+	private void questionPlayers(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions) {
+		while(players.hasNext()) {
+			pm.setPlayer(players.next());
+			pm.currentQuestionTournCards();
+			String string;
+			try {
+				string = actions.take();
+				Pattern p = Pattern.compile("game tournament picked: player (\\d+) (.*)");
+			    Matcher m = p.matcher(string);
+			    m.find();
+			    String cards = m.group(2);
+				pm.currentFaceDown(cards);
+				System.out.println("Action recieved: " + string);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
+		}
 	}
 }

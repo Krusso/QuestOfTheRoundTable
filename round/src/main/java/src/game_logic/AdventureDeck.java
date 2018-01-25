@@ -51,7 +51,11 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		return deck.stream().mapToInt(i -> i.getBattlePoints()).sum();
 	}
 
-	public void clean() {
-		deck.removeIf(i -> i.getType() == TYPE.AMOUR || i.getType() == TYPE.WEAPONS);
+	public void discardAmours() {
+		deck.removeIf(i -> i.getType() == TYPE.AMOUR);
+	}
+	
+	public void discardWeapons() {
+		deck.removeIf(i -> i.getType() == TYPE.WEAPONS);
 	}
 }

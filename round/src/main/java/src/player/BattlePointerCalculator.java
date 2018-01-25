@@ -8,6 +8,12 @@ import src.game_logic.Rank.RANKS;
 
 public class BattlePointerCalculator {
 	
+	/**
+	 * 
+	 * NOTE: not sure I like that the players cards are flipped over in here probably better
+	 * in the sequencemanager class
+	 */
+	
 	public List<Player> calculatePoints(List<Player> participants) {
 		int max = Integer.MIN_VALUE;
 		List<Player> winning = new ArrayList<Player>();
