@@ -4,6 +4,6 @@ public class EventCard extends StoryCard {
 	
 	public EventCard(String name) {
 		super(name);
-		this.type = TYPE.Event;
+		this.type = TYPE.EVENT;
 	}
 }

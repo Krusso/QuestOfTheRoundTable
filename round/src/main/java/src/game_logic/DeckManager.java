@@ -1,5 +1,7 @@
 package src.game_logic;
 
+import java.util.ArrayList;
+
 public class DeckManager {
 	
 	private StoryDeck storyDeck;
@@ -12,11 +14,11 @@ public class DeckManager {
 		adventureDeck.populate();
 	}
 	
-	public Card[] getStoryCard(int n) {
+	public ArrayList<StoryCard> getStoryCard(int n) {
 		return storyDeck.drawCards(n);
 	}
 	
-	public Card[] getAdventureCard(int n) {
+	public ArrayList<AdventureCard> getAdventureCard(int n) {
 		return adventureDeck.drawCards(n);
 	}
 	

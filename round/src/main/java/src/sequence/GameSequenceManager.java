@@ -1,15 +1,19 @@
 package src.sequence;
 
 import src.game_logic.StoryCard;
+import src.game_logic.TournamentCard;
 
 public class GameSequenceManager {
 	public SequenceManager createStoryManager(StoryCard card) {
-		if(card.getType() == StoryCard.TYPE.Quest) {
+		
+		// TODO: fix the casting doesnt seem right
+		
+		if(card.getType() == StoryCard.TYPE.QUEST) {
 			// make quest sequence
-		} else if (card.getType() == StoryCard.TYPE.Event) {
+		} else if (card.getType() == StoryCard.TYPE.EVENT) {
 			// make event sequence
-		} else if (card.getType() == StoryCard.TYPE.Tournament) {
-			// make tournament sequence
+		} else if (card.getType() == StoryCard.TYPE.TOURNAMENT) {
+			return new TournamentSequenceManager((TournamentCard) card);
 		}
 		return null;
 	}

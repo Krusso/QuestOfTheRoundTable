@@ -3,7 +3,7 @@ package src.game_logic;
 public class StoryCard extends Card {
 	
 	public static enum TYPE {
-		Quest, Event, Tournament;
+		QUEST, EVENT, TOURNAMENT;
 	}
 	
 	protected TYPE type;

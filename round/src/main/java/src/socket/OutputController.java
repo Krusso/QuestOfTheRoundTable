@@ -10,12 +10,14 @@ public class OutputController extends Thread {
 
 	public OutputController(LinkedBlockingQueue<String> queue) {
 		this.queue = queue;
+		this.internalQueue = new LinkedBlockingQueue<String>();
 	}
 
 	public void run() {
 		Supplier<String> socketOutput = () -> {
 			try {
-				return internalQueue.take();
+				String received = internalQueue.take();
+				return received;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				return null;
@@ -25,11 +27,12 @@ public class OutputController extends Thread {
 		stream.map(s -> {
 			queue.add(s);
 			return s;
-		});
+		}).allMatch(s -> s != null);
+		System.out.println("here");
 	}
 	
 	
-	public synchronized void sendMessage(String message) {
-		queue.add(message);
+	public void sendMessage(String message) {
+		internalQueue.add(message);
 	}
 }

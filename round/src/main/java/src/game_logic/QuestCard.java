@@ -8,7 +8,7 @@ public class QuestCard extends StoryCard {
 		super(name);
 		this.stages = stages;
 		this.foe = foe;
-		this.type = TYPE.Quest;
+		this.type = TYPE.QUEST;
 	}
 	
 	public int getNumStages() { return this.stages; }

@@ -1,35 +1,59 @@
 package src.game_logic;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
-public abstract class Deck {
+public abstract class Deck<E extends Card> {
 	
-	protected ArrayList<Card> deck;
+	protected ArrayList<E> deck;
 	
 	public Deck() {
-		this.deck = new ArrayList<Card>();
+		this.deck = new ArrayList<E>();
 	}
 	
 	abstract void populate();
 	
-	protected void addCard(Card card, int quantity) {
+	@Override
+	public String toString() {
+		String toReturn = "";
+		for(E card: deck) {
+			toReturn += card + " ";
+		}
+		return toReturn;
+	}
+	
+	public void addCards(List<E> cards) {
+		cards.forEach(i -> deck.add(i));
+	}
+	
+	public void addCard(E card, int quantity) {
 		for(int i=0; i<quantity; i++) {
 			deck.add(card);
 		}
 	}
 	
-	private Card getNextCard() {
+	public E getCardByName(String toFind) {
+		for(E card: deck) {
+			if(card.getName().equals(toFind)) {
+				deck.remove(card);
+				return card;
+			}
+		}
+		return null;
+	}
+	
+	private E getNextCard() {
 		if(deck.size() == 0) {
 			return null;
 		}
 		return deck.remove((int)(Math.random() * deck.size()));
 	}
 	
-	public Card[] drawCards(int n) {
-		Card[] cards = new Card[n];
-		IntStream.range(0, n).forEach(i -> cards[i] = getNextCard());
-		return cards;
+	public ArrayList<E> drawCards(int n) {
+		ArrayList<E> toReturn = new ArrayList<E>(n);
+		IntStream.range(0, n).forEach(i -> toReturn.add(getNextCard()));
+		return toReturn;
 	}
 	
 	public int size() {
