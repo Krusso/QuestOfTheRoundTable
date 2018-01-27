@@ -1,5 +1,6 @@
 package src.sequence;
 
+import src.game_logic.EventCard;
 import src.game_logic.StoryCard;
 import src.game_logic.TournamentCard;
 
@@ -11,7 +12,7 @@ public class GameSequenceManager {
 		if(card.getType() == StoryCard.TYPE.QUEST) {
 			// make quest sequence
 		} else if (card.getType() == StoryCard.TYPE.EVENT) {
-			// make event sequence
+			return new EventSequenceManager((EventCard) card);
 		} else if (card.getType() == StoryCard.TYPE.TOURNAMENT) {
 			return new TournamentSequenceManager((TournamentCard) card);
 		}

@@ -3,6 +3,7 @@ package src.socket;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.StoryCard;
 import src.player.PlayerManager;
@@ -24,6 +25,7 @@ public class Game extends Thread{
 
 	public void run() {
 		
+		BoardModel bm = new BoardModel();
 		DeckManager dm = new DeckManager();
 		PlayerManager pm = new PlayerManager(gm.getNumPlayers(), dm);
 		PlayersView pvs = new PlayersView(output);
@@ -37,12 +39,12 @@ public class Game extends Thread{
 		while(true) {
 			pm.nextTurn();
 			//System.out.println("deck size: " + dm.storySize());
-			StoryCard card = dm.getStoryCard(1).get(0);
+			bm.setCard(dm.getStoryCard(1).get(0));
 			if(dm.storySize() == 0) {
 				break;
 			}
-			SequenceManager sm = gsm.createStoryManager(card);
-			sm.start(actions, pm);
+			SequenceManager sm = gsm.createStoryManager(bm.getCard());
+			sm.start(actions, pm, bm);
 			//System.exit(0);
 			pm.nextTurn();
 			System.exit(0);

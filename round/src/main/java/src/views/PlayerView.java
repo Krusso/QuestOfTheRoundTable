@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AdventureDeck;
 import src.game_logic.Rank.RANKS;
+import src.game_logic.StoryCard;
 import src.player.Player;
 import src.player.Player.STATE;
 import src.socket.OutputController;
@@ -40,6 +42,14 @@ public class PlayerView {
 
 	public void updateFaceUp(AdventureDeck faceUp, int ID) {
 		output.sendMessage("face up: player " + ID + " " + faceUp);
+	}
+
+	public void updateState(STATE question, int ID, int i, TYPE type) {
+		output.sendMessage("discard hand: player " + ID + " type " + type + " amount " + i);
+	}
+
+	public void updateMiddle(StoryCard card) {
+		output.sendMessage("middle card: " + card.getName());
 	}
 
 }

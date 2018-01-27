@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AdventureDeck;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
@@ -12,7 +13,7 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-			QUESTIONED, YES, NO, PICKING
+			QUESTIONED, YES, NO, PICKING, DISCARDING
 	};
 	
 	private RANKS rank;
@@ -71,9 +72,17 @@ public class Player {
 		this.question = question;
 		pv.updateState(question, ID);
 	}
+	
+	public void setState(STATE question, int i, TYPE type) {
+		this.question = question;
+		pv.updateState(question, ID,i, type);
+	}
 
-	protected void addShields(int shields) {
+	protected void changeShields(int shields) {
 		this.shields += shields;
+		if(shields < 0) {
+			shields = 0;
+		}
 	}
 
 	protected void setFaceDown(String[] cards) {
@@ -85,7 +94,7 @@ public class Player {
 		pv.updateFaceDown(list, ID);
 	}
 
-	protected RANKS getRank() {
+	public RANKS getRank() {
 		return this.rank;
 	}
 
@@ -99,11 +108,46 @@ public class Player {
 	}
 
 	public void discardWeapons() {
-		faceUp.discardWeapons();
+		faceUp.discardType(TYPE.WEAPONS);
 	}
 	
 	public void discardAmours() {
-		faceUp.discardAmours();
+		faceUp.discardType(TYPE.AMOUR);
 	}
+	public int getShields() {
+		return this.shields;
+	}
+	public int getTotalShields() {
+		int toReturn = this.getShields();
+		if(rank == Rank.RANKS.KNIGHT) {
+			toReturn += 5;
+		} else if (rank == Rank.RANKS.CHAMPION) {
+			toReturn += 7;
+		}
+		return toReturn;
+	}
+
+	protected void discardAllies() {
+		faceUp.discardType(TYPE.ALLIES);
+	}
+
+	public int weaponCount() {
+		return hand.typeCount(TYPE.WEAPONS);
+	}
+
+	public int foeCount() {
+		return hand.typeCount(TYPE.FOES);
+	}
+	
+	protected void removeCards(String[] split) {
+		for(String cardName: split) {
+			hand.getCardByName(cardName);
+		}
+	}
+
+	public int getCardCount() {
+		return hand.size();
+	}
+
 
 }

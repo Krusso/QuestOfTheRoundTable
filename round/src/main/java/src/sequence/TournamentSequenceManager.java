@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import src.game_logic.BoardModel;
 import src.game_logic.TournamentCard;
 import src.player.BattlePointerCalculator;
 import src.player.Player;
@@ -20,7 +21,7 @@ public class TournamentSequenceManager extends SequenceManager {
 	}
 
 	@Override
-	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm) {
+	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm) {
 		
 		Iterator<Player> players = pm.round();
 		while(players.hasNext()) {
@@ -46,7 +47,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		if(participants.size() == 0) {
 			return;
 		} else if(participants.size() == 1) {
-			pm.winTournament(participants, card.getShields() + 1);
+			pm.changeShields(participants, card.getShields() + 1);
 		} else {
 			players = participants.iterator();
 			questionPlayers(players, pm, actions);
@@ -65,11 +66,11 @@ public class TournamentSequenceManager extends SequenceManager {
 			questionPlayers(players, pm, actions);
 			
 			winners = bpc.calculatePoints(winners);
-			pm.winTournament(winners, card.getShields() + participants.size());
+			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
 			
 		} else {
-			pm.winTournament(winners, card.getShields() + participants.size());
+			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
 			System.out.println();
 			System.out.println();

@@ -62,6 +62,10 @@ public class PlayerManager {
 	}
 
 
+	public void drawCards(ArrayList<Player> players, int cards) {
+		players.forEach(player -> player.addCards(dm.getAdventureCard(cards)));
+	}
+	
 	public void setPlayer(Player playerFind) {
 		for(int i = 0; i < players.length; i++) {
 			if(players[i]== playerFind) {
@@ -116,6 +120,10 @@ public class PlayerManager {
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
 
+	public void currentDiscard(int i, TYPE weapons) {
+		players[currentPlayer].setState(Player.STATE.DISCARDING, i, weapons);
+	}
+	
 	// TODO: bounds checking
 	public void currentAcceptTournament() {
 		players[currentPlayer].setState(Player.STATE.YES);
@@ -147,9 +155,10 @@ public class PlayerManager {
 		}
 	}
 
-	public void winTournament(List<Player> winners, int shields) {
-		winners.forEach(i -> i.addShields(shields));
+	public void changeShields(List<Player> winners, int shields) {
+		winners.forEach(i -> i.changeShields(shields));
 	}
+
 
 	public void discardCards(List<Player> participants) {
 		participants.forEach(i -> {
@@ -162,6 +171,16 @@ public class PlayerManager {
 		participants.forEach(i -> {
 			i.discardWeapons();
 		});
+	}
+
+	public void discardAllies(List<Player> participants) {
+		participants.forEach(i -> {
+			i.discardAllies();
+		});
+	}
+
+	public void discardFromHand(Player player, String cards) {
+		player.removeCards(cards.split(","));
 	}
 }
 
