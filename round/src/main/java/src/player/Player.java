@@ -13,7 +13,7 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-			QUESTIONED, YES, NO, PICKING, DISCARDING
+			QUESTIONED, YES, NO, PICKING, DISCARDING, WIN
 	};
 	
 	private RANKS rank;
@@ -64,7 +64,7 @@ public class Player {
 		this.pv = pv;
 	}
 
-	protected STATE getQuestion() {
+	public STATE getQuestion() {
 		return question;
 	}
 	
@@ -73,7 +73,7 @@ public class Player {
 		pv.updateState(question, ID);
 	}
 	
-	public void setState(STATE question, int i, TYPE type) {
+	protected void setState(STATE question, int i, TYPE type) {
 		this.question = question;
 		pv.updateState(question, ID,i, type);
 	}
@@ -148,6 +148,4 @@ public class Player {
 	public int getCardCount() {
 		return hand.size();
 	}
-
-
 }

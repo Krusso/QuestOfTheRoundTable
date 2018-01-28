@@ -33,6 +33,8 @@ public class PlayerView {
 			output.sendMessage("tournament accept: player " + ID);
 		} else if(question == Player.STATE.PICKING) {
 			output.sendMessage("tournament picking: player " + ID);
+		} else if(question == Player.STATE.WIN) {
+			output.sendMessage("tournament won: player " + ID);
 		}
 	}
 

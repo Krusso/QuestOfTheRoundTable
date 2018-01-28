@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public class OutputController extends Thread {
 	private LinkedBlockingQueue<String> queue;
-	private LinkedBlockingQueue<String> internalQueue;
+	public LinkedBlockingQueue<String> internalQueue;
 
 	public OutputController(LinkedBlockingQueue<String> queue) {
 		this.queue = queue;

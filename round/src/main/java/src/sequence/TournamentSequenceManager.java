@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import src.game_logic.BoardModel;
 import src.game_logic.TournamentCard;
-import src.player.BattlePointerCalculator;
+import src.player.BattlePointCalculator;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -22,7 +22,6 @@ public class TournamentSequenceManager extends SequenceManager {
 
 	@Override
 	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm) {
-		
 		Iterator<Player> players = pm.round();
 		while(players.hasNext()) {
 			pm.setPlayer(players.next());
@@ -31,10 +30,14 @@ public class TournamentSequenceManager extends SequenceManager {
 			try {
 				string = actions.take();
 				System.out.println("Action recieved: " + string);
-				if("game tournament accept: player 0".equals(string) ||
-						"game tournament accept: player 1".equals(string)) {
+				Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
+			    Matcher m = p.matcher(string);
+			    m.find();
+			    //System.out.println("3: " + m.group(3));
+			    //System.out.println("3: " + m.group(4));
+				if(m.group(3).equals("accept")) {
 					pm.currentAcceptTournament();
-				} else if("game tournament decline: player 0".equals(string)) {
+				} else {
 					pm.currentDeclineTournament();
 				}
 			} catch (InterruptedException e) {
@@ -42,12 +45,20 @@ public class TournamentSequenceManager extends SequenceManager {
 			}
 		}
 		
-		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
 		
+		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		if(participants.size() == 0) {
 			return;
 		} else if(participants.size() == 1) {
 			pm.changeShields(participants, card.getShields() + 1);
+			pm.setTournamentWinner(participants);
+			return;
 		} else {
 			players = participants.iterator();
 			questionPlayers(players, pm, actions);
@@ -58,26 +69,26 @@ public class TournamentSequenceManager extends SequenceManager {
 			pm.flipCards(players.next());	
 		}
 		
-		BattlePointerCalculator bpc = new BattlePointerCalculator();
+		BattlePointCalculator bpc = new BattlePointCalculator();
 		List<Player> winners = bpc.calculatePoints(participants);
 		if(winners.size() != 1) {
 			pm.discardWeapons(participants);
 			players = winners.iterator();
 			questionPlayers(players, pm, actions);
 			
+			players = winners.iterator();
+			while(players.hasNext()) {
+				pm.flipCards(players.next());	
+			}
+			
 			winners = bpc.calculatePoints(winners);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			
+			pm.setTournamentWinner(winners);
 		} else {
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println();
-			System.out.println();
+			pm.setTournamentWinner(participants);
 		}
 		//System.exit(0);
 		

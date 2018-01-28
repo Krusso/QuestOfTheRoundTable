@@ -31,6 +31,8 @@ public class TestEvents {
 	@Test
 	public void testKingsCallToArms() {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Call to Arms"));
+		// WIP
+		assertEquals(true, true);
 	}
 	
 	@Test
@@ -92,6 +94,7 @@ public class TestEvents {
 	
 	@Test
 	public void testCourtCalledToCamelot() {
+		EventSequenceManager esm = new EventSequenceManager(new EventCard("Court Called to Camelot"));
 		// WIP
 		assertEquals(true, true);
 	}

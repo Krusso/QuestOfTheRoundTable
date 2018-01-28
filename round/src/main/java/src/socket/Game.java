@@ -5,7 +5,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
-import src.game_logic.StoryCard;
 import src.player.PlayerManager;
 import src.sequence.GameSequenceManager;
 import src.sequence.SequenceManager;
@@ -32,7 +31,7 @@ public class Game extends Thread{
 		pm.subscribe(pvs);
 		PlayerView pv = new PlayerView(output);
 		pm.subscribe(pv);
-		
+		bm.subscribe(pv);
 		pm.start();
 
 		GameSequenceManager gsm = new GameSequenceManager();

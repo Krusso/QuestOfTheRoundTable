@@ -144,6 +144,10 @@ public class PlayerManager {
 	public void currentFaceDown(String cards) {
 		players[currentPlayer].setFaceDown(cards.split(","));
 	}
+	
+	public void setTournamentWinner(List<Player> participants) {
+		participants.forEach(i -> i.setState(Player.STATE.WIN));
+	}
 
 	public void flipCards(Player next) {
 		// TODO: should be its own method imo
@@ -182,5 +186,7 @@ public class PlayerManager {
 	public void discardFromHand(Player player, String cards) {
 		player.removeCards(cards.split(","));
 	}
+
+
 }
 

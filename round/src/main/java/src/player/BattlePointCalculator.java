@@ -6,7 +6,7 @@ import java.util.List;
 import src.game_logic.AdventureDeck;
 import src.game_logic.Rank.RANKS;
 
-public class BattlePointerCalculator {
+public class BattlePointCalculator {
 	
 	/**
 	 * 
