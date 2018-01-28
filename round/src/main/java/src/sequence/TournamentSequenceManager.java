@@ -70,7 +70,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		}
 		
 		BattlePointCalculator bpc = new BattlePointCalculator();
-		List<Player> winners = bpc.calculatePoints(participants);
+		List<Player> winners = bpc.calculateHighest(participants);
 		if(winners.size() != 1) {
 			pm.discardWeapons(participants);
 			players = winners.iterator();
@@ -81,7 +81,7 @@ public class TournamentSequenceManager extends SequenceManager {
 				pm.flipCards(players.next());	
 			}
 			
-			winners = bpc.calculatePoints(winners);
+			winners = bpc.calculateHighest(winners);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
 			pm.setTournamentWinner(winners);

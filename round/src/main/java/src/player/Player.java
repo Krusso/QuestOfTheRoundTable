@@ -24,6 +24,8 @@ public class Player {
 	private final int ID;
 	private STATE question;
 	private int shields;
+	private boolean tristan = false;
+	private boolean iseult = false;
 	
 	public Player(int id) {
 		rank = Rank.RANKS.SQUIRE;
@@ -43,17 +45,23 @@ public class Player {
 			rank = Rank.RANKS.SQUIRE;
 		} else if(rank == Rank.RANKS.SQUIRE) {
 			rank = Rank.RANKS.KNIGHT;
+			shields -= 5;
 		} else if (rank == Rank.RANKS.KNIGHT) {
 			rank = Rank.RANKS.CHAMPION;
+			shields -= 7;
+		} else if (rank == Rank.RANKS.CHAMPION) {
+			rank = Rank.RANKS.KNIGHTOFROUND;
+			shields -= 10;
+			// TODO - implement end of game
 		}
-		pv.update(rank, ID);
+		if(pv != null) pv.update(rank, ID);
 	}
 	
 	protected void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
 			hand.addCard(card, 1);
 		}
-		pv.updateCards(cards, ID);
+		if(pv != null) pv.updateCards(cards, ID);
 	}
 
 	protected String hand() {
@@ -70,12 +78,12 @@ public class Player {
 	
 	protected void setState(STATE question) {
 		this.question = question;
-		pv.updateState(question, ID);
+		if(pv != null) pv.updateState(question, ID);
 	}
 	
 	protected void setState(STATE question, int i, TYPE type) {
 		this.question = question;
-		pv.updateState(question, ID,i, type);
+		if(pv != null) pv.updateState(question, ID,i, type);
 	}
 
 	protected void changeShields(int shields) {
@@ -85,13 +93,15 @@ public class Player {
 		}
 	}
 
-	protected void setFaceDown(String[] cards) {
+	public void setFaceDown(String[] cards) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();
 		for(String card: cards) {
 			list.add(hand.getCardByName(card));
+			if(card.equals("Sir Tristan")) tristan = true;
+			if(card.equals("Queen Iseult")) iseult = true;
 		}
 		faceDown.addCards(list);
-		pv.updateFaceDown(list, ID);
+		if(pv != null) pv.updateFaceDown(list, ID);
 	}
 
 	public RANKS getRank() {
@@ -99,8 +109,8 @@ public class Player {
 	}
 
 	protected void flipCards() {
-		faceUp.addCards(faceDown.drawCards(faceDown.size()));
-		pv.updateFaceUp(faceUp, ID);
+		faceUp.addCards(faceDown.drawTopCards(faceDown.size()));
+		if(pv != null) pv.updateFaceUp(faceUp, ID);
 	}
 
 	protected final AdventureDeck getFaceUp() {
@@ -131,11 +141,11 @@ public class Player {
 		faceUp.discardType(TYPE.ALLIES);
 	}
 
-	public int weaponCount() {
+	public int getWeaponCount() {
 		return hand.typeCount(TYPE.WEAPONS);
 	}
 
-	public int foeCount() {
+	public int getFoeCount() {
 		return hand.typeCount(TYPE.FOES);
 	}
 	
@@ -147,5 +157,9 @@ public class Player {
 
 	public int getCardCount() {
 		return hand.size();
+	}
+
+	public boolean hasTristanIseultBoost() {
+		return tristan && iseult;
 	}
 }

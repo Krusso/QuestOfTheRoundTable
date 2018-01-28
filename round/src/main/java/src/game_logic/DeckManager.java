@@ -15,11 +15,11 @@ public class DeckManager {
 	}
 	
 	public ArrayList<StoryCard> getStoryCard(int n) {
-		return storyDeck.drawCards(n);
+		return storyDeck.drawRandomCards(n);
 	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {
-		return adventureDeck.drawCards(n);
+		return adventureDeck.drawRandomCards(n);
 	}
 	
 	public int storySize() {

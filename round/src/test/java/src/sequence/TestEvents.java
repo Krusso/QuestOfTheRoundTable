@@ -18,16 +18,6 @@ import src.views.PlayerView;
 
 public class TestEvents {
 
-
-	//	new EventCard("King's Recognition"),2);
-	//	new EventCard("Queen's Favor"),2);
-	//	new EventCard("Court Called to Camelot"),2);
-	//	new EventCard("Pox"),1);
-	//	new EventCard("Plague"),1);
-	//	new EventCard("Chivalrous Deed"),1);
-	//	new EventCard("Prosperity Throughout the Realm"),1);
-	//	new EventCard("King's Call to Arms"),1);
-
 	@Test
 	public void testKingsCallToArms() {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Call to Arms"));

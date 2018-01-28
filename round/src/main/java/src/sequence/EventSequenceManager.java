@@ -108,7 +108,7 @@ public class EventSequenceManager extends SequenceManager {
 			}
 			
 			highest.forEach(player -> {
-				if(player.weaponCount() >= 1) {
+				if(player.getWeaponCount() >= 1) {
 					pm.setPlayer(player);
 					pm.currentDiscard(1, AdventureCard.TYPE.WEAPONS);
 					String cards = null;
@@ -119,9 +119,9 @@ public class EventSequenceManager extends SequenceManager {
 						e.printStackTrace();
 					}
 					pm.discardFromHand(player, cards);
-				} else if(player.foeCount() >= 1) {
+				} else if(player.getFoeCount() >= 1) {
 					pm.setPlayer(player);
-					pm.currentDiscard(Math.min(2, player.foeCount()), AdventureCard.TYPE.FOES);
+					pm.currentDiscard(Math.min(2, player.getFoeCount()), AdventureCard.TYPE.FOES);
 					String cards = null;
 					try {
 						cards = actions.take();

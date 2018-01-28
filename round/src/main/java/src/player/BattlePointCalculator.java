@@ -8,23 +8,26 @@ import src.game_logic.Rank.RANKS;
 
 public class BattlePointCalculator {
 	
-	/**
-	 * 
-	 * NOTE: not sure I like that the players cards are flipped over in here probably better
-	 * in the sequencemanager class
-	 */
+	public ArrayList<Integer> calculatePoints(List<Player> participants){
+		ArrayList<Integer> scores = new ArrayList<Integer>();
+		participants.forEach(player -> {
+			scores.add(scoreOfPlayer(player));
+		});
+		
+		return scores;
+	}
 	
-	public List<Player> calculatePoints(List<Player> participants) {
+	public List<Player> calculateHighest(List<Player> participants) {
 		int max = Integer.MIN_VALUE;
 		List<Player> winning = new ArrayList<Player>();
-		for(Player player: participants) {
-			int score = scoreOfPlayer(player);
-			if(score == max) {
-				winning.add(player);
-			} else if (score > max) {
+		ArrayList<Integer> scores = calculatePoints(participants);
+		for(int i = 0; i < scores.size(); i++) {
+			if(scores.get(i) == max) {
+				winning.add(participants.get(i));
+			} else if (scores.get(i) > max) {
 				winning.clear();
-				winning.add(player);
-				max = score;
+				winning.add(participants.get(i));
+				max = scores.get(i);
 			}
 		}
 		return winning;
@@ -39,6 +42,10 @@ public class BattlePointCalculator {
 			score += 10;
 		} else {
 			score += 20;
+		}
+		
+		if(player.hasTristanIseultBoost()) {
+			score += 10;
 		}
 		
 		AdventureDeck cards = player.getFaceUp();
