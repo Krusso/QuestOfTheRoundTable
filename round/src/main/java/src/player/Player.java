@@ -127,16 +127,6 @@ public class Player {
 	public int getShields() {
 		return this.shields;
 	}
-	public int getTotalShields() {
-		int toReturn = this.getShields();
-		if(rank == Rank.RANKS.KNIGHT) {
-			toReturn += 5;
-		} else if (rank == Rank.RANKS.CHAMPION) {
-			toReturn += 7;
-		}
-		return toReturn;
-	}
-
 	protected void discardAllies() {
 		faceUp.discardType(TYPE.ALLIES);
 	}
