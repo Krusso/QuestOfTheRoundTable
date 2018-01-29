@@ -15,6 +15,8 @@ public class GameSequenceManager {
 			return new EventSequenceManager((EventCard) card);
 		} else if (card.getType() == StoryCard.TYPE.TOURNAMENT) {
 			return new TournamentSequenceManager((TournamentCard) card);
+		} else if (card.getType() == StoryCard.TYPE.GAMEOVER) {
+			return new FinalTournamentSequenceManager();
 		}
 		return null;
 	}

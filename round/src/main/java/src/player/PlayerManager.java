@@ -6,11 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.DeckManager;
+import src.game_logic.Rank;
 import src.game_logic.WeaponCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.views.PlayerView;
@@ -186,7 +188,22 @@ public class PlayerManager {
 	public void discardFromHand(Player player, String cards) {
 		player.removeCards(cards.split(","));
 	}
+	public boolean rankUp() {
+		AtomicBoolean winners = new AtomicBoolean();
+		round().forEachRemaining(player ->{
+			player.increaseLevel();
+			if(player.getRank() == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) {
+				player.setState(Player.STATE.WINNING);
+				winners.set(true);;
+			}
+		});
+		return winners.get();
+	}
 
-
+	public void setGameWinners(List<Player> winners) {
+		winners.forEach(player -> {
+			player.setState(Player.STATE.GAMEWON);
+		});
+	}
 }
 

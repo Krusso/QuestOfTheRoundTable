@@ -13,7 +13,7 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-			QUESTIONED, YES, NO, PICKING, DISCARDING, WIN
+			QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
 	};
 	
 	private RANKS rank;
@@ -43,16 +43,17 @@ public class Player {
 	protected void increaseLevel() {
 		if(rank == null) {
 			rank = Rank.RANKS.SQUIRE;
-		} else if(rank == Rank.RANKS.SQUIRE) {
+		} else if(rank == Rank.RANKS.SQUIRE && shields >= 5) {
 			rank = Rank.RANKS.KNIGHT;
 			shields -= 5;
-		} else if (rank == Rank.RANKS.KNIGHT) {
+		} else if (rank == Rank.RANKS.KNIGHT && shields >= 7) {
 			rank = Rank.RANKS.CHAMPION;
 			shields -= 7;
-		} else if (rank == Rank.RANKS.CHAMPION) {
-			rank = Rank.RANKS.KNIGHTOFROUND;
+		} else if (rank == Rank.RANKS.CHAMPION && shields >= 10) {
+			rank = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 			shields -= 10;
-			// TODO - implement end of game
+		} else {
+			return;
 		}
 		if(pv != null) pv.update(rank, ID);
 	}

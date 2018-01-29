@@ -1,10 +1,13 @@
 package src.socket;
 
 
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
+import src.game_logic.StoryCard;
+import src.player.Player;
 import src.player.PlayerManager;
 import src.sequence.GameSequenceManager;
 import src.sequence.SequenceManager;
@@ -44,8 +47,13 @@ public class Game extends Thread{
 			}
 			SequenceManager sm = gsm.createStoryManager(bm.getCard());
 			sm.start(actions, pm, bm);
-			//System.exit(0);
-			pm.nextTurn();
+			
+			boolean winners = pm.rankUp();
+			if(winners) {
+				sm = gsm.createStoryManager(StoryCard.GAMEOVER);
+				sm.start(actions, pm, bm);
+				break;
+			}
 			System.exit(0);
 		}
 

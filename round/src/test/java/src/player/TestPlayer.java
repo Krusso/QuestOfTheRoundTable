@@ -56,7 +56,7 @@ public class TestPlayer {
 		assertTrue(p1.getShields() == 10);
 		assertTrue(p1.getRank() == Rank.RANKS.CHAMPION);
 		p1.increaseLevel();
-		assertTrue(p1.getRank() == Rank.RANKS.KNIGHTOFROUND);
+		assertTrue(p1.getRank() == Rank.RANKS.KNIGHTOFTHEROUNDTABLE);
 		assertTrue(p1.getShields() == 0);
 	}
 	

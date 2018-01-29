@@ -22,6 +22,7 @@ public class TournamentSequenceManager extends SequenceManager {
 
 	@Override
 	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm) {
+		// Finding all players who want to join tournament
 		Iterator<Player> players = pm.round();
 		while(players.hasNext()) {
 			pm.setPlayer(players.next());
@@ -45,6 +46,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			}
 		}
 		
+		// cause tracing logs sucks
 		System.out.println();
 		System.out.println();
 		System.out.println();
@@ -52,6 +54,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		System.out.println();
 		System.out.println();
 		
+		// determining if anyone joined
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		if(participants.size() == 0) {
 			return;
@@ -64,6 +67,8 @@ public class TournamentSequenceManager extends SequenceManager {
 			questionPlayers(players, pm, actions);
 		}
 		
+		// all players have decided on what cards to play
+		// calculate highest bp and decide winner
 		players = participants.iterator();
 		while(players.hasNext()) {
 			pm.flipCards(players.next());	
@@ -72,6 +77,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		BattlePointCalculator bpc = new BattlePointCalculator();
 		List<Player> winners = bpc.calculateHighest(participants);
 		if(winners.size() != 1) {
+			// tie do tournament again
 			pm.discardWeapons(participants);
 			players = winners.iterator();
 			questionPlayers(players, pm, actions);
@@ -89,27 +95,6 @@ public class TournamentSequenceManager extends SequenceManager {
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
 			pm.setTournamentWinner(participants);
-		}
-		//System.exit(0);
-		
-	}
-
-	private void questionPlayers(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions) {
-		while(players.hasNext()) {
-			pm.setPlayer(players.next());
-			pm.currentQuestionTournCards();
-			String string;
-			try {
-				string = actions.take();
-				Pattern p = Pattern.compile("game tournament picked: player (\\d+) (.*)");
-			    Matcher m = p.matcher(string);
-			    m.find();
-			    String cards = m.group(2);
-				pm.currentFaceDown(cards);
-				System.out.println("Action recieved: " + string);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} 
 		}
 	}
 }
