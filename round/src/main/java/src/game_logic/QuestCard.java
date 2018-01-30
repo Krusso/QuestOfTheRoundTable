@@ -5,10 +5,9 @@ public class QuestCard extends StoryCard {
 	private String foe;
 	
 	public QuestCard(String name, int stages, String foe) {
-		super(name);
+		super(name, TYPE.QUEST);
 		this.stages = stages;
 		this.foe = foe;
-		this.type = TYPE.QUEST;
 	}
 	
 	public int getNumStages() { return this.stages; }

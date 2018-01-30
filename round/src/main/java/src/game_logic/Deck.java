@@ -50,7 +50,18 @@ public abstract class Deck<E extends Card> {
 		return deck.remove((int)(Math.random() * deck.size()));
 	}
 	
-	public ArrayList<E> drawCards(int n) {
+	/**
+	 *  Warning decks are not shuffled
+	 * @param n
+	 * @return
+	 */
+	public ArrayList<E> drawTopCards(int n){
+		ArrayList<E> toReturn = new ArrayList<E>(n);
+		IntStream.range(0, n).forEach(i -> toReturn.add(deck.remove(0)));
+		return toReturn;
+	}
+	
+	public ArrayList<E> drawRandomCards(int n) {
 		ArrayList<E> toReturn = new ArrayList<E>(n);
 		IntStream.range(0, n).forEach(i -> toReturn.add(getNextCard()));
 		return toReturn;

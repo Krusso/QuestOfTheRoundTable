@@ -4,9 +4,8 @@ public class TournamentCard extends StoryCard {
 	private int shields;
 	
 	public TournamentCard(String name, int shields) {
-		super(name);
+		super(name, TYPE.TOURNAMENT);
 		this.shields = shields;
-		this.type = TYPE.TOURNAMENT;
 	}
 	
 	public int getShields() { return this.shields; }

@@ -6,11 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.DeckManager;
+import src.game_logic.Rank;
 import src.game_logic.WeaponCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.views.PlayerView;
@@ -62,6 +64,10 @@ public class PlayerManager {
 	}
 
 
+	public void drawCards(ArrayList<Player> players, int cards) {
+		players.forEach(player -> player.addCards(dm.getAdventureCard(cards)));
+	}
+	
 	public void setPlayer(Player playerFind) {
 		for(int i = 0; i < players.length; i++) {
 			if(players[i]== playerFind) {
@@ -116,6 +122,10 @@ public class PlayerManager {
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
 
+	public void currentDiscard(int i, TYPE weapons) {
+		players[currentPlayer].setState(Player.STATE.DISCARDING, i, weapons);
+	}
+	
 	// TODO: bounds checking
 	public void currentAcceptTournament() {
 		players[currentPlayer].setState(Player.STATE.YES);
@@ -136,6 +146,10 @@ public class PlayerManager {
 	public void currentFaceDown(String cards) {
 		players[currentPlayer].setFaceDown(cards.split(","));
 	}
+	
+	public void setTournamentWinner(List<Player> participants) {
+		participants.forEach(i -> i.setState(Player.STATE.WIN));
+	}
 
 	public void flipCards(Player next) {
 		// TODO: should be its own method imo
@@ -147,9 +161,10 @@ public class PlayerManager {
 		}
 	}
 
-	public void winTournament(List<Player> winners, int shields) {
-		winners.forEach(i -> i.addShields(shields));
+	public void changeShields(List<Player> winners, int shields) {
+		winners.forEach(i -> i.changeShields(shields));
 	}
+
 
 	public void discardCards(List<Player> participants) {
 		participants.forEach(i -> {
@@ -161,6 +176,33 @@ public class PlayerManager {
 	public void discardWeapons(List<Player> participants) {
 		participants.forEach(i -> {
 			i.discardWeapons();
+		});
+	}
+
+	public void discardAllies(List<Player> participants) {
+		participants.forEach(i -> {
+			i.discardAllies();
+		});
+	}
+
+	public void discardFromHand(Player player, String cards) {
+		player.removeCards(cards.split(","));
+	}
+	public boolean rankUp() {
+		AtomicBoolean winners = new AtomicBoolean();
+		round().forEachRemaining(player ->{
+			player.increaseLevel();
+			if(player.getRank() == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) {
+				player.setState(Player.STATE.WINNING);
+				winners.set(true);;
+			}
+		});
+		return winners.get();
+	}
+
+	public void setGameWinners(List<Player> winners) {
+		winners.forEach(player -> {
+			player.setState(Player.STATE.GAMEWON);
 		});
 	}
 }
