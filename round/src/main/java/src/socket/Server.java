@@ -55,6 +55,9 @@ public class Server {
 
 				OutputController output = new OutputController(outputQueue);
 				Game game = new Game(output, gm);
+				
+
+				System.out.println("Game made");
 				InputController input = new InputController(inputQueue, game, gm);
 				input.start();
 				output.start();
@@ -86,6 +89,7 @@ class ClientWrite extends Thread {
 				}
 			};
 			Stream<String> stream = Stream.generate(socketOutput);
+			System.out.println(out.toString());
 			stream.map(s -> {
 				out.println(s);
 				return s;

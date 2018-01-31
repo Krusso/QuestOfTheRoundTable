@@ -1,19 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.Networking;
 using UnityEngine;
 using System.Net.Sockets;
 using System.IO;
 using System;
 using System.Text;
-
 public class Client{
-    private bool isAtStartup = true;
-    const string serverIp = "127.0.0.1";
-    const int port = 2223;
+    private string serverIp = "127.0.0.1";
+    private int port = 2223;
 
     NetworkStream stream;
     StreamWriter writer;
+    StreamReader reader;
+    Queue<string> messageQueue;
+
     public Client()
     {
 
@@ -21,48 +21,44 @@ public class Client{
     public Client(string serverIp, int port)
     {
         TcpClient client = new TcpClient(serverIp, port);
-        Debug.Log("New Client greated type: " + client.GetType());
+        Debug.Log("New Client created type, connected to: " + serverIp +":"+ port);
         stream = client.GetStream();
-
         stream.ReadTimeout = 10;
         if (stream.CanRead)
         {
-            writer = new StreamWriter(stream);
-            Debug.Log("Writer created");
+            reader = new StreamReader(stream);
+            Debug.Log("StreamReader created");
         }
+        if (stream.CanWrite)
+        {
+            writer = new StreamWriter(stream);
+            Debug.Log("StreamWriter created");
+        }
+        messageQueue = new Queue<string>();
     }
-    public void send(string data)
+    public void Send(string data)
     {
-        Debug.Log("Sending message:  " + data);
-        writer.Write(data);
+        Debug.Log("Sending msg:" + data);
+        writer.WriteLine(data);
         writer.Flush();
     }
 
-    void readData()
+    public void ReadData()
     {
-        if (stream.CanRead)
+        if (stream.DataAvailable)
         {
-            try
-            {
-                byte[] buff = new byte[1024];
-                StringBuilder realMessage = new StringBuilder();
-                int numBytesRead = 0;
-                while (stream.DataAvailable){
-                    numBytesRead = stream.Read(buff, 0, buff.Length);
-                    realMessage.AppendFormat("{0}", Encoding.ASCII.GetString(buff, 0, numBytesRead));
-                }
-                Debug.Log("Message Received: " + realMessage);
-            }catch(Exception e)
-            {
-                Debug.Log("Read data failed: " + e.ToString());
-            }
+            string data = reader.ReadLine();
+            Debug.Log("Message received:" + data);
+            messageQueue.Enqueue(data);
         }
     }
-    void performTask(string message)
+
+    public string GetMessage()
     {
-        switch(message)
+        if (messageQueue.Count != 0)
         {
-            
+            return messageQueue.Dequeue();
         }
+        return null;
     }
 }
