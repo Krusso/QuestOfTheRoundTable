@@ -114,6 +114,10 @@ public class PlayerManager {
 		return list.iterator();
 	}
 	
+	public void currentQuestionQuest() {
+		players[currentPlayer].setState(Player.STATE.QUESTIONED);
+	}
+	
 	public void currentQuestionTournament() {
 		players[currentPlayer].setState(Player.STATE.QUESTIONED);
 	}
@@ -133,6 +137,14 @@ public class PlayerManager {
 
 	public void currentDeclineTournament() {
 		players[currentPlayer].setState(Player.STATE.NO);
+	}
+	
+	public void currentSponsorQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
+	}
+	
+	public void currentDeclineQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
 	}
 
 	public List<Player> getAllWithState(Player.STATE state) {
