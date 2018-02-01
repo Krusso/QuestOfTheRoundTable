@@ -55,6 +55,8 @@ public class Server {
 
 				OutputController output = new OutputController(outputQueue);
 				Game game = new Game(output, gm);
+				
+
 				InputController input = new InputController(inputQueue, game, gm);
 				input.start();
 				output.start();
