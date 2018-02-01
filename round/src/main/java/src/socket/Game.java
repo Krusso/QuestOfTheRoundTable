@@ -23,7 +23,6 @@ public class Game extends Thread{
 	public Game(OutputController output, GameModel gm) {
 		this.output = output;
 		this.gm = gm;
-		System.out.println("Constructor Game Made");
 	}
 
 	public void run() {
