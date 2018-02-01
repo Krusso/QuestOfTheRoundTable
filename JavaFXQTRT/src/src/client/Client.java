@@ -26,9 +26,12 @@ public class Client implements Runnable {
 			writeStream = new PrintStream(client.getOutputStream());
             readStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
             String message;
-            while(readStream.ready()) {
-            	message = readStream.readLine();
-            	System.out.println("Messsage received: " + message);
+            
+            while(client.isConnected()) {
+            	if(readStream.ready()) {
+                	message = readStream.readLine();
+                	System.out.println("Messsage received: " + message);
+            	}
             }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
