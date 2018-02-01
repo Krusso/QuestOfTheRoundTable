@@ -121,6 +121,11 @@ public class PlayerManager {
 	public void currentQuestionTournament() {
 		players[currentPlayer].setState(Player.STATE.QUESTIONED);
 	}
+	
+	public void currentSetupQuest() {
+		// should we have a separate state for setting up a quest?
+		players[currentPlayer].setState(Player.STATE.PICKING);
+	}
 
 	public void currentQuestionTournCards() {
 		players[currentPlayer].setState(Player.STATE.PICKING);
@@ -144,7 +149,7 @@ public class PlayerManager {
 	}
 	
 	public void currentDeclineQuest() {
-		players[currentPlayer].setState(Player.STATE.YES);
+		players[currentPlayer].setState(Player.STATE.NO);
 	}
 
 	public List<Player> getAllWithState(Player.STATE state) {

@@ -51,8 +51,8 @@ public class QuestSequenceManager extends SequenceManager {
 			return;
 		} else if(sponsor.size() == 1) {
 			// TODO: set card in center of board
-			QuestCreator qc  = new QuestCreator(card.getNumStages(),sponsor.get(0));
-			
+			QuestCreator qc  = new QuestCreator(sponsor.get(0));
+			qc.setUpQuest(actions);
 		} // never more than one sponsor
 	}
 }
