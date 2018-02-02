@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AllyCard;
 import src.game_logic.AmourCard;
 import src.game_logic.Rank;
 import src.game_logic.WeaponCard;
-import src.game_logic.AdventureCard.TYPE;
+import src.player.Player;
 
 public class TestPlayer {
 	

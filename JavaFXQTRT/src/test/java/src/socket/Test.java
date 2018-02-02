@@ -1,5 +1,7 @@
 package src.socket;
 
+import java.net.URISyntaxException;
+
 import src.socket.Server;
 
 public class Test {
