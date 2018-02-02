@@ -82,18 +82,20 @@ public class QuestSequenceManager extends SequenceManager {
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		if(participants.size() == 0) {
 			return;
+		} else if(participants.size() == 1) {
+			return;
+		} else {
 		}
-
+		
 		pm.drawCards(participants,1);
 		
-		while(quest.getCurrentStage() < card.getNumStages()) {
+		while(quest.getCurrentStage() < card.getNumStages())
 			if (quest.currentStageType() == Quest.TYPE.FOE) {
 				quest.advanceStage();
 				// foe sequence
 			} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 				quest.advanceStage();
-				quest.bid(participants, pm, actions);
+				//quest.bid();
 			}
-		}
 	}
 }

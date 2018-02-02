@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 public class Quest {
 	
@@ -73,12 +73,10 @@ public class Quest {
 	public void advanceStage() { this.currentStage++; }
 	public int getCurrentStage() { return this.currentStage; }
 	
-	public void bid(List<Player> participants, PlayerManager pm, LinkedBlockingQueue<String> actions) {
+	public void bid(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions) {
 		
 		String[] highestBid = {};
 		int winningPlayerNum = -1;
-
-		ListIterator<Player> players = participants.listIterator();
 		
 		while(players.hasNext()) {
 			pm.setPlayer(players.next());
@@ -95,13 +93,14 @@ public class Quest {
 				if(cards.length > highestBid.length) {
 					highestBid = cards;
 					winningPlayerNum = Integer.parseInt(m.group(1));
-				} else {
-					players.remove();
 				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
+		
 	}
+	
 }
