@@ -8,3 +8,6 @@ Krystian Wojcicki (kwojcicki)
 Neha Rao (Neha-Rao)
 
 Michael Kuang (Krusso)
+
+**Install JavaFX**
+Using eclipse, install javafx by: help->install new software->work with-><your eclipse version>->General Purpose Tools->JavaFx 
