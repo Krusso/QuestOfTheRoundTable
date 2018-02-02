@@ -14,9 +14,15 @@ public class Client implements Runnable {
 	Socket client;
 	PrintStream writeStream;
 	BufferedReader readStream;
+	
+	GameBoardController gbc;
 	public Client(String host, int port) {
 		this.host = host;
 		this.port = port;
+	}
+	
+	public void setGameBoardController(GameBoardController gbc) {
+		this.gbc = gbc;
 	}
 	
 	@Override
@@ -31,6 +37,7 @@ public class Client implements Runnable {
             	if(readStream.ready()) {
                 	message = readStream.readLine();
                 	System.out.println("Messsage received: " + message);
+//                	if()
             	}
             }
 		} catch (IOException e) {
