@@ -36,22 +36,26 @@ public class TitleScreenController implements Initializable{
 	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
-		System.out.println("print");
-		Parent root = new AnchorPane();
+		//TODO check if numPlayers textfield is 2-4
+		
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
-		root = fxmlLoader.load();
-		client.send("game start:" + numPlayers.getText());
-		Scene gameBoardScene = new Scene(root);
+		Scene gameScene = new Scene(fxmlLoader.load());
 		
-		Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-		stage.setScene(gameBoardScene);
+		//give the GameBoardController the client if we got it
+		//in this case the GBC should always have the client when we initialize it
+		System.out.println("GameBoardController has reference to Client");
+		GameBoardController gbc = fxmlLoader.getController();
+		gbc.setClient(client);
+		client.setGameBoardController(gbc);
+		
+		//Change the scene to the gameScene and show it.
+		Stage stage = (Stage) start.getScene().getWindow();	
+		stage.setScene(gameScene);
 		stage.show();
 		
-		//pass the client to the GameBoardController
-//		GameBoardController gbc = fxmlLoader.getController();
-//		client.setGameBoardController(gbc);
-//		gbc.setClient(client);
+		//send gameStart message.
+		client.send("game start:" + numPlayers.getText());
 	}
 	
 	@Override

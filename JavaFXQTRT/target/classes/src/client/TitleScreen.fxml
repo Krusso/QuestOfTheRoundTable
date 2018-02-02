@@ -11,7 +11,7 @@
    <children>
       <Pane fx:id="p" layoutX="14.0" layoutY="38.0" prefHeight="448.0" prefWidth="843.0">
          <children>
-            <Button fx:id="startButton" layoutX="422.0" layoutY="261.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Start" />
+            <Button fx:id="start" layoutX="422.0" layoutY="261.0" mnemonicParsing="false" onAction="#handleButtonAction" text="Start" />
             <Text fx:id="numPlayerslabel" layoutX="393.0" layoutY="211.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of Players" />
             <TextField fx:id="numPlayers" layoutX="368.0" layoutY="224.0" />
          </children>
