@@ -64,7 +64,7 @@ public class PlayerManager {
 	}
 
 
-	public void drawCards(ArrayList<Player> players, int cards) {
+	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> player.addCards(dm.getAdventureCard(cards)));
 	}
 	
@@ -114,6 +114,12 @@ public class PlayerManager {
 		return list.iterator();
 	}
 	
+	public void flushState() {
+		for(int i = players.length; i > 0; i--) {
+			players[i - 1].setState(Player.STATE.NEUTRAL);
+		}
+	}
+	
 	public void currentQuestionQuest() {
 		players[currentPlayer].setState(Player.STATE.QUESTIONED);
 	}
@@ -145,6 +151,10 @@ public class PlayerManager {
 	}
 	
 	public void currentSponsorQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
+	}
+	
+	public void currentJoinQuest() {
 		players[currentPlayer].setState(Player.STATE.YES);
 	}
 	

@@ -6,6 +6,7 @@ import java.util.List;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AdventureDeck;
+import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.views.PlayerView;
@@ -13,7 +14,7 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-			QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
+		NEUTRAL, QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
 	};
 	
 	private RANKS rank;
@@ -144,6 +145,10 @@ public class Player {
 		for(String cardName: split) {
 			hand.getCardByName(cardName);
 		}
+	}
+	
+	public Card getCard(String cardName) {
+		return hand.getCardByName(cardName);
 	}
 
 	public int getCardCount() {

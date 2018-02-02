@@ -16,7 +16,7 @@ import src.game_logic.Card;
 public class QuestSequenceManager extends SequenceManager {
 	
 	QuestCard card;
-	List<List<Card>> quest;
+	Quest quest;
 	
 	public QuestSequenceManager(QuestCard card) { this.card = card; }
 	
@@ -51,8 +51,37 @@ public class QuestSequenceManager extends SequenceManager {
 			return;
 		} else if(sponsor.size() == 1) {
 			// TODO: set card in center of board
-			QuestCreator qc  = new QuestCreator(card.getNumStages(), sponsor.get(0));
-			qc.setUpQuest(actions);
+			quest = new Quest(card, sponsor.get(0));
+			quest.setUpQuest(actions);
 		} // never more than one sponsor
+		
+		pm.flushState();
+		
+		// Finding players who want to join
+		Iterator<Player> playersForQuest = pm.round();
+		while(playersForQuest.hasNext()) {
+			pm.setPlayer(players.next());
+			pm.currentQuestionQuest();
+			String string;
+			try {
+				string = actions.take();
+				System.out.println("Action recieved: " + string);
+				Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
+			    Matcher m = p.matcher(string);
+			    m.find();
+				if(m.group(3).equals("join quest")) {
+					pm.currentJoinQuest();
+				} else {
+					pm.currentDeclineQuest();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
+		pm.drawCards(participants,1);
+		
+		
 	}
 }
