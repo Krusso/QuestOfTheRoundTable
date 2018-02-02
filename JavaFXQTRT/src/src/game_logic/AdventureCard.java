@@ -25,6 +25,10 @@ public class AdventureCard extends Card{
 		this.namedBattlePoints = namedBattlePoints;
 	}
 	
+	public AdventureCard(String name, String path) {
+		super(name,path);
+	}
+	
 	public TYPE getType() { return this.type; }
 	public int getBattlePoints() { return this.battlePoints; }
 	public int getNamedBattlePoints() { return this.namedBattlePoints; }
