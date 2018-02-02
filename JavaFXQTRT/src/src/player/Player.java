@@ -14,7 +14,7 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-		NEUTRAL, QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
+		NEUTRAL, QUESTIONED, BIDDING, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
 	};
 	
 	private RANKS rank;

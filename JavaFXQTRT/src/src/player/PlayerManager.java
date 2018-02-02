@@ -120,6 +120,10 @@ public class PlayerManager {
 		}
 	}
 	
+	public void currentBid() {
+		players[currentPlayer].setState(Player.STATE.BIDDING);
+	}
+	
 	public void currentQuestionQuest() {
 		players[currentPlayer].setState(Player.STATE.QUESTIONED);
 	}
