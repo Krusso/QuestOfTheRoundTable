@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
+   <children>
+      <HBox fx:id="handWindow" layoutY="400.0" prefHeight="150.0" prefWidth="900.0">
+         <children>
+            <Pane prefHeight="150.0" prefWidth="903.0" />
+         </children></HBox>
+   </children>
+</AnchorPane>
