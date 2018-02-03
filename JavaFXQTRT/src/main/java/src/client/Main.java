@@ -36,6 +36,8 @@ public class Main extends Application {
 			TitleScreenController tlc = fxmlLoader.getController();
 			//Pass the client to the controller
 			tlc.setClient(client);
+			//testing image drag
+			tlc.addImage(new AdventureCard("Dagger", "src/main/resources/W Dagger.jpg").getImageView());
 			
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);

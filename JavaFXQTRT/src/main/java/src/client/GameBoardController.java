@@ -16,7 +16,7 @@ public class GameBoardController implements Initializable{
 
 	private Client c;
 	private ArrayList<Card> card;
-	@FXML private HBox handWindow;
+	@FXML private Pane handWindow;
 	
 	public void addCardToHand(Card c) {
 		card.add(c);

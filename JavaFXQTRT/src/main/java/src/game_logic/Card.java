@@ -3,6 +3,7 @@ package src.game_logic;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.rmi.activation.ActivateFailedException;
 
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
@@ -16,13 +17,15 @@ public abstract class Card {
 	private Image img;
 	private ImageView imgView;
 	
+	private double startX = 0;
+	private double startY = 0;
+	
 	public Card(String name) {
 		this.name = name;
 		
 	}
 	public Card(String name, String path) {
 		try {
-			System.out.println("New Card Path: " + path);
 			this.name = name;
 			File file = new File(path);
 			img = new Image (new FileInputStream(file));
@@ -30,18 +33,24 @@ public abstract class Card {
 			imgView.setImage(img);
 			imgView.setFitWidth(100);
 			imgView.setFitHeight(150);
-//			imgView.setdrag
+			setDraggableOn();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
-//	public void setDraggableOn() {
-//		if(imgView != null) {
-//			imgView.setOnDragDetected(new EventHandler<MouseEvent>()
-//					);
-//		}
-//		
-//	}
+	
+	//Simple drag motion for the card ImageView
+	public void setDraggableOn() {
+		imgView.setOnMousePressed((MouseEvent e) -> {
+			 startX = e.getX() - imgView.getX();
+			 startY = e.getY() - imgView.getY();
+		});
+		imgView.setOnMouseDragged((MouseEvent e)->
+		{
+			imgView.setX(e.getX() - startX);
+			imgView.setY(e.getY() - startY);
+		});
+	}
 	public ImageView getImageView() {
 		return imgView;
 	}

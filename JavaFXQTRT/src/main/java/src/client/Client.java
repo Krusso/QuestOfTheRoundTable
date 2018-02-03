@@ -24,12 +24,12 @@ import src.game_logic.WeaponCard;
 //Thread t = new Thread(new OneShotTask(str));
 //t.start();
 
-class PerformTask implements Runnable{
+class Task implements Runnable{
 	private File cardDir;
 	private GameBoardController gbc;
 	private String typeOfTask;
 	private String msg;
-	PerformTask(String typeOfTask, String msg, GameBoardController gbc) {
+	Task(String typeOfTask, String msg, GameBoardController gbc) {
 		this.msg = msg;
 		this.typeOfTask = typeOfTask;
 		this.gbc = gbc;
@@ -38,7 +38,9 @@ class PerformTask implements Runnable{
 	@Override
 	public void run() {
 		switch(typeOfTask) {
-		
+			case "add cards" :{
+				displayHand(msg);
+			}
 		}
 	}
 	
@@ -116,14 +118,7 @@ public class Client implements Runnable {
                 	currentMessage = readStream.readLine();
                 	System.out.println("Messsage received: " + currentMessage);
                 	if(currentMessage.startsWith("add cards: ")) {
-                		
-                		Platform.runLater(new Runnable() {
-                			@Override
-                			public void run() {
-                				
-                        		displayHand(currentMessage.substring(currentMessage.indexOf("player")));
-                			}
-                		});
+                		Platform.runLater(new Task("add cards", currentMessage.substring(currentMessage.indexOf("player")), gbc));
                 	}
             	}
             }
@@ -135,9 +130,6 @@ public class Client implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
 	
 	public void send(String message) {
 		writeStream.println(message);
