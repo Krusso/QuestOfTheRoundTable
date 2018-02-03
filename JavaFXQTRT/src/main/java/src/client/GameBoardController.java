@@ -15,13 +15,23 @@ import src.game_logic.Card;
 public class GameBoardController implements Initializable{
 
 	private Client c;
-	private ArrayList<Card> card;
+	private ArrayList<Card> hand;
 	@FXML private Pane handWindow;
 	
 	public void addCardToHand(Card c) {
-		card.add(c);
+		hand.add(c);
 		handWindow.getChildren().add(c.getImageView());
+		repositionCardsInHand();
 	}
+	
+	private void repositionCardsInHand() {
+		for(int i = 0 ; i < hand.size(); i++) {
+			double windowWidth = handWindow.getWidth();
+			hand.get(i).getImageView().setX(windowWidth/hand.size() * i);
+			hand.get(i).getImageView().setY(handWindow.getTranslateY());
+		}
+	}
+	
 	
 	public void setClient(Client c) {
 		this.c = c;
@@ -30,7 +40,7 @@ public class GameBoardController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
-		card = new ArrayList<Card>();
+		hand = new ArrayList<Card>();
 	}
 
 }

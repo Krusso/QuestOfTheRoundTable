@@ -52,7 +52,7 @@ class Task implements Runnable{
 			//find file associated to name
 			for(File f : list) {
 				if (f.getName().contains(card)) {
-					System.out.println("Adding image: ("+ f.getName()+") to hand found in " + f.getPath());
+//					System.out.println("Adding image: ("+ f.getName()+") to hand found in " + f.getPath());
 					switch (f.getName().charAt(0)) {
 						case 'A':{
 							gbc.addCardToHand(new AdventureCard(card, f.getPath()));
