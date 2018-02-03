@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 
 public abstract class Card {
 	private String name;
@@ -26,11 +30,18 @@ public abstract class Card {
 			imgView.setImage(img);
 			imgView.setFitWidth(100);
 			imgView.setFitHeight(150);
+//			imgView.setdrag
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
+//	public void setDraggableOn() {
+//		if(imgView != null) {
+//			imgView.setOnDragDetected(new EventHandler<MouseEvent>()
+//					);
+//		}
+//		
+//	}
 	public ImageView getImageView() {
 		return imgView;
 	}
