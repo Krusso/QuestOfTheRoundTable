@@ -12,17 +12,10 @@ import javafx.application.Platform;
 import src.client.GameBoardController;
 import src.game_logic.AdventureCard;
 import src.game_logic.EventCard;
+import src.game_logic.StoryCard;
 import src.game_logic.TournamentCard;
 import src.game_logic.WeaponCard;
-//class OneShotTask implements Runnable {
-//    String str;
-//    OneShotTask(String s) { str = s; }
-//    public void run() {
-//        someFunc(str);
-//    }
-//}
-//Thread t = new Thread(new OneShotTask(str));
-//t.start();
+
 
 class Task implements Runnable{
 	private File cardDir;
@@ -40,6 +33,15 @@ class Task implements Runnable{
 		switch(typeOfTask) {
 			case "add cards" :{
 				displayHand(msg);
+				break;
+			}
+			case "turn next" :{
+				nextTurn(msg);
+				break;
+			}
+			case "middle card" :{
+				middleCard(msg);
+				break;
 			}
 		}
 	}
@@ -47,6 +49,7 @@ class Task implements Runnable{
 	private void displayHand(String msg) {
 		System.out.println("Processing msg: "+msg);
 		File[] list = cardDir.listFiles();
+		int playerNumber = Integer.parseInt(msg.charAt(7) + "");
 		String[] hand = msg.substring("player # [".length(), msg.length()-1).split(", ");
 		for(String card: hand) {
 			//find file associated to name
@@ -55,20 +58,20 @@ class Task implements Runnable{
 //					System.out.println("Adding image: ("+ f.getName()+") to hand found in " + f.getPath());
 					switch (f.getName().charAt(0)) {
 						case 'A':{
-							gbc.addCardToHand(new AdventureCard(card, f.getPath()));
+							gbc.addCardToHand(new AdventureCard(card, f.getPath()), playerNumber);
 							break;
 						}
-						case 'E':{
-							gbc.addCardToHand(new EventCard(card, f.getPath()));
-							break;
-						}
-						case 'T':{
-							gbc.addCardToHand(new TournamentCard(card, f.getPath()));
-							break;
-						}
+//						case 'E':{
+//							gbc.addCardToHand(new EventCard(card, f.getPath()),playerNumber);
+//							break;
+//						}
+//						case 'T':{
+//							gbc.addCardToHand(new TournamentCard(card, f.getPath()),playerNumber);
+//							break;
+//						}
 						case 'W':{
 							AdventureCard weapon = new WeaponCard(card, f.getPath());
-							gbc.addCardToHand(weapon);
+							gbc.addCardToHand(weapon, playerNumber);
 							break;
 						}
 						default:{
@@ -80,6 +83,27 @@ class Task implements Runnable{
 		}
 	}
 	
+	//Msg should be a string with a number which indicates which players has the turn
+	private void nextTurn(String msg) {
+		int playerTurn = msg.charAt(msg.length()-1) - '0';
+		System.out.println("Processing msg: " + msg );
+		gbc.setPlayerTurn(playerTurn);
+		gbc.showPlayerHand(playerTurn);
+	}
+	
+	//Msg should be the name of the card
+	private void middleCard(String msg) {
+		System.out.println("Processing msg: middle card:" + msg);
+		//find story card
+		File[] list = cardDir.listFiles();
+		for(File c : list) {
+			if(c.getName().contains(msg)) {
+				StoryCard sc= new StoryCard(msg, c.getPath());
+				gbc.setStoryCard(sc);
+				System.out.println("Set story card to:" + sc.getName());
+			}
+		}
+	}
 }
 
 public class Client implements Runnable {
@@ -117,8 +141,16 @@ public class Client implements Runnable {
             	if(readStream.ready()) {
                 	currentMessage = readStream.readLine();
                 	System.out.println("Messsage received: " + currentMessage);
+                	
                 	if(currentMessage.startsWith("add cards: ")) {
                 		Platform.runLater(new Task("add cards", currentMessage.substring(currentMessage.indexOf("player")), gbc));
+                	}
+                	if(currentMessage.startsWith("turn next:")) {
+                		Platform.runLater(new Task("turn next", currentMessage.substring(currentMessage.indexOf("turn next:")), gbc));
+                	}
+                	if(currentMessage.startsWith("middle card:")) {
+                		String cardName = currentMessage.substring("middle card: ".length());
+                		Platform.runLater(new Task("middle card", cardName, gbc));
                 	}
             	}
             }

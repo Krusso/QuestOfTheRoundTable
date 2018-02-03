@@ -1,5 +1,7 @@
 package src.game_logic;
 
+import java.util.ArrayList;
+
 import src.game_logic.AdventureCard.TYPE;
 
 public class AdventureDeck extends Deck<AdventureCard> {
@@ -63,5 +65,9 @@ public class AdventureDeck extends Deck<AdventureCard> {
 				return 0;
 			}
 		}).sum();
+	}
+	
+	public ArrayList<AdventureCard> getDeck(){
+		return deck;
 	}
 }

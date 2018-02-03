@@ -54,8 +54,12 @@ public class TitleScreenController implements Initializable{
 		stage.setScene(gameScene);
 		stage.show();
 		
+		//Setup player manager
+		String n = numPlayers.getText();
+		gbc.initPlayerManager(Integer.parseInt(n));
+		
 		//send gameStart message.
-		client.send("game start:" + numPlayers.getText());
+		client.send("game start:" + n);
 	}
 	
 	@Override

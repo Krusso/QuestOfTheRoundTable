@@ -15,6 +15,7 @@ import src.game_logic.DeckManager;
 import src.game_logic.Rank;
 import src.game_logic.WeaponCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.AdventureDeck;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
@@ -205,5 +206,15 @@ public class PlayerManager {
 			player.setState(Player.STATE.GAMEWON);
 		});
 	}
+	
+//	public void addCardToPlayer(AdventureCard card, int playerNum) {
+//		if(playerNum < players.length) {
+//			ArrayList<AdventureCard> c = new ArrayList<>();
+//			c.add(card);
+//			players[playerNum].addCards(c);
+//		}
+//	}
+//	
+//	public AdventureDeck getPlayerHand()
 }
 

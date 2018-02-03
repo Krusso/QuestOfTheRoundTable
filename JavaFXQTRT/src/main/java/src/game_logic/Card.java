@@ -54,6 +54,15 @@ public abstract class Card {
 	public ImageView getImageView() {
 		return imgView;
 	}
+	
+	public void hide() {
+		imgView.setVisible(false);
+	}
+	public void show() {
+		imgView.setVisible(true);
+//		System.out.println("Set " + name + " visibility to: " + imgView.visibleProperty().getValue().);
+	}
+	
 	public String getName() {
 		return this.name;
 	}

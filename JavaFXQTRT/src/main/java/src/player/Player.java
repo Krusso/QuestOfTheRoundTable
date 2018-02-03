@@ -17,7 +17,7 @@ public class Player {
 	};
 	
 	private RANKS rank;
-	private AdventureDeck hand;
+	protected AdventureDeck hand;
 	private AdventureDeck faceDown;
 	private AdventureDeck faceUp;
 	private PlayerView pv;

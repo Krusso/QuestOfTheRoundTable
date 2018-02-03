@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Rectangle?>
 
-<AnchorPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
+<AnchorPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
    <children>
-      <Pane layoutX="362.0" layoutY="175.0" prefHeight="200.0" prefWidth="287.0" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="362.0" AnchorPane.rightAnchor="362.0" AnchorPane.topAnchor="175.0">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffb721" height="164.0" layoutX="187.0" layoutY="636.0" stroke="BLACK" strokeType="INSIDE" width="907.0" />
+      <Pane fx:id="handWindow" layoutX="191.0" layoutY="643.0" prefHeight="150.0" prefWidth="900.0" />
+      <Pane layoutX="257.0" layoutY="168.0" prefHeight="464.0" prefWidth="768.0" AnchorPane.bottomAnchor="168.0" AnchorPane.leftAnchor="257.0" AnchorPane.rightAnchor="255.0" AnchorPane.topAnchor="168.0">
          <children>
-            <Text layoutX="75.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Drop" />
+            <Pane fx:id="storyCardContainer" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </Pane>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="113.0" layoutY="185.0" pickOnBounds="true" preserveRatio="true" />
-      <Pane fx:id="handWindow" layoutY="350.0" prefHeight="150.0" prefWidth="900.0" />
    </children>
 </AnchorPane>
