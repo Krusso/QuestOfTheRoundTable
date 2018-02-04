@@ -21,6 +21,8 @@ public class Player {
 	private AdventureDeck hand;
 	private AdventureDeck faceDown;
 	private AdventureDeck faceUp;
+	private List<List<Card>> questDown;
+	private List<List<Card>> questUp;
 	private PlayerView pv;
 	private final int ID;
 	private STATE question;
@@ -104,6 +106,16 @@ public class Player {
 		}
 		faceDown.addCards(list);
 		if(pv != null) pv.updateFaceDown(list, ID);
+	}
+	
+	public void setQuestDown(List<List<Card>> quest) {
+		questDown = quest;
+		if(pv != null) pv.updateQuestDown(questDown, ID);
+	}
+	
+	public void flipStage(int stage) {
+		questUp.add(questDown.get(stage));
+		if(pv != null) pv.updateQuestUp(questUp);
 	}
 
 	public RANKS getRank() {

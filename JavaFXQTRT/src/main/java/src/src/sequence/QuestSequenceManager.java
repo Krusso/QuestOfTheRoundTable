@@ -17,6 +17,7 @@ public class QuestSequenceManager extends SequenceManager {
 	
 	QuestCard card;
 	Quest quest;
+	Player sponsor;
 	
 	public QuestSequenceManager(QuestCard card) { this.card = card; }
 	
@@ -46,13 +47,14 @@ public class QuestSequenceManager extends SequenceManager {
 		}
 		
 		// determining if anyone decided to sponsor
-		List<Player> sponsor = pm.getAllWithState(Player.STATE.YES);
-		if(sponsor.size() == 0) {
+		List<Player> sponsors = pm.getAllWithState(Player.STATE.YES);
+		if(sponsors.size() == 0) {
 			return;
-		} else if(sponsor.size() == 1) {
+		} else if(sponsors.size() == 1) {
 			// TODO: set card in center of board
-			quest = new Quest(card, sponsor.get(0));
-			quest.setUpQuest(actions);
+			sponsor = sponsors.get(0);
+			quest = new Quest(card, sponsor);
+			quest.setUpQuest(actions,pm);
 		} // never more than one sponsor
 		
 		pm.flushState();
@@ -60,7 +62,9 @@ public class QuestSequenceManager extends SequenceManager {
 		// Finding players who want to join
 		Iterator<Player> playersForQuest = pm.round();
 		while(playersForQuest.hasNext()) {
-			pm.setPlayer(players.next());
+			Player curr = players.next();
+			if(curr == sponsor) continue;
+			pm.setPlayer(curr);
 			pm.currentQuestionQuest();
 			String string;
 			try {
@@ -86,14 +90,24 @@ public class QuestSequenceManager extends SequenceManager {
 
 		pm.drawCards(participants,1);
 		
-		while(quest.getCurrentStage() < card.getNumStages()) {
+		while(participants.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
 			if (quest.currentStageType() == Quest.TYPE.FOE) {
 				quest.advanceStage();
-				// foe sequence
+				players = participants.iterator();
+				// some constraints when choosing cards... can be done on client side c:
+				questionPlayers(players, pm, actions, "cards picked for quest: player (\\d+) (.*)");
+				pm.flipStage(sponsor, quest.getCurrentStage());
 			} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 				quest.advanceStage();
+				pm.flipStage(sponsor, quest.getCurrentStage());
 				quest.bid(participants, pm, actions);
+				pm.drawCards(participants, 1); // participants at this point = guy who won the bid
 			}
 		}
+
+		if(participants.size() > 0) {
+			pm.changeShields(participants, quest.getNumStages());
+		}
+		pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
 	}
 }

@@ -68,6 +68,10 @@ public class PlayerManager {
 		players.forEach(player -> player.addCards(dm.getAdventureCard(cards)));
 	}
 	
+	public void drawCards(Player player, int cards) {
+		player.addCards(dm.getAdventureCard(cards));
+	}
+	
 	public void setPlayer(Player playerFind) {
 		for(int i = 0; i < players.length; i++) {
 			if(players[i]== playerFind) {
@@ -137,7 +141,7 @@ public class PlayerManager {
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
 
-	public void currentQuestionTournCards() {
+	public void currentQuestionCards() {
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
 
@@ -176,6 +180,14 @@ public class PlayerManager {
 
 	public void currentFaceDown(String cards) {
 		players[currentPlayer].setFaceDown(cards.split(","));
+	}
+	
+	public void questDown(Player sponsor, List cards) {
+		sponsor.setQuestDown(cards);
+	}
+	
+	public void flipStage(Player sponsor, int stage) {
+		sponsor.flipStage(stage);
 	}
 	
 	public void setTournamentWinner(List<Player> participants) {
@@ -219,6 +231,7 @@ public class PlayerManager {
 	public void discardFromHand(Player player, String cards) {
 		player.removeCards(cards.split(","));
 	}
+	
 	public boolean rankUp() {
 		AtomicBoolean winners = new AtomicBoolean();
 		round().forEachRemaining(player ->{

@@ -34,9 +34,9 @@ public class Quest {
 	}
 	
 	// reminder that verification for quest stages will be done on client side
-	public void setUpQuest(LinkedBlockingQueue<String> actions) {
+	public void setUpQuest(LinkedBlockingQueue<String> actions, PlayerManager pm) {
 		String string;
-		while(quest.size()<stages) {
+		while(quest.size()<=stages) {
 			try {
 				string = actions.take();
 				Pattern p = Pattern.compile("quest stage picked: (^\\d$) cards: (.*)");
@@ -51,11 +51,14 @@ public class Quest {
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
-				this.currentStage = 0;
 				System.out.println("Quest Stage recieved: " + string);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		if(quest.size()>0) {
+			currentStage = 0;
+			pm.questDown(sponsor, quest);
 		}
 	}
 	
@@ -72,11 +75,19 @@ public class Quest {
 	
 	public void advanceStage() { this.currentStage++; }
 	public int getCurrentStage() { return this.currentStage; }
+	public int getNumStages() { return this.stages; }
+	
+	public int getNumCards() {
+		int count = 0;
+		for(List stage : quest) {
+			count += stage.size();
+		}
+		return count;
+	}
 	
 	public void bid(List<Player> participants, PlayerManager pm, LinkedBlockingQueue<String> actions) {
 		
-		String[] highestBid = {};
-		int winningPlayerNum = -1;
+		String[] highestBid= {};
 
 		ListIterator<Player> players = participants.listIterator();
 		
@@ -92,9 +103,11 @@ public class Quest {
 			    String[] cards = m.group(2).split(",");
 				System.out.println("Action recieved: " + string);
 				
-				if(cards.length > highestBid.length) {
+				TestCard testCard = (TestCard) quest.get(currentStage).get(0); // hehe
+				int minBids = testCard.getMinBids();
+				
+				if(cards.length > minBids && cards.length > highestBid.length) {
 					highestBid = cards;
-					winningPlayerNum = Integer.parseInt(m.group(1));
 				} else {
 					players.remove();
 				}
@@ -102,6 +115,18 @@ public class Quest {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		if(participants.size() == 1) {
+			Player winner = participants.get(0);
+			// TODO: factor in free bids before discarding
+			String discards = "";
+			for(String card : highestBid) {
+				discards += card + ",";
+			}
+			pm.discardFromHand(winner, discards);
+		} else {
+			// TODO: handle somehow
 		}
 	}
 }

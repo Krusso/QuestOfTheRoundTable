@@ -13,14 +13,14 @@ public abstract class SequenceManager {
 
 	public abstract void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm);
 
-	protected void questionPlayers(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions) {
+	protected void questionPlayers(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions, String pattern) {
 		while(players.hasNext()) {
 			pm.setPlayer(players.next());
-			pm.currentQuestionTournCards();
+			pm.currentQuestionCards();
 			String string;
 			try {
 				string = actions.take();
-				Pattern p = Pattern.compile("game tournament picked: player (\\d+) (.*)");
+				Pattern p = Pattern.compile(pattern);
 			    Matcher m = p.matcher(string);
 			    m.find();
 			    String cards = m.group(2);
