@@ -117,6 +117,10 @@ public class Player {
 	protected final AdventureDeck getFaceUp() {
 		return this.faceUp;
 	}
+	
+	public AdventureDeck getFaceDownDeck() {
+		return this.faceDown;
+	}
 
 	public void discardWeapons() {
 		faceUp.discardType(TYPE.WEAPONS);
@@ -152,5 +156,9 @@ public class Player {
 
 	public boolean hasTristanIseultBoost() {
 		return tristan && iseult;
+	}
+	
+	public int faceDownDeckLength() {
+		return faceDown.size();
 	}
 }

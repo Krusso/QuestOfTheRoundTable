@@ -36,30 +36,32 @@ public class TitleScreenController implements Initializable{
 	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
-		//TODO check if numPlayers textfield is 2-4
 		
-		FXMLLoader fxmlLoader = new FXMLLoader();
-		fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
-		Scene gameScene = new Scene(fxmlLoader.load());
-		
-		//give the GameBoardController the client if we got it
-		//in this case the GBC should always have the client when we initialize it
-		System.out.println("GameBoardController has reference to Client");
-		GameBoardController gbc = fxmlLoader.getController();
-		gbc.setClient(client);
-		client.setGameBoardController(gbc);
-		
-		//Change the scene to the gameScene and show it.
-		Stage stage = (Stage) start.getScene().getWindow();	
-		stage.setScene(gameScene);
-		stage.show();
-		
-		//Setup player manager
 		String n = numPlayers.getText();
-		gbc.initPlayerManager(Integer.parseInt(n));
-		
-		//send gameStart message.
-		client.send("game start:" + n);
+		int players = Integer.parseInt(n);
+		if(players >= 2 && players <= 4) {
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
+			Scene gameScene = new Scene(fxmlLoader.load());
+			
+			//give the GameBoardController the client if we got it
+			//in this case the GBC should always have the client when we initialize it
+			System.out.println("GameBoardController has reference to Client");
+			GameBoardController gbc = fxmlLoader.getController();
+			gbc.setClient(client);
+			gbc.setUp();
+			client.setGameBoardController(gbc);
+			//Change the scene to the gameScene and show it.
+			Stage stage = (Stage) start.getScene().getWindow();	
+			stage.setScene(gameScene);
+			stage.show();
+			
+			//Setup player manager
+			gbc.initPlayerManager(players);
+			
+			//send gameStart message.
+			client.send("game start:" + n);
+		}
 	}
 	
 	@Override

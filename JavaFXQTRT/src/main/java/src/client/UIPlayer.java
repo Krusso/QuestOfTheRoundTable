@@ -11,7 +11,9 @@ public class UIPlayer extends Player{
 	public UIPlayer(int id) {
 		super(id);
 	}
-	
+	public int faceDownLength() {
+		return faceDownDeckLength();
+	}
 	public ArrayList<AdventureCard> getPlayerHandAsList() {
 		return hand.getDeck();
 	}
@@ -24,6 +26,18 @@ public class UIPlayer extends Player{
 	
 	public int getHandSize() {
 		return hand.getDeck().size();
+	}
+
+	public boolean removeCard(AdventureCard c) {
+		return hand.getDeck().remove(c);
+	}
+
+	public void playCard(AdventureCard card) {
+		hand.getDeck().remove(card);
+		setFaceDown(new String[] {card.getName()});
+	}
+	public String getFaceDown() {
+		return this.getFaceDownDeck().toString().replaceAll(" ", ",");
 	}
 
 }

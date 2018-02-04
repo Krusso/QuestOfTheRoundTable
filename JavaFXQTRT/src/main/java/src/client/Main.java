@@ -1,22 +1,12 @@
 package src.client;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import src.game_logic.AdventureCard;
-import src.game_logic.Card;
-import src.game_logic.WeaponCard;
 import src.socket.Server;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 
 
 public class Main extends Application {
@@ -48,10 +38,10 @@ public class Main extends Application {
 		}
 	}
 	public static void main(String[] args) {
-//		//Starts server
-//		Runnable task2 = () -> { Server.main(null); };
-//		// start the thread
-//		new Thread(task2).start();
+		//Starts server
+		Runnable task2 = () -> { Server.main(null); };
+		// start the thread
+		new Thread(task2).start();
 		launch(args);
 	}
 }

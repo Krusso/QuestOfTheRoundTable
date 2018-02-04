@@ -15,6 +15,18 @@ public class UIPlayerManager {
 		}
 	}
 	
+	public void playCard(AdventureCard card, int currentPlayer2) {
+		players[currentPlayer2].playCard(card);
+	}
+	
+	public int getCurrentPlayer() {
+		return currentPlayer;
+	}
+	
+	public boolean removeCardFromHand(AdventureCard c, int playerNum) {
+		return players[playerNum].removeCard(c);
+	}
+	
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		players[playerNum].addCard(c);
 	}
@@ -45,6 +57,13 @@ public class UIPlayerManager {
 	
 	public ArrayList<AdventureCard> getPlayerHand(int pNum){
 		return players[pNum].getPlayerHandAsList();
+	}
+	public int getFaceDownLength(int playerNumber) {
+		return players[playerNumber].faceDownDeckLength();
+	}
+
+	public String getFaceDownCards(int currentPlayer2) {
+		return players[currentPlayer2].getFaceDown();
 	}
 	
 }
