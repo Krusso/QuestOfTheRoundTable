@@ -14,13 +14,13 @@ import src.player.Player.STATE;
 import src.socket.OutputController;
 
 public class PlayerView {
-	
+
 	private OutputController output;
-	
+
 	public PlayerView(OutputController output) {
 		this.output = output;
 	}
-	
+
 	public void update(RANKS rank, int ID) {
 		output.sendMessage("rank set: player " + ID + " " + rank);
 	}
@@ -48,7 +48,7 @@ public class PlayerView {
 	}
 
 	public void updateFaceDown(List<AdventureCard> list, int ID) {
-		output.sendMessage("face down: player " + ID + " " + list);
+		output.sendMessage("face down: player " + ID + " " + list);	
 	}
 	
 	public void updateQuestDown(List<List<Card>> list, int ID) {

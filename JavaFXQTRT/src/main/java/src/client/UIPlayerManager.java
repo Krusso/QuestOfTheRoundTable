@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.Rank;
+import src.player.UIPlayer;
 
 public class UIPlayerManager {
 	

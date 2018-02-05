@@ -20,7 +20,7 @@ public class Player {
 	
 	protected RANKS rank;
 	protected AdventureDeck hand;
-	private AdventureDeck faceDown;
+	protected AdventureDeck faceDown;
 	private AdventureDeck faceUp;
 	private List<List<Card>> questDown;
 	private List<List<Card>> questUp;
