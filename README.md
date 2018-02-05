@@ -11,3 +11,6 @@ Michael Kuang (Krusso)
 
 **Install JavaFX**
 Using eclipse, install javafx by: help->install new software->work with-><your eclipse version>->General Purpose Tools->JavaFx 
+
+**Test Game**
+In eclipse, go to src/src/client/Main.java and run.
