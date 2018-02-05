@@ -54,7 +54,19 @@ public class Game extends Thread{
 				sm.start(actions, pm, bm);
 				break;
 			}
-			System.exit(0);
+			
+			//System.exit(0);
+			String message = "";
+			while(!message.equals("game next turn")) {
+				try {
+					message = actions.take();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			System.out.println("Starting next turn");
 		}
 
 	}

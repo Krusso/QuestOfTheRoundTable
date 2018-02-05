@@ -14,6 +14,9 @@ public class StoryCard extends Card {
 		super(name);
 		this.type = type;
 	}
+	public StoryCard(String name, String path) {
+		super(name, path);
+	}
 	
 	public TYPE getType() { return this.type; }
 }

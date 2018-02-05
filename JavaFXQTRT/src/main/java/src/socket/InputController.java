@@ -41,8 +41,8 @@ public class InputController extends Thread {
 	public void handle(String message) {
 		System.out.println("Server Received: " + message);
 		// TODO change to some regex
-		if("game start:2".equals(message)) {
-			gm.setNumPlayers(2);
+		if("game start:2".equals(message) || "game start:3".equals(message) || "game start:4".equals(message)) {
+			gm.setNumPlayers(Integer.parseInt(message.split(":")[1]));
 			game.setActionQueue(actionQueue);
 			game.start();
 		} else if(message.contains("game")) {
