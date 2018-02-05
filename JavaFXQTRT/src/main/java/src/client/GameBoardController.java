@@ -30,6 +30,11 @@ public class GameBoardController implements Initializable{
 	@FXML private Button accept;
 	@FXML private Button decline;
 	@FXML private Text playerNumber;
+	
+	//The pane that holds the other players' hand
+	@FXML private Pane opponentHand1;
+	@FXML private Pane opponentHand2;
+	@FXML private Pane opponentHand3;
 
 	public void initPlayerManager(int numPlayers) {
 		//		players = new UIPlayer[numPlayers];
@@ -45,15 +50,81 @@ public class GameBoardController implements Initializable{
 		handWindow.getChildren().add(c.getImageView());
 	}
 
+	
+	//Repositions the cards in the hand of this player
 	private void repositionCardsInHand(int pNum) {
 		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(pNum);
+		double windowWidth = handWindow.getWidth();
 		for(int i = 0 ; i < currHand.size(); i++) {
-			double windowWidth = handWindow.getWidth();
 			currHand.get(i).getImageView().setX(windowWidth/currHand.size() * i);
-			currHand.get(i).getImageView().setY(handWindow.getTranslateY());
+			currHand.get(i).getImageView().setY(0);
 		}
 	}
 
+	//Reposition all Player's hand in accordance to the current player.
+	//These are some nasty brute force coding but I love it.
+	public void repositionAllHands() {
+		//get current player number
+		int numPlayers = playerManager.getNumPlayers();
+		int currPlayer = playerManager.getCurrentPlayer();
+		//clear the panes for all the opponents hands
+		opponentHand1.getChildren().clear();
+		opponentHand2.getChildren().clear();
+		opponentHand3.getChildren().clear();
+		
+		//put the order of the players in the array (if currPlayer is 1, then order is [2,3,0] for a 4 player game
+		int[] playerOrder = new int[playerManager.getNumPlayers()-1];
+		for(int i = 0 ; i < playerOrder.length ; i++) {
+			playerOrder[i] = (currPlayer + 1 + i) % numPlayers;
+		}
+		for(int i = 0 ; i < playerOrder.length; i++) {
+			ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerOrder[i]);
+			System.out.println("put player:" + playerOrder[i] + "into pane " + (i+1));
+			positionHandInPane(i+1, currHand);
+			playerManager.faceDownPlayerHand(playerOrder[i]);
+		}
+		positionHandInPane(0, playerManager.getPlayerHand(playerManager.getCurrentPlayer()));
+	}
+
+	//Puts the hand of a player into the specified pane
+	private void positionHandInPane(int paneNum, ArrayList<AdventureCard> hand) {
+		switch (paneNum) {
+			case 0: {
+				handWindow.getChildren().clear();
+				for(int i = 0 ; i < hand.size(); i++) {
+					handWindow.getChildren().add(hand.get(i).getImageView());
+				}
+				break;
+			}
+			case 1:{
+				opponentHand1.getChildren().clear();
+				for(int i = 0 ; i < hand.size(); i++) {
+					opponentHand1.getChildren().add(hand.get(i).getImageView());
+				}
+				break;
+			}
+			case 2: {
+				opponentHand2.getChildren().clear();
+				for(int i = 0 ; i < hand.size(); i++) {
+					opponentHand2.getChildren().add(hand.get(i).getImageView());
+				}
+				break;
+			}
+			case 3: {
+				opponentHand3.getChildren().clear();
+				for(int i = 0 ; i < hand.size(); i++) {
+					opponentHand3.getChildren().add(hand.get(i).getImageView());
+				}
+				break;
+			}
+		}
+		for(int i = 0 ; i < hand.size(); i++) {
+			hand.get(i).getImageView().setX(handWindow.getWidth()/hand.size() * i);
+			hand.get(i).getImageView().setY(0);
+		}
+	}
+	
+	
 	public void setPlayerTurn(int p) {
 		playerManager.setCurrentPlayer(p);
 		this.playerNumber.setText("#" + p);
@@ -69,7 +140,7 @@ public class GameBoardController implements Initializable{
 		repositionCardsInHand(playerNum);
 	}
 
-	//When player drags a card over the playfield Pane, we add the card into cards selected
+	//When current player drags a card over the playfield Pane, we add the card into cards selected
 	public void playCard(Card card, double d, double e) {
 		Bounds boundsHand = handWindow.localToScene(handWindow.getBoundsInLocal());
 		Bounds boundsPlay = playField.localToScene(playField.getBoundsInLocal());

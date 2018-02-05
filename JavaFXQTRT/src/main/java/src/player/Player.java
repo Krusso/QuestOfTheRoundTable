@@ -16,7 +16,7 @@ public class Player {
 			QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
 	};
 	
-	private RANKS rank;
+	protected RANKS rank;
 	protected AdventureDeck hand;
 	private AdventureDeck faceDown;
 	private AdventureDeck faceUp;

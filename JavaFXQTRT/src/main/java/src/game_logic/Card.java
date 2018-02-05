@@ -2,6 +2,7 @@ package src.game_logic;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,6 +11,7 @@ import src.client.GameBoardController;
 
 public abstract class Card {
 	private String name;
+	private Image cardBack;
 	private Image img;
 	private ImageView imgView;
 	public GameBoardController gbc;
@@ -33,10 +35,26 @@ public abstract class Card {
 			imgView.setImage(img);
 			imgView.setFitWidth(100);
 			imgView.setFitHeight(150);
+			
 			setDraggableOn();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void setCardBack(String path) {
+		File file = new File(path);
+		try {
+			cardBack = new Image(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setImageSize(double width, double height) {
+		imgView.setFitHeight(height);
+		imgView.setFitWidth(width);
 	}
 
 	public void returnOriginalPosition() {
@@ -70,8 +88,14 @@ public abstract class Card {
 		imgView.setVisible(false);
 	}
 	public void show() {
+		imgView.setImage(img);
 		imgView.setVisible(true);
-		//		System.out.println("Set " + name + " visibility to: " + imgView.visibleProperty().getValue().);
+	}
+	public void faceDown() {
+		imgView.setImage(cardBack);
+	}
+	public void faceUp() {
+		imgView.setImage(img);
 	}
 
 	public String getName() {
