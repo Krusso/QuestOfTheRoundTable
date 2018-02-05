@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureDeck;
+import src.game_logic.Rank;
 import src.player.Player;
 
 public class UIPlayer extends Player{
@@ -39,4 +40,8 @@ public class UIPlayer extends Player{
 		return this.getFaceDownDeck().toString().replaceAll(" ", ",");
 	}
 
+	public void setPlayerRank(Rank.RANKS r) {
+		rank = r;
+	}
+	
 }

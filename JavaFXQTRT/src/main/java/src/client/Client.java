@@ -75,11 +75,13 @@ class Task implements Runnable{
 		for(String card: hand) {
 			//find file associated to name
 			for(File f : list) {
-				if (f.getName().contains(card)) {
+				if (f.getName().contains(card+".jpg")) {
 					//					System.out.println("Adding image: ("+ f.getName()+") to hand found in " + f.getPath());
 					switch (f.getName().charAt(0)) {
 					case 'A':{
-						gbc.addCardToHand(new AdventureCard(card, f.getPath()), playerNumber);
+						AdventureCard c = new AdventureCard(card, f.getPath());
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						gbc.addCardToHand(c, playerNumber);
 						break;
 					}
 					//						case 'E':{
@@ -92,6 +94,7 @@ class Task implements Runnable{
 					//						}
 					case 'W':{
 						AdventureCard weapon = new WeaponCard(card, f.getPath());
+						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(weapon, playerNumber);
 						break;
 					}
@@ -111,6 +114,7 @@ class Task implements Runnable{
 		gbc.clearPlayField();
 		gbc.setPlayerTurn(playerTurn);
 		gbc.showPlayerHand(playerTurn);
+		gbc.repositionAllHands();
 	}
 
 	//Msg should be the name of the card
@@ -192,6 +196,7 @@ public class Client implements Runnable {
 	}
 
 	public void send(String message) {
+		System.out.println("Sending message: " + message);
 		writeStream.println(message);
 	}
 }

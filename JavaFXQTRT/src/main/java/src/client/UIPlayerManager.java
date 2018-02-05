@@ -3,6 +3,7 @@ package src.client;
 import java.util.ArrayList;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.Rank;
 
 public class UIPlayerManager {
 	
@@ -15,6 +16,13 @@ public class UIPlayerManager {
 		}
 	}
 	
+//	public void setPlayerRank(int playerNum, Rank.RANKS r) {
+//		players[playerNum].
+//	}
+
+	public Rank.RANKS getPlayerRank(int playerNum){
+		return players[playerNum].getRank();
+	}
 	public void playCard(AdventureCard card, int currentPlayer2) {
 		players[currentPlayer2].playCard(card);
 	}
@@ -44,13 +52,19 @@ public class UIPlayerManager {
 			card.hide();
 		});
 	}
+	public void faceDownPlayerHand(int playerNum) {
+		ArrayList<AdventureCard> p = getPlayerHand(playerNum);
+		p.forEach(card-> {
+			card.faceDown();
+		});
+	}
 	public void setCurrentPlayer(int p) {
 		currentPlayer = p;
 		for(int i = 0; i < players.length ; i++) {
 			if(i == p) {
 				showPlayerHand(p);
 			}else {
-				hidePlayerHand(i);
+//				hidePlayerHand(i);
 			}
 		}
 	}
@@ -64,6 +78,10 @@ public class UIPlayerManager {
 
 	public String getFaceDownCards(int currentPlayer2) {
 		return players[currentPlayer2].getFaceDown();
+	}
+	
+	public int getNumPlayers() {
+		return players.length;
 	}
 	
 }
