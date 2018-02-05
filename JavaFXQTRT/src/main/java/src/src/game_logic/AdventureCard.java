@@ -34,14 +34,12 @@ public class AdventureCard extends Card{
 	public int getBattlePoints() { return this.battlePoints; }
 	public int getNamedBattlePoints() { return this.namedBattlePoints; }
 	
-	public boolean checkIfNamed(String quest) {
-		// "When a Foe is named on the Quest Card in play" is ambiguous so
-		// rn just check if the quest and the card name have a word in common...
-		// maybe should have a switch/case or lookup later on?
+	public boolean checkIfNamed(String quest, String foe) {
 	    List<String> questwords = Arrays.asList(quest.split(" ")); 
-	    for (String word : getName().split(" ")) {
-	        if(questwords.contains(word))
+	    for (String word : questwords) {
+	        if(word.equals(foe)){ 
 	        	return true;
+	        }
 	    } return false;
 	}
 	

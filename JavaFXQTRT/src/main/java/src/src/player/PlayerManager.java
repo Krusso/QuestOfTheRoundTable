@@ -124,23 +124,31 @@ public class PlayerManager {
 		}
 	}
 	
-	public void currentBid() {
-		players[currentPlayer].setState(Player.STATE.BIDDING);
-	}
-	
 	public void currentQuestionQuest() {
-		players[currentPlayer].setState(Player.STATE.QUESTIONED);
-	}
-	
-	public void currentQuestionTournament() {
-		players[currentPlayer].setState(Player.STATE.QUESTIONED);
+		players[currentPlayer].setState(Player.STATE.QUESTQUESTIONED);
 	}
 	
 	public void currentSetupQuest() {
 		// should we have a separate state for setting up a quest?
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
-
+	
+	public void currentSponsorQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
+	}
+	
+	public void currentJoinQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
+	}
+	
+	public void currentDeclineQuest() {
+		players[currentPlayer].setState(Player.STATE.NO);
+	}
+	
+	public void currentQuestionTournament() {
+		players[currentPlayer].setState(Player.STATE.QUESTIONED);
+	}
+	
 	public void currentQuestionCards() {
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
@@ -157,18 +165,6 @@ public class PlayerManager {
 	public void currentDeclineTournament() {
 		players[currentPlayer].setState(Player.STATE.NO);
 	}
-	
-	public void currentSponsorQuest() {
-		players[currentPlayer].setState(Player.STATE.YES);
-	}
-	
-	public void currentJoinQuest() {
-		players[currentPlayer].setState(Player.STATE.YES);
-	}
-	
-	public void currentDeclineQuest() {
-		players[currentPlayer].setState(Player.STATE.NO);
-	}
 
 	public List<Player> getAllWithState(Player.STATE state) {
 		return StreamSupport.stream(
@@ -180,6 +176,10 @@ public class PlayerManager {
 
 	public void currentFaceDown(String cards) {
 		players[currentPlayer].setFaceDown(cards.split(","));
+	}
+
+	public void currentFaceUp(String cards) {
+		players[currentPlayer].setFaceUp(cards.split(","));
 	}
 	
 	public void questDown(Player sponsor, List cards) {
@@ -229,7 +229,11 @@ public class PlayerManager {
 	}
 
 	public void discardFromHand(Player player, String cards) {
-		player.removeCards(cards.split(","));
+		player.removeCards(cards.split(" "));
+	}
+	
+	public void discardFaceUp(Player player) {
+		player.discardFaceUp();
 	}
 	
 	public boolean rankUp() {

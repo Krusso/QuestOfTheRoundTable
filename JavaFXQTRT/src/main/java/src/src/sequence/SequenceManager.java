@@ -31,4 +31,23 @@ public abstract class SequenceManager {
 			} 
 		}
 	}
+
+	protected void questionPlayersForBid(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions, String pattern) {
+		while(players.hasNext()) {
+			pm.setPlayer(players.next());
+			pm.currentQuestionCards();
+			String string;
+			try {
+				string = actions.take();
+				Pattern p = Pattern.compile(pattern);
+			    Matcher m = p.matcher(string);
+			    m.find();
+			    String cards = m.group(2);
+				pm.currentFaceUp(cards);
+				System.out.println("Action recieved: " + string);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
+		}
+	}
 }

@@ -10,9 +10,12 @@ import src.game_logic.FoeCard;
 import src.game_logic.TestCard;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ListIterator;
+
+import src.player.BattlePointCalculator;
 
 public class Quest {
 	
@@ -33,7 +36,7 @@ public class Quest {
 		this.quest = new ArrayList<List<Card>>();
 	}
 	
-	// reminder that verification for quest stages will be done on client side
+	// verification for quest stages will be done on client side
 	public void setUpQuest(LinkedBlockingQueue<String> actions, PlayerManager pm) {
 		String string;
 		while(quest.size()<=stages) {
@@ -47,7 +50,7 @@ public class Quest {
 				List<Card> cardlist = new ArrayList<Card>();
 				for(int i=0; i<cards.length; i++) {
 					AdventureCard card = (AdventureCard) sponsor.getCard(cards[i]);
-					if (card.checkIfNamed(questCard.getName())) card.name();
+					if (card.checkIfNamed(questCard.getName(), questCard.getFoe())) card.name();
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
@@ -85,48 +88,57 @@ public class Quest {
 		return count;
 	}
 	
-	public void bid(List<Player> participants, PlayerManager pm, LinkedBlockingQueue<String> actions) {
+	public int getFoeBP() {
+		int fbp = 0;
+		for(Card card : quest.get(currentStage)) {
+			AdventureCard advCard = (AdventureCard) card;
+			if (advCard.getType() == AdventureCard.TYPE.FOES) {
+				if (advCard.isNamed()) {
+					fbp += advCard.getNamedBattlePoints();
+				}
+			} else {
+				fbp += advCard.getBattlePoints();
+			}
+		}
+		return fbp;
+	}
+	
+	public void battleFoe(List<Player> participants, PlayerManager pm) {
+		Iterator<Player> players = participants.iterator();
+		while(players.hasNext()) {
+			pm.flipCards(players.next());	
+		}
 		
-		String[] highestBid= {};
-
+		BattlePointCalculator bpc = new BattlePointCalculator();
+		bpc.getFoeWinners(participants, getFoeBP());
+	}
+	
+	public void winBid(List<Player> participants, PlayerManager pm) {
+		
+		int highestBid=0;
+		
+		TestCard testCard = (TestCard) quest.get(currentStage).get(0); // hehe
+		int minBids = testCard.getMinBids();
+		
+		BattlePointCalculator bpc = new BattlePointCalculator();
 		ListIterator<Player> players = participants.listIterator();
 		
 		while(players.hasNext()) {
-			pm.setPlayer(players.next());
-			pm.currentBid();
-			String string;
-			try {
-				string = actions.take();
-				Pattern p = Pattern.compile("quest bid: player (\\d+) (.*)");
-			    Matcher m = p.matcher(string);
-			    m.find();
-			    String[] cards = m.group(2).split(",");
-				System.out.println("Action recieved: " + string);
-				
-				TestCard testCard = (TestCard) quest.get(currentStage).get(0); // hehe
-				int minBids = testCard.getMinBids();
-				
-				if(cards.length > minBids && cards.length > highestBid.length) {
-					highestBid = cards;
-				} else {
-					players.remove();
-				}
-				
-			} catch (Exception e) {
-				e.printStackTrace();
+			Player player = players.next();
+			int amount = bpc.bidAmount(player);
+			if(amount > minBids && amount > highestBid) {
+				highestBid = amount;
+			} else {
+				participants.remove(player);
 			}
 		}
 		
 		if(participants.size() == 1) {
 			Player winner = participants.get(0);
 			// TODO: factor in free bids before discarding
-			String discards = "";
-			for(String card : highestBid) {
-				discards += card + ",";
-			}
-			pm.discardFromHand(winner, discards);
+			pm.discardFaceUp(winner);
 		} else {
-			// TODO: handle somehow
+			// handle somehow
 		}
 	}
 }

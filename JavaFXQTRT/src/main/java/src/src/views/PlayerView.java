@@ -32,6 +32,10 @@ public class PlayerView {
 	public void updateState(STATE state, int ID) {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage("tournament accept: player " + ID);
+		} else if(state == Player.STATE.QUESTQUESTIONED) {
+			output.sendMessage("quest deciding: player " + ID);
+		} else if(state == Player.STATE.SPONSORING) {
+			output.sendMessage("quest sponsoring: player " + ID);
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage("tournament picking: player " + ID);
 		} else if(state == Player.STATE.WIN) {

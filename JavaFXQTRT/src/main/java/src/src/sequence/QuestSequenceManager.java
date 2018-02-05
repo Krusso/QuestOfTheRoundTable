@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.game_logic.Card;
-
 
 public class QuestSequenceManager extends SequenceManager {
 	
@@ -60,8 +60,8 @@ public class QuestSequenceManager extends SequenceManager {
 		pm.flushState();
 		
 		// Finding players who want to join
-		Iterator<Player> playersForQuest = pm.round();
-		while(playersForQuest.hasNext()) {
+		players = pm.round();
+		while(players.hasNext()) {
 			Player curr = players.next();
 			if(curr == sponsor) continue;
 			pm.setPlayer(curr);
@@ -87,27 +87,30 @@ public class QuestSequenceManager extends SequenceManager {
 		if(participants.size() == 0) {
 			return;
 		}
-
-		pm.drawCards(participants,1);
 		
-		while(participants.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
+		List<Player> winners = new ArrayList<Player>(participants);
+		
+		while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
+			pm.drawCards(winners, 1);
 			if (quest.currentStageType() == Quest.TYPE.FOE) {
-				quest.advanceStage();
-				players = participants.iterator();
+				players = winners.iterator();
 				// some constraints when choosing cards... can be done on client side c:
 				questionPlayers(players, pm, actions, "cards picked for quest: player (\\d+) (.*)");
 				pm.flipStage(sponsor, quest.getCurrentStage());
+				quest.battleFoe(winners, pm);
 			} else if (quest.currentStageType() == Quest.TYPE.TEST) {
-				quest.advanceStage();
 				pm.flipStage(sponsor, quest.getCurrentStage());
-				quest.bid(participants, pm, actions);
-				pm.drawCards(participants, 1); // participants at this point = guy who won the bid
+				players = winners.iterator();
+				questionPlayers(players, pm, actions, "quest bid: player (\\\\d+) (.*)");
+				quest.winBid(winners, pm);
 			}
+			quest.advanceStage();
+			// TODO: discard weapon cards
 		}
-
-		if(participants.size() > 0) {
-			pm.changeShields(participants, quest.getNumStages());
+		if(winners.size() > 0) {
+			pm.changeShields(winners, quest.getNumStages());
 		}
+		// TODO: discard all cards from participants except Allies
 		pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
 	}
 }

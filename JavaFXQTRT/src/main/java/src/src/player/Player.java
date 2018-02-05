@@ -14,7 +14,8 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-		NEUTRAL, QUESTIONED, BIDDING, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
+		NEUTRAL, QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON,
+		SPONSORING, QUESTQUESTIONED // >:(
 	};
 	
 	private RANKS rank;
@@ -67,6 +68,10 @@ public class Player {
 		}
 		if(pv != null) pv.updateCards(cards, ID);
 	}
+	
+	public void discardFaceUp() {
+		faceUp.empty();
+	}
 
 	protected String hand() {
 		return hand.toString();
@@ -97,6 +102,17 @@ public class Player {
 		}
 	}
 
+	public void setFaceUp(String[] cards){
+		List<AdventureCard> list = new ArrayList<AdventureCard>();
+		for(String card : cards) {
+			list.add(hand.getCardByName(card));
+			if(card.equals("Sir Tristan")) tristan = true;
+			if(card.equals("Queen Iseult")) iseult = true;
+		}
+		faceUp.addCards(list);
+		if(pv != null) pv.updateFaceDown(list, ID);
+	}
+
 	public void setFaceDown(String[] cards) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();
 		for(String card: cards) {
@@ -115,7 +131,7 @@ public class Player {
 	
 	public void flipStage(int stage) {
 		questUp.add(questDown.get(stage));
-		if(pv != null) pv.updateQuestUp(questUp);
+		if(pv != null) pv.updateQuestUp(questUp, ID);
 	}
 
 	public RANKS getRank() {
@@ -127,7 +143,7 @@ public class Player {
 		if(pv != null) pv.updateFaceUp(faceUp, ID);
 	}
 
-	protected final AdventureDeck getFaceUp() {
+	public final AdventureDeck getFaceUp() {
 		return this.faceUp;
 	}
 
