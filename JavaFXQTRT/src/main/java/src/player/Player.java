@@ -18,8 +18,8 @@ public class Player {
 	
 	protected RANKS rank;
 	protected AdventureDeck hand;
-	private AdventureDeck faceDown;
-	private AdventureDeck faceUp;
+	protected AdventureDeck faceDown;
+	protected AdventureDeck faceUp;
 	private PlayerView pv;
 	private final int ID;
 	private STATE question;
@@ -93,7 +93,7 @@ public class Player {
 			shields = 0;
 		}
 	}
-
+	
 	public void setFaceDown(String[] cards) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();
 		for(String card: cards) {

@@ -21,6 +21,7 @@ public class BattlePointCalculator {
 		int max = Integer.MIN_VALUE;
 		List<Player> winning = new ArrayList<Player>();
 		ArrayList<Integer> scores = calculatePoints(participants);
+		System.out.println(scores);
 		for(int i = 0; i < scores.size(); i++) {
 			if(scores.get(i) == max) {
 				winning.add(participants.get(i));

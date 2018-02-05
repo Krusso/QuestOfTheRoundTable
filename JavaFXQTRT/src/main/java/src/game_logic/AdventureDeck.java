@@ -70,4 +70,5 @@ public class AdventureDeck extends Deck<AdventureCard> {
 	public ArrayList<AdventureCard> getDeck(){
 		return deck;
 	}
+
 }

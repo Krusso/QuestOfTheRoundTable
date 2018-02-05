@@ -94,7 +94,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		} else {
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			pm.setTournamentWinner(participants);
+			pm.setTournamentWinner(winners);
 		}
 	}
 }
