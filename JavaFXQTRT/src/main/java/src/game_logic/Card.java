@@ -33,8 +33,8 @@ public abstract class Card {
 			img = new Image (new FileInputStream(file));
 			imgView = new ImageView();
 			imgView.setImage(img);
-			imgView.setFitWidth(100);
-			imgView.setFitHeight(150);
+			imgView.setFitWidth(75);
+			imgView.setFitHeight(112.5);
 			//setDraggableOn();
 		}catch(Exception e) {
 			e.printStackTrace();
