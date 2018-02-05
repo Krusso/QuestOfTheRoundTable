@@ -64,7 +64,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			return;
 		} else {
 			players = participants.iterator();
-			questionPlayers(players, pm, actions);
+			questionPlayers(players, pm, actions, "game tournament picked: player (\\d+) (.*)");
 		}
 		
 		// all players have decided on what cards to play
@@ -80,7 +80,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			// tie do tournament again
 			pm.discardWeapons(participants);
 			players = winners.iterator();
-			questionPlayers(players, pm, actions);
+			questionPlayers(players, pm, actions, "game tournament picked: player (\\d+) (.*)");
 			
 			players = winners.iterator();
 			while(players.hasNext()) {

@@ -7,21 +7,16 @@ import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /*
  * A chat server that delivers public and private messages.
  */
 public class Server {
 
-	
-	final static Logger logger = LogManager.getLogger(Server.class);
-	
 	// The server socket.
 	private static ServerSocket serverSocket = null;
 	// The client socket.
@@ -29,8 +24,7 @@ public class Server {
 
 	private static final ArrayList<ClientRead> threads = new ArrayList<ClientRead>(4);
 
-	
-	public void startServer() {
+	public static void main(String args[]) {
 		int portNumber = 2223;
 
 		try {
@@ -46,9 +40,8 @@ public class Server {
 		
 		LinkedBlockingQueue<String> inputQueue = new LinkedBlockingQueue<String>();
 		LinkedBlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
-		logger.info("Starting up server on port: " +  portNumber);
-		
-		
+
+
 		while (true) {
 			try {
 				clientSocket = serverSocket.accept();
@@ -69,11 +62,6 @@ public class Server {
 				System.out.println(e);
 			}
 		}
-	}
-	
-	public static void main(String args[])  {
-		Server server = new Server();
-		server.startServer();
 	}
 }
 

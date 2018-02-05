@@ -15,7 +15,6 @@ import src.game_logic.DeckManager;
 import src.game_logic.Rank;
 import src.game_logic.WeaponCard;
 import src.game_logic.AdventureCard.TYPE;
-import src.game_logic.AdventureDeck;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
@@ -65,8 +64,12 @@ public class PlayerManager {
 	}
 
 
-	public void drawCards(ArrayList<Player> players, int cards) {
+	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> player.addCards(dm.getAdventureCard(cards)));
+	}
+	
+	public void drawCards(Player player, int cards) {
+		player.addCards(dm.getAdventureCard(cards));
 	}
 	
 	public void setPlayer(Player playerFind) {
@@ -115,11 +118,38 @@ public class PlayerManager {
 		return list.iterator();
 	}
 	
+	public void flushState() {
+		for(int i = players.length; i > 0; i--) {
+			players[i - 1].setState(Player.STATE.NEUTRAL);
+		}
+	}
+	
+	public void currentQuestionQuest() {
+		players[currentPlayer].setState(Player.STATE.QUESTQUESTIONED);
+	}
+	
+	public void currentSetupQuest() {
+		// should we have a separate state for setting up a quest?
+		players[currentPlayer].setState(Player.STATE.PICKING);
+	}
+	
+	public void currentSponsorQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
+	}
+	
+	public void currentJoinQuest() {
+		players[currentPlayer].setState(Player.STATE.YES);
+	}
+	
+	public void currentDeclineQuest() {
+		players[currentPlayer].setState(Player.STATE.NO);
+	}
+	
 	public void currentQuestionTournament() {
 		players[currentPlayer].setState(Player.STATE.QUESTIONED);
 	}
-
-	public void currentQuestionTournCards() {
+	
+	public void currentQuestionCards() {
 		players[currentPlayer].setState(Player.STATE.PICKING);
 	}
 
@@ -150,6 +180,18 @@ public class PlayerManager {
 		} else {
 			players[currentPlayer].setFaceDown(new String[] {});
 		}
+	}
+
+	public void currentFaceUp(String cards) {
+		players[currentPlayer].setFaceUp(cards.split(","));
+	}
+	
+	public void questDown(Player sponsor, List cards) {
+		sponsor.setQuestDown(cards);
+	}
+	
+	public void flipStage(Player sponsor, int stage) {
+		sponsor.flipStage(stage);
 	}
 	
 	public void setTournamentWinner(List<Player> participants) {
@@ -191,8 +233,13 @@ public class PlayerManager {
 	}
 
 	public void discardFromHand(Player player, String cards) {
-		player.removeCards(cards.split(","));
+		player.removeCards(cards.split(" "));
 	}
+	
+	public void discardFaceUp(Player player) {
+		player.discardFaceUp();
+	}
+	
 	public boolean rankUp() {
 		AtomicBoolean winners = new AtomicBoolean();
 		round().forEachRemaining(player ->{
@@ -210,15 +257,4 @@ public class PlayerManager {
 			player.setState(Player.STATE.GAMEWON);
 		});
 	}
-	
-//	public void addCardToPlayer(AdventureCard card, int playerNum) {
-//		if(playerNum < players.length) {
-//			ArrayList<AdventureCard> c = new ArrayList<>();
-//			c.add(card);
-//			players[playerNum].addCards(c);
-//		}
-//	}
-//	
-//	public AdventureDeck getPlayerHand()
 }
-

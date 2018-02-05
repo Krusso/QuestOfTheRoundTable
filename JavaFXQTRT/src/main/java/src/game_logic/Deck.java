@@ -23,6 +23,12 @@ public abstract class Deck<E extends Card> {
 		return toReturn;
 	}
 
+	public void empty() {
+		for(E card : deck) {
+			deck.remove(card);
+		}
+	}
+
 	public void addCards(List<E> cards) {
 		cards.forEach(i -> deck.add(i));
 	}
