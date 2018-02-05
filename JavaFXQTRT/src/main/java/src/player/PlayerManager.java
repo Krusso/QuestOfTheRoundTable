@@ -145,7 +145,7 @@ public class PlayerManager {
 	}
 
 	public void currentFaceDown(String cards) {
-		if(cards.contains(",")) {
+		if(!"".equals(cards)) {
 			players[currentPlayer].setFaceDown(cards.split(","));
 		} else {
 			players[currentPlayer].setFaceDown(new String[] {});
