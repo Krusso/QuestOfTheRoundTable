@@ -73,15 +73,24 @@ public class GameBoardController implements Initializable{
 		opponentHand3.getChildren().clear();
 		
 		//put the order of the players in the array (if currPlayer is 1, then order is [2,3,0] for a 4 player game
-		int[] playerOrder = new int[playerManager.getNumPlayers()-1];
-		for(int i = 0 ; i < playerOrder.length ; i++) {
-			playerOrder[i] = (currPlayer + 1 + i) % numPlayers;
-		}
-		for(int i = 0 ; i < playerOrder.length; i++) {
-			ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerOrder[i]);
-			System.out.println("put player:" + playerOrder[i] + "into pane " + (i+1));
-			positionHandInPane(i+1, currHand);
-			playerManager.faceDownPlayerHand(playerOrder[i]);
+		int[] playerOrder = new int[numPlayers-1];
+		//if we only have 2 players, we swap between top and bottom panes (so we are using opponentpane2 and handWindow)
+		if (numPlayers == 2) {
+			int otherPlayer = (currPlayer + 1) % numPlayers;
+			ArrayList<AdventureCard> otherPlayerHand = playerManager.getPlayerHand(otherPlayer);
+			positionHandInPane(2, otherPlayerHand);
+			playerManager.faceDownPlayerHand(otherPlayer);
+		}else {
+			for(int i = 0 ; i < playerOrder.length ; i++) {
+				playerOrder[i] = (currPlayer + 1 + i) % numPlayers;
+			}
+
+			for(int i = 0 ; i < playerOrder.length; i++) {
+				ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerOrder[i]);
+				System.out.println("put player:" + playerOrder[i] + "into pane " + (i+1));
+				positionHandInPane(i+1, currHand);
+				playerManager.faceDownPlayerHand(playerOrder[i]);
+			}
 		}
 		positionHandInPane(0, playerManager.getPlayerHand(playerManager.getCurrentPlayer()));
 	}

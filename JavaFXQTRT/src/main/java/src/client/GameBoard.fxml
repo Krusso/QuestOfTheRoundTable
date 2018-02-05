@@ -11,9 +11,9 @@
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffb721" height="164.0" layoutX="380.0" layoutY="636.0" stroke="BLACK" strokeType="INSIDE" width="907.0" />
       <Pane fx:id="handWindow" layoutX="384.0" layoutY="643.0" prefHeight="150.0" prefWidth="900.0" />
-      <Pane fx:id="opponentHand1" layoutX="383.0" layoutY="14.0" prefHeight="150.0" prefWidth="900.0" />
-      <Pane fx:id="opponentHand2" layoutX="-246.0" layoutY="373.0" prefHeight="150.0" prefWidth="900.0" rotate="90.0" />
-      <Pane fx:id="opponentHand3" layoutX="1021.0" layoutY="373.0" prefHeight="150.0" prefWidth="900.0" rotate="-90.0" />
+      <Pane fx:id="opponentHand2" layoutX="383.0" layoutY="14.0" prefHeight="150.0" prefWidth="900.0" />
+      <Pane fx:id="opponentHand3" layoutX="-246.0" layoutY="373.0" prefHeight="150.0" prefWidth="900.0" rotate="90.0" />
+      <Pane fx:id="opponentHand1" layoutX="1021.0" layoutY="373.0" prefHeight="150.0" prefWidth="900.0" rotate="-90.0" />
       <Pane layoutX="449.0" layoutY="197.0" prefHeight="232.0" prefWidth="768.0" AnchorPane.bottomAnchor="371.0" AnchorPane.leftAnchor="449.0" AnchorPane.topAnchor="197.0">
          <children>
             <Pane fx:id="storyCardContainer" prefHeight="232.0" prefWidth="200.0" />
