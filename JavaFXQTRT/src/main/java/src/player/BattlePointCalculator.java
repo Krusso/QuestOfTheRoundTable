@@ -2,6 +2,7 @@ package src.player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import src.game_logic.AdventureDeck;
 import src.game_logic.Rank.RANKS;
@@ -15,6 +16,15 @@ public class BattlePointCalculator {
 		});
 		
 		return scores;
+	}
+	
+	public void getFoeWinners(List<Player> participants, int foePoints){
+		ListIterator<Player> players = participants.listIterator();
+		while(players.hasNext()) {
+			if (scoreOfPlayer(players.next()) < foePoints) {
+				players.remove();
+			}
+		}
 	}
 	
 	public List<Player> calculateHighest(List<Player> participants) {
@@ -52,5 +62,8 @@ public class BattlePointCalculator {
 		score += cards.getBP();
 		return score;
 	}
-
+	
+	public int bidAmount(Player player) {
+		return player.getFaceUp().size();
+	}
 }

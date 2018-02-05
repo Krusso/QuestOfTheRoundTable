@@ -7,7 +7,7 @@ public class QuestCard extends StoryCard {
 	public QuestCard(String name, int stages, String foe) {
 		super(name, TYPE.QUEST);
 		this.stages = stages;
-		this.foe = foe;
+		this.foe = foe; // assumes only one named foe per quest... need to clarify if this is the case
 	}
 	
 	public int getNumStages() { return this.stages; }

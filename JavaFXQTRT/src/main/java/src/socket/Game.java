@@ -54,8 +54,7 @@ public class Game extends Thread{
 				sm.start(actions, pm, bm);
 				break;
 			}
-			
-			//System.exit(0);
+
 			String message = "";
 			while(!message.equals("game next turn")) {
 				try {

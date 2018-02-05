@@ -14,7 +14,7 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 	@Override
 	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm) {
 		List<Player> participants = pm.getAllWithState(Player.STATE.WINNING);
-		questionPlayers(participants.listIterator(), pm, actions);
+		questionPlayers(participants.listIterator(), pm, actions, "game tournament picked: player (\\d+) (.*)");
 		
 		Iterator<Player> players = participants.iterator();
 		while(players.hasNext()) {

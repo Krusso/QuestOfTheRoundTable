@@ -1,16 +1,27 @@
 # QuestOfTheRoundTable
 COMP3004B 2018 Team 2 Project
 
-**Authors:**
+**Authors**
+- Krystian Wojcicki (kwojcicki)
+- Neha Rao (Neha-Rao)
+- Michael Kuang (Krusso)
 
-Krystian Wojcicki (kwojcicki)
+**Requirements**
+- Java version 8 (v important otherwise none of our amazing lambdas will work)
+- Eclipse Oxygen
+- JavaFX (version??)
+- ..
 
-Neha Rao (Neha-Rao)
+**Setup**
+- Install Eclipse Oxygen from eclipse.org
+- Install JavaFX Using eclipse (help->install new software->work with->->General Purpose Tools->JavaFx)
 
-Michael Kuang (Krusso)
+**Running**
+- To run the game: Run JavaFXQTRT/src/main/java/src/client/Main.java
+- To run tests:
+  - Create a run configuration to run JUnit tests (Run -> Run Configuration -> JUnit(right click) -> New)
+  - Select "Run all tests in the selected project, package or source folder" and set src/test/java as the source folder
+  - Set TestRunner as JUnit 4
+  - Apply and Run
 
-**Install JavaFX**
-Using eclipse, install javafx by: help->install new software->work with-><your eclipse version>->General Purpose Tools->JavaFx 
-
-**Test Game**
-In eclipse, go to src/src/client/Main.java and run.
+**FAQ**

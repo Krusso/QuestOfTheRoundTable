@@ -1,6 +1,5 @@
 package src.socket;
 
-import java.net.URISyntaxException;
 
 import src.socket.Server;
 
@@ -13,7 +12,7 @@ public class Test {
 		new Thread(task2).start();
 		
 		Thread.sleep(1000);
-		Client.main(null);
+		//src.socket.Client.main(null);
 	}
 
 }

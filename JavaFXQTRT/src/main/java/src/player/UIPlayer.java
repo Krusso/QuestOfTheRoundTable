@@ -1,11 +1,10 @@
-package src.client;
+package src.player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import src.game_logic.AdventureCard;
-import src.game_logic.AdventureDeck;
 import src.game_logic.Rank;
-import src.player.Player;
 
 public class UIPlayer extends Player{
 
@@ -34,8 +33,15 @@ public class UIPlayer extends Player{
 	}
 
 	public void playCard(AdventureCard card) {
-		setFaceDown(new String[] {card.getName()});
+		setFaceDown(card);
 	}
+	
+	private void setFaceDown(AdventureCard card) {
+		List<AdventureCard> list = new ArrayList<AdventureCard>();
+		list.add(hand.getCard(card));
+		faceDown.addCards(list);
+	}
+
 	public String getFaceDown() {
 		return this.getFaceDownDeck().toString().replaceAll(" ", ",");
 	}

@@ -3,6 +3,7 @@ package src.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import src.game_logic.Card;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AdventureDeck;
@@ -13,13 +14,13 @@ import src.player.Player.STATE;
 import src.socket.OutputController;
 
 public class PlayerView {
-	
+
 	private OutputController output;
-	
+
 	public PlayerView(OutputController output) {
 		this.output = output;
 	}
-	
+
 	public void update(RANKS rank, int ID) {
 		output.sendMessage("rank set: player " + ID + " " + rank);
 	}
@@ -31,6 +32,10 @@ public class PlayerView {
 	public void updateState(STATE state, int ID) {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage("tournament accept: player " + ID);
+		} else if(state == Player.STATE.QUESTQUESTIONED) {
+			output.sendMessage("quest deciding: player " + ID);
+		} else if(state == Player.STATE.SPONSORING) {
+			output.sendMessage("quest sponsoring: player " + ID);
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage("tournament picking: player " + ID);
 		} else if(state == Player.STATE.WIN) {
@@ -43,11 +48,19 @@ public class PlayerView {
 	}
 
 	public void updateFaceDown(List<AdventureCard> list, int ID) {
-		output.sendMessage("face down: player " + ID + " " + list);
+		output.sendMessage("face down: player " + ID + " " + list);	
+	}
+	
+	public void updateQuestDown(List<List<Card>> list, int ID) {
+		output.sendMessage("quest down: player " + ID + " " + list); // not sure about this
+	}
+	
+	public void updateQuestUp(List<List<Card>> list, int ID) {
+		output.sendMessage("quest up: player " + ID + " " + list); // not sure about this either c:
 	}
 
 	public void updateFaceUp(AdventureDeck faceUp, int ID) {
-		output.sendMessage("face up: player " + ID + " " + faceUp);
+		output.sendMessage("quest up: player " + ID + " " + faceUp);
 	}
 
 	public void updateState(STATE question, int ID, int i, TYPE type) {

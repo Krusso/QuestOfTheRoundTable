@@ -6,6 +6,7 @@ import java.util.List;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AdventureDeck;
+import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.views.PlayerView;
@@ -13,13 +14,16 @@ import src.views.PlayerView;
 public class Player {
 
 	public static enum STATE {
-			QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON
+		NEUTRAL, QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON,
+		SPONSORING, QUESTQUESTIONED // >:(
 	};
 	
 	protected RANKS rank;
 	protected AdventureDeck hand;
-	private AdventureDeck faceDown;
+	protected AdventureDeck faceDown;
 	private AdventureDeck faceUp;
+	private List<List<Card>> questDown;
+	private List<List<Card>> questUp;
 	private PlayerView pv;
 	private final int ID;
 	private STATE question;
@@ -64,6 +68,10 @@ public class Player {
 		}
 		if(pv != null) pv.updateCards(cards, ID);
 	}
+	
+	public void discardFaceUp() {
+		faceUp.empty();
+	}
 
 	protected String hand() {
 		return hand.toString();
@@ -93,6 +101,25 @@ public class Player {
 			shields = 0;
 		}
 	}
+	
+	public int faceDownDeckLength() {
+		return faceDown.size();
+	}
+	
+	public AdventureDeck getFaceDownDeck() {
+		return this.faceDown;
+	}
+
+	public void setFaceUp(String[] cards){
+		List<AdventureCard> list = new ArrayList<AdventureCard>();
+		for(String card : cards) {
+			list.add(hand.getCardByName(card));
+			if(card.equals("Sir Tristan")) tristan = true;
+			if(card.equals("Queen Iseult")) iseult = true;
+		}
+		faceUp.addCards(list);
+		if(pv != null) pv.updateFaceDown(list, ID);
+	}
 
 	public void setFaceDown(String[] cards) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();
@@ -104,6 +131,16 @@ public class Player {
 		faceDown.addCards(list);
 		if(pv != null) pv.updateFaceDown(list, ID);
 	}
+	
+	public void setQuestDown(List<List<Card>> quest) {
+		questDown = quest;
+		if(pv != null) pv.updateQuestDown(questDown, ID);
+	}
+	
+	public void flipStage(int stage) {
+		questUp.add(questDown.get(stage));
+		if(pv != null) pv.updateQuestUp(questUp, ID);
+	}
 
 	public RANKS getRank() {
 		return this.rank;
@@ -114,12 +151,8 @@ public class Player {
 		if(pv != null) pv.updateFaceUp(faceUp, ID);
 	}
 
-	protected final AdventureDeck getFaceUp() {
+	public final AdventureDeck getFaceUp() {
 		return this.faceUp;
-	}
-	
-	public AdventureDeck getFaceDownDeck() {
-		return this.faceDown;
 	}
 
 	public void discardWeapons() {
@@ -149,6 +182,10 @@ public class Player {
 			hand.getCardByName(cardName);
 		}
 	}
+	
+	public Card getCard(String cardName) {
+		return hand.getCardByName(cardName);
+	}
 
 	public int getCardCount() {
 		return hand.size();
@@ -156,9 +193,5 @@ public class Player {
 
 	public boolean hasTristanIseultBoost() {
 		return tristan && iseult;
-	}
-	
-	public int faceDownDeckLength() {
-		return faceDown.size();
 	}
 }
