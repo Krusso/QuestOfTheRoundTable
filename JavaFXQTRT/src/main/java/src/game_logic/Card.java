@@ -33,7 +33,7 @@ public abstract class Card {
 			imgView.setImage(img);
 			imgView.setFitWidth(100);
 			imgView.setFitHeight(150);
-			setDraggableOn();
+			//setDraggableOn();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -42,6 +42,12 @@ public abstract class Card {
 	public void returnOriginalPosition() {
 		imgView.setX(orgStartX);
 		imgView.setY(orgStartY);
+	}
+	
+	public void setDraggableOff() {
+		imgView.setOnMouseReleased(null);
+		imgView.setOnMousePressed(null);
+		imgView.setOnMouseDragged(null);
 	}
 	
 	//Simple drag motion for the card ImageView

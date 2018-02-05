@@ -33,7 +33,6 @@ public class UIPlayer extends Player{
 	}
 
 	public void playCard(AdventureCard card) {
-		hand.getDeck().remove(card);
 		setFaceDown(new String[] {card.getName()});
 	}
 	public String getFaceDown() {

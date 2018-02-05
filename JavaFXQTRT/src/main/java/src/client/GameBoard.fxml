@@ -25,5 +25,6 @@
             <Font size="52.0" />
          </font>
       </Text>
+      <Button fx:id="nextTurn" layoutX="1141.0" layoutY="429.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="Next Turn" />
    </children>
 </AnchorPane>

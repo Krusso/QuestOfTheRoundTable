@@ -30,6 +30,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Button accept;
 	@FXML private Button decline;
 	@FXML private Text playerNumber;
+	@FXML private Button nextTurn;
 
 	public void initPlayerManager(int numPlayers) {
 		//		players = new UIPlayer[numPlayers];
@@ -85,11 +86,12 @@ public class GameBoardController implements Initializable{
 			System.out.println("in the box");
 			handWindow.getChildren().remove(card.getImageView());
 			playField.getChildren().add(card.getImageView());
-			card.getImageView().setX(100 * playerManager.getFaceDownLength(playerManager.getCurrentPlayer()) + 10);
-			card.getImageView().setY(0);
 			card.inPlay = true;
 			playerManager.playCard((AdventureCard) card, playerManager.getCurrentPlayer());
 			repositionCardsInHand(playerManager.getCurrentPlayer());
+			System.out.println("Length : " + playerManager.getFaceDownLength(playerManager.getCurrentPlayer()));
+			card.getImageView().setX(100 * (playerManager.getFaceDownLength(playerManager.getCurrentPlayer()) - 1) + 10);
+			card.getImageView().setY(0);
 		} 
 		// TODO: let user put back to his hand
 		else {
@@ -114,6 +116,7 @@ public class GameBoardController implements Initializable{
 		this.endTurn.setOnAction(e -> {
 			System.out.println("clicked end turn");
 			this.setButtonsInvisible();
+			this.removeDraggable();
 			c.send("game tournament picked: player " + playerManager.getCurrentPlayer() + " " + playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
 		});
 		this.accept.setOnAction(e -> {
@@ -126,6 +129,10 @@ public class GameBoardController implements Initializable{
 			this.setButtonsInvisible();
 			c.send("game tournament decline: player " + playerManager.getCurrentPlayer());
 		});
+		this.nextTurn.setOnAction(e -> {
+			System.out.println("Clicked next turn");
+			c.send("game next turn");
+		});
 		this.setButtonsInvisible();
 	}
 	public void clearPlayField() {
@@ -136,6 +143,7 @@ public class GameBoardController implements Initializable{
 		this.endTurn.setVisible(false);
 		this.accept.setVisible(false);
 		this.decline.setVisible(false);
+		this.nextTurn.setVisible(false);
 	}
 	
 	public void showAcceptDecline() {
@@ -143,8 +151,26 @@ public class GameBoardController implements Initializable{
 		this.decline.setVisible(true);
 	}
 
+	public void showNextTurn() {
+		this.nextTurn.setVisible(true);
+	}
+	
 	public void showEndTurn() {
 		this.endTurn.setVisible(true);
+	}
+
+	public void removeDraggable() {
+		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
+		for(int i = 0 ; i < currHand.size(); i++) {
+			currHand.get(i).setDraggableOff();
+		}
+	}
+	
+	public void addDraggable() {
+		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
+		for(int i = 0 ; i < currHand.size(); i++) {
+			currHand.get(i).setDraggableOn();
+		}
 	}
 	
 }

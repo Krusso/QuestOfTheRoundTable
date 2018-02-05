@@ -58,6 +58,7 @@ class Task implements Runnable{
 	private void showEndTurn() {
 		System.out.println("Processing msg: pick card tournament");
 		gbc.showEndTurn();
+		gbc.addDraggable();
 	}
 	
 	// no msg expected
