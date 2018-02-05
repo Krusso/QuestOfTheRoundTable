@@ -16,6 +16,7 @@ public class Player {
 	public static enum STATE {
 		NEUTRAL, QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON,
 		SPONSORING, QUESTQUESTIONED // >:(
+, BIDDING, TESTDISCARD, QUESTPICKING
 	};
 	
 	protected RANKS rank;
@@ -38,9 +39,10 @@ public class Player {
 		faceUp = new AdventureDeck();
 		ID = id;
 		shields = 0;
+		questUp = new ArrayList<List<Card>>();
 	}
 	
-	protected int getID() {
+	public int getID() {
 		return ID;
 	}
 	

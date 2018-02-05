@@ -32,22 +32,28 @@ public abstract class SequenceManager {
 		}
 	}
 
-	protected void questionPlayersForBid(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions, String pattern) {
+	protected Player questionPlayersForBid(Iterator<Player> players, PlayerManager pm, LinkedBlockingQueue<String> actions, String pattern) {
+		Player maxBid = null;
 		while(players.hasNext()) {
-			pm.setPlayer(players.next());
-			pm.currentQuestionCards();
+			Player next = players.next();
+			pm.setPlayer(next);
+			pm.currentQuestionBids();
 			String string;
 			try {
 				string = actions.take();
 				Pattern p = Pattern.compile(pattern);
 			    Matcher m = p.matcher(string);
 			    m.find();
-			    String cards = m.group(2);
-				pm.currentFaceUp(cards);
 				System.out.println("Action recieved: " + string);
+				String stringBid = m.group(2);
+			    if("skip".equals(stringBid)) {
+			    	continue;
+			    }
+			    maxBid = next;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} 
 		}
+		return maxBid;
 	}
 }

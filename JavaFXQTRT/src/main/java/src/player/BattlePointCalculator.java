@@ -62,8 +62,4 @@ public class BattlePointCalculator {
 		score += cards.getBP();
 		return score;
 	}
-	
-	public int bidAmount(Player player) {
-		return player.getFaceUp().size();
-	}
 }
