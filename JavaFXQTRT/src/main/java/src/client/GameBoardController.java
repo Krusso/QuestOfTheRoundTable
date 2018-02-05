@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import javafx.animation.SequentialTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -197,7 +198,12 @@ public class GameBoardController implements Initializable{
 			this.setButtonsInvisible();
 			this.removeDraggable();
 			System.out.println(playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
-			c.send("game tournament picked: player " + playerManager.getCurrentPlayer() + " " + playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
+			//c.send("game tournament picked: player " + playerManager.getCurrentPlayer() + " " + playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
+			playerManager.getPlayerHand(playerManager.getCurrentPlayer()).forEach(g -> {
+				SequentialTransition x = g.flipDown();
+				x.play();
+				System.out.println("rotated: " + g.getName());
+			});
 		});
 		this.accept.setOnAction(e -> {
 			System.out.println("accepted tournament");
