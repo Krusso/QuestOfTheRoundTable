@@ -196,6 +196,7 @@ public class GameBoardController implements Initializable{
 			System.out.println("clicked end turn");
 			this.setButtonsInvisible();
 			this.removeDraggable();
+			System.out.println(playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
 			c.send("game tournament picked: player " + playerManager.getCurrentPlayer() + " " + playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
 		});
 		this.accept.setOnAction(e -> {
