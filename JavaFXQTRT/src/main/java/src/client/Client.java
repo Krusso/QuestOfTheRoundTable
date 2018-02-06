@@ -114,7 +114,8 @@ class Task implements Runnable{
 		gbc.clearPlayField();
 		gbc.setPlayerTurn(playerTurn);
 		gbc.showPlayerHand(playerTurn);
-		gbc.repositionAllHands();
+		gbc.setPlayerPerspectiveTo(playerTurn);;
+		
 	}
 
 	//Msg should be the name of the card
