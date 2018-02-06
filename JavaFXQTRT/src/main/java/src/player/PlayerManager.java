@@ -12,7 +12,9 @@ import java.util.stream.StreamSupport;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.DeckManager;
+import src.game_logic.FoeCard;
 import src.game_logic.Rank;
+import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.views.PlayerView;
@@ -50,13 +52,18 @@ public class PlayerManager {
 			cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 			cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
 			cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
+			//cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
 			cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
 			cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+			//cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+			cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+			cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
+			cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+			//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 			cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 			//players[i - 1].addCards(dm.getAdventureCard(12));
 			players[i - 1].addCards(cards);
@@ -65,7 +72,10 @@ public class PlayerManager {
 
 
 	public void drawCards(List<Player> players, int cards) {
-		players.forEach(player -> player.addCards(dm.getAdventureCard(cards)));
+		players.forEach(player -> {
+			//System.out.println(player.hand);
+			player.addCards(dm.getAdventureCard(cards));
+		});
 	}
 	
 	public void drawCards(Player player, int cards) {
@@ -134,7 +144,7 @@ public class PlayerManager {
 	}
 	
 	public void currentSponsorQuest() {
-		players[currentPlayer].setState(Player.STATE.YES);
+		players[currentPlayer].setState(Player.STATE.SPONSORING);
 	}
 	
 	public void currentJoinQuest() {
@@ -147,6 +157,10 @@ public class PlayerManager {
 	
 	public void currentQuestionTournament() {
 		players[currentPlayer].setState(Player.STATE.QUESTIONED);
+	}
+	
+	public void currentQuestionBids() {
+		players[currentPlayer].setState(Player.STATE.BIDDING);
 	}
 	
 	public void currentQuestionCards() {
@@ -233,7 +247,7 @@ public class PlayerManager {
 	}
 
 	public void discardFromHand(Player player, String cards) {
-		player.removeCards(cards.split(" "));
+		player.removeCards(cards.split(","));
 	}
 	
 	public void discardFaceUp(Player player) {
@@ -256,5 +270,13 @@ public class PlayerManager {
 		winners.forEach(player -> {
 			player.setState(Player.STATE.GAMEWON);
 		});
+	}
+
+	public void currentQuestDiscard() {
+		players[currentPlayer].setState(Player.STATE.TESTDISCARD);
+	}
+
+	public void currentQuestPicking() {
+		players[currentPlayer].setState(Player.STATE.QUESTPICKING);
 	}
 }

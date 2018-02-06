@@ -47,7 +47,7 @@ public class QuestSequenceManager extends SequenceManager {
 		}
 		
 		// determining if anyone decided to sponsor
-		List<Player> sponsors = pm.getAllWithState(Player.STATE.YES);
+		List<Player> sponsors = pm.getAllWithState(Player.STATE.SPONSORING);
 		if(sponsors.size() == 0) {
 			return;
 		} else if(sponsors.size() == 1) {
@@ -73,7 +73,7 @@ public class QuestSequenceManager extends SequenceManager {
 				Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
 			    Matcher m = p.matcher(string);
 			    m.find();
-				if(m.group(3).equals("join quest")) {
+				if(m.group(3).equals("join")) {
 					pm.currentJoinQuest();
 				} else {
 					pm.currentDeclineQuest();
@@ -95,18 +95,56 @@ public class QuestSequenceManager extends SequenceManager {
 			if (quest.currentStageType() == Quest.TYPE.FOE) {
 				players = winners.iterator();
 				// some constraints when choosing cards... can be done on client side c:
-				questionPlayers(players, pm, actions, "cards picked for quest: player (\\d+) (.*)");
+				//questionPlayers(players, pm, actions, "game cards picked for quest: player (\\d+) (.*)");
+				
+				while(players.hasNext()) {
+					pm.setPlayer(players.next());
+					pm.currentQuestPicking();
+					String string;
+					try {
+						string = actions.take();
+						Pattern p = Pattern.compile("game cards picked for quest: player (\\d+) (.*)");
+					    Matcher m = p.matcher(string);
+					    m.find();
+					    String cards = m.group(2);
+						pm.currentFaceDown(cards);
+						System.out.println("Action recieved: " + string);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} 
+				}
+				
 				pm.flipStage(sponsor, quest.getCurrentStage());
 				quest.battleFoe(winners, pm);
+				pm.discardWeapons(winners);
 			} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 				pm.flipStage(sponsor, quest.getCurrentStage());
 				players = winners.iterator();
-				questionPlayers(players, pm, actions, "quest bid: player (\\\\d+) (.*)");
-				quest.winBid(winners, pm);
+				Player bidWinner = questionPlayersForBid(players, pm, actions, "game quest bid: player (\\d+) (.*)");
+				// No one decided to bid not sure if legal?
+				if(bidWinner == null) {
+					winners.clear();
+					break;
+				}
+				pm.setPlayer(bidWinner);
+				pm.currentQuestDiscard();
+				String string;
+				try {
+					string = actions.take();
+					System.out.println("Action recieved: " + string);
+					Pattern p = Pattern.compile("game test discard: player (\\d+) (.*)");
+				    Matcher m = p.matcher(string);
+				    m.find();
+				    pm.discardFromHand(bidWinner, m.group(2));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				winners.clear();
+				winners.add(bidWinner);
 			}
 			quest.advanceStage();
-			// TODO: discard weapon cards
 		}
+
 		if(winners.size() > 0) {
 			pm.changeShields(winners, quest.getNumStages());
 		}

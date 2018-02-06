@@ -39,10 +39,10 @@ public class Quest {
 	// verification for quest stages will be done on client side
 	public void setUpQuest(LinkedBlockingQueue<String> actions, PlayerManager pm) {
 		String string;
-		while(quest.size()<=stages) {
+		while(quest.size()<stages) {
 			try {
 				string = actions.take();
-				Pattern p = Pattern.compile("quest stage picked: (^\\d$) cards: (.*)");
+				Pattern p = Pattern.compile("game quest stage picked: (\\d) cards: (.*)");
 				Matcher m = p.matcher(string);
 				m.find();
 				int stage = Integer.parseInt(m.group(1));
@@ -111,34 +111,5 @@ public class Quest {
 		
 		BattlePointCalculator bpc = new BattlePointCalculator();
 		bpc.getFoeWinners(participants, getFoeBP());
-	}
-	
-	public void winBid(List<Player> participants, PlayerManager pm) {
-		
-		int highestBid=0;
-		
-		TestCard testCard = (TestCard) quest.get(currentStage).get(0); // hehe
-		int minBids = testCard.getMinBids();
-		
-		BattlePointCalculator bpc = new BattlePointCalculator();
-		ListIterator<Player> players = participants.listIterator();
-		
-		while(players.hasNext()) {
-			Player player = players.next();
-			int amount = bpc.bidAmount(player);
-			if(amount > minBids && amount > highestBid) {
-				highestBid = amount;
-			} else {
-				participants.remove(player);
-			}
-		}
-		
-		if(participants.size() == 1) {
-			Player winner = participants.get(0);
-			// TODO: factor in free bids before discarding
-			pm.discardFaceUp(winner);
-		} else {
-			// handle somehow
-		}
 	}
 }
