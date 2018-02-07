@@ -55,6 +55,11 @@
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="34.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="530.0" />
                   <Pane fx:id="storyCardContainer" layoutX="35.0" prefHeight="150.0" prefWidth="100.0" />
                   <Pane fx:id="playField" layoutX="132.0" prefHeight="150.0" prefWidth="430.0" />
+                  <Text fx:id="toast" layoutX="35.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
+                     <font>
+                        <Font name="Britannic Bold" size="69.0" />
+                     </font>
+                  </Text>
                   <HBox layoutX="35.0" layoutY="154.0">
                      <children>
                         <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="Continue" />

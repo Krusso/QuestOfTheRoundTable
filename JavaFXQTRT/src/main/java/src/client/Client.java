@@ -25,6 +25,7 @@ class Task implements Runnable{
 	private GameBoardController gbc;
 	private String typeOfTask;
 	private String msg;
+	private static boolean[] winners = {false,false,false,false};
 	Task(String typeOfTask, String msg, GameBoardController gbc) {
 		this.msg = msg;
 		this.typeOfTask = typeOfTask;
@@ -56,14 +57,41 @@ class Task implements Runnable{
 		}
 		case "quest up": {
 			turnFaceDownFieldUp();
+			break;
 		}
 		case "rank set": {
 			setRank();
+			break;
+		}
+		case "tournament won": {
+			tournamentWon();
+			break;
 		}
 		}
 	}
+	private void tournamentWon() {
+		
+		int playerNum = msg.charAt("tournament won: player ".length()) - '0';
+		winners[playerNum] = true;
+
+		String display = "Player(s) ";
+		for(int i = 0 ; i < winners.length; i++) {
+
+			System.out.println("pnum " + i + " winners: " + winners[i]) ;
+			if(winners[i] == true) {
+				display = display + i + ", ";
+			}
+			System.out.println(display);
+		}
+		display = display.substring(0, display.length()-2);
+		display = display + " won the tournmanet!";
+		gbc.toast.setText(display);
+		gbc.toast.setVisible(true);
+		
+	}
 	private void setRank() {
 		int playerNum = msg.charAt("rank set: player ".length()) - '0';
+		
 		String[] splits = msg.split(" ");
 		String rank = splits[splits.length-1];
 		Rank.RANKS r = Rank.RANKS.SQUIRE;
@@ -216,6 +244,9 @@ public class Client implements Runnable {
 					}
 					if(currentMessage.startsWith("rank set:")) {
 						Platform.runLater(new Task("rank set", currentMessage, gbc));
+					}
+					if(currentMessage.startsWith("tournament won:")) {
+						Platform.runLater(new Task("tournament won", currentMessage, gbc));
 					}
 				}
 			}

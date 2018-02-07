@@ -80,9 +80,7 @@ public class GameBoardController implements Initializable{
     @FXML private ImageView playerRank3;
     private ImageView[] playerRanks = new ImageView[4];
 
-	//The position of the current player's perspective. Should never change
-	private  double currPlayerPaneX ;
-	private  double currPlayerPaneY ;
+    @FXML public Text toast;
     
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -112,8 +110,9 @@ public class GameBoardController implements Initializable{
 	////Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers) {
 		playerManager = new UIPlayerManager(numPlayers);
-		currPlayerPaneX = playerPane0.getLayoutX();
-		currPlayerPaneY = playerPane0.getLayoutY();
+		for(int i = 0 ; i < numPlayers ; i++) {
+			setPlayerRank(i, Rank.RANKS.SQUIRE);;
+		}
 	}
 
     
