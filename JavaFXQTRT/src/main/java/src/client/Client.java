@@ -7,11 +7,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.application.Platform;
 import src.client.GameBoardController;
 import src.game_logic.AdventureCard;
 import src.game_logic.EventCard;
+import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.game_logic.TournamentCard;
 import src.game_logic.WeaponCard;
@@ -51,7 +54,25 @@ class Task implements Runnable{
 			showEndTurn();
 			break;
 		}
+		case "quest up": {
+			turnFaceDownFieldUp();
 		}
+		case "rank set": {
+			setRank();
+		}
+		}
+	}
+	private void setRank() {
+		int playerNum = msg.charAt("rank set: player ".length()) - '0';
+		String[] splits = msg.split(" ");
+		String rank = splits[splits.length-1];
+		Rank.RANKS r = Rank.RANKS.SQUIRE;
+//		if(rank.equals("SQUIRE")) r = Rank.RANKS.SQUIRE;
+		if(rank.equals("KNIGHT")) r = Rank.RANKS.KNIGHT;
+		if(rank.equals("CHAMPION")) r = Rank.RANKS.CHAMPION;
+		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
+		gbc.setPlayerRank(playerNum, r);
+		
 	}
 
 	// no msg expected
@@ -106,6 +127,12 @@ class Task implements Runnable{
 			}
 		}
 	}
+	
+	private void turnFaceDownFieldUp() {
+		int p = msg.charAt(msg.indexOf("player") + "player ".length()) - '0';
+		gbc.showFaceDownFieldCards(p);
+		
+	}
 
 	//Msg should be a string with a number which indicates which players has the turn
 	private void nextTurn(String msg) {
@@ -114,7 +141,7 @@ class Task implements Runnable{
 		gbc.clearPlayField();
 		gbc.setPlayerTurn(playerTurn);
 		gbc.showPlayerHand(playerTurn);
-		gbc.repositionAllHands();
+		
 	}
 
 	//Msg should be the name of the card
@@ -183,6 +210,12 @@ public class Client implements Runnable {
 					}
 					if(currentMessage.startsWith("tournament picking: player")) {
 						Platform.runLater(new Task("tournament picking","",gbc));
+					}
+					if(currentMessage.startsWith("quest up:")) {
+						Platform.runLater(new Task("quest up", currentMessage, gbc));
+					}
+					if(currentMessage.startsWith("rank set:")) {
+						Platform.runLater(new Task("rank set", currentMessage, gbc));
 					}
 				}
 			}

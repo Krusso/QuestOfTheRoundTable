@@ -20,8 +20,8 @@ public class StoryDeck extends Deck<StoryCard> {
 		
 		addCard(new TournamentCard("Tournament at Camelot",3),1);
 		addCard(new TournamentCard("Tournament at Orkney",2),1);
-		addCard(new TournamentCard("Tournament at Tintagel",1),1);
-		addCard(new TournamentCard("Tournament at York",0),1);
+//		addCard(new TournamentCard("Tournament at Tintagel",1),1);
+//		addCard(new TournamentCard("Tournament at York",0),1);
 		
 //		addCard(new EventCard("King's Recognition"),2);
 //		addCard(new EventCard("Queen's Favor"),2);
