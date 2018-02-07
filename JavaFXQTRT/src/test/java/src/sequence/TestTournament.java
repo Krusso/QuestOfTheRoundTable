@@ -12,6 +12,7 @@ import org.junit.Test;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.TournamentCard;
+import src.messages.QOTRTQueue;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -23,7 +24,7 @@ public class TestTournament {
 	@Test
 	public void testWinSecondRound() throws InterruptedException {
 		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -94,7 +95,7 @@ public class TestTournament {
 	@Test
 	public void testDrawSecondRound() throws InterruptedException {
 		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -165,7 +166,7 @@ public class TestTournament {
 	@Test
 	public void testNoOneEnter() throws InterruptedException {
 		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -195,7 +196,7 @@ public class TestTournament {
 	@Test
 	public void testOnePlayer() throws InterruptedException {
 		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -232,7 +233,7 @@ public class TestTournament {
 	@Test
 	public void testFourPlayer() throws InterruptedException {
 		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;

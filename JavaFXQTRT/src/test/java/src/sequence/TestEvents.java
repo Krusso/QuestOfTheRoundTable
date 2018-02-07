@@ -11,6 +11,7 @@ import org.junit.Test;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.EventCard;
+import src.messages.QOTRTQueue;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -31,7 +32,7 @@ public class TestEvents {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(true, i.getCardCount() == 12);
 		});
-		esm.start(new LinkedBlockingQueue<String>(), pm, bm);
+		esm.start(new QOTRTQueue(), pm, bm);
 		pm.round().forEachRemaining(i -> {
 			assertEquals(true, i.getCardCount() == 14);
 		});
@@ -49,7 +50,7 @@ public class TestEvents {
 		});
 		player.remove(0);
 		pm.changeShields(player, 10);
-		esm.start(new LinkedBlockingQueue<String>(), pm, bm);
+		esm.start(new QOTRTQueue(), pm, bm);
 		assertEquals(3, players.get(0).getShields());
 		assertEquals(10, players.get(1).getShields());
 	}
@@ -63,7 +64,7 @@ public class TestEvents {
 			assertEquals(true, i.getShields() == 0);
 		});
 		pm.changeShields(player, 10);
-		esm.start(new LinkedBlockingQueue<String>(), pm, bm);
+		esm.start(new QOTRTQueue(), pm, bm);
 		assertEquals(8, player.get(0).getShields());
 		assertEquals(10, player.get(1).getShields());
 	}
@@ -77,7 +78,7 @@ public class TestEvents {
 			assertEquals(true, i.getShields() == 0);
 		});
 		pm.changeShields(player, 10);
-		esm.start(new LinkedBlockingQueue<String>(), pm, bm);
+		esm.start(new QOTRTQueue(), pm, bm);
 		assertEquals(10, player.get(0).getShields());
 		assertEquals(9, player.get(1).getShields());
 	}
@@ -95,7 +96,7 @@ public class TestEvents {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(true, i.getCardCount() == 12);
 		});
-		esm.start(new LinkedBlockingQueue<String>(), pm, bm);
+		esm.start(new QOTRTQueue(), pm, bm);
 		pm.round().forEachRemaining(i -> {
 			assertEquals(true, i.getCardCount() == 14);
 		});
@@ -107,7 +108,7 @@ public class TestEvents {
 		PlayerManager pm = new PlayerManager(0, null);
 		BoardModel bm = new BoardModel();
 		assertEquals(false, bm.isSetKingRecognition());
-		esm.start(new LinkedBlockingQueue<String>(), pm, bm);
+		esm.start(new QOTRTQueue(), pm, bm);
 		assertEquals(true, bm.isSetKingRecognition());
 	}
 	

@@ -7,6 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.StoryCard;
+import src.messages.QOTRTQueue;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.sequence.GameSequenceManager;
@@ -18,7 +19,7 @@ public class Game extends Thread{
 
 	private OutputController output;
 	private GameModel gm;
-	private LinkedBlockingQueue<String> actions;
+	private QOTRTQueue actions;
 
 	public Game(OutputController output, GameModel gm) {
 		this.output = output;
@@ -57,12 +58,7 @@ public class Game extends Thread{
 
 			String message = "";
 			while(!message.equals("game next turn")) {
-				try {
-					message = actions.take();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				message = actions.take();
 			}
 			
 			System.out.println("Starting next turn");
@@ -70,7 +66,7 @@ public class Game extends Thread{
 
 	}
 
-	public void setActionQueue(LinkedBlockingQueue<String> actionQueue) {
+	public void setActionQueue(QOTRTQueue actionQueue) {
 		this.actions = actionQueue;
 	}
 

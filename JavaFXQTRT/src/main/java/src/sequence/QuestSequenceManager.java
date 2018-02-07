@@ -1,17 +1,16 @@
 package src.sequence;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
 
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
+import src.messages.QOTRTQueue;
 import src.player.Player;
 import src.player.PlayerManager;
-import src.game_logic.Card;
 
 public class QuestSequenceManager extends SequenceManager {
 	
@@ -22,27 +21,24 @@ public class QuestSequenceManager extends SequenceManager {
 	public QuestSequenceManager(QuestCard card) { this.card = card; }
 	
 	@Override
-	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm) {
+	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
 		// Finding player who wants to sponsor quest
 		Iterator<Player> players = pm.round();
 		while(players.hasNext()) {
-			pm.setPlayer(players.next());
-			pm.currentQuestionQuest();
+			Player next = players.next();
+			pm.setPlayer(next);
+			pm.setState(next, Player.STATE.QUESTQUESTIONED);
 			String string;
-			try {
-				string = actions.take();
-				System.out.println("Action recieved: " + string);
-				Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
-			    Matcher m = p.matcher(string);
-			    m.find();
-				if(m.group(3).equals("sponsors")) {
-					pm.currentSponsorQuest();
-					break;
-				} else {
-					pm.currentDeclineQuest();
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			string = actions.take();
+			System.out.println("Action recieved: " + string);
+			Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
+			Matcher m = p.matcher(string);
+			m.find();
+			if(m.group(3).equals("sponsors")) {
+				pm.setState(next, Player.STATE.SPONSORING);
+				break;
+			} else {
+				pm.setState(next, Player.STATE.NO);
 			}
 		}
 		
@@ -65,21 +61,17 @@ public class QuestSequenceManager extends SequenceManager {
 			Player curr = players.next();
 			if(curr == sponsor) continue;
 			pm.setPlayer(curr);
-			pm.currentQuestionQuest();
+			pm.setState(curr, Player.STATE.QUESTQUESTIONED);
 			String string;
-			try {
-				string = actions.take();
-				System.out.println("Action recieved: " + string);
-				Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
-			    Matcher m = p.matcher(string);
-			    m.find();
-				if(m.group(3).equals("join")) {
-					pm.currentJoinQuest();
-				} else {
-					pm.currentDeclineQuest();
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			string = actions.take();
+			System.out.println("Action recieved: " + string);
+			Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
+			Matcher m = p.matcher(string);
+			m.find();
+			if(m.group(3).equals("join")) {
+				pm.setState(curr, Player.STATE.YES);
+			} else {
+				pm.setState(curr, Player.STATE.NO);
 			}
 		}
 		
@@ -98,20 +90,17 @@ public class QuestSequenceManager extends SequenceManager {
 				//questionPlayers(players, pm, actions, "game cards picked for quest: player (\\d+) (.*)");
 				
 				while(players.hasNext()) {
-					pm.setPlayer(players.next());
-					pm.currentQuestPicking();
+					Player pick = players.next();
+					pm.setPlayer(pick);
+					pm.setState(pick, Player.STATE.QUESTPICKING);
 					String string;
-					try {
-						string = actions.take();
-						Pattern p = Pattern.compile("game cards picked for quest: player (\\d+) (.*)");
-					    Matcher m = p.matcher(string);
-					    m.find();
-					    String cards = m.group(2);
-						pm.currentFaceDown(cards);
-						System.out.println("Action recieved: " + string);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} 
+					string = actions.take();
+					Pattern p = Pattern.compile("game cards picked for quest: player (\\d+) (.*)");
+					Matcher m = p.matcher(string);
+					m.find();
+					String cards = m.group(2);
+					pm.currentFaceDown(cards);
+					System.out.println("Action recieved: " + string); 
 				}
 				
 				pm.flipStage(sponsor, quest.getCurrentStage());
@@ -127,18 +116,14 @@ public class QuestSequenceManager extends SequenceManager {
 					break;
 				}
 				pm.setPlayer(bidWinner);
-				pm.currentQuestDiscard();
+				pm.setState(bidWinner, Player.STATE.TESTDISCARD);
 				String string;
-				try {
-					string = actions.take();
-					System.out.println("Action recieved: " + string);
-					Pattern p = Pattern.compile("game test discard: player (\\d+) (.*)");
-				    Matcher m = p.matcher(string);
-				    m.find();
-				    pm.discardFromHand(bidWinner, m.group(2));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				string = actions.take();
+				System.out.println("Action recieved: " + string);
+				Pattern p = Pattern.compile("game test discard: player (\\d+) (.*)");
+				Matcher m = p.matcher(string);
+				m.find();
+				pm.discardFromHand(bidWinner, m.group(2));
 				winners.clear();
 				winners.add(bidWinner);
 			}

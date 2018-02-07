@@ -12,6 +12,7 @@ import org.junit.Test;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.QuestCard;
+import src.messages.QOTRTQueue;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -23,7 +24,7 @@ public class TestQuests {
 	@Test
 	public void testNoSponsor() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -54,7 +55,7 @@ public class TestQuests {
 	@Test
 	public void testNoParticipants() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -108,7 +109,7 @@ public class TestQuests {
 	@Test
 	public void testBidding() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
@@ -188,7 +189,7 @@ public class TestQuests {
 	@Test
 	public void testFightingFoe() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",2,"Dragon"));
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;

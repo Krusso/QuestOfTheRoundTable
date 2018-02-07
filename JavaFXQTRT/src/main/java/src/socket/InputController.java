@@ -5,10 +5,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import src.messages.QOTRTQueue;
+
 public class InputController extends Thread {
 	
 	private LinkedBlockingQueue<String> inputQueue;
-	private LinkedBlockingQueue<String> actionQueue;
+	private QOTRTQueue actionQueue;
 	private Game game;
 	private GameModel gm;
 
@@ -16,7 +18,7 @@ public class InputController extends Thread {
 		this.inputQueue = queue;
 		this.game = game;
 		this.gm = gm;
-		this.actionQueue = new LinkedBlockingQueue<String>();
+		this.actionQueue = new QOTRTQueue();
 	}
 
 	public void run() {

@@ -17,6 +17,7 @@ import src.game_logic.Rank;
 import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.Card;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
@@ -134,52 +135,23 @@ public class PlayerManager {
 		}
 	}
 	
-	public void currentQuestionQuest() {
-		players[currentPlayer].setState(Player.STATE.QUESTQUESTIONED);
+	// I believe this is only used for the one event where a player must discard 2 weapons or if not possible 2 foes
+	public void setState(List<Player> partipcipants, Player.STATE state, int i, TYPE weapons) {
+		partipcipants.forEach(e -> e.setState(state, i, weapons));
 	}
 	
-	public void currentSetupQuest() {
-		// should we have a separate state for setting up a quest?
-		players[currentPlayer].setState(Player.STATE.PICKING);
+	public void setState(Player partipcipants, Player.STATE state, int i, TYPE weapons) {
+		partipcipants.setState(state, i, weapons);
 	}
 	
-	public void currentSponsorQuest() {
-		players[currentPlayer].setState(Player.STATE.SPONSORING);
+	public void setState(Player participant, Player.STATE state) {
+		participant.setState(state);
 	}
 	
-	public void currentJoinQuest() {
-		players[currentPlayer].setState(Player.STATE.YES);
+	public void setState(List<Player> participants, Player.STATE state) {
+		participants.forEach(e -> e.setState(state));
 	}
 	
-	public void currentDeclineQuest() {
-		players[currentPlayer].setState(Player.STATE.NO);
-	}
-	
-	public void currentQuestionTournament() {
-		players[currentPlayer].setState(Player.STATE.QUESTIONED);
-	}
-	
-	public void currentQuestionBids() {
-		players[currentPlayer].setState(Player.STATE.BIDDING);
-	}
-	
-	public void currentQuestionCards() {
-		players[currentPlayer].setState(Player.STATE.PICKING);
-	}
-
-	public void currentDiscard(int i, TYPE weapons) {
-		players[currentPlayer].setState(Player.STATE.DISCARDING, i, weapons);
-	}
-	
-	// TODO: bounds checking
-	public void currentAcceptTournament() {
-		players[currentPlayer].setState(Player.STATE.YES);
-	}
-
-	public void currentDeclineTournament() {
-		players[currentPlayer].setState(Player.STATE.NO);
-	}
-
 	public List<Player> getAllWithState(Player.STATE state) {
 		return StreamSupport.stream(
 		          Spliterators.spliteratorUnknownSize(round(), Spliterator.ORDERED),
@@ -200,7 +172,7 @@ public class PlayerManager {
 		players[currentPlayer].setFaceUp(cards.split(","));
 	}
 	
-	public void questDown(Player sponsor, List cards) {
+	public void questDown(Player sponsor, List<List<Card>> cards) {
 		sponsor.setQuestDown(cards);
 	}
 	
@@ -208,10 +180,6 @@ public class PlayerManager {
 		sponsor.flipStage(stage);
 	}
 	
-	public void setTournamentWinner(List<Player> participants) {
-		participants.forEach(i -> i.setState(Player.STATE.WIN));
-	}
-
 	public void flipCards(Player next) {
 		// TODO: should be its own method imo
 		for(int i = 0; i < players.length; i++) {
@@ -264,19 +232,5 @@ public class PlayerManager {
 			}
 		});
 		return winners.get();
-	}
-
-	public void setGameWinners(List<Player> winners) {
-		winners.forEach(player -> {
-			player.setState(Player.STATE.GAMEWON);
-		});
-	}
-
-	public void currentQuestDiscard() {
-		players[currentPlayer].setState(Player.STATE.TESTDISCARD);
-	}
-
-	public void currentQuestPicking() {
-		players[currentPlayer].setState(Player.STATE.QUESTPICKING);
 	}
 }

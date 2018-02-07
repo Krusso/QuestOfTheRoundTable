@@ -9,6 +9,7 @@ import src.game_logic.AdventureCard;
 import src.game_logic.BoardModel;
 import src.game_logic.EventCard;
 import src.game_logic.Rank;
+import src.messages.QOTRTQueue;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -22,7 +23,7 @@ public class EventSequenceManager extends SequenceManager {
 
 
 	@Override
-	public void start(LinkedBlockingQueue<String> actions, PlayerManager pm, BoardModel bm) {
+	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
 
 		// Holy this is pretty dumb.... not sure of a better way though
 		// The next player to complete a Quest will receive 2 extra shields
@@ -109,32 +110,21 @@ public class EventSequenceManager extends SequenceManager {
 			
 			highest.forEach(player -> {
 				if(player.getWeaponCount() >= 1) {
-					pm.setPlayer(player);
-					pm.currentDiscard(1, AdventureCard.TYPE.WEAPONS);
+					pm.setPlayer(player);;
+					pm.setState(player, Player.STATE.DISCARDING, 1, AdventureCard.TYPE.WEAPONS);
 					String cards = null;
-					try {
-						cards = actions.take();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					cards = actions.take();
 					pm.discardFromHand(player, cards);
 				} else if(player.getFoeCount() >= 1) {
 					pm.setPlayer(player);
-					pm.currentDiscard(Math.min(2, player.getFoeCount()), AdventureCard.TYPE.FOES);
+					pm.setState(player, Player.STATE.DISCARDING, Math.min(2, player.getFoeCount()), AdventureCard.TYPE.FOES);
 					String cards = null;
-					try {
-						cards = actions.take();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					cards = actions.take();
 					pm.discardFromHand(player, cards);
 				} else {
 					//sheet you got no cards gg
 				}
 			});
-			
 		}  
 	}
 }
