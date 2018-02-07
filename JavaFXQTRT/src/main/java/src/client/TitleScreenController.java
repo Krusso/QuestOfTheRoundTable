@@ -49,10 +49,10 @@ public class TitleScreenController implements Initializable{
 			
 			//scale the game application to full screen
 			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-			double scaleX = screenBounds.getMaxX()/1024; //FXML anchor pane width is 1024 and hieght is 768
-			double scaleY = screenBounds.getMaxY()/768;
-			System.out.println("scale X: " + scaleX);
-			System.out.println("scale y: " + scaleY);
+			double scaleX = screenBounds.getMaxX()/1920; //FXML anchor pane width is 1024 and hieght is 768
+			double scaleY = screenBounds.getMaxY()/1080;
+//			System.out.println("scale X: " + scaleX);
+//			System.out.println("scale y: " + scaleY);
 			scaleScene(gameScene,scaleX,scaleY);
 			
 			//give the GameBoardController the client if we got it

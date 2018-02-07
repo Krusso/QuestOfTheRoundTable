@@ -6,7 +6,11 @@ import java.io.FileNotFoundException;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import src.client.GameBoardController;
 
 public abstract class Card {
@@ -15,6 +19,7 @@ public abstract class Card {
 	private Image img;
 	private ImageView imgView;
 	public GameBoardController gbc;
+	public Pane faceDownPane;
 
 	private double startX = 0;
 	private double startY = 0;
@@ -33,8 +38,8 @@ public abstract class Card {
 			img = new Image (new FileInputStream(file));
 			imgView = new ImageView();
 			imgView.setImage(img);
-			imgView.setFitWidth(75);
-			imgView.setFitHeight(112.5);
+			imgView.setFitWidth(100);
+			imgView.setFitHeight(150);
 			//setDraggableOn();
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -50,6 +55,8 @@ public abstract class Card {
 			e.printStackTrace();
 		}
 	}
+	
+	
 	
 	public void setImageSize(double width, double height) {
 		imgView.setFitHeight(height);
@@ -71,9 +78,22 @@ public abstract class Card {
 	public void setDraggableOn() {
 		imgView.setOnMouseReleased((MouseEvent e)->{
 			if(gbc != null) {
-				gbc.playCard(this, imgView.getX(), imgView.getY());	
+				gbc.playCard(this, this.faceDownPane, imgView.getX(), imgView.getY());
 			}
 		});
+//		imgView.setOnDragDetected(e -> {
+//			Dragboard db = imgView.startDragAndDrop(TransferMode.ANY);
+//	        ClipboardContent content = new ClipboardContent();
+//	        content.putString(name);
+//	        db.setContent(content);
+//	        e.consume();
+//		});
+//		imgView.setOnMouseDragEntered(e -> {
+//			orgStartX = imgView.getX();
+//			orgStartY = imgView.getY();
+//			startX = e.getX() - imgView.getX();
+//			startY = e.getY() - imgView.getY();
+//		});
 		imgView.setOnMousePressed((MouseEvent e) -> {
 			orgStartX = imgView.getX();
 			orgStartY = imgView.getY();
