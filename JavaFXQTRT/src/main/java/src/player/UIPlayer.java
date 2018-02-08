@@ -50,4 +50,6 @@ public class UIPlayer extends Player{
 		rank = r;
 	}
 	
+	
+	
 }

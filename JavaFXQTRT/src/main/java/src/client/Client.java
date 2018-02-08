@@ -7,11 +7,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.application.Platform;
 import src.client.GameBoardController;
 import src.game_logic.AdventureCard;
 import src.game_logic.EventCard;
+import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.game_logic.TournamentCard;
 import src.game_logic.WeaponCard;
@@ -22,6 +25,7 @@ class Task implements Runnable{
 	private GameBoardController gbc;
 	private String typeOfTask;
 	private String msg;
+	private static boolean[] winners = {false,false,false,false};
 	Task(String typeOfTask, String msg, GameBoardController gbc) {
 		this.msg = msg;
 		this.typeOfTask = typeOfTask;
@@ -51,7 +55,52 @@ class Task implements Runnable{
 			showEndTurn();
 			break;
 		}
+		case "quest up": {
+			turnFaceDownFieldUp();
+			break;
 		}
+		case "rank set": {
+			setRank();
+			break;
+		}
+		case "tournament won": {
+			tournamentWon();
+			break;
+		}
+		}
+	}
+	private void tournamentWon() {
+		
+		int playerNum = msg.charAt("tournament won: player ".length()) - '0';
+		winners[playerNum] = true;
+
+		String display = "Player(s) ";
+		for(int i = 0 ; i < winners.length; i++) {
+
+			System.out.println("pnum " + i + " winners: " + winners[i]) ;
+			if(winners[i] == true) {
+				display = display + i + ", ";
+			}
+			System.out.println(display);
+		}
+		display = display.substring(0, display.length()-2);
+		display = display + " won the tournmanet!";
+		gbc.toast.setText(display);
+		gbc.toast.setVisible(true);
+		
+	}
+	private void setRank() {
+		int playerNum = msg.charAt("rank set: player ".length()) - '0';
+		
+		String[] splits = msg.split(" ");
+		String rank = splits[splits.length-1];
+		Rank.RANKS r = Rank.RANKS.SQUIRE;
+//		if(rank.equals("SQUIRE")) r = Rank.RANKS.SQUIRE;
+		if(rank.equals("KNIGHT")) r = Rank.RANKS.KNIGHT;
+		if(rank.equals("CHAMPION")) r = Rank.RANKS.CHAMPION;
+		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
+		gbc.setPlayerRank(playerNum, r);
+		
 	}
 
 	// no msg expected
@@ -106,6 +155,12 @@ class Task implements Runnable{
 			}
 		}
 	}
+	
+	private void turnFaceDownFieldUp() {
+		int p = msg.charAt(msg.indexOf("player") + "player ".length()) - '0';
+		gbc.showFaceDownFieldCards(p);
+		
+	}
 
 	//Msg should be a string with a number which indicates which players has the turn
 	private void nextTurn(String msg) {
@@ -114,7 +169,7 @@ class Task implements Runnable{
 		gbc.clearPlayField();
 		gbc.setPlayerTurn(playerTurn);
 		gbc.showPlayerHand(playerTurn);
-		gbc.repositionAllHands();
+		
 	}
 
 	//Msg should be the name of the card
@@ -183,6 +238,15 @@ public class Client implements Runnable {
 					}
 					if(currentMessage.startsWith("tournament picking: player")) {
 						Platform.runLater(new Task("tournament picking","",gbc));
+					}
+					if(currentMessage.startsWith("quest up:")) {
+						Platform.runLater(new Task("quest up", currentMessage, gbc));
+					}
+					if(currentMessage.startsWith("rank set:")) {
+						Platform.runLater(new Task("rank set", currentMessage, gbc));
+					}
+					if(currentMessage.startsWith("tournament won:")) {
+						Platform.runLater(new Task("tournament won", currentMessage, gbc));
 					}
 				}
 			}
