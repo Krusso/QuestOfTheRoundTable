@@ -14,7 +14,8 @@ COMP3004B 2018 Team 2 Project
 
 **Setup**
 - Install Eclipse Oxygen from eclipse.org
-- Install JavaFX Using eclipse (help->install new software->work with->->General Purpose Tools->JavaFx)
+- Install JavaFX Using eclipse (help->install new software->work with: choose your eclipse version (Oxygen)->->General Purpose Tools->install e(fx)lipse)
+- For UI, download Scene Builder by Gluon. Set path by going on eclipse -> Windows -> Preferences -> JavaFX -> choose the scene build.exe 
 
 **Running**
 - To run the game: Run JavaFXQTRT/src/main/java/src/client/Main.java
