@@ -4,7 +4,7 @@ import src.messages.Message;
 
 //from Client
 public class QuestBidClient extends Message {
-	int bid;
+	public int bid;
 	
 	public QuestBidClient(int player, int bid) {
 		super(player);

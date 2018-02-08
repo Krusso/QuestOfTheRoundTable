@@ -1,11 +1,15 @@
 package src.socket;
 
-import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import src.messages.QOTRTQueue;
+import src.messages.game.GameStartClient;
 
 public class InputController extends Thread {
 	
@@ -13,6 +17,8 @@ public class InputController extends Thread {
 	private QOTRTQueue actionQueue;
 	private Game game;
 	private GameModel gm;
+	private Gson gson = new Gson();
+	private JsonParser json = new JsonParser();
 
 	public InputController(LinkedBlockingQueue<String> queue, Game game, GameModel gm) {
 		this.inputQueue = queue;
@@ -42,12 +48,17 @@ public class InputController extends Thread {
 	
 	public void handle(String message) {
 		System.out.println("Server Received: " + message);
-		// TODO change to some regex
-		if("game start:2".equals(message) || "game start:3".equals(message) || "game start:4".equals(message)) {
-			gm.setNumPlayers(Integer.parseInt(message.split(":")[1]));
+		JsonObject obj = json.parse(message).getAsJsonObject();
+		if(obj.get("TYPE") == null || !obj.get("TYPE").getAsString().equals("GAME")){
+			return;
+		}
+		
+		if(obj.get("message") != null && obj.get("message").getAsString().equals("START GAME")) {
+			GameStartClient gsc = gson.fromJson(obj, GameStartClient.class);
+			gm.setNumPlayers(gsc.player);
 			game.setActionQueue(actionQueue);
 			game.start();
-		} else if(message.contains("game")) {
+		} else {
 			actionQueue.add(message);
 		}
 	}

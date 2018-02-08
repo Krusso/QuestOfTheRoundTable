@@ -3,13 +3,15 @@ package src.messages;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class QOTRTQueue extends LinkedBlockingQueue<String> {
 	/**
 	 * idk serilization :) got rid of the eclipse warning
 	 */
 	private static final long serialVersionUID = -165091956128205657L;
-
+	private Gson gson = new Gson();
+	
 	@Override
 	public String take() {
 		String message = null;
@@ -35,10 +37,24 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 		return message;
 	}
 	
-	public <T extends Message>Message take(Class<T> c) {
-		Gson gson = new Gson();
-		T x = gson.fromJson(this.take(), c);
-		return x;
+	public void put(Message message) {
+		try {
+			super.put(gson.toJson(message));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// generics woooo 
+	public <T extends Message> T take(Class<T> c) {
+		while(true) {
+			try {
+			T x = gson.fromJson(this.take(), c);
+			return x;
+			} catch (JsonSyntaxException e) {
+				
+			}
+		}
 	}
 
 }

@@ -14,7 +14,7 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 	@Override
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
 		List<Player> participants = pm.getAllWithState(Player.STATE.WINNING);
-		questionPlayers(participants.listIterator(), pm, actions, "game tournament picked: player (\\d+) (.*)");
+		questionPlayersTournament(participants.listIterator(), pm, actions);
 		
 		Iterator<Player> players = participants.iterator();
 		while(players.hasNext()) {

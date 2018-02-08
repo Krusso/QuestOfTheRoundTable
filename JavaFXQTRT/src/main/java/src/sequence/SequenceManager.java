@@ -1,11 +1,13 @@
 package src.sequence;
 
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import src.game_logic.BoardModel;
+import src.messages.Message;
 import src.messages.QOTRTQueue;
+import src.messages.quest.QuestBidClient;
+import src.messages.quest.QuestPickCardsClient;
+import src.messages.tournament.TournamentPickCardsClient;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -13,39 +15,29 @@ public abstract class SequenceManager {
 
 	public abstract void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm);
 
-	protected void questionPlayers(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, String pattern) {
+	protected void questionPlayersTournament(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions) {
 		while(players.hasNext()) {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.PICKING);
-			String string;
-			string = actions.take();
-			Pattern p = Pattern.compile(pattern);
-			Matcher m = p.matcher(string);
-			m.find();
-			String cards = m.group(2);
-			pm.currentFaceDown(cards);
-			System.out.println("Action recieved: " + string); 
+			TournamentPickCardsClient cards = actions.take(TournamentPickCardsClient.class);
+			pm.currentFaceDown(cards.cards);
 		}
 	}
 
-	protected Player questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, String pattern) {
+	protected Player questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions) {
 		Player maxBid = null;
+		// will be used when no longer hotseat
+		int maxBidValue = Integer.MIN_VALUE;
 		while(players.hasNext()) {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.BIDDING);
-			String string;
-			string = actions.take();
-			Pattern p = Pattern.compile(pattern);
-			Matcher m = p.matcher(string);
-			m.find();
-			System.out.println("Action recieved: " + string);
-			String stringBid = m.group(2);
-			if("skip".equals(stringBid)) {
-				continue;
+			QuestBidClient qbc = actions.take(QuestBidClient.class);
+			if(qbc.bid !=  -1) {
+				maxBid = next; 
+				maxBidValue = qbc.bid;
 			}
-			maxBid = next; 
 		}
 		return maxBid;
 	}

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import src.game_logic.BoardModel;
 import src.game_logic.TournamentCard;
 import src.messages.QOTRTQueue;
+import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.player.BattlePointCalculator;
 import src.player.Player;
 import src.player.PlayerManager;
@@ -28,15 +29,8 @@ public class TournamentSequenceManager extends SequenceManager {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.QUESTIONED);
-			String string;
-			string = actions.take();
-			System.out.println("Action recieved: " + string);
-			Pattern p = Pattern.compile("(.*)(\\s+)(.*?): player (\\d+)");
-			Matcher m = p.matcher(string);
-			m.find();
-			//System.out.println("3: " + m.group(3));
-			//System.out.println("3: " + m.group(4));
-			if(m.group(3).equals("accept")) {
+			TournamentAcceptDeclineClient tadc = actions.take(TournamentAcceptDeclineClient.class);
+			if(tadc.joined) {
 				pm.setState(next, Player.STATE.YES);
 			} else {
 				pm.setState(next, Player.STATE.NO);
@@ -61,7 +55,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			return;
 		} else {
 			players = participants.iterator();
-			questionPlayers(players, pm, actions, "game tournament picked: player (\\d+) (.*)");
+			questionPlayersTournament(players, pm, actions);
 		}
 		
 		// all players have decided on what cards to play
@@ -77,7 +71,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			// tie do tournament again
 			pm.discardWeapons(participants);
 			players = winners.iterator();
-			questionPlayers(players, pm, actions, "game tournament picked: player (\\d+) (.*)");
+			questionPlayersTournament(players, pm, actions);
 			
 			players = winners.iterator();
 			while(players.hasNext()) {

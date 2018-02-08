@@ -9,10 +9,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.Gson;
+
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.QuestCard;
+import src.messages.Message;
 import src.messages.QOTRTQueue;
+import src.messages.quest.QuestSponserClient;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -27,7 +31,7 @@ public class TestQuests {
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
-		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
@@ -35,12 +39,12 @@ public class TestQuests {
 		// decline to sponsor as each player
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
-				System.out.println(string);
-				if(string.equals("quest deciding: player " + i)) break;
+				Message string = actualOutput.take();
+				System.out.println(gson.toJson(string));
+				if(string.message.equals("SPONSER QUEST") && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
-			input.put("game quest decline: player " + i);
+			input.put(new QuestSponserClient(i, false));
 			Thread.sleep(100);
 			assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 		}
@@ -278,6 +282,7 @@ public class TestQuests {
 	PlayerView pv;
 	OutputController oc;
 	LinkedBlockingQueue<String> output;
+	Gson gson = new Gson();
 	@Before
 	public void before() {
 		output = new LinkedBlockingQueue<String>();

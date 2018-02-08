@@ -11,7 +11,7 @@ public abstract class Message {
 	}
 	
 	public Message(int player) {
-		super();
+		this();
 		this.player = player;
 	}
 	
