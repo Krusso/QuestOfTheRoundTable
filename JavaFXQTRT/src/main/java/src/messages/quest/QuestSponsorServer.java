@@ -3,9 +3,9 @@ package src.messages.quest;
 import src.messages.Message;
 
 // from server
-public class QuestSponserServer extends Message {
+public class QuestSponsorServer extends Message {
 
-	public QuestSponserServer(int player) {
+	public QuestSponsorServer(int player) {
 		super(player);
 	}
 	

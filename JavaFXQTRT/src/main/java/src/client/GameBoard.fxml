@@ -17,7 +17,7 @@
             <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" fill="#a9ff21" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="1000.0" />
             <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0" />
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
-            <Pane fx:id="playerFaceDown3" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
+            <Pane fx:id="playerFaceDown3" layoutX="501.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank3" fitHeight="150.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="250.0" />
          </children>
       </Pane>
@@ -63,8 +63,8 @@
                   <HBox layoutX="35.0" layoutY="154.0">
                      <children>
                         <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="Continue" />
-                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Accept Tournament" />
-                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Decline Tournament" />
+                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Accept" />
+                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Decline" />
                         <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="End Turn" />
                      </children>
                   </HBox>

@@ -22,7 +22,7 @@ import src.messages.quest.QuestDownServer;
 import src.messages.quest.QuestJoinServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
-import src.messages.quest.QuestSponserServer;
+import src.messages.quest.QuestSponsorServer;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
@@ -53,7 +53,7 @@ public class PlayerView {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage(new TournamentAcceptDeclineServer(ID));
 		} else if(state == Player.STATE.QUESTQUESTIONED) {
-			output.sendMessage(new QuestSponserServer(ID));
+			output.sendMessage(new QuestSponsorServer(ID));
 		} else if(state == Player.STATE.SPONSORING) {
 			output.sendMessage(new QuestPickStagesServer(ID));
 		} else if(state == Player.STATE.PICKING) {

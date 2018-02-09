@@ -7,12 +7,15 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
+import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
+import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
@@ -29,6 +32,7 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
+import src.messages.quest.*;
 
 class AddCardsTask extends Task{
 	private int player;
@@ -53,14 +57,6 @@ class AddCardsTask extends Task{
 						gbc.addCardToHand(c, player);
 						break;
 					}
-					//						case 'E':{
-					//							gbc.addCardToHand(new EventCard(card, f.getPath()),playerNumber);
-					//							break;
-					//						}
-					//						case 'T':{
-					//							gbc.addCardToHand(new TournamentCard(card, f.getPath()),playerNumber);
-					//							break;
-					//						}
 					case 'W':{
 						AdventureCard weapon = new WeaponCard(card, f.getPath());
 						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
@@ -106,6 +102,7 @@ class MiddleCardTask extends Task{
 		System.out.println("Processing msg: middle card:" + card);
 		//find story card
 		File[] list = cardDir.listFiles();
+//		System.out.println("Finding " + card + " card");
 		for(File c : list) {
 			if(c.getName().contains(card)) {
 				StoryCard sc= new StoryCard(card, c.getPath());
@@ -113,6 +110,20 @@ class MiddleCardTask extends Task{
 				System.out.println("Set story card to:" + sc.getName());
 			}
 		}
+	}
+}
+
+class QuestSponsorTask extends Task {
+	private int player;
+	public QuestSponsorTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
+		gbc.showAcceptDecline();
 	}
 }
 
@@ -188,6 +199,7 @@ class ShowAcceptDeclineTask extends Task{
 	@Override
 	public void run() {
 		System.out.println("Processing msg: accept/decline tournament");
+		gbc.CURRENT_STATE = STATE.JOIN_TOURNAMENT;
 		gbc.showAcceptDecline();
 	}
 }
@@ -205,6 +217,25 @@ class ShowTurnFaceDownFieldUp extends Task{
 
 	}
 }
+
+class QuestPickStagesTask extends Task {
+
+	private int player;
+	public QuestPickStagesTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.PICK_STAGES;
+		gbc.showEndTurn();
+		gbc.addDraggable();
+	}
+	
+}
+
+
 
 abstract class Task implements Runnable{
 	protected File cardDir;
@@ -286,6 +317,18 @@ public class Client implements Runnable {
 					if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
 						TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
 						Platform.runLater(new TournamentWonTask(gbc, request.player));
+					}
+					/*
+					 * Dealing with Quest state
+					 */
+					if(message.equals(MESSAGETYPES.SPONSERQUEST.name())) {
+						QuestSponsorServer request = gson.fromJson(obj, QuestSponsorServer.class);
+						Platform.runLater(new QuestSponsorTask(gbc, request.player));
+					}
+					if(message.equals(MESSAGETYPES.PICKSTAGES.name())) {
+						//TODO::
+						QuestPickStagesServer request = gson.fromJson(obj, QuestPickStagesServer.class);
+						Platform.runLater(new QuestPickStagesTask(gbc, request.player));
 					}
 				}
 			}

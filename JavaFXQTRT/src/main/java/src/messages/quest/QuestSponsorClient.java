@@ -4,11 +4,11 @@ import src.messages.Message;
 
 
 //from Client
-public class QuestSponserClient extends Message {
+public class QuestSponsorClient extends Message {
 
 	public boolean sponser;
 	
-	public QuestSponserClient(int player, boolean joined) {
+	public QuestSponsorClient(int player, boolean joined) {
 		super(player);
 		this.sponser = joined;
 	}

@@ -24,16 +24,21 @@ import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.messages.game.ContinueGameClient;
+import src.messages.quest.QuestSponsorClient;
+import src.messages.quest.*;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
+	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, JOIN_TOURNAMENT, NONE}
 
 	private static final int NUM_POSITIONS = 4;
 
+	public STATE CURRENT_STATE = STATE.NONE;
 	private Client c;
 	private UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
+
 
 
 	@FXML private Pane playField;
@@ -61,7 +66,6 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerHand3;
 	@FXML private Pane[] handPanes = new Pane[4];
 
-	//TODO: make the face down field in FXML
 	//The panes that govern the player's facedown cards
 	@FXML private Pane playerFaceDown0;
 	@FXML private Pane playerFaceDown1;
@@ -69,13 +73,11 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerFaceDown3;
 	private Pane[] faceDownPanes = new Pane[4];
 
-	//TODO: make the faceup field in FXML
 	//The panes that govern the player's faceup cards
 	@FXML private Pane playerFaceUp0;
 	@FXML private Pane playerFaceUp1;
 	@FXML private Pane playerFaceUp2;
 	@FXML private Pane playerFaceUp3;
-	//TODO: initialize these in the init function
 	private Pane[] faceUpPanes = new Pane[4];
 
 	@FXML private ImageView playerRank0;
@@ -118,21 +120,6 @@ public class GameBoardController implements Initializable{
 			setPlayerRank(i, Rank.RANKS.SQUIRE);;
 		}
 	}
-
-
-
-
-	//Put's Cards into the Pane and repositions it to fit the width
-	private void putCardIntoPane(Pane p, Card... c) {
-		for(Card card : c) {
-			p.getChildren().add(card.getImageView());
-		}
-		//TODO reposition the the cards in this pane
-		//		for(int i = 0 ; i < p.getChildren().size() ; i++) {
-		//			
-		//		}
-	}
-
 
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		c.gbc = this;
@@ -246,26 +233,37 @@ public class GameBoardController implements Initializable{
 			System.out.println("clicked end turn");
 			this.setButtonsInvisible();
 			this.removeDraggable();
-			playerManager.faceDownFaceDownCards(playerManager.getCurrentPlayer());
-
-
-			c.send(new TournamentPickCardsClient(playerManager.getCurrentPlayer(), 
-					playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer()).stream().map(i -> i.getName()).toArray(size -> new String[size])));
-			//			playerManager.getPlayerHand(playerManager.getCurrentPlayer()).forEach(g -> {
-			//				SequentialTransition x = g.flipDown();
-			//				x.play();
-			//				System.out.println("rotated: " + g.getName());
-			//			});
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				playerManager.faceDownFaceDownCards(playerManager.getCurrentPlayer());
+				c.send(new TournamentPickCardsClient(playerManager.getCurrentPlayer(), 
+						playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer()).stream().map(i -> i.getName()).toArray(size -> new String[size])));
+			}else if(CURRENT_STATE == STATE.PICK_STAGES) {
+				//TODO::Handle PICK_STAGES
+//				c.send(new QuestPickStagesClient(playerManager.getCurrentPlayer(), ));
+			}
 		});
 		this.accept.setOnAction(e -> {
-			System.out.println("accepted tournament");
+			System.out.println("accepted story");
 			this.setButtonsInvisible();
-			c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
+				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
+			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
+				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
+			}
+
 		});
 		this.decline.setOnAction(e -> {
-			System.out.println("declined tournament");
+			System.out.println("declined story");
 			this.setButtonsInvisible();
-			c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
+				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
+				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
+			}
 		});
 		this.nextTurn.setOnAction(e -> {
 			System.out.println("Clicked next turn");
