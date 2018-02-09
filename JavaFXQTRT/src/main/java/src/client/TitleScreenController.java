@@ -31,6 +31,7 @@ public class TitleScreenController implements Initializable{
 	@FXML private TextField numPlayers;
 	@FXML private Button start;
 	@FXML private Pane p;
+	@FXML public Pane background;
 	public void setClient(Client c) {
 		client = c;
 	}
