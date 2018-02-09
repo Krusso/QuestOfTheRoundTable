@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.animation.SequentialTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 import src.client.GameBoardController;
 
 public abstract class Card {
@@ -131,4 +133,44 @@ public abstract class Card {
 	public String toString() {
 		return this.name;
 	}
+	/*
+	 * copied and edited from
+	 * https://stackoverflow.com/questions/37117475/attach-back-cover-to-a-card-image
+	 */
+	public SequentialTransition flipUp() {
+        // first 90  -> show back
+        RotateTransition rotator1 = createRotator(0, 90);
+
+        // from 90 to 180 show front
+        rotator1.setOnFinished(evt -> this.faceUp());
+        RotateTransition rotator2 = createRotator(90, 180);
+
+        SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
+        rotator.setCycleCount(1);
+        return rotator;
+	} 
+	
+	public SequentialTransition flipDown() {
+        // first 90 -> show front
+        RotateTransition rotator1 = createRotator(0, 90);
+
+        // from 90 to 180 show backside
+        rotator1.setOnFinished(evt ->this.faceDown());
+        RotateTransition rotator2 = createRotator(90, 180);
+
+        SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
+        rotator.setCycleCount(1);
+        return rotator;
+	}
+	
+	private RotateTransition createRotator(double fromAngle, double toAngle) {
+        // animation length proportional to the rotation angle
+        RotateTransition rotator = new RotateTransition(Duration.millis(Math.abs(1000 * (fromAngle - toAngle) / 360)), imgView);
+        rotator.setAxis(Rotate.Y_AXIS);
+        rotator.setFromAngle(fromAngle);
+        rotator.setToAngle(toAngle);
+        rotator.setInterpolator(Interpolator.LINEAR);
+        return rotator;
+    }
+	
 }
