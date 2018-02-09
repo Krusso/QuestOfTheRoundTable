@@ -4,35 +4,40 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.google.gson.Gson;
+
+import src.messages.Message;
+
 public class OutputController extends Thread {
 	private LinkedBlockingQueue<String> queue;
-	public LinkedBlockingQueue<String> internalQueue;
+	public LinkedBlockingQueue<Message> internalQueue;
 
 	public OutputController(LinkedBlockingQueue<String> queue) {
 		this.queue = queue;
-		this.internalQueue = new LinkedBlockingQueue<String>();
+		this.internalQueue = new LinkedBlockingQueue<Message>();
 	}
 
 	public void run() {
-		Supplier<String> socketOutput = () -> {
+		Gson gson = new Gson();
+		Supplier<Message> socketOutput = () -> {
 			try {
-				String received = internalQueue.take();
+				Message received = internalQueue.take();
 				return received;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				return null;
 			}
 		};
-		Stream<String> stream = Stream.generate(socketOutput);
+		Stream<Message> stream = Stream.generate(socketOutput);
 		stream.map(s -> {
-			queue.add(s);
+			queue.add(gson.toJson(s));
 			return s;
 		}).allMatch(s -> s != null);
 		System.out.println("here");
 	}
 	
 	
-	public void sendMessage(String message) {
+	public void sendMessage(Message message) {
 		internalQueue.add(message);
 	}
 }

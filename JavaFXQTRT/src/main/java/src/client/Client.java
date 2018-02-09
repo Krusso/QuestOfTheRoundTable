@@ -3,76 +3,129 @@ package src.client;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
-import src.client.GameBoardController;
 import src.game_logic.AdventureCard;
-import src.game_logic.EventCard;
 import src.game_logic.Rank;
+import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
-import src.game_logic.TournamentCard;
 import src.game_logic.WeaponCard;
+import src.messages.Message;
+import src.messages.Message.MESSAGETYPES;
+import src.messages.game.MiddleCardServer;
+import src.messages.game.TurnNextServer;
+import src.messages.hand.AddCardsServer;
+import src.messages.quest.QuestUpServer;
+import src.messages.rank.RankServer;
+import src.messages.tournament.TournamentAcceptDeclineClient;
+import src.messages.tournament.TournamentAcceptDeclineServer;
+import src.messages.tournament.TournamentPickCardsServer;
+import src.messages.tournament.TournamentWinServer;
 
-
-class Task implements Runnable{
-	private File cardDir;
-	private GameBoardController gbc;
-	private String typeOfTask;
-	private String msg;
-	private static boolean[] winners = {false,false,false,false};
-	Task(String typeOfTask, String msg, GameBoardController gbc) {
-		this.msg = msg;
-		this.typeOfTask = typeOfTask;
-		this.gbc = gbc;
-		cardDir = new File("src/main/resources/"); 
+class AddCardsTask extends Task{
+	private int player;
+	private String[] cards;
+	public AddCardsTask(GameBoardController gbc, int player, String[] cards) {
+		super(gbc);
+		this.player = player;
+		this.cards = cards;
 	}
+
 	@Override
 	public void run() {
-		switch(typeOfTask) {
-		case "add cards" :{
-			displayHand(msg);
-			break;
-		}
-		case "turn next" :{
-			nextTurn(msg);
-			break;
-		}
-		case "middle card" :{
-			middleCard(msg);
-			break;
-		}
-		case "tournament accept":{
-			showAcceptDecline();
-			break;
-		}
-		case "tournament picking":{
-			showEndTurn();
-			break;
-		}
-		case "quest up": {
-			turnFaceDownFieldUp();
-			break;
-		}
-		case "rank set": {
-			setRank();
-			break;
-		}
-		case "tournament won": {
-			tournamentWon();
-			break;
-		}
+		File[] list = cardDir.listFiles();
+		for(String card: cards) {
+			//find file associated to name
+			for(File f : list) {
+				if (f.getName().contains(card+".jpg")) {
+					switch (f.getName().charAt(0)) {
+					case 'A':{
+						AdventureCard c = new AdventureCard(card, f.getPath());
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						gbc.addCardToHand(c, player);
+						break;
+					}
+					//						case 'E':{
+					//							gbc.addCardToHand(new EventCard(card, f.getPath()),playerNumber);
+					//							break;
+					//						}
+					//						case 'T':{
+					//							gbc.addCardToHand(new TournamentCard(card, f.getPath()),playerNumber);
+					//							break;
+					//						}
+					case 'W':{
+						AdventureCard weapon = new WeaponCard(card, f.getPath());
+						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						gbc.addCardToHand(weapon, player);
+						break;
+					}
+					default:{
+						break;
+					}
+					}
+				}
+			}
 		}
 	}
-	private void tournamentWon() {
-		
-		int playerNum = msg.charAt("tournament won: player ".length()) - '0';
-		winners[playerNum] = true;
+}
+class TurnNextTask extends Task{
+	private int player;
+	public TurnNextTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+
+	//Msg should be a string with a number which indicates which players has the turn
+	@Override
+	public void run() {
+		gbc.clearPlayField();
+		gbc.setPlayerTurn(player);
+		gbc.showPlayerHand(player);
+
+	}
+}
+
+class MiddleCardTask extends Task{
+	private String card;
+	public MiddleCardTask(GameBoardController gbc, String card) {
+		super(gbc);
+		this.card = card;
+	}
+
+	//Msg should be the name of the card
+	@Override
+	public void run() {
+		System.out.println("Processing msg: middle card:" + card);
+		//find story card
+		File[] list = cardDir.listFiles();
+		for(File c : list) {
+			if(c.getName().contains(card)) {
+				StoryCard sc= new StoryCard(card, c.getPath());
+				gbc.setStoryCard(sc);
+				System.out.println("Set story card to:" + sc.getName());
+			}
+		}
+	}
+}
+
+class TournamentWonTask extends Task{
+	private int player;
+	public TournamentWonTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+
+	@Override
+	public void run() {
+		winners[player] = true;
 
 		String display = "Player(s) ";
 		for(int i = 0 ; i < winners.length; i++) {
@@ -87,108 +140,87 @@ class Task implements Runnable{
 		display = display + " won the tournmanet!";
 		gbc.toast.setText(display);
 		gbc.toast.setVisible(true);
-		
+
 	}
-	private void setRank() {
-		int playerNum = msg.charAt("rank set: player ".length()) - '0';
-		
-		String[] splits = msg.split(" ");
-		String rank = splits[splits.length-1];
+}
+
+class SetRankTask extends Task{
+	private RANKS rank;
+	private int player;
+	public SetRankTask(GameBoardController gbc, RANKS newrank, int player) {
+		super(gbc);
+		this.rank = newrank;
+		this.player = player;
+	}
+
+	@Override
+	public void run() {
 		Rank.RANKS r = Rank.RANKS.SQUIRE;
-//		if(rank.equals("SQUIRE")) r = Rank.RANKS.SQUIRE;
-		if(rank.equals("KNIGHT")) r = Rank.RANKS.KNIGHT;
-		if(rank.equals("CHAMPION")) r = Rank.RANKS.CHAMPION;
-		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
-		gbc.setPlayerRank(playerNum, r);
-		
+		if(rank.name().equals("KNIGHT")) r = Rank.RANKS.KNIGHT;
+		if(rank.name().equals("CHAMPION")) r = Rank.RANKS.CHAMPION;
+		if(rank.name().equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
+		gbc.setPlayerRank(player, r);
+
+	}
+}
+class ShowEndTurn extends Task {
+	public ShowEndTurn(GameBoardController gbc, int player) {
+		super(gbc);
 	}
 
 	// no msg expected
-	private void showEndTurn() {
+	@Override
+	public void run() {
 		System.out.println("Processing msg: pick card tournament");
 		gbc.showEndTurn();
 		gbc.addDraggable();
 	}
-	
+}
+
+class ShowAcceptDeclineTask extends Task{
+	private int player;
+	public ShowAcceptDeclineTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+
 	// no msg expected
-	private void showAcceptDecline() {
+	@Override
+	public void run() {
 		System.out.println("Processing msg: accept/decline tournament");
 		gbc.showAcceptDecline();
 	}
-	
-	private void displayHand(String msg) {
-		System.out.println("Processing msg: "+msg);
-		File[] list = cardDir.listFiles();
-		int playerNumber = Integer.parseInt(msg.charAt(7) + "");
-		String[] hand = msg.substring("player # [".length(), msg.length()-1).split(", ");
-		for(String card: hand) {
-			//find file associated to name
-			for(File f : list) {
-				if (f.getName().contains(card+".jpg")) {
-					//					System.out.println("Adding image: ("+ f.getName()+") to hand found in " + f.getPath());
-					switch (f.getName().charAt(0)) {
-					case 'A':{
-						AdventureCard c = new AdventureCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
-						gbc.addCardToHand(c, playerNumber);
-						break;
-					}
-					//						case 'E':{
-					//							gbc.addCardToHand(new EventCard(card, f.getPath()),playerNumber);
-					//							break;
-					//						}
-					//						case 'T':{
-					//							gbc.addCardToHand(new TournamentCard(card, f.getPath()),playerNumber);
-					//							break;
-					//						}
-					case 'W':{
-						AdventureCard weapon = new WeaponCard(card, f.getPath());
-						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
-						gbc.addCardToHand(weapon, playerNumber);
-						break;
-					}
-					default:{
-						break;
-					}
-					}
-				}
-			}
-		}
-	}
-	
-	private void turnFaceDownFieldUp() {
-		int p = msg.charAt(msg.indexOf("player") + "player ".length()) - '0';
-		gbc.showFaceDownFieldCards(p);
-		
+}
+
+class ShowTurnFaceDownFieldUp extends Task{
+	private int player;
+	public ShowTurnFaceDownFieldUp(GameBoardController gbc, String[][] cards, int player) {
+		super(gbc);
+		this.player = player;
 	}
 
-	//Msg should be a string with a number which indicates which players has the turn
-	private void nextTurn(String msg) {
-		int playerTurn = msg.charAt(msg.length()-1) - '0';
-		System.out.println("Processing msg: " + msg );
-		gbc.clearPlayField();
-		gbc.setPlayerTurn(playerTurn);
-		gbc.showPlayerHand(playerTurn);
-		
-	}
+	@Override
+	public void run() {
+		gbc.showFaceDownFieldCards(player);
 
-	//Msg should be the name of the card
-	private void middleCard(String msg) {
-		System.out.println("Processing msg: middle card:" + msg);
-		//find story card
-		File[] list = cardDir.listFiles();
-		for(File c : list) {
-			if(c.getName().contains(msg)) {
-				StoryCard sc= new StoryCard(msg, c.getPath());
-				gbc.setStoryCard(sc);
-				System.out.println("Set story card to:" + sc.getName());
-			}
-		}
+	}
+}
+
+abstract class Task implements Runnable{
+	protected File cardDir;
+	protected GameBoardController gbc;
+	protected static boolean[] winners = {false,false,false,false};
+	public Task() { };
+	public Task(GameBoardController gbc) {
+		this.gbc = gbc;
+		cardDir = new File("src/main/resources/"); 
 	}
 }
 
 public class Client implements Runnable {
 
+	private Gson gson = new Gson();
+	private JsonParser json = new JsonParser();
 	private File cardDir;
 	private String host;
 	private int port;
@@ -216,37 +248,44 @@ public class Client implements Runnable {
 			client = new Socket(host, port);
 			writeStream = new PrintStream(client.getOutputStream());
 			readStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
-			String message;
 
 			while(client.isConnected()) {
 				if(readStream.ready()) {
 					currentMessage = readStream.readLine();
 					System.out.println("Messsage received: " + currentMessage);
-
-					if(currentMessage.startsWith("add cards: ")) {
-						Platform.runLater(new Task("add cards", currentMessage.substring(currentMessage.indexOf("player")), gbc));
+					JsonObject obj = json.parse(currentMessage).getAsJsonObject();
+					String message = obj.get("message").getAsString();
+					if(message.equals(MESSAGETYPES.ADDCARDS.name())) {
+						AddCardsServer request = gson.fromJson(obj, AddCardsServer.class);
+						Platform.runLater(new AddCardsTask(gbc, request.player, request.cards));
 					}
-					if(currentMessage.startsWith("turn next:")) {
-						Platform.runLater(new Task("turn next", currentMessage.substring(currentMessage.indexOf("turn next:")), gbc));
+					if(message.equals(MESSAGETYPES.TURNNEXT.name())) {
+						TurnNextServer request = gson.fromJson(obj, TurnNextServer.class);
+						Platform.runLater(new TurnNextTask(gbc, request.player));
 					}
-					if(currentMessage.startsWith("middle card:")) {
-						String cardName = currentMessage.substring("middle card: ".length());
-						Platform.runLater(new Task("middle card", cardName, gbc));
+					if(message.equals(MESSAGETYPES.SHOWMIDDLECARD.name())) {
+						MiddleCardServer request = gson.fromJson(obj, MiddleCardServer.class);
+						Platform.runLater(new MiddleCardTask(gbc, request.card));
 					}
-					if(currentMessage.startsWith("tournament accept: player")) {
-						Platform.runLater(new Task("tournament accept","",gbc));
+					if(message.equals(MESSAGETYPES.JOINTOURNAMENT.name())) {
+						TournamentAcceptDeclineServer request = gson.fromJson(obj, TournamentAcceptDeclineServer.class);
+						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
 					}
-					if(currentMessage.startsWith("tournament picking: player")) {
-						Platform.runLater(new Task("tournament picking","",gbc));
+					if(message.equals(MESSAGETYPES.PICKTOURNAMENT.name())) {
+						TournamentPickCardsServer request = gson.fromJson(obj, TournamentPickCardsServer.class);
+						Platform.runLater(new ShowEndTurn(gbc, request.player));
 					}
-					if(currentMessage.startsWith("quest up:")) {
-						Platform.runLater(new Task("quest up", currentMessage, gbc));
+					if(message.equals(MESSAGETYPES.UPQUEST.name())) {
+						QuestUpServer request = gson.fromJson(obj, QuestUpServer.class);
+						Platform.runLater(new ShowTurnFaceDownFieldUp(gbc, request.cards, request.player));
 					}
-					if(currentMessage.startsWith("rank set:")) {
-						Platform.runLater(new Task("rank set", currentMessage, gbc));
+					if(message.equals(MESSAGETYPES.RANKUPDATE.name())) {
+						RankServer request = gson.fromJson(obj, RankServer.class);
+						Platform.runLater(new SetRankTask(gbc, request.newrank, request.player));
 					}
-					if(currentMessage.startsWith("tournament won:")) {
-						Platform.runLater(new Task("tournament won", currentMessage, gbc));
+					if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
+						TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
+						Platform.runLater(new TournamentWonTask(gbc, request.player));
 					}
 				}
 			}
@@ -259,8 +298,8 @@ public class Client implements Runnable {
 		}
 	}
 
-	public void send(String message) {
+	public void send(Message message) {
 		System.out.println("Sending message: " + message);
-		writeStream.println(message);
+		writeStream.println(gson.toJson(message));
 	}
 }

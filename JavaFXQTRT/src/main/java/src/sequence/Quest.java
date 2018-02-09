@@ -8,13 +8,11 @@ import src.game_logic.AdventureCard;
 import src.game_logic.QuestCard;
 import src.game_logic.FoeCard;
 import src.game_logic.TestCard;
-import java.util.concurrent.LinkedBlockingQueue;
+import src.messages.QOTRTQueue;
+import src.messages.quest.QuestPickStagesClient;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.ListIterator;
-
 import src.player.BattlePointCalculator;
 
 public class Quest {
@@ -37,24 +35,23 @@ public class Quest {
 	}
 	
 	// verification for quest stages will be done on client side
-	public void setUpQuest(LinkedBlockingQueue<String> actions, PlayerManager pm) {
-		String string;
+	public void setUpQuest(QOTRTQueue actions, PlayerManager pm) {
 		while(quest.size()<stages) {
 			try {
-				string = actions.take();
-				Pattern p = Pattern.compile("game quest stage picked: (\\d) cards: (.*)");
-				Matcher m = p.matcher(string);
-				m.find();
-				int stage = Integer.parseInt(m.group(1));
-				String[] cards = m.group(2).split(",");
+				QuestPickStagesClient qpsc = actions.take(QuestPickStagesClient.class);
+				int stage = qpsc.stage;
+				String[] cards = qpsc.cards;
 				List<Card> cardlist = new ArrayList<Card>();
 				for(int i=0; i<cards.length; i++) {
 					AdventureCard card = (AdventureCard) sponsor.getCard(cards[i]);
+					System.out.println(sponsor.hand());
+					System.out.println(cards[i]);
+					System.out.println(card);
 					if (card.checkIfNamed(questCard.getName(), questCard.getFoe())) card.name();
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
-				System.out.println("Quest Stage recieved: " + string);
+				//System.out.println("Quest Stage recieved: " + string);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -82,7 +79,7 @@ public class Quest {
 	
 	public int getNumCards() {
 		int count = 0;
-		for(List stage : quest) {
+		for(List<Card> stage : quest) {
 			count += stage.size();
 		}
 		return count;

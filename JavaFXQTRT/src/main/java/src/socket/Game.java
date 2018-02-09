@@ -1,13 +1,12 @@
 package src.socket;
 
 
-import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.StoryCard;
-import src.player.Player;
+import src.messages.QOTRTQueue;
+import src.messages.game.ContinueGameClient;
+import src.messages.game.TurnNextClient;
 import src.player.PlayerManager;
 import src.sequence.GameSequenceManager;
 import src.sequence.SequenceManager;
@@ -18,7 +17,7 @@ public class Game extends Thread{
 
 	private OutputController output;
 	private GameModel gm;
-	private LinkedBlockingQueue<String> actions;
+	private QOTRTQueue actions;
 
 	public Game(OutputController output, GameModel gm) {
 		this.output = output;
@@ -55,22 +54,13 @@ public class Game extends Thread{
 				break;
 			}
 
-			String message = "";
-			while(!message.equals("game next turn")) {
-				try {
-					message = actions.take();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			System.out.println("Starting next turn");
+			// wait until client is ready for the next turn
+			actions.take(ContinueGameClient.class);
 		}
 
 	}
 
-	public void setActionQueue(LinkedBlockingQueue<String> actionQueue) {
+	public void setActionQueue(QOTRTQueue actionQueue) {
 		this.actions = actionQueue;
 	}
 

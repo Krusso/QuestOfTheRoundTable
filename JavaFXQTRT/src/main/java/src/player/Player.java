@@ -16,7 +16,7 @@ public class Player {
 	public static enum STATE {
 		NEUTRAL, QUESTIONED, YES, NO, PICKING, DISCARDING, WIN, WINNING, GAMEWON,
 		SPONSORING, QUESTQUESTIONED // >:(
-, BIDDING, TESTDISCARD, QUESTPICKING
+, BIDDING, TESTDISCARD, QUESTPICKING, QUESTJOINQUESTIONED
 	};
 	
 	protected RANKS rank;
@@ -75,7 +75,7 @@ public class Player {
 		faceUp.empty();
 	}
 
-	protected String hand() {
+	public String hand() {
 		return hand.toString();
 	}
 
