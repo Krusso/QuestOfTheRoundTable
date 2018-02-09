@@ -75,7 +75,7 @@ public class Player {
 		faceUp.empty();
 	}
 
-	protected String hand() {
+	public String hand() {
 		return hand.toString();
 	}
 

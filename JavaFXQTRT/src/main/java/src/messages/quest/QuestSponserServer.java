@@ -12,7 +12,7 @@ public class QuestSponserServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = "SPONSER QUEST";
+		this.message = MESSAGETYPES.SPONSERQUEST;
 	}
 
 }

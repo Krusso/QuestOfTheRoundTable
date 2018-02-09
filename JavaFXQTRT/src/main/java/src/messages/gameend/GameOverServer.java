@@ -13,7 +13,7 @@ public class GameOverServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "GAME OVER";
+		this.message = MESSAGETYPES.GAMEOVER;
 	}
 
 }

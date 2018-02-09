@@ -13,7 +13,7 @@ public class MiddleCardServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "SHOW MIDDLECARD";
+		this.message = MESSAGETYPES.SHOWMIDDLECARD;
 	}
 
 }

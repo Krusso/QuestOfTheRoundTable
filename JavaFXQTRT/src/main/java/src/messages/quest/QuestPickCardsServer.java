@@ -12,7 +12,7 @@ public class QuestPickCardsServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = "PICK QUEST";
+		this.message = MESSAGETYPES.PICKQUEST;
 	}
 
 }

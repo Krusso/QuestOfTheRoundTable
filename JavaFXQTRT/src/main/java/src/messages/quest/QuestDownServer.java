@@ -13,7 +13,7 @@ public class QuestDownServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "DOWN QUEST";
+		this.message = MESSAGETYPES.DOWNQUEST;
 	}
 
 }

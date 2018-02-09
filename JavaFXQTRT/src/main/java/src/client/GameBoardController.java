@@ -22,6 +22,9 @@ import src.game_logic.AdventureCard;
 import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
+import src.messages.game.ContinueGameClient;
+import src.messages.tournament.TournamentAcceptDeclineClient;
+import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
 	
@@ -244,22 +247,22 @@ public class GameBoardController implements Initializable{
 			this.removeDraggable();
 			playerManager.faceDownFaceDownCards(playerManager.getCurrentPlayer());
 			
-			c.send("game tournament picked: player " + playerManager.getCurrentPlayer() + " " + playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
+			c.send(new TournamentPickCardsClient(playerManager.getCurrentPlayer(), 
+					playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer()).stream().map(i -> i.getName()).toArray(size -> new String[size])));
 		});
 		this.accept.setOnAction(e -> {
 			System.out.println("accepted tournament");
 			this.setButtonsInvisible();
-			c.send("game tournament accept: player " + playerManager.getCurrentPlayer());
+			c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
 		});
 		this.decline.setOnAction(e -> {
 			System.out.println("declined tournament");
 			this.setButtonsInvisible();
-			c.send("game tournament decline: player " + playerManager.getCurrentPlayer());
+			c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
 		});
 		this.nextTurn.setOnAction(e -> {
 			System.out.println("Clicked next turn");
-			
-			c.send("game next turn");
+			c.send(new ContinueGameClient());
 		});
 		this.setButtonsInvisible();
 	}

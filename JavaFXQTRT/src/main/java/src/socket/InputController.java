@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.game.GameStartClient;
 
@@ -53,7 +54,7 @@ public class InputController extends Thread {
 			return;
 		}
 		
-		if(obj.get("message") != null && obj.get("message").getAsString().equals("START GAME")) {
+		if(obj.get("message") != null && obj.get("message").getAsString().equals(MESSAGETYPES.STARTGAME.name())) {
 			GameStartClient gsc = gson.fromJson(obj, GameStartClient.class);
 			gm.setNumPlayers(gsc.player);
 			game.setActionQueue(actionQueue);

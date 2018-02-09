@@ -3,7 +3,11 @@ package src.messages;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+
+import src.messages.Message.MESSAGETYPES;
+import src.messages.events.EventDiscardCardsClient;
 
 public class QOTRTQueue extends LinkedBlockingQueue<String> {
 	/**

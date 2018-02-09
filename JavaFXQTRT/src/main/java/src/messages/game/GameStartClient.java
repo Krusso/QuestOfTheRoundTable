@@ -11,7 +11,7 @@ public class GameStartClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "START GAME";
+		this.message = MESSAGETYPES.STARTGAME;
 	}
 	
 }

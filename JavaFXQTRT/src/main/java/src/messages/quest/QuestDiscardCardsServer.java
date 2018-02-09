@@ -12,7 +12,7 @@ public class QuestDiscardCardsServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = "DISCARD QUEST";
+		this.message = MESSAGETYPES.DISCARDQUEST;
 	}
 
 }

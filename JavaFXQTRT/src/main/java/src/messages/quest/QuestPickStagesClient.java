@@ -15,7 +15,7 @@ public class QuestPickStagesClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "PICK STAGES";
+		this.message = MESSAGETYPES.PICKSTAGES;
 	}
 
 }

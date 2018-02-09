@@ -12,7 +12,7 @@ public class TournamentWinServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "WIN TOURNAMENT";
+		this.message = MESSAGETYPES.WINTOURNAMENT;
 	}
 
 }

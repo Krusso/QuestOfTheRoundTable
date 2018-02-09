@@ -13,7 +13,7 @@ public class ShowHandServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "SHOW CARDS";
+		this.message = MESSAGETYPES.SHOWCARDS;
 	}
 
 }

@@ -13,7 +13,7 @@ public class QuestUpServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "UP QUEST";
+		this.message = MESSAGETYPES.UPQUEST;
 	}
 
 }

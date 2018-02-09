@@ -12,7 +12,11 @@ import org.junit.Test;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.TournamentCard;
+import src.messages.Message;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
+import src.messages.tournament.TournamentAcceptDeclineClient;
+import src.messages.tournament.TournamentPickCardsClient;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -27,7 +31,7 @@ public class TestTournament {
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
-		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
@@ -35,12 +39,12 @@ public class TestTournament {
 		// accept tournament as all 4 players
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament accept: player " + i)) break;
+				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
-			input.put("game tournament accept: player " + i);
+			input.put(new TournamentAcceptDeclineClient(i, true));
 			actualOutput.take();
 			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
 		}
@@ -48,43 +52,39 @@ public class TestTournament {
 		// select cards as all 4 players
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament picking: player " + i)) break;
+				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
-			if(i == 0) {
-				input.put("game tournament picked: player 0 Lance,Lance");	
-			} else if(i == 1) {
-				input.put("game tournament picked: player 1 Lance,Lance");	
-			} else if(i == 2) {
-				input.put("game tournament picked: player 2 Lance");	
-			} else if(i == 3) {
-				input.put("game tournament picked: player 3 Lance");	
+			if(i == 0 || i == 1) {
+				input.put(new TournamentPickCardsClient(i, new String[] {"Lance", "Lance"}));
+			} else if(i == 2 || i == 3) {
+				input.put(new TournamentPickCardsClient(i, new String[] {"Lance"}));
 			}   
 		}
-		
+
 		// select cards for top 2 players
 		for(int i = 0; i < 2; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament picking: player " + i)) break;
+				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
 			if(i == 0) {
-				input.put("game tournament picked: player 0 Excalibur");	
+				input.put(new TournamentPickCardsClient(i, new String[] {"Excalibur"}));
 			} else if(i == 1) {
-				input.put("game tournament picked: player 1 Dagger");
+				input.put(new TournamentPickCardsClient(i, new String[] {"Dagger"}));
 			}
 		}
 
 
 		// player 0 won and player 1 won
 		while(true) {
-			String string = actualOutput.take();
+			Message string = actualOutput.take();
 			System.out.println(string);
-			if(string.equals("tournament won: player 0")) break;
+			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 0) break;
 		}
 		assertEquals(7,players.get(0).getShields());
 		assertEquals(0,players.get(1).getShields());
@@ -98,7 +98,7 @@ public class TestTournament {
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
-		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
@@ -106,12 +106,12 @@ public class TestTournament {
 		// accept tournament as all 4 players
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament accept: player " + i)) break;
+				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
-			input.put("game tournament accept: player " + i);
+			input.put(new TournamentAcceptDeclineClient(i, true));
 			actualOutput.take();
 			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
 		}
@@ -119,43 +119,35 @@ public class TestTournament {
 		// select cards as all 4 players
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament picking: player " + i)) break;
+				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
-			if(i == 0) {
-				input.put("game tournament picked: player 0 Lance,Lance");	
-			} else if(i == 1) {
-				input.put("game tournament picked: player 1 Lance,Lance");	
-			} else if(i == 2) {
-				input.put("game tournament picked: player 2 Lance");	
-			} else if(i == 3) {
-				input.put("game tournament picked: player 3 Lance");	
-			}   
+			if(i == 0 || i == 1) {
+				input.put(new TournamentPickCardsClient(i, new String[] {"Lance", "Lance"}));	
+			} else if(i == 2 || i == 3) {
+				input.put(new TournamentPickCardsClient(i, new String[] {"Lance"}));
+			}
 		}
-		
+
 		// select cards for top 2 players
 		for(int i = 0; i < 2; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament picking: player " + i)) break;
+				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
-			if(i == 0) {
-				input.put("game tournament picked: player 0 Dagger");	
-			} else if(i == 1) {
-				input.put("game tournament picked: player 1 Dagger");
-			}
+			input.put(new TournamentPickCardsClient(i, new String[] {"Dagger"}));	
 		}
 
 
 		// player 0 won and player 1 won
 		while(true) {
-			String string = actualOutput.take();
+			Message string = actualOutput.take();
 			System.out.println(string);
-			if(string.equals("tournament won: player 1")) break;
+			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 1) break;
 		}
 		assertEquals(7,players.get(0).getShields());
 		assertEquals(7,players.get(1).getShields());
@@ -169,7 +161,7 @@ public class TestTournament {
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
-		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 
@@ -177,11 +169,11 @@ public class TestTournament {
 		iter.forEachRemaining(i -> players.add(i));
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament accept: player " + i)) break;
+				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
-			input.put("game tournament decline: player " + i);
+			input.put(new TournamentAcceptDeclineClient(i, false));
 			Thread.sleep(100);
 			assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 		}
@@ -199,7 +191,7 @@ public class TestTournament {
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
-		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 
@@ -207,17 +199,17 @@ public class TestTournament {
 		iter.forEachRemaining(i -> players.add(i));
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament accept: player " + i)) break;
+				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
 			if(i == 0) { 
-				input.put("game tournament accept: player " + i); 
+				input.put(new TournamentAcceptDeclineClient(i, true));
 				actualOutput.take();
 				assertEquals(Player.STATE.YES, players.get(i).getQuestion());
 			} else { 
-				input.put("game tournament decline: player " + i);
+				input.put(new TournamentAcceptDeclineClient(i, false));
 				actualOutput.take();
 				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 			}
@@ -236,7 +228,7 @@ public class TestTournament {
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();
-		LinkedBlockingQueue<String> actualOutput = oc.internalQueue;
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
@@ -244,12 +236,12 @@ public class TestTournament {
 		// accept tournament as all 4 players
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament accept: player " + i)) break;
+				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
-			input.put("game tournament accept: player " + i);
+			input.put(new TournamentAcceptDeclineClient(i, true));
 			actualOutput.take();
 			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
 		}
@@ -257,28 +249,28 @@ public class TestTournament {
 		// select cards as all 4 players
 		for(int i = 0; i < 4; i++) {
 			while(true) {
-				String string = actualOutput.take();
+				Message string = actualOutput.take();
 				System.out.println(string);
-				if(string.equals("tournament picking: player " + i)) break;
+				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
 			if(i == 0) {
-				input.put("game tournament picked: player 0 Excalibur,Lance,Lance,Battle-ax");	
+				input.put(new TournamentPickCardsClient(i, new String[] {"Excalibur", "Lance", "Lance", "Battle-ax"}));	
 			} else if(i == 1) {
-				input.put("game tournament picked: player 1 Excalibur,Lance,Lance");	
+				input.put(new TournamentPickCardsClient(i, new String[] {"Excalibur", "Lance", "Lance"}));		
 			} else if(i == 2) {
-				input.put("game tournament picked: player 2 Excalibur,Lance");	
+				input.put(new TournamentPickCardsClient(i, new String[] {"Excalibur", "Lance"}));	
 			} else if(i == 3) {
-				input.put("game tournament picked: player 3 Excalibur");	
+				input.put(new TournamentPickCardsClient(i, new String[] {"Excalibur"}));	
 			}   
 		}
 
 
 		// player 0 won
 		while(true) {
-			String string = actualOutput.take();
+			Message string = actualOutput.take();
 			System.out.println(string);
-			if(string.equals("tournament won: player 0")) break;
+			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 0) break;
 		}
 		assertEquals(7,players.get(0).getShields());
 		assertEquals(0,players.get(1).getShields());

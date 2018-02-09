@@ -12,7 +12,7 @@ public class QuestBidServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = "BID QUEST";
+		this.message = MESSAGETYPES.BIDQUEST;
 	}
 
 }

@@ -7,7 +7,7 @@ public class ContinueGameClient extends Message {
 
 	@Override
 	public void setMessage() {
-		this.message = "CONTINUE GAME";
+		this.message = MESSAGETYPES.CONTINUEGAME;
 	}
 	
 }

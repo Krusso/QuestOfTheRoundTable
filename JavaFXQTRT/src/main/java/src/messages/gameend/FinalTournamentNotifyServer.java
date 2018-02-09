@@ -11,7 +11,7 @@ public class FinalTournamentNotifyServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = "JOINED FINAL TOURNAMENT";
+		this.message = MESSAGETYPES.JOINEDFINALTOURNAMENT;
 	}
 
 }

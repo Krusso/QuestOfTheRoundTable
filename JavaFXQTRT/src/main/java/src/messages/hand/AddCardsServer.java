@@ -13,7 +13,7 @@ public class AddCardsServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "ADD CARDS";
+		this.message = MESSAGETYPES.ADDCARDS;
 	}
 
 }

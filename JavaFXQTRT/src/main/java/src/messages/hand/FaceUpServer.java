@@ -13,7 +13,7 @@ public class FaceUpServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "FACEDOWN CARDS";
+		this.message = MESSAGETYPES.FACEUPCARDS;
 	}
 
 }

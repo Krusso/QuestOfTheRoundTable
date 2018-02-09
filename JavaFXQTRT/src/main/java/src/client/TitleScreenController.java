@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import src.messages.game.GameStartClient;
 
 public class TitleScreenController implements Initializable{
 
@@ -72,7 +73,7 @@ public class TitleScreenController implements Initializable{
 			gbc.initPlayerManager(players);
 			
 			//send gameStart message.
-			client.send("game start:" + n);
+			client.send(new GameStartClient(players));
 		}
 	}
 	

@@ -17,7 +17,7 @@ public class EventDiscardCardsServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "EVENT DISCARD";
+		this.message = MESSAGETYPES.EVENTDISCARD;
 	}
 
 }

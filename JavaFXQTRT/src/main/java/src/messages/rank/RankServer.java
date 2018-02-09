@@ -16,7 +16,7 @@ public class RankServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = "RANK UPDATE";
+		this.message = MESSAGETYPES.RANKUPDATE;
 	}
 
 }
