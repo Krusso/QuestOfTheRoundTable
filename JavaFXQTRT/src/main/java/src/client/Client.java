@@ -21,6 +21,8 @@ import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
 import src.game_logic.WeaponCard;
+import src.game_logic.FoeCard;
+import src.game_logic.TestCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.MiddleCardServer;
@@ -57,8 +59,20 @@ class AddCardsTask extends Task{
 						gbc.addCardToHand(c, player);
 						break;
 					}
+					case 'F' : {
+						FoeCard c = new FoeCard(card, f.getPath());
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						gbc.addCardToHand(c, player);
+						break;
+					}
+					case 'T' : {
+						TestCard c = new TestCard(card, f.getPath());
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						gbc.addCardToHand(c, player);
+						break;
+					}
 					case 'W':{
-						AdventureCard weapon = new WeaponCard(card, f.getPath());
+						WeaponCard weapon = new WeaponCard(card, f.getPath());
 						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(weapon, player);
 						break;

@@ -97,6 +97,14 @@ public class UIPlayerManager {
 	public ArrayList<AdventureCard> getFaceDownCardsAsList(int playerNum){
 		return players[playerNum].getFaceDownDeck().getDeck();
 	}
+	public String[] getFaceDownCardNames(int playerNum){
+		ArrayList<AdventureCard> faceDownCards = players[playerNum].getFaceDownDeck().getDeck();
+		String[] cardNames = new String[faceDownCards.size()];
+		for(int i = 0 ; i <faceDownCards.size(); i++) {
+			cardNames[i] = faceDownCards.get(i).getName();
+		}
+		return cardNames;
+	}
 	
 	public int getNumPlayers() {
 		return players.length;

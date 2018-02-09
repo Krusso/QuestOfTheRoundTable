@@ -11,6 +11,10 @@ public class TestCard extends AdventureCard {
 		this.namedMinBids = 3;
 	}
 	
+	public TestCard(String name, String path) {
+		super(name, path);
+	}
+	
 	public TestCard(String name, int minBids, TYPE type) {
 		super(name, type);
 		this.minBids = minBids;

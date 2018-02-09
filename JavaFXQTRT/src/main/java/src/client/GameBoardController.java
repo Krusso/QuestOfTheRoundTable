@@ -35,6 +35,9 @@ public class GameBoardController implements Initializable{
 	private static final int NUM_POSITIONS = 4;
 
 	public STATE CURRENT_STATE = STATE.NONE;
+	//TODO::placeholder for now
+	public int currentStage = 0;
+	
 	private Client c;
 	private UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
@@ -238,8 +241,11 @@ public class GameBoardController implements Initializable{
 				c.send(new TournamentPickCardsClient(playerManager.getCurrentPlayer(), 
 						playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer()).stream().map(i -> i.getName()).toArray(size -> new String[size])));
 			}else if(CURRENT_STATE == STATE.PICK_STAGES) {
-				//TODO::Handle PICK_STAGES
-//				c.send(new QuestPickStagesClient(playerManager.getCurrentPlayer(), ));
+				//TODO::Handle PICK_STAGES make sure player plays a card
+				ArrayList<AdventureCard> stageCards = playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer());
+				c.send(new QuestPickStagesClient(playerManager.getCurrentPlayer(), 
+						playerManager.getFaceDownCardNames(playerManager.getCurrentPlayer()),
+						currentStage));
 			}
 		});
 		this.accept.setOnAction(e -> {
@@ -262,6 +268,8 @@ public class GameBoardController implements Initializable{
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
 			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
+				
+				
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
 			}
 		});
