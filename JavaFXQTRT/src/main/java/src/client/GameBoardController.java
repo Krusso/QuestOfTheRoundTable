@@ -1,6 +1,8 @@
 package src.client;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -10,20 +12,27 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
 import src.game_logic.Card;
+import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 
 public class GameBoardController implements Initializable{
+	
+	private static final int NUM_POSITIONS = 4;
 
 	private Client c;
 	private UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
+	
 
-	@FXML private Pane handWindow;
 	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
@@ -33,109 +42,146 @@ public class GameBoardController implements Initializable{
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
 	//The pane that holds the other players' hand
-	@FXML private Pane opponentHand1;
-	@FXML private Pane opponentHand2;
-	@FXML private Pane opponentHand3;
-
-	public void initPlayerManager(int numPlayers) {
-		//		players = new UIPlayer[numPlayers];
-		//		for(int i = 0 ; i < players.length ; i++) {
-		//			players[i] = new UIPlayer(i);
-		//		}
-		playerManager = new UIPlayerManager(numPlayers);
-	}
-
-	public void addCardToHand(AdventureCard c, int playerNum) {
-		c.gbc = this;
-		playerManager.addCardToHand(c, playerNum);
-		handWindow.getChildren().add(c.getImageView());
-	}
 
 	
+    //These panes are for hold each player's respective items, e.g hand, face up card, face down cards etc
+    //When rotating, we only rotate these panes.
+    @FXML private Pane playerPane0;
+    @FXML private Pane playerPane1;
+    @FXML private Pane playerPane2;
+    @FXML private Pane playerPane3;
+    private Pane playerPanes[] = new Pane[4];
+    
+	@FXML private Pane playerhand0;
+	@FXML private Pane playerHand1;
+	@FXML private Pane playerHand2;
+	@FXML private Pane playerHand3;
+	@FXML private Pane[] handPanes = new Pane[4];
+	
+	//TODO: make the face down field in FXML
+	//The panes that govern the player's facedown cards
+	@FXML private Pane playerFaceDown0;
+	@FXML private Pane playerFaceDown1;
+	@FXML private Pane playerFaceDown2;
+	@FXML private Pane playerFaceDown3;
+    private Pane[] faceDownPanes = new Pane[4];
+    
+	//TODO: make the faceup field in FXML
+	//The panes that govern the player's faceup cards
+	@FXML private Pane playerFaceUp0;
+	@FXML private Pane playerFaceUp1;
+	@FXML private Pane playerFaceUp2;
+	@FXML private Pane playerFaceUp3;
+	//TODO: initialize these in the init function
+    private Pane[] faceUpPanes = new Pane[4];
+
+    @FXML private ImageView playerRank0;
+    @FXML private ImageView playerRank1;
+    @FXML private ImageView playerRank2;
+    @FXML private ImageView playerRank3;
+    private ImageView[] playerRanks = new ImageView[4];
+
+    @FXML public Text toast;
+    
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		
+		playerPanes[0] = playerPane0;
+		playerPanes[1] = playerPane1;
+		playerPanes[2] = playerPane2;
+		playerPanes[3] = playerPane3;
+		handPanes[0] = playerhand0;
+		handPanes[1] = playerHand1;
+		handPanes[2] = playerHand2; 
+		handPanes[3] = playerHand3;
+		faceDownPanes[0] = playerFaceDown0;
+		faceDownPanes[1] = playerFaceDown1;
+		faceDownPanes[2] = playerFaceDown2;
+		faceDownPanes[3] = playerFaceDown3;
+		faceUpPanes[0] = playerFaceUp0;
+		faceUpPanes[1] = playerFaceUp1;
+		faceUpPanes[2] = playerFaceUp2;
+		faceUpPanes[3] = playerFaceUp3;
+		playerRanks[0] = playerRank0;
+		playerRanks[1] = playerRank1;
+		playerRanks[2] = playerRank2;
+		playerRanks[3] = playerRank3;
+
+	}
+	////Must call this when you click start game in title screen!
+	public void initPlayerManager(int numPlayers) {
+		playerManager = new UIPlayerManager(numPlayers);
+		for(int i = 0 ; i < numPlayers ; i++) {
+			setPlayerRank(i, Rank.RANKS.SQUIRE);;
+		}
+	}
+
+    
+	
+	
+	//Put's Cards into the Pane and repositions it to fit the width
+	private void putCardIntoPane(Pane p, Card... c) {
+		for(Card card : c) {
+			p.getChildren().add(card.getImageView());
+		}
+		//TODO reposition the the cards in this pane
+//		for(int i = 0 ; i < p.getChildren().size() ; i++) {
+//			
+//		}
+	}
+	
+	
+	public void addCardToHand(AdventureCard c, int playerNum) {
+		c.gbc = this;
+		c.faceDownPane = faceDownPanes[playerNum];
+		playerManager.addCardToHand(c, playerNum);
+		handPanes[playerNum].getChildren().add(c.getImageView());
+		repositionCardsInHand(playerNum);
+	}
+	
+
+	//Some raunchy way of setting player perspective to playerNum
+	public void setPlayerPerspectiveTo(int playerNum) {
+		int currentPlayer = playerManager.getCurrentPlayer();
+
+		while(currentPlayer != playerNum) {
+			if(currentPlayer == 3) {
+				currentPlayer = 0;
+			}else {
+				currentPlayer++;
+			}
+			rotatePlayerPosition();
+		}
+
+	}
+	
+	//This rotates the player's pane clockwise 90 degrees
+	private void rotatePlayerPosition() {
+			double posX3 = playerPanes[3].getLayoutX();
+			double posY3 = playerPanes[3].getLayoutY();	
+			for(int i = playerPanes.length-1 ; i >= 0 ; i--) {
+				int pos = i-1 < 0 ? 3 : i-1;
+				if(i == 0) {
+					playerPanes[i].relocate(posX3, posY3);
+				}else {
+					playerPanes[i].relocate(playerPanes[pos].getLayoutX(), playerPanes[pos].getLayoutY());
+				}
+				playerPanes[i].setRotate(playerPanes[i].getRotate() + 90);
+			}
+	}
 	//Repositions the cards in the hand of this player
 	private void repositionCardsInHand(int pNum) {
 		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(pNum);
-		double windowWidth = handWindow.getWidth();
+		double windowWidth = playerhand0.getWidth();
 		for(int i = 0 ; i < currHand.size(); i++) {
 			currHand.get(i).getImageView().setX(windowWidth/currHand.size() * i);
 			currHand.get(i).getImageView().setY(0);
 		}
 	}
-
-	//Reposition all Player's hand in accordance to the current player.
-	//These are some nasty brute force coding but I love it.
-	public void repositionAllHands() {
-		//get current player number
-		int numPlayers = playerManager.getNumPlayers();
-		int currPlayer = playerManager.getCurrentPlayer();
-		//clear the panes for all the opponents hands
-		opponentHand1.getChildren().clear();
-		opponentHand2.getChildren().clear();
-		opponentHand3.getChildren().clear();
-		
-		//put the order of the players in the array (if currPlayer is 1, then order is [2,3,0] for a 4 player game
-		int[] playerOrder = new int[numPlayers-1];
-		//if we only have 2 players, we swap between top and bottom panes (so we are using opponentpane2 and handWindow)
-		if (numPlayers == 2) {
-			int otherPlayer = (currPlayer + 1) % numPlayers;
-			ArrayList<AdventureCard> otherPlayerHand = playerManager.getPlayerHand(otherPlayer);
-			positionHandInPane(2, otherPlayerHand);
-			playerManager.faceDownPlayerHand(otherPlayer);
-		}else {
-			for(int i = 0 ; i < playerOrder.length ; i++) {
-				playerOrder[i] = (currPlayer + 1 + i) % numPlayers;
-			}
-
-			for(int i = 0 ; i < playerOrder.length; i++) {
-				ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerOrder[i]);
-				System.out.println("put player:" + playerOrder[i] + "into pane " + (i+1));
-				positionHandInPane(i+1, currHand);
-				playerManager.faceDownPlayerHand(playerOrder[i]);
-			}
-		}
-		positionHandInPane(0, playerManager.getPlayerHand(playerManager.getCurrentPlayer()));
-	}
-
-	//Puts the hand of a player into the specified pane
-	private void positionHandInPane(int paneNum, ArrayList<AdventureCard> hand) {
-		switch (paneNum) {
-			case 0: {
-				handWindow.getChildren().clear();
-				for(int i = 0 ; i < hand.size(); i++) {
-					handWindow.getChildren().add(hand.get(i).getImageView());
-				}
-				break;
-			}
-			case 1:{
-				opponentHand1.getChildren().clear();
-				for(int i = 0 ; i < hand.size(); i++) {
-					opponentHand1.getChildren().add(hand.get(i).getImageView());
-				}
-				break;
-			}
-			case 2: {
-				opponentHand2.getChildren().clear();
-				for(int i = 0 ; i < hand.size(); i++) {
-					opponentHand2.getChildren().add(hand.get(i).getImageView());
-				}
-				break;
-			}
-			case 3: {
-				opponentHand3.getChildren().clear();
-				for(int i = 0 ; i < hand.size(); i++) {
-					opponentHand3.getChildren().add(hand.get(i).getImageView());
-				}
-				break;
-			}
-		}
-		for(int i = 0 ; i < hand.size(); i++) {
-			hand.get(i).getImageView().setX(handWindow.getWidth()/hand.size() * i);
-			hand.get(i).getImageView().setY(0);
-		}
-	}
-	
 	
 	public void setPlayerTurn(int p) {
+		System.out.println("Set Player Turn to :" + p);
+		setPlayerPerspectiveTo(p);
 		playerManager.setCurrentPlayer(p);
 		this.playerNumber.setText("#" + p);
 	}
@@ -150,10 +196,15 @@ public class GameBoardController implements Initializable{
 		repositionCardsInHand(playerNum);
 	}
 
-	//When current player drags a card over the playfield Pane, we add the card into cards selected
-	public void playCard(Card card, double d, double e) {
-		Bounds boundsHand = handWindow.localToScene(handWindow.getBoundsInLocal());
-		Bounds boundsPlay = playField.localToScene(playField.getBoundsInLocal());
+	//Puts currently selected card into the specified pane with precision of d and e
+	public void playCard(Card card, Pane p, double d, double e) {
+		int currPlayer = playerManager.getCurrentPlayer();
+		
+		//Gets the bounds for the current player's perspective
+		Bounds boundsHand = handPanes[currPlayer].localToScene(handPanes[currPlayer].getBoundsInLocal());// playerhand0.localToScene(playerhand0.getBoundsInLocal());
+		
+		//the bounds to play will be outside of the player's hand
+		Bounds boundsPlay = p.localToScene(p.getBoundsInLocal());//playField.localToScene(playField.getBoundsInLocal());
 
 		// Cards topleft corner = boundsHand.getMinY(), boundsHand.getMinX + d
 		// give +10 on each side of the boundsPlay box to be nice to user
@@ -164,14 +215,15 @@ public class GameBoardController implements Initializable{
 				boundsHand.getMinX() + d >= boundsPlay.getMinX() - 210 &&
 				boundsHand.getMinX() + d <= boundsPlay.getMaxX() + 10 && !card.inPlay) {
 			System.out.println("in the box");
-			handWindow.getChildren().remove(card.getImageView());
-			playField.getChildren().add(card.getImageView());
+			handPanes[currPlayer].getChildren().remove(card.getImageView());
+			p.getChildren().add(card.getImageView());
 			card.inPlay = true;
 			playerManager.playCard((AdventureCard) card, playerManager.getCurrentPlayer());
 			repositionCardsInHand(playerManager.getCurrentPlayer());
-			System.out.println("Length : " + playerManager.getFaceDownLength(playerManager.getCurrentPlayer()));
+//			System.out.println("Length : " + playerManager.getFaceDownLength(playerManager.getCurrentPlayer()));
 			card.getImageView().setX(100 * (playerManager.getFaceDownLength(playerManager.getCurrentPlayer()) - 1) + 10);
 			card.getImageView().setY(0);
+
 		} 
 		// TODO: let user put back to his hand
 		else {
@@ -186,18 +238,13 @@ public class GameBoardController implements Initializable{
 		this.c = c;
 	}
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
-		//		storyContainer.getChildren().add(storyCard);
-	}
-
 	public void setUp() {
 		this.endTurn.setOnAction(e -> {
 			System.out.println("clicked end turn");
 			this.setButtonsInvisible();
 			this.removeDraggable();
-			System.out.println(playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
+			playerManager.faceDownFaceDownCards(playerManager.getCurrentPlayer());
+			
 			c.send("game tournament picked: player " + playerManager.getCurrentPlayer() + " " + playerManager.getFaceDownCards(playerManager.getCurrentPlayer()));
 //			playerManager.getPlayerHand(playerManager.getCurrentPlayer()).forEach(g -> {
 //				SequentialTransition x = g.flipDown();
@@ -217,10 +264,12 @@ public class GameBoardController implements Initializable{
 		});
 		this.nextTurn.setOnAction(e -> {
 			System.out.println("Clicked next turn");
+			
 			c.send("game next turn");
 		});
 		this.setButtonsInvisible();
 	}
+	
 	public void clearPlayField() {
 		this.playField.getChildren().clear();
 	}
@@ -259,4 +308,37 @@ public class GameBoardController implements Initializable{
 		}
 	}
 	
+	
+	//Allow pane to take image views
+	public void setOnDragOverOn(Pane p) {
+		p.setOnDragOver(e->{
+			if(e.getGestureSource() != p && e.getDragboard().hasString()) {
+				e.acceptTransferModes(TransferMode.ANY);
+			}
+		});
+	}
+	
+	public void showFaceDownFieldCards(int p) {
+		playerManager.showFaceDownFieldCards(p);
+	}
+	
+	public void setPlayerRank(int p, Rank.RANKS r) {
+		playerManager.setPlayerRank(p, r);
+		String rank = "";
+		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.jpg";
+		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.jpg";
+		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.jpg";
+//		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
+		if(!rank.isEmpty()) {
+			try {
+				File file = new File(resDir.getPath() + rank);
+				Image img = new Image (new FileInputStream(file));
+				playerRanks[p].setImage(img);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }
+

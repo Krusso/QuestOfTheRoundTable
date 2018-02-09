@@ -44,6 +44,12 @@ public class PlayerView {
 			output.sendMessage("final tournament: player " + ID);
 		} else if(state == Player.STATE.GAMEWON) {
 			output.sendMessage("player won: player " + ID);
+		} else if(state == Player.STATE.BIDDING) {
+			output.sendMessage("quest bidding: player " + ID);
+		} else if(state == Player.STATE.TESTDISCARD) {
+			output.sendMessage("quest bidding discard: player " + ID);
+		} else if(state == Player.STATE.QUESTPICKING) {
+			output.sendMessage("quest picking: player " + ID);
 		}
 	}
 

@@ -7,13 +7,10 @@ import java.io.FileNotFoundException;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import src.client.GameBoardController;
@@ -24,6 +21,7 @@ public abstract class Card {
 	private Image img;
 	private ImageView imgView;
 	public GameBoardController gbc;
+	public Pane faceDownPane;
 
 	private double startX = 0;
 	private double startY = 0;
@@ -60,45 +58,7 @@ public abstract class Card {
 		}
 	}
 	
-	/*
-	 * copied and edited from
-	 * https://stackoverflow.com/questions/37117475/attach-back-cover-to-a-card-image
-	 */
-	public SequentialTransition flipUp() {
-        // first 90° -> show back
-        RotateTransition rotator1 = createRotator(0, 90);
-
-        // from 90° to 180° show front
-        rotator1.setOnFinished(evt -> this.faceUp());
-        RotateTransition rotator2 = createRotator(90, 180);
-
-        SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
-        rotator.setCycleCount(1);
-        return rotator;
-	} 
 	
-	public SequentialTransition flipDown() {
-        // first 90° -> show front
-        RotateTransition rotator1 = createRotator(0, 90);
-
-        // from 90° to 180° show backside
-        rotator1.setOnFinished(evt ->this.faceDown());
-        RotateTransition rotator2 = createRotator(90, 180);
-
-        SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
-        rotator.setCycleCount(1);
-        return rotator;
-	}
-	
-	private RotateTransition createRotator(double fromAngle, double toAngle) {
-        // animation length proportional to the rotation angle
-        RotateTransition rotator = new RotateTransition(Duration.millis(Math.abs(1000 * (fromAngle - toAngle) / 360)), imgView);
-        rotator.setAxis(Rotate.Y_AXIS);
-        rotator.setFromAngle(fromAngle);
-        rotator.setToAngle(toAngle);
-        rotator.setInterpolator(Interpolator.LINEAR);
-        return rotator;
-    }
 	
 	public void setImageSize(double width, double height) {
 		imgView.setFitHeight(height);
@@ -120,9 +80,22 @@ public abstract class Card {
 	public void setDraggableOn() {
 		imgView.setOnMouseReleased((MouseEvent e)->{
 			if(gbc != null) {
-				gbc.playCard(this, imgView.getX(), imgView.getY());	
+				gbc.playCard(this, this.faceDownPane, imgView.getX(), imgView.getY());
 			}
 		});
+//		imgView.setOnDragDetected(e -> {
+//			Dragboard db = imgView.startDragAndDrop(TransferMode.ANY);
+//	        ClipboardContent content = new ClipboardContent();
+//	        content.putString(name);
+//	        db.setContent(content);
+//	        e.consume();
+//		});
+//		imgView.setOnMouseDragEntered(e -> {
+//			orgStartX = imgView.getX();
+//			orgStartY = imgView.getY();
+//			startX = e.getX() - imgView.getX();
+//			startY = e.getY() - imgView.getY();
+//		});
 		imgView.setOnMousePressed((MouseEvent e) -> {
 			orgStartX = imgView.getX();
 			orgStartY = imgView.getY();
@@ -160,4 +133,44 @@ public abstract class Card {
 	public String toString() {
 		return this.name;
 	}
+	/*
+	 * copied and edited from
+	 * https://stackoverflow.com/questions/37117475/attach-back-cover-to-a-card-image
+	 */
+	public SequentialTransition flipUp() {
+        // first 90  -> show back
+        RotateTransition rotator1 = createRotator(0, 90);
+
+        // from 90 to 180 show front
+        rotator1.setOnFinished(evt -> this.faceUp());
+        RotateTransition rotator2 = createRotator(90, 180);
+
+        SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
+        rotator.setCycleCount(1);
+        return rotator;
+	} 
+	
+	public SequentialTransition flipDown() {
+        // first 90 -> show front
+        RotateTransition rotator1 = createRotator(0, 90);
+
+        // from 90 to 180 show backside
+        rotator1.setOnFinished(evt ->this.faceDown());
+        RotateTransition rotator2 = createRotator(90, 180);
+
+        SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
+        rotator.setCycleCount(1);
+        return rotator;
+	}
+	
+	private RotateTransition createRotator(double fromAngle, double toAngle) {
+        // animation length proportional to the rotation angle
+        RotateTransition rotator = new RotateTransition(Duration.millis(Math.abs(1000 * (fromAngle - toAngle) / 360)), imgView);
+        rotator.setAxis(Rotate.Y_AXIS);
+        rotator.setFromAngle(fromAngle);
+        rotator.setToAngle(toAngle);
+        rotator.setInterpolator(Interpolator.LINEAR);
+        return rotator;
+    }
+	
 }
