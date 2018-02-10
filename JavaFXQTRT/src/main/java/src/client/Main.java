@@ -33,14 +33,15 @@ public class Main extends Application {
 			tlc.setClient(client);
 			
 			try {
-				File file = new File("src/main/resources/titlescreen1.jpg");
-				Image img = new Image (new FileInputStream(file));
-				ImageView imgView = new ImageView();
-				imgView.setImage(img);
-				imgView.fitWidthProperty().bind(primaryStage.widthProperty());
-				imgView.fitHeightProperty().bind(primaryStage.heightProperty());
+				File titlebg = new File("src/main/resources/titlescreen1.jpg");
+				Image titleImg = new Image (new FileInputStream(titlebg));
+				ImageView titleImgView = new ImageView();
+				titleImgView.setImage(titleImg);
+				titleImgView.fitWidthProperty().bind(primaryStage.widthProperty());
+				titleImgView.fitHeightProperty().bind(primaryStage.heightProperty());
 //				tlc.addImage(imgView);
-				tlc.background.getChildren().add(imgView);
+				tlc.background.getChildren().add(titleImgView);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
