@@ -92,6 +92,11 @@ public class Player {
 		if(pv != null) pv.updateState(question, ID);
 	}
 	
+	protected void setState(STATE question, int numStages) {
+		this.question = question;
+		if(pv != null) pv.updateState(question, ID, numStages);
+	}
+	
 	protected void setState(STATE question, int i, TYPE type) {
 		this.question = question;
 		if(pv != null) pv.updateState(question, ID,i, type);
@@ -196,4 +201,6 @@ public class Player {
 	public boolean hasTristanIseultBoost() {
 		return tristan && iseult;
 	}
+
+
 }
