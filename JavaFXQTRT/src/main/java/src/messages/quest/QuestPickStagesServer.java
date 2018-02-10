@@ -5,8 +5,11 @@ import src.messages.Message;
 // from server
 public class QuestPickStagesServer extends Message {
 
-	public QuestPickStagesServer(int player) {
+	public int numStages;
+	
+	public QuestPickStagesServer(int player, int numStages) {
 		super(player);
+		this.numStages = numStages;
 	}
 	
 	//from server

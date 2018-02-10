@@ -49,13 +49,17 @@ public class PlayerView {
 		output.sendMessage(new AddCardsServer(ID, cardNames));
 	}
 
+	public void updateState(STATE state, int ID, int numStages) {
+		if(state == Player.STATE.SPONSORING) {
+			output.sendMessage(new QuestPickStagesServer(ID, numStages));
+		}	
+	}
+	
 	public void updateState(STATE state, int ID) {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage(new TournamentAcceptDeclineServer(ID));
 		} else if(state == Player.STATE.QUESTQUESTIONED) {
 			output.sendMessage(new QuestSponserServer(ID));
-		} else if(state == Player.STATE.SPONSORING) {
-			output.sendMessage(new QuestPickStagesServer(ID));
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage(new TournamentPickCardsServer(ID));
 		} else if(state == Player.STATE.WIN) {
@@ -105,5 +109,6 @@ public class PlayerView {
 	public void updateMiddle(StoryCard card) {
 		output.sendMessage(new MiddleCardServer(card.getName()));
 	}
+
 
 }

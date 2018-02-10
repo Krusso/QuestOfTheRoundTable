@@ -16,6 +16,7 @@ import src.game_logic.FoeCard;
 import src.game_logic.Rank;
 import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
+import src.player.Player.STATE;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Card;
 import src.views.PlayerView;
@@ -151,6 +152,11 @@ public class PlayerManager {
 	public void setState(List<Player> participants, Player.STATE state) {
 		participants.forEach(e -> e.setState(state));
 	}
+	
+
+	public void setState(Player participant, STATE sponsoring, int numStages) {
+		participant.setState(sponsoring, numStages);
+	}
 
 	public List<Player> getAllWithState(Player.STATE state) {
 		return StreamSupport.stream(
@@ -229,4 +235,5 @@ public class PlayerManager {
 		});
 		return winners.get();
 	}
+
 }
