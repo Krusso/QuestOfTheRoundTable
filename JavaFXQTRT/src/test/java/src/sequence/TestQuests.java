@@ -166,7 +166,8 @@ public class TestQuests {
 			Thread.sleep(100);
 			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
 		}
-		
+
+		// bidding first time
 		Thread.sleep(100);
 		assertEquals(Player.STATE.BIDDING, players.get(0).getQuestion());
 		input.put(new QuestBidClient(0, 1));
@@ -177,18 +178,24 @@ public class TestQuests {
 		assertEquals(Player.STATE.BIDDING, players.get(2).getQuestion());
 		input.put(new QuestBidClient(2, 2));
 
+		
+		// bidding second time
+		Thread.sleep(100);
+		assertEquals(Player.STATE.BIDDING, players.get(0).getQuestion());
+		input.put(new QuestBidClient(0, -1));
+		
 		Thread.sleep(100);
 		assertEquals(Player.STATE.TESTDISCARD, players.get(2).getQuestion());
 		
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			System.out.println(gson.toJson(string));
 			if(string.message == MESSAGETYPES.DISCARDQUEST && string.player == 2) break;
 		}
 		
-		input.put(new QuestDiscardCardsClient(2, new String[]{"Thieves", "Thieves"}));
+		input.put(new QuestDiscardCardsClient(2, new String[]{"Thieves", "Saxons"}));
 		Thread.sleep(100);
-		assertEquals(12, players.get(2).getCardCount());
+		assertEquals(11, players.get(2).getCardCount());
 		assertEquals(0, players.get(0).getShields());
 		assertEquals(0, players.get(1).getShields());
 		assertEquals(1, players.get(2).getShields());

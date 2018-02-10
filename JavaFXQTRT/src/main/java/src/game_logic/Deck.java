@@ -58,6 +58,15 @@ public abstract class Deck<E extends Card> {
 		}
 		return null;
 	}
+	
+	public E findCardByName(String toFind) {
+		for(E card: deck) {
+			if(card.getName().equals(toFind)) {
+				return card;
+			}
+		}
+		return null;
+	}
 
 	private E getNextCard() {
 		if(deck.size() == 0) {

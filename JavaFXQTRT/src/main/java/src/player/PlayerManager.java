@@ -16,6 +16,7 @@ import src.game_logic.FoeCard;
 import src.game_logic.Rank;
 import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
+import src.player.Player.STATE;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Card;
 import src.views.PlayerView;
@@ -228,5 +229,9 @@ public class PlayerManager {
 			}
 		});
 		return winners.get();
+	}
+
+	public void setBidAmount(Player next, STATE bidding, int maxBidValue, int i) {
+		next.setBidAmount(bidding, maxBidValue, i);
 	}
 }

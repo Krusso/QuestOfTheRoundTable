@@ -2,6 +2,7 @@ package src.player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
@@ -20,7 +21,7 @@ public class Player {
 	};
 	
 	protected RANKS rank;
-	protected AdventureDeck hand;
+	public AdventureDeck hand;
 	protected AdventureDeck faceDown;
 	private AdventureDeck faceUp;
 	private List<List<Card>> questDown;
@@ -196,4 +197,22 @@ public class Player {
 	public boolean hasTristanIseultBoost() {
 		return tristan && iseult;
 	}
+	
+	public List<AdventureCard> listOfTypeDecreasingBp(TYPE type){
+		return hand.getDeck().stream().
+		sorted((p1,p2) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
+		filter(i -> i.getType() == type).
+		collect(Collectors.toList());
+	}
+	
+	public List<AdventureCard> uniqueListOfTypeDecreasingBp(TYPE type){
+		return listOfTypeDecreasingBp(type).stream().map(i -> i.getName()).distinct().map(i -> hand.findCardByName(i))
+				.collect(Collectors.toList());
+	}
+
+	public void setBidAmount(STATE bidding, int maxBidValue, int i) {
+		this.question = bidding;
+		if(pv != null) this.pv.setBidAmount(bidding, this.ID, maxBidValue, i);
+	}
+	
 }

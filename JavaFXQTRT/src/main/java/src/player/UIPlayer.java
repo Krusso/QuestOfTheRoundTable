@@ -49,7 +49,4 @@ public class UIPlayer extends Player{
 	public void setPlayerRank(Rank.RANKS r) {
 		rank = r;
 	}
-	
-	
-	
 }

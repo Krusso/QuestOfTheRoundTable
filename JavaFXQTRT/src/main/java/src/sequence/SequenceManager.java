@@ -1,13 +1,15 @@
 package src.sequence;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import src.game_logic.BoardModel;
-import src.messages.Message;
+import src.game_logic.QuestCard;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestBidClient;
-import src.messages.quest.QuestPickCardsClient;
 import src.messages.tournament.TournamentPickCardsClient;
+import src.player.BidCalculator;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -25,20 +27,23 @@ public abstract class SequenceManager {
 		}
 	}
 
-	protected Player questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions) {
-		Player maxBid = null;
-		// will be used when no longer hotseat
+	protected Player questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, QuestCard card) {
+		Queue<Player> notDropped = new LinkedList<Player>();
+		players.forEachRemaining(i -> notDropped.add(i));
 		int maxBidValue = Integer.MIN_VALUE;
-		while(players.hasNext()) {
-			Player next = players.next();
+		BidCalculator bc = new BidCalculator();
+		while(notDropped.size() > 1) {
+			Player next = notDropped.poll();
 			pm.setPlayer(next);
-			pm.setState(next, Player.STATE.BIDDING);
+			int playerMaxBid = bc.maxBid(next, card);			
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue));
 			QuestBidClient qbc = actions.take(QuestBidClient.class);
-			if(qbc.bid !=  -1) {
-				maxBid = next; 
+			if(qbc.bid != -1) {
 				maxBidValue = qbc.bid;
+				notDropped.add(next);
 			}
 		}
-		return maxBid;
+		
+		return notDropped.poll();
 	}
 }
