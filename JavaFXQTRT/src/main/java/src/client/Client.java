@@ -96,7 +96,6 @@ class TurnNextTask extends Task{
 	//Msg should be a string with a number which indicates which players has the turn
 	@Override
 	public void run() {
-		gbc.clearPlayField();
 		gbc.setPlayerTurn(player);
 		gbc.showPlayerHand(player);
 
@@ -137,6 +136,7 @@ class QuestSponsorTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
+		gbc.setButtonsInvisible();
 		gbc.showAcceptDecline();
 	}
 }
@@ -235,20 +235,62 @@ class ShowTurnFaceDownFieldUp extends Task{
 class QuestPickStagesTask extends Task {
 
 	private int player;
-	public QuestPickStagesTask(GameBoardController gbc, int player) {
+	private int numStages;
+	public QuestPickStagesTask(GameBoardController gbc, int player, int numStages) {
+		super(gbc);
+		this.player = player;
+		this.numStages = numStages;
+		
+	}
+	@Override
+	public void run() {
+		gbc.setButtonsInvisible();
+		gbc.CURRENT_STATE = STATE.PICK_STAGES;
+		gbc.setPickStageOn(numStages);
+		gbc.addDraggable();
+		gbc.showEndTurn();
+		gbc.addStagePaneListener();
+	}
+	
+}
+class QuestJoinTask extends Task {
+
+	private int player;
+	public QuestJoinTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
 		
 	}
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.PICK_STAGES;
-		gbc.showEndTurn();
+		gbc.setButtonsInvisible();
+		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
+		gbc.showAcceptDecline();
 		gbc.addDraggable();
 	}
 	
 }
 
+class QuestPickCardsTask extends Task {
+
+	private int player;
+	public QuestPickCardsTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		gbc.setButtonsInvisible();
+		gbc.CURRENT_STATE = STATE.QUEST_PICK_CARDS;
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.showEndTurn();
+		gbc.addDraggable();
+		gbc.removeStagePaneDragOver();
+		gbc.addFaceDownPaneDragOver();
+		
+	}
+}
 
 
 abstract class Task implements Runnable{
@@ -340,9 +382,16 @@ public class Client implements Runnable {
 						Platform.runLater(new QuestSponsorTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.PICKSTAGES.name())) {
-						//TODO::
 						QuestPickStagesServer request = gson.fromJson(obj, QuestPickStagesServer.class);
-						Platform.runLater(new QuestPickStagesTask(gbc, request.player));
+						Platform.runLater(new QuestPickStagesTask(gbc, request.player, request.numStages));
+					}
+					if(message.equals(MESSAGETYPES.JOINQUEST.name())) {
+						QuestJoinServer request = gson.fromJson(obj, QuestJoinServer.class);
+						Platform.runLater(new QuestJoinTask(gbc, request.player));
+					}					
+					if(message.equals(MESSAGETYPES.PICKQUEST.name())) {
+						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
+						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
 					}
 				}
 			}

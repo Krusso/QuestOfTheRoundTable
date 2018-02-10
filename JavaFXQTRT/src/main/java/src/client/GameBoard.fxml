@@ -3,9 +3,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -15,10 +15,12 @@
       <Pane fx:id="playerPane3" layoutX="-340.0" layoutY="341.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
          <children>
             <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" fill="#a9ff21" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="1000.0" />
-            <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0" />
+            <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0">
+               <children>
+                  <ImageView fx:id="playerRank3" fitHeight="150.0" fitWidth="125.0" layoutX="115.0" layoutY="-256.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="250.0" />
+               </children></Pane>
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown3" layoutX="501.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank3" fitHeight="150.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="250.0" />
          </children>
       </Pane>
       <Pane fx:id="playerPane2" layoutX="425.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
@@ -45,29 +47,33 @@
             <Pane fx:id="playerhand0" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="750.0" />
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="800.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="978.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
-      <StackPane layoutX="650.0" layoutY="420.0" prefHeight="250.0" prefWidth="600.0">
+      <StackPane layoutX="460.0" layoutY="350.0" prefHeight="400.0" prefWidth="1000.0">
          <children>
-            <Pane prefHeight="232.0" prefWidth="599.0">
+            <Pane prefHeight="400.0" prefWidth="500.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="34.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="530.0" />
-                  <Pane fx:id="storyCardContainer" layoutX="35.0" prefHeight="150.0" prefWidth="100.0" />
-                  <Pane fx:id="playField" layoutX="132.0" prefHeight="150.0" prefWidth="430.0" />
-                  <Text fx:id="toast" layoutX="35.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="400.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="897.0" />
+                  <Pane fx:id="storyCardContainer" layoutX="2.0" layoutY="125.0" prefHeight="150.0" prefWidth="100.0" />
+                  <Pane fx:id="pickStage0" layoutX="203.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage1" layoutX="313.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage2" layoutX="438.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage3" layoutX="563.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage4" layoutX="688.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Text fx:id="toast" layoutY="-50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
                      <font>
                         <Font name="Britannic Bold" size="69.0" />
                      </font>
                   </Text>
-                  <HBox layoutX="35.0" layoutY="154.0">
+                  <VBox layoutX="897.0" layoutY="100.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="Continue" />
+                        <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="99.0" text="End Turn" />
                         <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Accept" />
                         <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Decline" />
-                        <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="End Turn" />
                      </children>
-                  </HBox>
+                  </VBox>
                </children>
             </Pane>
          </children>

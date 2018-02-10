@@ -35,6 +35,9 @@ public class UIPlayer extends Player{
 	public void playCard(AdventureCard card) {
 		setFaceDown(card);
 	}
+	public void playCardFaceDown(AdventureCard card) {
+		setFaceDown(card);
+	}
 	
 	private void setFaceDown(AdventureCard card) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();

@@ -3,19 +3,27 @@ package src.game_logic;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import src.client.GameBoardController;
 
 public abstract class Card {
+	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
+	final int id = NEXT_ID.getAndIncrement();
+	public static double DEFAULT_WIDTH = 100;
+	public static double DEFAULT_HEIGHT = 150;
 	private String name;
 	private Image cardBack;
 	private Image img;
@@ -78,33 +86,32 @@ public abstract class Card {
 	
 	//Simple drag motion for the card ImageView
 	public void setDraggableOn() {
+		
 		imgView.setOnMouseReleased((MouseEvent e)->{
 			if(gbc != null) {
 				gbc.playCard(this, this.faceDownPane, imgView.getX(), imgView.getY());
 			}
 		});
-//		imgView.setOnDragDetected(e -> {
-//			Dragboard db = imgView.startDragAndDrop(TransferMode.ANY);
-//	        ClipboardContent content = new ClipboardContent();
-//	        content.putString(name);
-//	        db.setContent(content);
-//	        e.consume();
-//		});
-//		imgView.setOnMouseDragEntered(e -> {
+//		imgView.setOnMousePressed((MouseEvent e) -> {
 //			orgStartX = imgView.getX();
 //			orgStartY = imgView.getY();
 //			startX = e.getX() - imgView.getX();
 //			startY = e.getY() - imgView.getY();
+//			e.setDragDetect(true);
 //		});
-		imgView.setOnMousePressed((MouseEvent e) -> {
-			orgStartX = imgView.getX();
-			orgStartY = imgView.getY();
-			startX = e.getX() - imgView.getX();
-			startY = e.getY() - imgView.getY();
-		});
-		imgView.setOnMouseDragged((MouseEvent e)->{
-			imgView.setX(e.getX() - startX);
-			imgView.setY(e.getY() - startY);
+//		imgView.setOnMouseDragged((MouseEvent e)->{
+//			imgView.setX(e.getX() - startX);
+//			imgView.setY(e.getY() - startY);
+//			
+//		});
+		imgView.setOnDragDetected(e->{
+			System.out.println("On Drag Detected");
+			Dragboard db = imgView.startDragAndDrop(TransferMode.ANY);
+			ClipboardContent content = new ClipboardContent();
+			content.putString(id+"");
+			content.putImage(imgView.getImage());
+			db.setContent(content);
+			e.consume();
 		});
 	}
 	public ImageView getImageView() {
@@ -172,5 +179,9 @@ public abstract class Card {
         rotator.setInterpolator(Interpolator.LINEAR);
         return rotator;
     }
+	
+	public int getID() {
+		return id;
+	}
 	
 }

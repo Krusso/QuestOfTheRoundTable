@@ -110,4 +110,31 @@ public class UIPlayerManager {
 		return players.length;
 	}
 	
+	public void removeCardFromPlayerHandByID(int p, int id) {
+		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
+		for(int i = 0 ; i < hand.size(); i++) {
+			if(hand.get(i).getID() == id) {
+				hand.remove(i);
+				return;
+			}
+		}
+	}
+	public int getCardIndexByID(int p, int id) {
+		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
+		for(int i = 0 ; i < hand.size(); i++) {
+			if(hand.get(i).getID() == id) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	public AdventureCard getCardByID(int p, int id) {
+		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
+		for(int i = 0 ; i < hand.size(); i++) {
+			if(hand.get(i).getID() == id) {
+				return hand.get(i);
+			}
+		}
+		return null;
+	}
 }
