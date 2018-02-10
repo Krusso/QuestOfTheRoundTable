@@ -152,6 +152,11 @@ public class PlayerManager {
 	public void setState(List<Player> participants, Player.STATE state) {
 		participants.forEach(e -> e.setState(state));
 	}
+	
+
+	public void setState(Player participant, STATE sponsoring, int numStages) {
+		participant.setState(sponsoring, numStages);
+	}
 
 	public List<Player> getAllWithState(Player.STATE state) {
 		return StreamSupport.stream(

@@ -31,7 +31,7 @@ public class QuestSequenceManager extends SequenceManager {
 			pm.setState(next, Player.STATE.QUESTQUESTIONED);
 			QuestSponserClient qsc = actions.take(QuestSponserClient.class);
 			if(qsc.sponser) {
-				pm.setState(next, Player.STATE.SPONSORING);
+				pm.setState(next, Player.STATE.SPONSORING, card.getNumStages());
 				break;
 			} else {
 				pm.setState(next, Player.STATE.NO);
