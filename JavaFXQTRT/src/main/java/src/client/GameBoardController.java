@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -34,9 +35,9 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
-	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, 
+	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, 
-		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS,
+		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD,
 		NONE}
 
 	public STATE CURRENT_STATE = STATE.NONE;
@@ -57,6 +58,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
 	@FXML private Pane background;
+	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
 
 
@@ -138,12 +140,19 @@ public class GameBoardController implements Initializable{
 			stageCards.add(new ArrayList<AdventureCard>());
 		}
 
+		bidSlider.setVisible(false);
 		//setBackground
 		setBackground();
-
+		//give PlayerManager the panes
 
 	}
-
+	////Must call this when you click start game in title screen!
+	public void initPlayerManager(int numPlayers) {
+		playerManager = new UIPlayerManager(numPlayers);
+		for(int i = 0 ; i < numPlayers ; i++) {
+			setPlayerRank(i, Rank.RANKS.SQUIRE);
+		}
+	}
 
 	public void addStagePaneListener() {
 		//Add listeners for the stage panes
@@ -281,13 +290,7 @@ public class GameBoardController implements Initializable{
 		//TODO::Provide visual feeed back by implementing setOnDragEntered
 	}
 
-	////Must call this when you click start game in title screen!
-	public void initPlayerManager(int numPlayers) {
-		playerManager = new UIPlayerManager(numPlayers);
-		for(int i = 0 ; i < numPlayers ; i++) {
-			setPlayerRank(i, Rank.RANKS.SQUIRE);;
-		}
-	}
+
 
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		c.gbc = this;
@@ -413,6 +416,7 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void setUp() {
+		//END TURN BUTTON LISTENER
 		this.endTurn.setOnAction(e -> {
 			System.out.println("clicked end turn");
 			this.removeDraggable();
@@ -441,6 +445,13 @@ public class GameBoardController implements Initializable{
 				}
 				c.send(new QuestPickCardsClient(currentPlayer, cards));
 			}
+			//TODO::verify cards are minimum number of cards
+			else if(CURRENT_STATE == STATE.QUEST_BID) {
+				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
+			}else if(CURRENT_STATE == STATE.BID_DISCARD) {
+				String[] cards = discardAllFaceDownCards(currentPlayer);
+				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
+			}
 		});
 		this.accept.setOnAction(e -> {
 			System.out.println("accepted story");
@@ -466,6 +477,9 @@ public class GameBoardController implements Initializable{
 			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.QUEST_BID) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
+				c.send(new QuestBidClient(playerManager.getCurrentPlayer(), -1));
 			}
 		});
 		this.nextTurn.setOnAction(e -> {
@@ -503,6 +517,10 @@ public class GameBoardController implements Initializable{
 		this.accept.setVisible(true);
 		this.decline.setVisible(true);
 	}
+	public void showDecline() {
+		this.decline.setVisible(true);
+	}
+
 
 	public void showNextTurn() {
 		this.nextTurn.setVisible(true);
@@ -572,6 +590,17 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	//discards all cards and returns the string[] name of them
+	public String[] discardAllFaceDownCards(int p) {
+		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
+		faceDownPanes[p].getChildren().clear();
+		String[] cardNames = new String[fdc.size()];
+		for(int i = 0 ; i < cardNames.length;i++) {
+			cardNames[i] = fdc.get(i).getName();
+		}
+		fdc.clear();
+		return cardNames;
+	}
 
 	public void flipStageCards(int stageNum, boolean isShow) {
 		ArrayList<AdventureCard> cards = stageCards.get(stageNum);
@@ -587,5 +616,6 @@ public class GameBoardController implements Initializable{
 	public void addShields(int p, int s) {
 		playerManager.addShields(p, s);
 	}
+	
 }
 

@@ -363,6 +363,59 @@ class ShieldCountTask extends Task {
 	}
 }
 
+//TODO::server gives us min and max as well later
+class QuestBidTask extends Task {
+	private int min;
+	private int max;
+	private int player;
+	public QuestBidTask(GameBoardController gbc, int player, int min, int max) {
+		super(gbc);
+		this.player = player;
+		this.min = min;
+		this.max = max;
+		
+	}
+	@Override
+	public void run() {
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.showDecline();
+//		//players can only drag over facedown pane.
+		gbc.removeStagePaneDragOver();
+		gbc.removeFaceDownPaneDragOver();
+		gbc.CURRENT_STATE = STATE.QUEST_BID;
+		gbc.bidSlider.setMin(min);
+		gbc.bidSlider.setMax(max);
+		gbc.bidSlider.setVisible(true);
+		gbc.bidSlider.setMajorTickUnit(2);
+		gbc.bidSlider.setShowTickLabels(true);
+		gbc.bidSlider.setBlockIncrement(1);
+		gbc.bidSlider.setSnapToTicks(true);
+	}
+}
+
+class DiscardQuestTask extends Task {
+	private int min;
+	private int max;
+	private int player;
+	public DiscardQuestTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		this.min = min;
+		this.max = max;
+		
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.BID_DISCARD;
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.addDraggable();
+		gbc.removeStagePaneDragOver();
+		gbc.addFaceDownPaneDragOver();
+	}
+}
 
 
 
@@ -483,6 +536,18 @@ public class Client implements Runnable {
 						
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new ShieldCountTask(gbc, request.player, request.shields));
+					}
+					if(message.equals(MESSAGETYPES.BIDQUEST.name())) {
+						QuestBidServer request = gson.fromJson(obj, QuestBidServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new QuestBidTask(gbc, request.player, request.minBidValue, request.maxBidValue));
+					}
+					if(message.equals(MESSAGETYPES.DISCARDQUEST.name())) {
+						QuestDiscardCardsServer request = gson.fromJson(obj, QuestDiscardCardsServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new DiscardQuestTask(gbc, request.player));
 					}
 				}
 			}

@@ -16,6 +16,11 @@ public class UIPlayerManager {
 			players[i] = new UIPlayer(i);
 		}
 	}
+	//Some dank raunch way of setting up our UIPlayers :^) :V) :^) :V) :^) :V) :^)
+	
+
+//	public void setPlayerPanes()
+	
 	
 	public void addShields(int p, int shields) {
 		players[p].addShields(shields);
