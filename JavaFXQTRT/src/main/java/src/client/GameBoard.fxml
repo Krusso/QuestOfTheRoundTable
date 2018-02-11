@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="768.0" maxWidth="1024.0" minHeight="1080.0" minWidth="1920.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
    <children>
-      <Pane fx:id="playerPane3" layoutX="-340.0" layoutY="341.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
+      <Pane prefHeight="1088.0" prefWidth="1928.0">
          <children>
-            <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" fill="#a9ff21" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="1000.0" />
+            <ImageView fitHeight="1086.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../resources/gameboardbg3.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
+      <Pane fx:id="playerPane3" layoutX="-340.0" layoutY="385.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
+         <children>
+            <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="0.23333333333333323" startX="1.0" startY="1.0">
+                     <stops>
+                        <Stop color="#c4501a" />
+                        <Stop color="#ffffff00" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill></Rectangle>
             <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0" />
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown3" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -23,7 +43,15 @@
       </Pane>
       <Pane fx:id="playerPane2" layoutX="425.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
          <children>
-            <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" fill="#de21ff9c" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="1000.0" />
+            <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="0.23333333333333323" startX="1.0" startY="1.0">
+                     <stops>
+                        <Stop color="#ff8242" />
+                        <Stop color="#ffffff00" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill></Rectangle>
             <Pane fx:id="playerHand2" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0" />
             <Pane fx:id="playerFaceUp2" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown2" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -32,27 +60,43 @@
       </Pane>
       <Pane fx:id="playerPane1" layoutX="1180.0" layoutY="345.0" prefHeight="400.0" prefWidth="1080.0" rotate="-90.0">
          <children>
-            <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" fill="#ffb721" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="1000.0" />
+            <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="0.0999999999999999" startX="1.0" startY="0.7904761904761904">
+                     <stops>
+                        <Stop color="#ff8242" />
+                        <Stop color="#ffffff00" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill></Rectangle>
             <Pane fx:id="playerHand1" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="800.0" />
             <Pane fx:id="playerFaceUp1" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown1" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank1" fitHeight="150.0" fitWidth="125.0" layoutX="800.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
-      <Pane fx:id="playerPane0" layoutX="425.0" layoutY="680.0" prefHeight="400.0" prefWidth="1080.0">
+      <Pane fx:id="playerPane0" layoutX="457.0" layoutY="680.0" prefHeight="400.0" prefWidth="1080.0">
          <children>
-            <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" fill="#ff2121" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" width="1000.0" />
+            <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="0.23333333333333323" startX="1.0" startY="1.0">
+                     <stops>
+                        <Stop color="#ff8242" />
+                        <Stop color="#ffffff00" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill></Rectangle>
             <Pane fx:id="playerhand0" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="750.0" />
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="800.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
-      <StackPane layoutX="650.0" layoutY="420.0" prefHeight="250.0" prefWidth="600.0">
+      <StackPane layoutX="650.0" layoutY="420.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
          <children>
             <Pane prefHeight="232.0" prefWidth="599.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="150.0" layoutX="34.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="530.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutX="34.0" stroke="BLACK" strokeLineCap="BUTT" strokeLineJoin="BEVEL" strokeType="INSIDE" strokeWidth="0.0" width="530.0" />
                   <Pane fx:id="storyCardContainer" layoutX="35.0" prefHeight="150.0" prefWidth="100.0" />
                   <Pane fx:id="playField" layoutX="132.0" prefHeight="150.0" prefWidth="430.0" />
                   <Text fx:id="toast" layoutX="35.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
@@ -62,17 +106,21 @@
                   </Text>
                   <HBox layoutX="35.0" layoutY="154.0">
                      <children>
-                        <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="Continue" />
-                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Accept Tournament" />
-                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" text="Decline Tournament" />
-                        <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" text="End Turn" />
+                        <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Continue" textFill="WHITE">
+                           <font>
+                              <Font name="Mistral" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Accept Tournament" textFill="WHITE" />
+                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Decline Tournament" textFill="WHITE" />
+                        <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="End Turn" textFill="WHITE" />
                      </children>
                   </HBox>
                </children>
             </Pane>
          </children>
       </StackPane>
-      <Text fx:id="playerNumber" layoutX="354.0" layoutY="917.0" strokeType="OUTSIDE" strokeWidth="0.0" text="#0" wrappingWidth="101.0000228881836">
+      <Text fx:id="playerNumber" fill="WHITE" layoutX="354.0" layoutY="917.0" strokeType="OUTSIDE" strokeWidth="0.0" text="#0" wrappingWidth="101.0000228881836">
          <font>
             <Font size="52.0" />
          </font>
