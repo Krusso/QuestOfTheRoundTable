@@ -363,8 +363,29 @@ class ShieldCountTask extends Task {
 	}
 }
 
+//TODO::server gives us min and max as well later
+class QuestBidTask extends Task {
 
-
+	private int min;
+	private int max;
+	private int player;
+	public QuestBidTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.addDraggable();
+		//players can only drag over facedown pane.
+		gbc.removeStagePaneDragOver();
+		gbc.addFaceDownPaneDragOver();
+		gbc.CURRENT_STATE = STATE.QUEST_BID;
+	}
+}
 
 abstract class Task implements Runnable{
 	protected File cardDir;
@@ -483,6 +504,12 @@ public class Client implements Runnable {
 						
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new ShieldCountTask(gbc, request.player, request.shields));
+					}
+					if(message.equals(MESSAGETYPES.BIDQUEST.name())) {
+						QuestBidServer request = gson.fromJson(obj, QuestBidServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new QuestBidTask(gbc, request.player));
 					}
 				}
 			}

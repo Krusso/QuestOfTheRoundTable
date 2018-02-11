@@ -34,7 +34,7 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
-	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, 
+	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, 
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS,
 		NONE}
@@ -140,10 +140,16 @@ public class GameBoardController implements Initializable{
 
 		//setBackground
 		setBackground();
-
+		//give PlayerManager the panes
 
 	}
-
+	////Must call this when you click start game in title screen!
+	public void initPlayerManager(int numPlayers) {
+		playerManager = new UIPlayerManager(numPlayers);
+		for(int i = 0 ; i < numPlayers ; i++) {
+			setPlayerRank(i, Rank.RANKS.SQUIRE);
+		}
+	}
 
 	public void addStagePaneListener() {
 		//Add listeners for the stage panes
@@ -281,13 +287,7 @@ public class GameBoardController implements Initializable{
 		//TODO::Provide visual feeed back by implementing setOnDragEntered
 	}
 
-	////Must call this when you click start game in title screen!
-	public void initPlayerManager(int numPlayers) {
-		playerManager = new UIPlayerManager(numPlayers);
-		for(int i = 0 ; i < numPlayers ; i++) {
-			setPlayerRank(i, Rank.RANKS.SQUIRE);;
-		}
-	}
+
 
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		c.gbc = this;
@@ -413,6 +413,7 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void setUp() {
+		//END TURN BUTTON LISTENER
 		this.endTurn.setOnAction(e -> {
 			System.out.println("clicked end turn");
 			this.removeDraggable();
@@ -440,6 +441,16 @@ public class GameBoardController implements Initializable{
 					cards[i] = faceDownCards.get(i).getName();
 				}
 				c.send(new QuestPickCardsClient(currentPlayer, cards));
+			}
+			//TODO::verify cards are minimum number of cards
+			else if(CURRENT_STATE == STATE.QUEST_BID) {
+				//send cards 
+				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
+//				String[] cards = new String[faceDownCards.size()];
+//				for(int i = 0 ; i < cards.length ; i++) {
+//					cards[i] = faceDownCards.get(i).getName();
+//				}
+				c.send(new QuestBidClient(currentPlayer, faceDownCards.size()));
 			}
 		});
 		this.accept.setOnAction(e -> {
