@@ -138,6 +138,8 @@ public class GameBoardController implements Initializable{
 			stageCards.add(new ArrayList<AdventureCard>());
 		}
 
+		//setBackground
+		setBackground();
 
 
 	}
@@ -472,8 +474,21 @@ public class GameBoardController implements Initializable{
 		});
 	}
 	
+	//TODO:: BG image isn't completely scaled correctly not sure why
 	public void setBackground() {
-		//
+		try {
+			File f = new File(resDir + "/gameboardbg3.jpg");
+			Image bg;
+			bg = new Image(new FileInputStream(f));
+			ImageView bgView = new ImageView();
+			bgView.setImage(bg);
+			bgView.setFitHeight(1920);
+			bgView.setFitHeight(1080);
+			background.getChildren().add(bgView);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setButtonsInvisible() {

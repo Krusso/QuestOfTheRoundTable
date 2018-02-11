@@ -15,7 +15,7 @@
 
 <AnchorPane maxHeight="768.0" maxWidth="1024.0" minHeight="1080.0" minWidth="1920.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
    <children>
-      <Pane prefHeight="1088.0" prefWidth="1928.0">
+      <Pane fx:id="background" prefHeight="1080.0" prefWidth="1920.0">
          <children>
 
             <ImageView fitHeight="1086.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
@@ -93,7 +93,7 @@
          </children>
       </Pane>
 
-      <StackPane layoutX="650.0" layoutY="420.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
+      <StackPane layoutX="525.0" layoutY="375.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
          <children>
             <Pane prefHeight="400.0" prefWidth="500.0">
                <children>
@@ -118,8 +118,8 @@
                               <Font name="Mistral" size="12.0" />
                            </font>
                         </Button>
-                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Accept Tournament" textFill="WHITE" />
-                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Decline Tournament" textFill="WHITE" />
+                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Accept" textFill="WHITE" />
+                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Decline" textFill="WHITE" />
                         <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="End Turn" textFill="WHITE" />
 
                      </children>
