@@ -38,21 +38,19 @@ public class TitleScreenController implements Initializable{
 	@FXML private Button start;
 	@FXML private Pane p;
 	@FXML public Pane background;
-	private ArrayList<String> players;
+	private String[] players;
 	
 	@FXML private MenuButton b1;
 	@FXML private MenuButton b2;
 	@FXML private MenuButton b3;
 	@FXML private MenuButton b4;
 	
-	public TitleScreenController() { 
-		this.players = new ArrayList<String>();
-		// init with capacity not working for some reason
-		players.add("");
-		players.add("");
-		players.add("");
-		players.add("");
-		System.out.println(this.players.size());
+	public TitleScreenController() {
+		players = new String[4];
+		for(int i=0; i<players.length;i++) {
+			players[i] = "";
+		}
+		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
 	}
 	
 	public void setClient(Client c) {
@@ -63,14 +61,22 @@ public class TitleScreenController implements Initializable{
 	}
 
 	// sorry guys
-	@FXML private void setHuman1(ActionEvent e) throws IOException { this.players.set(0, "Human"); b1.setText("Human"); }
-	@FXML private void setHuman2(ActionEvent e) throws IOException { this.players.set(1, "Human"); b2.setText("Human"); }
-	@FXML private void setHuman3(ActionEvent e) throws IOException { this.players.set(2, "Human"); b3.setText("Human"); }
-	@FXML private void setHuman4(ActionEvent e) throws IOException { this.players.set(3, "Human"); b4.setText("Human"); }
-	@FXML private void setAI1(ActionEvent e) throws IOException { this.players.set(0, "AI"); b1.setText("AI"); }
-	@FXML private void setAI2(ActionEvent e) throws IOException { this.players.set(1, "AI"); b2.setText("AI"); }
-	@FXML private void setAI3(ActionEvent e) throws IOException { this.players.set(2, "AI"); b3.setText("AI"); }
-	@FXML private void setAI4(ActionEvent e) throws IOException { this.players.set(3, "AI"); b4.setText("AI"); }
+	@FXML private void setHuman1(ActionEvent e) throws IOException { this.players[0] = "Human"; b1.setText("Human"); }
+	@FXML private void setHuman2(ActionEvent e) throws IOException { this.players[1] = "Human"; b2.setText("Human"); }
+	@FXML private void setHuman3(ActionEvent e) throws IOException { this.players[2] = "Human"; b3.setText("Human"); }
+	@FXML private void setHuman4(ActionEvent e) throws IOException { this.players[3] = "Human"; b4.setText("Human"); }
+	@FXML private void setAI1(ActionEvent e) throws IOException { this.players[0] = "AI"; b1.setText("AI"); }
+	@FXML private void setAI2(ActionEvent e) throws IOException { this.players[1] = "AI"; b2.setText("AI"); }
+	@FXML private void setAI3(ActionEvent e) throws IOException { this.players[2] = "AI"; b3.setText("AI"); }
+	@FXML private void setAI4(ActionEvent e) throws IOException { this.players[3] = "AI"; b4.setText("AI"); }
+	
+	private int getNumPlayers() {
+		int num = 0;
+		for(int i=0; i<players.length; i++) {
+			if(players[i].equals("Human") || players[i].equals("AI")) num++;
+		}
+		return num;
+	}
 	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
@@ -78,7 +84,7 @@ public class TitleScreenController implements Initializable{
 //		int players = Integer.parseInt(n);
 //		if(players >= 2 && players <= 4) {}
 		
-		for(int i=0;i<players.size();i++) { System.out.println(players.get(i)); }
+		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
 	
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
@@ -106,10 +112,10 @@ public class TitleScreenController implements Initializable{
 		stage.show();
 		
 		//Setup player manager
-		gbc.initPlayerManager(players.size());
+		gbc.initPlayerManager(getNumPlayers());
 		
 		//send gameStart message.
-		client.send(new GameStartClient(players.size()));
+		client.send(new GameStartClient(getNumPlayers()));
 	}
 	
 	//Gives the capability to scale the screen based on the scale factor (1.0 = 100%, 0.5 = 50% etc)
