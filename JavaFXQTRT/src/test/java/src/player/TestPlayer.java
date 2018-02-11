@@ -126,8 +126,8 @@ public class TestPlayer {
 		
 		p1.addCards(cards);
 		assertEquals(5, p1.getCardCount());
-		assertEquals(2, p1.getWeaponCount());
-		assertEquals(0, p1.getFoeCount());
+		assertEquals(2, p1.getTypeCount(TYPE.WEAPONS));
+		assertEquals(0, p1.getTypeCount(TYPE.FOES));
 	}
 	
 }

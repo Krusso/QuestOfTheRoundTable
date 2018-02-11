@@ -2,6 +2,8 @@ package src.player;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import src.client.UIPlayerManager;
 import src.game_logic.Card;
 import src.game_logic.QuestCard;
 
@@ -9,13 +11,15 @@ public abstract class AbstractAI {
 	
 	protected UIPlayer player;
 	protected List<Player> listPlayer;
+	protected UIPlayerManager pm;
 	
-	public AbstractAI() {}
+	protected AbstractAI() {}
 	
-	public AbstractAI(UIPlayer player) {
+	public AbstractAI(UIPlayer player, UIPlayerManager pm) {
 		this.player = player;
 		listPlayer = new ArrayList<Player>();
 		listPlayer.add(player);
+		this.pm = pm;
 	}
 	
 	public abstract boolean doIParticipateInTournament();

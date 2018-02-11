@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Card;
@@ -15,6 +17,10 @@ import src.game_logic.Rank.RANKS;
 
 public class A2 extends AbstractAI {
 
+	public A2(UIPlayer player, UIPlayerManager pm) {
+		super(player, pm);
+	}
+	
 	@Override
 	public boolean doIParticipateInTournament() {
 		return true;
@@ -30,7 +36,6 @@ public class A2 extends AbstractAI {
 		}
 		List<AdventureCard> allies = player.listOfTypeDecreasingBp(TYPE.ALLIES);
 		List<AdventureCard> weapons = player.uniqueListOfTypeDecreasingBp(TYPE.WEAPONS);
-
 		// TODO: this doesnt account for synergies between cards
 		List<Card> cardsToUse = new ArrayList<Card>();
 		for(AdventureCard card: allies) {
@@ -57,7 +62,7 @@ public class A2 extends AbstractAI {
 	public List<List<Card>> doISponserAQuest(List<Player> participants, QuestCard questCard) {
 		for(Player player: participants) {
 			if(player.getRank() == RANKS.CHAMPION && player.getShields() >= 10 - questCard.getNumStages()) {
-				return null;
+				return new ArrayList<List<Card>>();
 			}
 		}
 
@@ -71,20 +76,18 @@ public class A2 extends AbstractAI {
 		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<Card>()));
 
 		//set up last stage to be atleast 40
-		if(sortedfoes.size() <= 0) return null;
+		if(sortedfoes.size() <= 0) return new ArrayList<List<Card>>();
 
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
 		cards.get(stages).add(biggestFoe);
-		while(sortedweapons.size() != 0) {
-			if(bp < 40) {
+		while(sortedweapons.size() != 0 && bp < 40) {
 				AdventureCard biggestWeapon = sortedweapons.remove(0);
 				bp += biggestWeapon.getBattlePoints();
 				cards.get(stages).add(biggestWeapon);
-			}	
 		}
 
-		if(bp < 40) return null;
+		if(bp < 40) return new ArrayList<List<Card>>();
 
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
@@ -116,7 +119,7 @@ public class A2 extends AbstractAI {
 		cards.remove(0);
 
 		for(List<Card> i: cards) {
-			if(i.size() == 0) return null;	
+			if(i.size() == 0) return new ArrayList<List<Card>>();	
 		}
 
 		// TODO: make sure stage before last is less bp than last stage
@@ -130,14 +133,15 @@ public class A2 extends AbstractAI {
 
 		int tenIncrements = 0;
 		for(AdventureCard card: player.hand.getDeck()) {
-			if((card.getType() == TYPE.WEAPONS || card.getType() == TYPE.ALLIES) && card.getBattlePoints() == 10) {
+			if((card.getType() == TYPE.WEAPONS || card.getType() == TYPE.ALLIES
+					|| card.getType() == TYPE.AMOUR) && card.getBattlePoints() == 10) {
 				tenIncrements++;
 			}
 		}
 
 		int foes = 0;
 		for(AdventureCard foe: sortedfoes) {
-			if(foe.getBattlePoints() == 10) {
+			if(foe.getBattlePoints() < 25) {
 				foes++;
 			}
 		}
@@ -151,6 +155,7 @@ public class A2 extends AbstractAI {
 
 		List<AdventureCard> sortedweapons = player.uniqueListOfTypeDecreasingBp(TYPE.WEAPONS);
 		List<AdventureCard> sortedallies = player.listOfTypeDecreasingBp(TYPE.ALLIES);
+		sortedallies.addAll(player.listOfTypeDecreasingBp(TYPE.AMOUR));
 		if(lastStage) {
 			// if last stage add everything you can
 			cards.addAll(sortedweapons);
@@ -196,14 +201,14 @@ public class A2 extends AbstractAI {
 					filter(i -> i.getBattlePoints() < 25).collect(Collectors.toList());
 		} else if(round == 2) {
 			List<Card> cards = new ArrayList<Card>();
-			Set<Card> uniqueCards = new HashSet<Card>();
+			Set<String> uniqueCards = new HashSet<String>();
 			for(AdventureCard card: player.hand.getDeck()) {
 				if(card.getType() == TYPE.FOES && card.getBattlePoints() < 25) {
 					cards.add(card);
-				} else if(uniqueCards.contains(card)) {
+				} else if(uniqueCards.contains(card.getName())) {
 					cards.add(card);
 				} else {
-					uniqueCards.add(card);
+					uniqueCards.add(card.getName());
 				}
 			}
 			return cards;

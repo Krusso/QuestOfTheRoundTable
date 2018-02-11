@@ -177,12 +177,8 @@ public class Player {
 		faceUp.discardType(TYPE.ALLIES);
 	}
 
-	public int getWeaponCount() {
-		return hand.typeCount(TYPE.WEAPONS);
-	}
-
-	public int getFoeCount() {
-		return hand.typeCount(TYPE.FOES);
+	public int getTypeCount(TYPE type) {
+		return hand.typeCount(type);
 	}
 	
 	protected void removeCards(String[] split) {
@@ -204,8 +200,9 @@ public class Player {
 	}
 	
 	public List<AdventureCard> listOfTypeDecreasingBp(TYPE type){
+		// p1 and p2 being flipped is not a typo :) 
 		return hand.getDeck().stream().
-		sorted((p1,p2) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
+		sorted((p2,p1) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
 		filter(i -> i.getType() == type).
 		collect(Collectors.toList());
 	}
