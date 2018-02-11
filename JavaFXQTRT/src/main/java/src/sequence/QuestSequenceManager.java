@@ -9,7 +9,7 @@ import src.messages.QOTRTQueue;
 import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
 import src.messages.quest.QuestPickCardsClient;
-import src.messages.quest.QuestSponserClient;
+import src.messages.quest.QuestSponsorClient;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -21,6 +21,8 @@ public class QuestSequenceManager extends SequenceManager {
 	
 	public QuestSequenceManager(QuestCard card) { this.card = card; }
 	
+	
+
 	@Override
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
 		// Finding player who wants to sponsor quest
@@ -29,7 +31,7 @@ public class QuestSequenceManager extends SequenceManager {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.QUESTQUESTIONED);
-			QuestSponserClient qsc = actions.take(QuestSponserClient.class);
+			QuestSponsorClient qsc = actions.take(QuestSponsorClient.class);
 			if(qsc.sponser) {
 				pm.setState(next, Player.STATE.SPONSORING, card.getNumStages());
 				break;
