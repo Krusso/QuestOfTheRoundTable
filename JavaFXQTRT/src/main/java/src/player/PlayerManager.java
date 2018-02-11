@@ -199,20 +199,20 @@ public class PlayerManager {
 
 	public void discardCards(List<Player> participants) {
 		participants.forEach(i -> {
-			i.discardWeapons();
-			i.discardAmours();
+			i.discardType(TYPE.WEAPONS);
+			i.discardType(TYPE.AMOUR);
 		});
 	}
 
 	public void discardWeapons(List<Player> participants) {
 		participants.forEach(i -> {
-			i.discardWeapons();
+			i.discardType(TYPE.WEAPONS);
 		});
 	}
 
 	public void discardAllies(List<Player> participants) {
 		participants.forEach(i -> {
-			i.discardAllies();
+			i.discardType(TYPE.ALLIES);
 		});
 	}
 
