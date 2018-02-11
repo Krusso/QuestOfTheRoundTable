@@ -1,4 +1,7 @@
 package src.client;
+import java.io.File;
+import java.io.FileInputStream;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -7,6 +10,8 @@ import src.socket.Server;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 
 public class Main extends Application {
@@ -27,6 +32,20 @@ public class Main extends Application {
 			//Pass the client to the controller
 			tlc.setClient(client);
 			
+			try {
+				File titlebg = new File("src/main/resources/titlescreen1.jpg");
+				Image titleImg = new Image (new FileInputStream(titlebg));
+				ImageView titleImgView = new ImageView();
+				titleImgView.setImage(titleImg);
+				titleImgView.fitWidthProperty().bind(primaryStage.widthProperty());
+				titleImgView.fitHeightProperty().bind(primaryStage.heightProperty());
+//				tlc.addImage(imgView);
+				tlc.background.getChildren().add(titleImgView);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+						
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			primaryStage.show();

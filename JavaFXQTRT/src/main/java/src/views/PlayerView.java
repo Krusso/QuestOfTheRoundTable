@@ -11,6 +11,7 @@ import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
 import src.messages.events.EventDiscardCardsServer;
 import src.messages.game.MiddleCardServer;
+import src.messages.game.ShieldCountServer;
 import src.messages.gameend.FinalTournamentNotifyServer;
 import src.messages.gameend.GameOverServer;
 import src.messages.hand.AddCardsServer;
@@ -55,7 +56,7 @@ public class PlayerView {
 			output.sendMessage(new QuestPickStagesServer(ID, numStages));
 		}	
 	}
-	
+
 	public void updateState(STATE state, int ID) {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage(new TournamentAcceptDeclineServer(ID));
@@ -86,15 +87,16 @@ public class PlayerView {
 	}
 
 	public void updateQuestDown(List<List<Card>> list, int ID) {
-		// not sure how to format this to make it look pretty 
-		String[][] cards = list.stream().map(i -> i.stream().map(e -> e.getName()).toArray(size -> new String[size]))
-				.toArray(String[][]::new);
+		String[][] cards = list.stream().
+				map(i -> i.stream().map(e -> e.getName()).toArray(size -> new String[size])).
+				toArray(String[][]::new);
 		output.sendMessage(new  QuestDownServer(ID, cards));
 	}
 
 	public void updateQuestUp(List<List<Card>> list, int ID) {
-		String[][] cards = list.stream().map(i -> i.stream().map(e -> e.getName()).toArray(size -> new String[size]))
-				.toArray(String[][]::new);
+		String[][] cards = list.stream().
+				map(i -> i.stream().map(e -> e.getName()).toArray(size -> new String[size])).
+				toArray(String[][]::new);
 		output.sendMessage(new  QuestUpServer(ID, cards));
 	}
 
@@ -109,6 +111,10 @@ public class PlayerView {
 
 	public void updateMiddle(StoryCard card) {
 		output.sendMessage(new MiddleCardServer(card.getName()));
+	}
+
+	public void updateShieldCount(int ID, int shields) {
+		output.sendMessage(new ShieldCountServer(ID, shields));
 	}
 
 

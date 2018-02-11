@@ -47,6 +47,8 @@ public class GameBoardController implements Initializable{
 	private UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
+	
+	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
 	@FXML private Button endTurn;
@@ -54,6 +56,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Button decline;
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
+	@FXML private Pane background;
 	//The pane that holds the other players' hand
 
 
@@ -467,6 +470,10 @@ public class GameBoardController implements Initializable{
 			System.out.println("Clicked next turn");
 			c.send(new ContinueGameClient());
 		});
+	}
+	
+	public void setBackground() {
+		//
 	}
 
 	public void setButtonsInvisible() {
