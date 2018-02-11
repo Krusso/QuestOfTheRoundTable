@@ -16,6 +16,7 @@ import src.messages.gameend.FinalTournamentNotifyServer;
 import src.messages.gameend.GameOverServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
+import src.messages.hand.FaceUpDiscardServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.quest.QuestBidServer;
 import src.messages.quest.QuestDiscardCardsServer;
@@ -93,11 +94,10 @@ public class PlayerView {
 		output.sendMessage(new  QuestDownServer(ID, cards));
 	}
 
-	public void updateQuestUp(List<List<Card>> list, int ID) {
-		String[][] cards = list.stream().
-				map(i -> i.stream().map(e -> e.getName()).toArray(size -> new String[size])).
-				toArray(String[][]::new);
-		output.sendMessage(new  QuestUpServer(ID, cards));
+	public void updateQuestUp(List<Card> list, int ID, int stage) {
+		String[] cards = list.stream().
+				map(e -> e.getName()).toArray(size -> new String[size]);
+		output.sendMessage(new QuestUpServer(ID, cards, stage));
 	}
 
 	public void updateFaceUp(AdventureDeck faceUp, int ID) {
@@ -115,6 +115,11 @@ public class PlayerView {
 
 	public void updateShieldCount(int ID, int shields) {
 		output.sendMessage(new ShieldCountServer(ID, shields));
+	}
+
+	public void discard(int ID, List<Card> removedCards) {
+		String[] cardNames = removedCards.stream().map(e -> e.getName()).toArray(size -> new String[size]);
+		output.sendMessage(new FaceUpDiscardServer(ID, cardNames));
 	}
 
 

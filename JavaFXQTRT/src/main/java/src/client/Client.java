@@ -314,16 +314,17 @@ class FaceDownCardsTask extends Task {
 class UpQuestTask extends Task {
 
 	private int player;
-	public UpQuestTask(GameBoardController gbc, String[][]cards, int player) {
+	private int stage;
+	public UpQuestTask(GameBoardController gbc, String[]cards, int player, int stage) {
 		super(gbc);
 		this.player = player;
+		this.stage = stage;
 		
 	}
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
-		gbc.flipStageCards(gbc.currentStage, true);
-		gbc.currentStage++;
+		gbc.flipStageCards(this.stage, true);
 	}
 }
 
@@ -399,8 +400,7 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.UPQUEST.name())) {
 						QuestUpServer request = gson.fromJson(obj, QuestUpServer.class);
-//						Platform.runLater(new ShowTurnFaceDownFieldUp(gbc, request.cards, request.player));
-						Platform.runLater(new UpQuestTask(gbc, request.cards, request.player));
+						Platform.runLater(new UpQuestTask(gbc, request.cards, request.player, request.stage));
 					}
 					if(message.equals(MESSAGETYPES.RANKUPDATE.name())) {
 						RankServer request = gson.fromJson(obj, RankServer.class);

@@ -89,7 +89,7 @@
             <Pane fx:id="playerhand0" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="750.0" />
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="978.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="823.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
 
