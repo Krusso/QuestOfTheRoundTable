@@ -236,4 +236,7 @@ public class PlayerManager {
 		return winners.get();
 	}
 
+	public void setBidAmount(Player next, STATE bidding, int maxBidValue, int i) {
+		next.setBidAmount(bidding, maxBidValue, i);
+	}
 }

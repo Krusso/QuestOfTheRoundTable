@@ -71,8 +71,6 @@ public class PlayerView {
 			output.sendMessage(new FinalTournamentNotifyServer(ID));
 		} else if(state == Player.STATE.GAMEWON) {
 			output.sendMessage(new GameOverServer(ID));
-		} else if(state == Player.STATE.BIDDING) {
-			output.sendMessage(new QuestBidServer(ID));
 		} else if(state == Player.STATE.TESTDISCARD) {
 			output.sendMessage(new QuestDiscardCardsServer(ID));
 		} else if(state == Player.STATE.QUESTPICKING) {
@@ -123,5 +121,9 @@ public class PlayerView {
 	}
 
 
+
+	public void setBidAmount(STATE bidding, int ID, int maxBidValue, int i) {
+		output.sendMessage(new QuestBidServer(ID, maxBidValue,i));
+	}
 
 }
