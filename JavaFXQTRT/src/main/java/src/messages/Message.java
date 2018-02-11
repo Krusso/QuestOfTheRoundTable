@@ -41,7 +41,8 @@ public abstract class Message {
 		JOINTOURNAMENT, 
 		PICKTOURNAMENT, 
 		WINTOURNAMENT, 
-		DOWNQUEST
+		DOWNQUEST, 
+		SHIELDCOUNT
 
 	};
 }
