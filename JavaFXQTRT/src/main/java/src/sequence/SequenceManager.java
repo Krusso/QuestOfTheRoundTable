@@ -32,6 +32,17 @@ public abstract class SequenceManager {
 		players.forEachRemaining(i -> notDropped.add(i));
 		int maxBidValue = Integer.MIN_VALUE;
 		BidCalculator bc = new BidCalculator();
+		if(notDropped.size() == 1) {
+			Player next = notDropped.poll();
+			pm.setPlayer(next);
+			int playerMaxBid = bc.maxBid(next, card);			
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue));
+			QuestBidClient qbc = actions.take(QuestBidClient.class);
+			if(qbc.bid != -1) {
+				notDropped.add(next);
+			}
+			return notDropped.poll();
+		}
 		while(notDropped.size() > 1) {
 			Player next = notDropped.poll();
 			pm.setPlayer(next);
