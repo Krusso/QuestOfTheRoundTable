@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.BoardModel;
 import src.game_logic.EventCard;
 import src.game_logic.Rank;
@@ -109,12 +110,12 @@ public class EventSequenceManager extends SequenceManager {
 			}
 			
 			highest.forEach(player -> {
-				if(player.getWeaponCount() >= 1) {
+				if(player.getTypeCount(TYPE.WEAPONS) >= 1) {
 					pm.setPlayer(player);;
 					pm.setState(player, Player.STATE.DISCARDING, 1, AdventureCard.TYPE.WEAPONS);
-				} else if(player.getFoeCount() >= 1) {
+				} else if(player.getTypeCount(TYPE.FOES) >= 1) {
 					pm.setPlayer(player);
-					pm.setState(player, Player.STATE.DISCARDING, Math.min(2, player.getFoeCount()), AdventureCard.TYPE.FOES);
+					pm.setState(player, Player.STATE.DISCARDING, Math.min(2, player.getTypeCount(TYPE.FOES)), AdventureCard.TYPE.FOES);
 				} else {
 					return;
 				}
