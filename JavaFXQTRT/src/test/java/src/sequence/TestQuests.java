@@ -30,7 +30,7 @@ import src.views.PlayerView;
 import src.views.PlayersView;
 
 public class TestQuests {
-	
+		
 	@Test
 	public void testNoSponsor() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
@@ -260,7 +260,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			System.out.println(gson.toJson(string));
 			if(string.message == MESSAGETYPES.PICKQUEST && string.player == 0) break;
 		}
 		
