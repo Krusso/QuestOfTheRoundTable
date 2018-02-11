@@ -42,7 +42,8 @@ public abstract class Message {
 		PICKTOURNAMENT, 
 		WINTOURNAMENT, 
 		DOWNQUEST, 
-		SHIELDCOUNT
+		SHIELDCOUNT, 
+		DISCARDFACEUP
 
 	};
 }

@@ -4,11 +4,13 @@ import src.messages.Message;
 
 //from server
 public class QuestUpServer extends Message {
-	public String[][] cards;
+	public String[] cards;
+	public int stage;
 	
-	public QuestUpServer(int player, String[][] cards) {
+	public QuestUpServer(int player, String[] cards, int stage) {
 		super(player);
 		this.cards = cards;
+		this.stage = stage;
 	}
 	
 	@Override

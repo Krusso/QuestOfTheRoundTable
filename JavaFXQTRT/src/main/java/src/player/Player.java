@@ -147,7 +147,7 @@ public class Player {
 	
 	public void flipStage(int stage) {
 		questUp.add(questDown.get(stage));
-		if(pv != null) pv.updateQuestUp(questUp, ID);
+		if(pv != null) pv.updateQuestUp(questDown.get(stage), stage, ID);
 	}
 
 	public RANKS getRank() {
@@ -163,18 +163,13 @@ public class Player {
 		return this.faceUp;
 	}
 
-	public void discardWeapons() {
-		faceUp.discardType(TYPE.WEAPONS);
+	public void discardType(TYPE type) {
+		List<Card> removedCards = faceUp.discardType(type);
+		if(pv != null) pv.discard(ID, removedCards);
 	}
 	
-	public void discardAmours() {
-		faceUp.discardType(TYPE.AMOUR);
-	}
 	public int getShields() {
 		return this.shields;
-	}
-	protected void discardAllies() {
-		faceUp.discardType(TYPE.ALLIES);
 	}
 
 	public int getWeaponCount() {

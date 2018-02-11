@@ -74,7 +74,7 @@ public class TestPlayer {
 		p1.setFaceDown(cards.stream().map(i -> i.getName()).toArray(String[]::new));
 		p1.flipCards();
 		assertTrue("Sir Tristan Queen Iseult Dagger Horse ".equals(p1.getFaceUp().toString()));
-		p1.discardWeapons();
+		p1.discardType(TYPE.WEAPONS);
 		assertTrue("Sir Tristan Queen Iseult ".equals(p1.getFaceUp().toString()));
 	}
 	
@@ -92,7 +92,7 @@ public class TestPlayer {
 		p1.setFaceDown(cards.stream().map(i -> i.getName()).toArray(String[]::new));
 		p1.flipCards();
 		assertTrue("Sir Tristan Queen Iseult Dagger Horse Amour ".equals(p1.getFaceUp().toString()));
-		p1.discardAmours();
+		p1.discardType(TYPE.AMOUR);
 		assertTrue("Sir Tristan Queen Iseult Dagger Horse ".equals(p1.getFaceUp().toString()));
 	}
 	
@@ -110,7 +110,7 @@ public class TestPlayer {
 		p1.setFaceDown(cards.stream().map(i -> i.getName()).toArray(String[]::new));
 		p1.flipCards();
 		assertTrue("Sir Tristan Queen Iseult Dagger Horse Amour ".equals(p1.getFaceUp().toString()));
-		p1.discardAllies();
+		p1.discardType(TYPE.ALLIES);
 		assertTrue("Dagger Horse Amour ".equals(p1.getFaceUp().toString()));
 	}
 	

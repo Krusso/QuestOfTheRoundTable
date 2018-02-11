@@ -1,6 +1,7 @@
 package src.game_logic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import src.game_logic.AdventureCard.TYPE;
 
@@ -53,8 +54,17 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		return deck.stream().mapToInt(i -> i.getBattlePoints()).sum();
 	}
 
-	public void discardType(TYPE type) {
-		deck.removeIf(i -> i.getType() == type);
+	public List<Card> discardType(TYPE type) {
+		List<Card> removed = new ArrayList<Card>();
+		deck.removeIf(i -> {
+			if(i.getType() != type) {
+				return false;
+			}
+			removed.add(i);
+			return true;
+		});
+		
+		return removed;
 	}
 	
 	public int typeCount(TYPE type) {
