@@ -16,6 +16,7 @@ import src.messages.gameend.FinalTournamentNotifyServer;
 import src.messages.gameend.GameOverServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
+import src.messages.hand.FaceUpDiscardServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.quest.QuestBidServer;
 import src.messages.quest.QuestDiscardCardsServer;
@@ -23,13 +24,14 @@ import src.messages.quest.QuestDownServer;
 import src.messages.quest.QuestJoinServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
-import src.messages.quest.QuestSponserServer;
+import src.messages.quest.QuestSponsorServer;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
 import src.player.Player;
+import src.player.PlayerManager;
 import src.player.Player.STATE;
 import src.socket.OutputController;
 
@@ -60,7 +62,7 @@ public class PlayerView {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage(new TournamentAcceptDeclineServer(ID));
 		} else if(state == Player.STATE.QUESTQUESTIONED) {
-			output.sendMessage(new QuestSponserServer(ID));
+			output.sendMessage(new QuestSponsorServer(ID));
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage(new TournamentPickCardsServer(ID));
 		} else if(state == Player.STATE.WIN) {
@@ -90,11 +92,10 @@ public class PlayerView {
 		output.sendMessage(new  QuestDownServer(ID, cards));
 	}
 
-	public void updateQuestUp(List<List<Card>> list, int ID) {
-		String[][] cards = list.stream().
-				map(i -> i.stream().map(e -> e.getName()).toArray(size -> new String[size])).
-				toArray(String[][]::new);
-		output.sendMessage(new  QuestUpServer(ID, cards));
+	public void updateQuestUp(List<Card> list, int ID, int stage) {
+		String[] cards = list.stream().
+				map(e -> e.getName()).toArray(size -> new String[size]);
+		output.sendMessage(new QuestUpServer(ID, cards, stage));
 	}
 
 	public void updateFaceUp(AdventureDeck faceUp, int ID) {
@@ -113,6 +114,12 @@ public class PlayerView {
 	public void updateShieldCount(int ID, int shields) {
 		output.sendMessage(new ShieldCountServer(ID, shields));
 	}
+
+	public void discard(int ID, List<Card> removedCards) {
+		String[] cardNames = removedCards.stream().map(e -> e.getName()).toArray(size -> new String[size]);
+		output.sendMessage(new FaceUpDiscardServer(ID, cardNames));
+	}
+
 
 
 	public void setBidAmount(STATE bidding, int ID, int maxBidValue, int i) {

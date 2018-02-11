@@ -8,12 +8,17 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.animation.SequentialTransition;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -24,12 +29,19 @@ import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.messages.game.ContinueGameClient;
+import src.messages.quest.*;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
+	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, 
+		JOIN_TOURNAMENT, 
+		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS,
+		NONE}
 
-	private static final int NUM_POSITIONS = 4;
+	public STATE CURRENT_STATE = STATE.NONE;
+	public int numStages = 0;
+	public int currentStage = 0;
 
 	private Client c;
 	private UIPlayerManager playerManager;
@@ -44,6 +56,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Button decline;
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
+	@FXML private Pane background;
 	//The pane that holds the other players' hand
 
 
@@ -61,7 +74,6 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerHand3;
 	@FXML private Pane[] handPanes = new Pane[4];
 
-	//TODO: make the face down field in FXML
 	//The panes that govern the player's facedown cards
 	@FXML private Pane playerFaceDown0;
 	@FXML private Pane playerFaceDown1;
@@ -69,13 +81,11 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerFaceDown3;
 	private Pane[] faceDownPanes = new Pane[4];
 
-	//TODO: make the faceup field in FXML
 	//The panes that govern the player's faceup cards
 	@FXML private Pane playerFaceUp0;
 	@FXML private Pane playerFaceUp1;
 	@FXML private Pane playerFaceUp2;
 	@FXML private Pane playerFaceUp3;
-	//TODO: initialize these in the init function
 	private Pane[] faceUpPanes = new Pane[4];
 
 	@FXML private ImageView playerRank0;
@@ -85,6 +95,15 @@ public class GameBoardController implements Initializable{
 	private ImageView[] playerRanks = new ImageView[4];
 
 	@FXML public Text toast;
+
+	/*Panes for picking stages (maximum number of stages is 5)*/
+	@FXML private Pane pickStage0;
+	@FXML private Pane pickStage1;
+	@FXML private Pane pickStage2;
+	@FXML private Pane pickStage3;
+	@FXML private Pane pickStage4;
+	private Pane[] stages = new Pane[5];
+	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -110,7 +129,158 @@ public class GameBoardController implements Initializable{
 		playerRanks[2] = playerRank2;
 		playerRanks[3] = playerRank3;
 
+		stages[0] = pickStage0;
+		stages[1] = pickStage1;
+		stages[2] = pickStage2;
+		stages[3] = pickStage3;
+		stages[4] = pickStage4;
+		for(int i = 0 ; i < 5 ; i++) {
+			stageCards.add(new ArrayList<AdventureCard>());
+		}
+
+		//setBackground
+		setBackground();
+
+
 	}
+
+
+	public void addStagePaneListener() {
+		//Add listeners for the stage panes
+		for(int i = 0 ; i < stages.length ; i++) {
+			Pane p = stages[i];
+			final int currentIndex = i;
+			p.setOnDragOver(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					if(event.getGestureSource() != pickStage0 && event.getDragboard().hasString()) {
+						event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+					}
+					event.consume();
+				}
+			});
+			//TODO::
+			p.setOnDragDropped(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
+					Dragboard db = event.getDragboard();
+					if(db.hasImage()) {
+						//Find the id of the card and the index of the card in the player's hand
+						int cPlayer = playerManager.getCurrentPlayer();
+						int id = Integer.parseInt(db.getString());
+						int idx = playerManager.getCardIndexByID(cPlayer, id);
+						AdventureCard card = playerManager.getCardByID(cPlayer, id);
+						//remove the card from the player hand pane
+						handPanes[cPlayer].getChildren().remove(idx);
+						//add the card image to the stage pane
+						p.getChildren().add(card.getImageView());
+
+
+						//add the card name to the stage
+						stageCards.get(currentIndex).add(card);
+						//remove card from the player's hand by matching the id of the card
+						playerManager.removeCardFromPlayerHandByID(cPlayer, id);
+
+						//lastly reposition the hand and reposition the card in this pane
+						repositionCardsInHand(cPlayer);
+						//reposition cards in this pane
+						ObservableList<Node> cards = p.getChildren();
+						double handPaneHeight = p.getHeight();
+
+						for(int i = 0 ; i < cards.size(); i++) {
+							if(cards.get(i) instanceof ImageView) {
+								ImageView img = (ImageView) cards.get(i);
+								img.setX(0);
+								img.setY(handPaneHeight/cards.size() * i);
+							}
+						}
+					}
+					event.consume();
+				}
+			});
+		}
+	}
+
+	public void removeStagePaneDragOver() {
+		for(Pane p : stages) {
+			p.setOnDragOver(null);
+			p.setOnDragDropped(null);
+		}
+	}
+
+	public void addFaceDownPaneDragOver() {
+		for(int i = 0 ; i < faceDownPanes.length ; i++) {
+			Pane p = faceDownPanes[i];
+			final int currentIndex = i;
+			p.setOnDragOver(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					if(event.getGestureSource() != pickStage0 && event.getDragboard().hasString()) {
+						event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+					}
+					event.consume();
+				}
+			});
+			//TODO::
+			p.setOnDragDropped(new EventHandler<DragEvent>() {
+				@Override
+				public void handle(DragEvent event) {
+					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
+					Dragboard db = event.getDragboard();
+					if(db.hasImage()) {
+						//Find the id of the card and the index of the card in the player's hand
+						int cPlayer = playerManager.getCurrentPlayer();
+						int id = Integer.parseInt(db.getString());
+						int idx = playerManager.getCardIndexByID(cPlayer, id);
+						AdventureCard card = playerManager.getCardByID(cPlayer, id);
+						//remove the card from the player hand pane
+						handPanes[cPlayer].getChildren().remove(idx);
+						//add the card image to the stage pane
+						p.getChildren().add(card.getImageView());
+
+
+						AdventureCard c = playerManager.getCardByID(cPlayer, id);
+						playerManager.playCard(c,cPlayer);
+						//remove card from the player's hand by matching the id of the card
+						playerManager.removeCardFromPlayerHandByID(cPlayer, id);
+
+						//lastly reposition the hand and reposition the card in this pane
+						repositionCardsInHand(cPlayer);
+						//reposition cards in this pane
+						ObservableList<Node> cards = p.getChildren();
+						double handPaneWidth = p.getHeight();
+
+						for(int i = 0 ; i < cards.size(); i++) {
+							if(cards.get(i) instanceof ImageView) {
+								ImageView img = (ImageView) cards.get(i);
+								img.setX(handPaneWidth/cards.size() * i);
+								img.setY(0);
+							}
+						}
+					}
+					event.consume();
+				}
+			});
+		}
+	}
+	public void removeFaceDownPaneDragOver() {
+		for(Pane p: faceDownPanes) {
+			//TODO:: remove panes listener
+		}
+	}
+	//important for making sure players won't be dragging cards into the wrong stage panes
+	public void setPickStageOn(int numStage) {
+		for(int i = 0 ; i < stages.length ; i++) {
+			if(i < numStage) {
+				stages[i].setVisible(true);
+			}else {
+				stages[i].setVisible(false);
+			}
+		}
+		//TODO::Provide visual feeed back by implementing setOnDragEntered
+	}
+
 	////Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers) {
 		playerManager = new UIPlayerManager(numPlayers);
@@ -118,21 +288,6 @@ public class GameBoardController implements Initializable{
 			setPlayerRank(i, Rank.RANKS.SQUIRE);;
 		}
 	}
-
-
-
-
-	//Put's Cards into the Pane and repositions it to fit the width
-	private void putCardIntoPane(Pane p, Card... c) {
-		for(Card card : c) {
-			p.getChildren().add(card.getImageView());
-		}
-		//TODO reposition the the cards in this pane
-		//		for(int i = 0 ; i < p.getChildren().size() ; i++) {
-		//			
-		//		}
-	}
-
 
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		c.gbc = this;
@@ -146,7 +301,6 @@ public class GameBoardController implements Initializable{
 	//Some raunchy way of setting player perspective to playerNum
 	public void setPlayerPerspectiveTo(int playerNum) {
 		int currentPlayer = playerManager.getCurrentPlayer();
-
 		while(currentPlayer != playerNum) {
 			if(currentPlayer == 3) {
 				currentPlayer = 0;
@@ -155,6 +309,15 @@ public class GameBoardController implements Initializable{
 			}
 			rotatePlayerPosition();
 		}
+
+		for(int i = 0 ; i < playerManager.getNumPlayers();i++) {
+			if(currentPlayer == i) {
+				playerManager.showPlayerHand(currentPlayer);
+			}else {
+				playerManager.faceDownPlayerHand(i);
+			}
+		}
+		playerManager.setCurrentPlayer(playerNum);
 
 	}
 
@@ -175,17 +338,20 @@ public class GameBoardController implements Initializable{
 	//Repositions the cards in the hand of this player
 	private void repositionCardsInHand(int pNum) {
 		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(pNum);
-		double windowWidth = playerhand0.getWidth();
-		for(int i = 0 ; i < currHand.size(); i++) {
-			currHand.get(i).getImageView().setX(windowWidth/currHand.size() * i);
-			currHand.get(i).getImageView().setY(0);
+		ObservableList<Node> cards = handPanes[pNum].getChildren();
+		double handPaneWidth = handPanes[pNum].getWidth();
+
+		for(int i = 0 ; i < cards.size(); i++) {
+			if(cards.get(i) instanceof ImageView) {
+				ImageView img = (ImageView) cards.get(i);
+				img.setX(handPaneWidth/cards.size() * i);
+				img.setY(0);
+			}
 		}
 	}
 
 	public void setPlayerTurn(int p) {
-		System.out.println("Set Player Turn to :" + p);
 		setPlayerPerspectiveTo(p);
-		playerManager.setCurrentPlayer(p);
 		this.playerNumber.setText("#" + p);
 	}
 
@@ -206,28 +372,33 @@ public class GameBoardController implements Initializable{
 		//Gets the bounds for the current player's perspective
 		Bounds boundsHand = handPanes[currPlayer].localToScene(handPanes[currPlayer].getBoundsInLocal());// playerhand0.localToScene(playerhand0.getBoundsInLocal());
 
-		//the bounds to play will be outside of the player's hand
-		Bounds boundsPlay = p.localToScene(p.getBoundsInLocal());//playField.localToScene(playField.getBoundsInLocal());
-
-		// Cards topleft corner = boundsHand.getMinY(), boundsHand.getMinX + d
-		// give +10 on each side of the boundsPlay box to be nice to user
-		if(boundsHand.getMinY() >= boundsPlay.getMinY() - 10 &&
-				boundsHand.getMinY() <= boundsPlay.getMaxY() + 10 &&
-				// plus 200 because we want to let the user play it on the story card too just so that we dont create
-				// a gap where if the card is dropped user cant move it
-				boundsHand.getMinX() + d >= boundsPlay.getMinX() - 210 &&
-				boundsHand.getMinX() + d <= boundsPlay.getMaxX() + 10 && !card.inPlay) {
-			System.out.println("in the box");
-			handPanes[currPlayer].getChildren().remove(card.getImageView());
-			p.getChildren().add(card.getImageView());
-			card.inPlay = true;
-			playerManager.playCard((AdventureCard) card, playerManager.getCurrentPlayer());
-			repositionCardsInHand(playerManager.getCurrentPlayer());
-			//			System.out.println("Length : " + playerManager.getFaceDownLength(playerManager.getCurrentPlayer()));
-			card.getImageView().setX(100 * (playerManager.getFaceDownLength(playerManager.getCurrentPlayer()) - 1) + 10);
-			card.getImageView().setY(0);
-
+		//TODO:: might make another state for choosing cards in tournament
+		if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+			//the bounds to play will be outside of the player's hand
+			Bounds boundsPlay = p.localToScene(p.getBoundsInLocal());
+			// Cards topleft corner = boundsHand.getMinY(), boundsHand.getMinX + d
+			// give +10 on each side of the boundsPlay box to be nice to user
+			if(boundsHand.getMinY() >= boundsPlay.getMinY() - 10 &&
+					boundsHand.getMinY() <= boundsPlay.getMaxY() + 10 &&
+					// plus 200 because we want to let the user play it on the story card too just so that we dont create
+					// a gap where if the card is dropped user cant move it
+					boundsHand.getMinX() + d >= boundsPlay.getMinX() - 210 &&
+					boundsHand.getMinX() + d <= boundsPlay.getMaxX() + 10 && !card.inPlay) {
+				System.out.println("in the box");
+				handPanes[currPlayer].getChildren().remove(card.getImageView());
+				p.getChildren().add(card.getImageView());
+				card.inPlay = true;
+				playerManager.playCard((AdventureCard) card, playerManager.getCurrentPlayer());
+				repositionCardsInHand(playerManager.getCurrentPlayer());
+				//			System.out.println("Length : " + playerManager.getFaceDownLength(playerManager.getCurrentPlayer()));
+				card.getImageView().setX(100 * (playerManager.getFaceDownLength(playerManager.getCurrentPlayer()) - 1) + 10);
+				card.getImageView().setY(0);
+			}
 		} 
+		//If state is currently pick stages, we allow player to drag and drop cards into the 5 stage panes
+		if(CURRENT_STATE == STATE.PICK_STAGES) {
+
+		}
 		// TODO: let user put back to his hand
 		else {
 			System.out.println("out of the box");
@@ -244,38 +415,80 @@ public class GameBoardController implements Initializable{
 	public void setUp() {
 		this.endTurn.setOnAction(e -> {
 			System.out.println("clicked end turn");
-			this.setButtonsInvisible();
 			this.removeDraggable();
-			playerManager.faceDownFaceDownCards(playerManager.getCurrentPlayer());
-
-
-			c.send(new TournamentPickCardsClient(playerManager.getCurrentPlayer(), 
-					playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer()).stream().map(i -> i.getName()).toArray(size -> new String[size])));
-			//			playerManager.getPlayerHand(playerManager.getCurrentPlayer()).forEach(g -> {
-			//				SequentialTransition x = g.flipDown();
-			//				x.play();
-			//				System.out.println("rotated: " + g.getName());
-			//			});
+			int currentPlayer = playerManager.getCurrentPlayer();
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				playerManager.flipFaceDownCards(currentPlayer, false);
+				c.send(new TournamentPickCardsClient(currentPlayer, 
+						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
+			}else if(CURRENT_STATE == STATE.PICK_STAGES) {
+				//TODO::Handle PICK_STAGES make sure player plays a card
+				for(int i = 0 ; i < stageCards.size(); i++) {
+					if(!stageCards.get(i).isEmpty()) {
+						String[] currentStageCards = new String[stageCards.get(i).size()];
+						for(int j = 0 ; j < stageCards.get(i).size(); j++) {
+							currentStageCards[j] = stageCards.get(i).get(j).getName();
+						}
+						c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
+					}
+				}
+			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+				//send cards 
+				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
+				String[] cards = new String[faceDownCards.size()];
+				for(int i = 0 ; i < cards.length ; i++) {
+					cards[i] = faceDownCards.get(i).getName();
+				}
+				c.send(new QuestPickCardsClient(currentPlayer, cards));
+			}
 		});
 		this.accept.setOnAction(e -> {
-			System.out.println("accepted tournament");
-			this.setButtonsInvisible();
-			c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
+			System.out.println("accepted story");
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
+				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
+			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
+				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
+			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
+				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
+			}
 		});
 		this.decline.setOnAction(e -> {
-			System.out.println("declined tournament");
-			this.setButtonsInvisible();
-			c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
+			System.out.println("declined story");
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
+				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
+				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
+				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
+			}
 		});
 		this.nextTurn.setOnAction(e -> {
 			System.out.println("Clicked next turn");
 			c.send(new ContinueGameClient());
 		});
-		this.setButtonsInvisible();
 	}
 
-	public void clearPlayField() {
-		this.playField.getChildren().clear();
+	//TODO:: BG image isn't completely scaled correctly not sure why
+	public void setBackground() {
+		try {
+			File f = new File(resDir + "/gameboardbg3.jpg");
+			Image bg;
+			bg = new Image(new FileInputStream(f));
+			ImageView bgView = new ImageView();
+			bgView.setImage(bg);
+			bgView.setFitHeight(1920);
+			bgView.setFitHeight(1080);
+			background.getChildren().add(bgView);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setButtonsInvisible() {
@@ -283,6 +496,7 @@ public class GameBoardController implements Initializable{
 		this.accept.setVisible(false);
 		this.decline.setVisible(false);
 		this.nextTurn.setVisible(false);
+		System.out.println("Called");
 	}
 
 	public void showAcceptDecline() {
@@ -322,8 +536,8 @@ public class GameBoardController implements Initializable{
 		});
 	}
 
-	public void showFaceDownFieldCards(int p) {
-		playerManager.showFaceDownFieldCards(p);
+	public void flipFaceDownPane(int p, boolean isShow) {
+		playerManager.flipFaceDownCards(p, isShow);
 	}
 
 	public void setPlayerRank(int p, Rank.RANKS r) {
@@ -343,6 +557,35 @@ public class GameBoardController implements Initializable{
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	public void discardFaceDownCards(int p, String[] cardNames) {
+		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
+		for(String n : cardNames) {
+			for(int i = 0 ; i < fdc.size(); i++) {
+				//find cards to discard in fdc  and the image view from the pane
+				if(fdc.get(i).getName().equalsIgnoreCase(n)) {
+					faceDownPanes[p].getChildren().remove(i);
+					fdc.remove(i);
+				}
+			}
+		}
+	}
+
+	public void flipStageCards(int stageNum, boolean isShow) {
+		ArrayList<AdventureCard> cards = stageCards.get(stageNum);
+		for(int i = 0 ; i < cards.size(); i++) {
+			if(isShow == true) {
+				cards.get(i).faceUp();
+			}else {
+				cards.get(i).faceDown();
+			}
+		}
+	}
+	
+	public void addShields(int p, int s) {
+		playerManager.addShields(p, s);
 	}
 }
 

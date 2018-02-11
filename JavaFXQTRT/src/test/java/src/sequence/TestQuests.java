@@ -22,7 +22,7 @@ import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
 import src.messages.quest.QuestPickCardsClient;
 import src.messages.quest.QuestPickStagesClient;
-import src.messages.quest.QuestSponserClient;
+import src.messages.quest.QuestSponsorClient;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -30,7 +30,7 @@ import src.views.PlayerView;
 import src.views.PlayersView;
 
 public class TestQuests {
-	
+		
 	@Test
 	public void testNoSponsor() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
@@ -50,7 +50,7 @@ public class TestQuests {
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
-			input.put(new QuestSponserClient(i, false));
+			input.put(new QuestSponsorClient(i, false));
 			Thread.sleep(100);
 			assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 		}
@@ -82,11 +82,11 @@ public class TestQuests {
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
 			if(i<3) {
-				input.put(new QuestSponserClient(i, false));
+				input.put(new QuestSponsorClient(i, false));
 				Thread.sleep(100);
 				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 			} else {
-				input.put(new QuestSponserClient(i, true));
+				input.put(new QuestSponsorClient(i, true));
 				Thread.sleep(100);
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
@@ -136,11 +136,11 @@ public class TestQuests {
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
 			if(i<3) {
-				input.put(new QuestSponserClient(i, false));
+				input.put(new QuestSponsorClient(i, false));
 				Thread.sleep(100);
 				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 			} else {
-				input.put(new QuestSponserClient(i, true));
+				input.put(new QuestSponsorClient(i, true));
 				Thread.sleep(100);
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
@@ -223,11 +223,11 @@ public class TestQuests {
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
 			if(i<3) {
-				input.put(new QuestSponserClient(i, false));
+				input.put(new QuestSponsorClient(i, false));
 				Thread.sleep(100);
 				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 			} else {
-				input.put(new QuestSponserClient(i, true));
+				input.put(new QuestSponsorClient(i, true));
 				Thread.sleep(100);
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
@@ -267,7 +267,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			System.out.println(gson.toJson(string));
 			if(string.message == MESSAGETYPES.PICKQUEST && string.player == 0) break;
 		}
 		
