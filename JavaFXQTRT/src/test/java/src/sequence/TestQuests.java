@@ -1,9 +1,11 @@
 package src.sequence;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.Before;
@@ -11,12 +13,18 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 
+import src.game_logic.AdventureCard;
+import src.game_logic.AllyCard;
+import src.game_logic.AmourCard;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.QuestCard;
+import src.game_logic.WeaponCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
+import src.messages.hand.FaceUpDiscardServer;
 import src.messages.quest.QuestBidClient;
 import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
@@ -30,6 +38,90 @@ import src.views.PlayerView;
 import src.views.PlayersView;
 
 public class TestQuests {
+	
+	@Test
+	public void testDiscardForQuests() throws InterruptedException {
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QOTRTQueue input = new QOTRTQueue();
+		Runnable task2 = () -> { qsm.start(input, pm, bm); };
+		new Thread(task2).start();
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
+		Iterator<Player> iter = pm.round();
+		ArrayList<Player> players = new ArrayList<Player>();
+		iter.forEachRemaining(i -> players.add(i));
+		
+		// decline to sponsor as first 3 players, accept to sponsor as 4th
+		for(int i = 0; i < 4; i++) {
+			while(true) {
+				Message string = actualOutput.take();
+				System.out.println(string);
+				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
+			}
+			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
+			if(i<3) {
+				input.put(new QuestSponserClient(i, false));
+				Thread.sleep(100);
+				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
+			} else {
+				input.put(new QuestSponserClient(i, true));
+				Thread.sleep(100);
+				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
+			}
+		}
+		
+		while(true) {
+			Message string = actualOutput.take();
+			System.out.println(string);
+			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
+		}
+
+		// sending cards for each stage
+		input.put(new QuestPickStagesClient(3, new String[] {"Boar"}, 0) );
+
+		// agree to participate as all players
+		for(int i = 0; i < 3; i++) {
+			while(true) {
+				Message string = actualOutput.take();
+				System.out.println(string);
+				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
+			}
+			input.put(new QuestJoinClient(i, true));
+			Thread.sleep(100);
+			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
+		}
+		
+		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+		cards.add(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
+		cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+		cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+		
+		players.get(0).addCards(cards);
+		players.get(1).addCards(cards);
+		players.get(2).addCards(cards);
+		
+		input.put(new QuestPickCardsClient(0, new String[] {"Lance"}));
+		input.put(new QuestPickCardsClient(1, new String[] {"Lance", "Excalibur", "Sir Galahad"}));
+		input.put(new QuestPickCardsClient(2, new String[] {"Battle-ax", "Amour", "Dagger"}));
+
+		while(true) {
+			Message string = actualOutput.take();
+			System.out.println(gson.toJson(string));
+			if(string.message == MESSAGETYPES.DISCARDFACEUP && string.player == 0) {
+				assertTrue(((FaceUpDiscardServer) string).cardsDiscarded[0].equals("Lance"));
+			} else if(string.message == MESSAGETYPES.DISCARDFACEUP && string.player == 1) {
+				String[] discarded = ((FaceUpDiscardServer) string).cardsDiscarded;
+				for(String s: discarded) {
+					assertTrue(s.equals("Lance") || s.equals("Excalibur"));
+				}
+			} else if(string.message == MESSAGETYPES.DISCARDFACEUP && string.player == 2) {
+				String[] discarded = ((FaceUpDiscardServer) string).cardsDiscarded;
+				for(String s: discarded) {
+					assertTrue(s.equals("Battle-ax") || s.equals("Amour") || s.equals("Dagger"));
+				}
+				break;
+			} 
+		}
+	}
 		
 	@Test
 	public void testNoSponsor() throws InterruptedException {

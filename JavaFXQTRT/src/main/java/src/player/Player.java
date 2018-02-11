@@ -64,7 +64,7 @@ public class Player {
 		if(pv != null) pv.update(rank, ID);
 	}
 	
-	protected void addCards(ArrayList<AdventureCard> cards) {
+	public void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
 			hand.addCard(card, 1);
 		}
