@@ -29,6 +29,7 @@ import src.messages.game.MiddleCardServer;
 import src.messages.game.TurnNextServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
+import src.messages.hand.FaceUpDiscardServer;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineClient;
@@ -434,6 +435,13 @@ public class Client implements Runnable {
 						FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);
 						
 						Platform.runLater(new FaceDownCardsTask(gbc, request.player));
+					}
+					if(message.equals(MESSAGETYPES.DISCARDFACEUP.name())) {
+//						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
+						FaceUpDiscardServer request = gson.fromJson(obj, FaceUpDiscardServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new DiscardFaceDownTask(gbc, request.player, request.cardsDiscarded));
 					}
 				}
 			}
