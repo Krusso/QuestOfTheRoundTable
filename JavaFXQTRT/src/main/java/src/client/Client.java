@@ -328,6 +328,24 @@ class UpQuestTask extends Task {
 		gbc.flipStageCards(this.stage, true);
 	}
 }
+class DiscardFaceDownTask extends Task {
+
+	private String[] cardsToDiscard;
+	private int player;
+	public DiscardFaceDownTask(GameBoardController gbc, int player, String[] cardsDiscarded) {
+		super(gbc);
+		this.player = player;
+		this.cardsToDiscard = cardsDiscarded;
+		
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
+		gbc.discardFaceDownCards(player,cardsToDiscard);
+	}
+}
+
+
 
 
 abstract class Task implements Runnable{

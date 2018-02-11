@@ -97,7 +97,7 @@
          <children>
             <Pane prefHeight="400.0" prefWidth="500.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="400.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="897.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="400.0" opacity="0.54" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="897.0" />
                   <Pane fx:id="storyCardContainer" layoutX="2.0" layoutY="125.0" prefHeight="150.0" prefWidth="100.0" />
                   <Pane fx:id="pickStage0" layoutX="203.0" prefHeight="400.0" prefWidth="125.0" />
                   <Pane fx:id="pickStage1" layoutX="313.0" prefHeight="400.0" prefWidth="125.0" />

@@ -36,7 +36,7 @@ import src.messages.tournament.TournamentPickCardsClient;
 public class GameBoardController implements Initializable{
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, 
 		JOIN_TOURNAMENT, 
-		FACE_DOWN_CARDS, UP_QUEST,
+		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS,
 		NONE}
 
 	public STATE CURRENT_STATE = STATE.NONE;
@@ -47,7 +47,7 @@ public class GameBoardController implements Initializable{
 	private UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
-	
+
 	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
@@ -473,7 +473,7 @@ public class GameBoardController implements Initializable{
 			c.send(new ContinueGameClient());
 		});
 	}
-	
+
 	//TODO:: BG image isn't completely scaled correctly not sure why
 	public void setBackground() {
 		try {
@@ -535,7 +535,7 @@ public class GameBoardController implements Initializable{
 			}
 		});
 	}
-	
+
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
 	}
@@ -560,10 +560,19 @@ public class GameBoardController implements Initializable{
 	}
 
 
-	public void discardFaceDownCards() {
-		playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer()).clear();
+	public void discardFaceDownCards(int p, String[] cardNames) {
+		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
+		for(String n : cardNames) {
+			for(int i = 0 ; i < fdc.size(); i++) {
+				//find cards to discard in fdc  and the image view from the pane
+				if(fdc.get(i).getName().equalsIgnoreCase(n)) {
+					faceDownPanes[p].getChildren().remove(i);
+					fdc.remove(i);
+				}
+			}
+		}
 	}
-	
+
 	public void flipStageCards(int stageNum, boolean isShow) {
 		ArrayList<AdventureCard> cards = stageCards.get(stageNum);
 		for(int i = 0 ; i < cards.size(); i++) {
