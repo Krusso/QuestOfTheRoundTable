@@ -51,13 +51,13 @@ public class Player {
 			rank = Rank.RANKS.SQUIRE;
 		} else if(rank == Rank.RANKS.SQUIRE && shields >= 5) {
 			rank = Rank.RANKS.KNIGHT;
-			shields -= 5;
+			changeShields(-5);
 		} else if (rank == Rank.RANKS.KNIGHT && shields >= 7) {
 			rank = Rank.RANKS.CHAMPION;
-			shields -= 7;
+			changeShields(-7);
 		} else if (rank == Rank.RANKS.CHAMPION && shields >= 10) {
 			rank = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
-			shields -= 10;
+			changeShields(-10);
 		} else {
 			return;
 		}
@@ -107,6 +107,7 @@ public class Player {
 		if(shields < 0) {
 			shields = 0;
 		}
+		if(pv != null ) pv.updateShieldCount(ID, shields);
 	}
 	
 	public int faceDownDeckLength() {
