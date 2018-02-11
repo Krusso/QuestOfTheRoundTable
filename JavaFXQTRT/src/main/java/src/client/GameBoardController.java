@@ -583,5 +583,9 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	
+	public void addShields(int p, int s) {
+		playerManager.addShields(p, s);
+	}
 }
 

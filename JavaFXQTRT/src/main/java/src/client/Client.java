@@ -26,6 +26,7 @@ import src.game_logic.TestCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.MiddleCardServer;
+import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
@@ -345,6 +346,23 @@ class DiscardFaceDownTask extends Task {
 	}
 }
 
+class ShieldCountTask extends Task {
+
+	private int shields;
+	private int player;
+	public ShieldCountTask(GameBoardController gbc, int player, int shields) {
+		super(gbc);
+		this.player = player;
+		this.shields = shields;
+		
+	}
+	@Override
+	public void run() {
+//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a statae for shields
+		gbc.addShields(player, shields);
+	}
+}
+
 
 
 
@@ -455,11 +473,16 @@ public class Client implements Runnable {
 						Platform.runLater(new FaceDownCardsTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.DISCARDFACEUP.name())) {
-//						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
 						FaceUpDiscardServer request = gson.fromJson(obj, FaceUpDiscardServer.class);
 						
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new DiscardFaceDownTask(gbc, request.player, request.cardsDiscarded));
+					}
+					if(message.equals(MESSAGETYPES.SHIELDCOUNT.name())) {
+						ShieldCountServer request = gson.fromJson(obj, ShieldCountServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new ShieldCountTask(gbc, request.player, request.shields));
 					}
 				}
 			}

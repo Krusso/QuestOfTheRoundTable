@@ -21,14 +21,18 @@ public class UIPlayer extends Player{
 		super(id);
 	}
 	
-	public UIPlayer(int id, Pane handPane, Pane faceDownPane,Pane faceUpPane, ImageView playerRank ) {
-		super(id);
-		this.handPaneUI = handPane;
-		this.faceDownPaneUI = faceDownPane;
-		this.faceUpPaneUI = faceUpPane;
-		this.playerRankUI = playerRank;
-	}
+//	public UIPlayer(int id, Pane handPane, Pane faceDownPane,Pane faceUpPane, ImageView playerRank ) {
+//		super(id);
+//		this.handPaneUI = handPane;
+//		this.faceDownPaneUI = faceDownPane;
+//		this.faceUpPaneUI = faceUpPane;
+//		this.playerRankUI = playerRank;
+//	}
 	
+
+	public void addShields(int s) {
+		shields += s;
+	}
 	public int faceDownLength() {
 		return faceDownDeckLength();
 	}

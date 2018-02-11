@@ -17,6 +17,9 @@ public class UIPlayerManager {
 		}
 	}
 	
+	public void addShields(int p, int shields) {
+		players[p].addShields(shields);
+	}
 
 	public Rank.RANKS getPlayerRank(int playerNum){
 		return players[playerNum].getRank();

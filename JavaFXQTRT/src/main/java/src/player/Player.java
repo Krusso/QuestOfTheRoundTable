@@ -28,7 +28,7 @@ public class Player {
 	private PlayerView pv;
 	private final int ID;
 	private STATE question;
-	private int shields;
+	protected int shields;
 	private boolean tristan = false;
 	private boolean iseult = false;
 	
