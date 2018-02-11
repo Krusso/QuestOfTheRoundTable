@@ -60,27 +60,26 @@ public class UIPlayerManager {
 			card.faceDown();
 		});
 	}
-	public void faceDownFaceDownCards(int playerNum) {
+
+	public void flipFaceDownCards(int playerNum, boolean isShow) {
 		ArrayList<AdventureCard> p = getFaceDownCardsAsList(playerNum);
 		p.forEach(card-> {
-			card.faceDown();
-		});
-	}
-	public void showFaceDownFieldCards(int playerNum) {
-		ArrayList<AdventureCard> p = getFaceDownCardsAsList(playerNum);
-		p.forEach(card-> {
-			card.faceUp();
+			if(isShow) {
+				card.faceUp();
+			}else {
+				card.faceDown();
+			}
 		});
 	}
 	public void setCurrentPlayer(int p) {
 		currentPlayer = p;
-		for(int i = 0; i < players.length ; i++) {
-			if(i == p) {
-				showPlayerHand(p);
-			}else {
-//				hidePlayerHand(i);
-			}
-		}
+//		for(int i = 0; i < players.length ; i++) {
+//			if(i == p) {
+//				showPlayerHand(p);
+//			}else {
+////				hidePlayerHand(i);
+//			}
+//		}
 	}
 	
 	public ArrayList<AdventureCard> getPlayerHand(int pNum){

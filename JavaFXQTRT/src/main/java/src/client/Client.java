@@ -28,6 +28,7 @@ import src.messages.Message.MESSAGETYPES;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.TurnNextServer;
 import src.messages.hand.AddCardsServer;
+import src.messages.hand.FaceDownServer;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineClient;
@@ -56,6 +57,7 @@ class AddCardsTask extends Task{
 					case 'A':{
 						AdventureCard c = new AdventureCard(card, f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.faceDown();
 						gbc.addCardToHand(c, player);
 						break;
 					}
@@ -63,18 +65,21 @@ class AddCardsTask extends Task{
 						FoeCard c = new FoeCard(card, f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(c, player);
+						c.faceDown();
 						break;
 					}
 					case 'T' : {
 						TestCard c = new TestCard(card, f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(c, player);
+						c.faceDown();
 						break;
 					}
 					case 'W':{
 						WeaponCard weapon = new WeaponCard(card, f.getPath());
 						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(weapon, player);
+						weapon.faceDown();
 						break;
 					}
 					default:{
@@ -220,14 +225,16 @@ class ShowAcceptDeclineTask extends Task{
 
 class ShowTurnFaceDownFieldUp extends Task{
 	private int player;
+	private String[][] cards;
 	public ShowTurnFaceDownFieldUp(GameBoardController gbc, String[][] cards, int player) {
 		super(gbc);
 		this.player = player;
+		this.cards = cards;
 	}
 
 	@Override
 	public void run() {
-		gbc.showFaceDownFieldCards(player);
+		gbc.flipFaceDownPane(player, true);
 
 	}
 }
@@ -288,7 +295,35 @@ class QuestPickCardsTask extends Task {
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
 		gbc.addFaceDownPaneDragOver();
+	}
+}
+class FaceDownCardsTask extends Task {
+
+	private int player;
+	public FaceDownCardsTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
 		
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.FACE_DOWN_CARDS;
+		gbc.flipFaceDownPane(player, false);
+	}
+}
+class UpQuestTask extends Task {
+
+	private int player;
+	public UpQuestTask(GameBoardController gbc, String[][]cards, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.UP_QUEST;
+		gbc.flipStageCards(gbc.currentStage, true);
+		gbc.currentStage++;
 	}
 }
 
@@ -364,7 +399,8 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.UPQUEST.name())) {
 						QuestUpServer request = gson.fromJson(obj, QuestUpServer.class);
-						Platform.runLater(new ShowTurnFaceDownFieldUp(gbc, request.cards, request.player));
+//						Platform.runLater(new ShowTurnFaceDownFieldUp(gbc, request.cards, request.player));
+						Platform.runLater(new UpQuestTask(gbc, request.cards, request.player));
 					}
 					if(message.equals(MESSAGETYPES.RANKUPDATE.name())) {
 						RankServer request = gson.fromJson(obj, RankServer.class);
@@ -392,6 +428,12 @@ public class Client implements Runnable {
 					if(message.equals(MESSAGETYPES.PICKQUEST.name())) {
 						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
 						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
+					}
+					if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
+//						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
+						FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);
+						
+						Platform.runLater(new FaceDownCardsTask(gbc, request.player));
 					}
 				}
 			}

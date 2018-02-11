@@ -167,7 +167,7 @@ public class PlayerManager {
 	}
 
 	public void currentFaceDown(String[] cards) {
-		players[currentPlayer].setFaceDown(cards);
+
 	}
 
 	public void currentFaceUp(String cards) {
