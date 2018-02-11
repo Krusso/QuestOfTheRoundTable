@@ -2,6 +2,7 @@ package src.player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
@@ -20,7 +21,7 @@ public class Player {
 	};
 	
 	protected RANKS rank;
-	protected AdventureDeck hand;
+	public AdventureDeck hand;
 	protected AdventureDeck faceDown;
 	private AdventureDeck faceUp;
 	private List<List<Card>> questDown;
@@ -28,7 +29,7 @@ public class Player {
 	private PlayerView pv;
 	private final int ID;
 	private STATE question;
-	private int shields;
+	protected int shields;
 	private boolean tristan = false;
 	private boolean iseult = false;
 	
@@ -172,12 +173,8 @@ public class Player {
 		return this.shields;
 	}
 
-	public int getWeaponCount() {
-		return hand.typeCount(TYPE.WEAPONS);
-	}
-
-	public int getFoeCount() {
-		return hand.typeCount(TYPE.FOES);
+	public int getTypeCount(TYPE type) {
+		return hand.typeCount(type);
 	}
 	
 	protected void removeCards(String[] split) {
@@ -197,6 +194,22 @@ public class Player {
 	public boolean hasTristanIseultBoost() {
 		return tristan && iseult;
 	}
+	
+	public List<AdventureCard> listOfTypeDecreasingBp(TYPE type){
+		// p1 and p2 being flipped is not a typo :) 
+		return hand.getDeck().stream().
+		sorted((p2,p1) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
+		filter(i -> i.getType() == type).
+		collect(Collectors.toList());
+	}
+	
+	public List<AdventureCard> uniqueListOfTypeDecreasingBp(TYPE type){
+		return listOfTypeDecreasingBp(type).stream().map(i -> i.getName()).distinct().map(i -> hand.findCardByName(i))
+				.collect(Collectors.toList());
+	}
 
-
+	public void setBidAmount(STATE bidding, int maxBidValue, int i) {
+		this.question = bidding;
+		if(pv != null) this.pv.setBidAmount(bidding, this.ID, maxBidValue, i);
+	}
 }

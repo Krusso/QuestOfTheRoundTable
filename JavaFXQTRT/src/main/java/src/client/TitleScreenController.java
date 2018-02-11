@@ -80,9 +80,6 @@ public class TitleScreenController implements Initializable{
 	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
-//		String n = numPlayers.getText();
-//		int players = Integer.parseInt(n);
-//		if(players >= 2 && players <= 4) {}
 		
 		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
 	

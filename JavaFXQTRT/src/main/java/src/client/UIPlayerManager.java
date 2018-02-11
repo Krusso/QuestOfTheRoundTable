@@ -17,6 +17,9 @@ public class UIPlayerManager {
 		}
 	}
 	
+	public void addShields(int p, int shields) {
+		players[p].addShields(shields);
+	}
 
 	public Rank.RANKS getPlayerRank(int playerNum){
 		return players[playerNum].getRank();
@@ -60,27 +63,26 @@ public class UIPlayerManager {
 			card.faceDown();
 		});
 	}
-	public void faceDownFaceDownCards(int playerNum) {
+
+	public void flipFaceDownCards(int playerNum, boolean isShow) {
 		ArrayList<AdventureCard> p = getFaceDownCardsAsList(playerNum);
 		p.forEach(card-> {
-			card.faceDown();
-		});
-	}
-	public void showFaceDownFieldCards(int playerNum) {
-		ArrayList<AdventureCard> p = getFaceDownCardsAsList(playerNum);
-		p.forEach(card-> {
-			card.faceUp();
+			if(isShow) {
+				card.faceUp();
+			}else {
+				card.faceDown();
+			}
 		});
 	}
 	public void setCurrentPlayer(int p) {
 		currentPlayer = p;
-		for(int i = 0; i < players.length ; i++) {
-			if(i == p) {
-				showPlayerHand(p);
-			}else {
-//				hidePlayerHand(i);
-			}
-		}
+//		for(int i = 0; i < players.length ; i++) {
+//			if(i == p) {
+//				showPlayerHand(p);
+//			}else {
+////				hidePlayerHand(i);
+//			}
+//		}
 	}
 	
 	public ArrayList<AdventureCard> getPlayerHand(int pNum){
@@ -97,9 +99,44 @@ public class UIPlayerManager {
 	public ArrayList<AdventureCard> getFaceDownCardsAsList(int playerNum){
 		return players[playerNum].getFaceDownDeck().getDeck();
 	}
+	public String[] getFaceDownCardNames(int playerNum){
+		ArrayList<AdventureCard> faceDownCards = players[playerNum].getFaceDownDeck().getDeck();
+		String[] cardNames = new String[faceDownCards.size()];
+		for(int i = 0 ; i <faceDownCards.size(); i++) {
+			cardNames[i] = faceDownCards.get(i).getName();
+		}
+		return cardNames;
+	}
 	
 	public int getNumPlayers() {
 		return players.length;
 	}
 	
+	public void removeCardFromPlayerHandByID(int p, int id) {
+		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
+		for(int i = 0 ; i < hand.size(); i++) {
+			if(hand.get(i).getID() == id) {
+				hand.remove(i);
+				return;
+			}
+		}
+	}
+	public int getCardIndexByID(int p, int id) {
+		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
+		for(int i = 0 ; i < hand.size(); i++) {
+			if(hand.get(i).getID() == id) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	public AdventureCard getCardByID(int p, int id) {
+		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
+		for(int i = 0 ; i < hand.size(); i++) {
+			if(hand.get(i).getID() == id) {
+				return hand.get(i);
+			}
+		}
+		return null;
+	}
 }

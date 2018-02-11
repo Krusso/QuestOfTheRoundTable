@@ -24,13 +24,14 @@ import src.messages.quest.QuestDownServer;
 import src.messages.quest.QuestJoinServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
-import src.messages.quest.QuestSponserServer;
+import src.messages.quest.QuestSponsorServer;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
 import src.player.Player;
+import src.player.PlayerManager;
 import src.player.Player.STATE;
 import src.socket.OutputController;
 
@@ -61,7 +62,7 @@ public class PlayerView {
 		if(state == Player.STATE.QUESTIONED) {
 			output.sendMessage(new TournamentAcceptDeclineServer(ID));
 		} else if(state == Player.STATE.QUESTQUESTIONED) {
-			output.sendMessage(new QuestSponserServer(ID));
+			output.sendMessage(new QuestSponsorServer(ID));
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage(new TournamentPickCardsServer(ID));
 		} else if(state == Player.STATE.WIN) {
@@ -70,8 +71,6 @@ public class PlayerView {
 			output.sendMessage(new FinalTournamentNotifyServer(ID));
 		} else if(state == Player.STATE.GAMEWON) {
 			output.sendMessage(new GameOverServer(ID));
-		} else if(state == Player.STATE.BIDDING) {
-			output.sendMessage(new QuestBidServer(ID));
 		} else if(state == Player.STATE.TESTDISCARD) {
 			output.sendMessage(new QuestDiscardCardsServer(ID));
 		} else if(state == Player.STATE.QUESTPICKING) {
@@ -121,5 +120,10 @@ public class PlayerView {
 		output.sendMessage(new FaceUpDiscardServer(ID, cardNames));
 	}
 
+
+
+	public void setBidAmount(STATE bidding, int ID, int maxBidValue, int i) {
+		output.sendMessage(new QuestBidServer(ID, maxBidValue,i));
+	}
 
 }
