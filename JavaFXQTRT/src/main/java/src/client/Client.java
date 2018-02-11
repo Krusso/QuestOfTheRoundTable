@@ -365,13 +365,14 @@ class ShieldCountTask extends Task {
 
 //TODO::server gives us min and max as well later
 class QuestBidTask extends Task {
-
 	private int min;
 	private int max;
 	private int player;
-	public QuestBidTask(GameBoardController gbc, int player) {
+	public QuestBidTask(GameBoardController gbc, int player, int min, int max) {
 		super(gbc);
 		this.player = player;
+		this.min = min;
+		this.max = max;
 		
 	}
 	@Override
@@ -386,6 +387,26 @@ class QuestBidTask extends Task {
 		gbc.CURRENT_STATE = STATE.QUEST_BID;
 	}
 }
+
+class DiscardQuestTask extends Task {
+	private int min;
+	private int max;
+	private int player;
+	public DiscardQuestTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		this.min = min;
+		this.max = max;
+		
+	}
+	@Override
+	public void run() {
+		gbc.discardAllFaceDownCards(player);
+		
+	}
+}
+
+
 
 abstract class Task implements Runnable{
 	protected File cardDir;
@@ -509,7 +530,13 @@ public class Client implements Runnable {
 						QuestBidServer request = gson.fromJson(obj, QuestBidServer.class);
 						
 						//Discard "Face Down" cards because that is where players play their cards.
-						Platform.runLater(new QuestBidTask(gbc, request.player));
+						Platform.runLater(new QuestBidTask(gbc, request.player, request.minBidValue, request.maxBidValue));
+					}
+					if(message.equals(MESSAGETYPES.DISCARDQUEST.name())) {
+						QuestDiscardCardsServer request = gson.fromJson(obj, QuestDiscardCardsServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new DiscardQuestTask(gbc, request.player));
 					}
 				}
 			}

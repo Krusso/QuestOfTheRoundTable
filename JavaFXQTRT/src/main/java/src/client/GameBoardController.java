@@ -583,6 +583,17 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	//discards all cards and returns the string[] name of them
+	public String[] discardAllFaceDownCards(int p) {
+		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
+		faceDownPanes[p].getChildren().clear();
+		String[] cardNames = new String[fdc.size()];
+		for(int i = 0 ; i < cardNames.length;i++) {
+			cardNames[i] = fdc.get(i).getName();
+		}
+		c.send(new QuestDiscardCardsClient(p,cardNames));
+		return cardNames;
+	}
 
 	public void flipStageCards(int stageNum, boolean isShow) {
 		ArrayList<AdventureCard> cards = stageCards.get(stageNum);
