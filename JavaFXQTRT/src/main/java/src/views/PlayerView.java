@@ -31,7 +31,6 @@ import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
 import src.player.Player;
-import src.player.PlayerManager;
 import src.player.Player.STATE;
 import src.socket.OutputController;
 
@@ -71,8 +70,6 @@ public class PlayerView {
 			output.sendMessage(new FinalTournamentNotifyServer(ID));
 		} else if(state == Player.STATE.GAMEWON) {
 			output.sendMessage(new GameOverServer(ID));
-		} else if(state == Player.STATE.TESTDISCARD) {
-			output.sendMessage(new QuestDiscardCardsServer(ID));
 		} else if(state == Player.STATE.QUESTPICKING) {
 			output.sendMessage(new QuestPickCardsServer(ID));
 		} else if(state == Player.STATE.QUESTJOINQUESTIONED) {
@@ -120,10 +117,14 @@ public class PlayerView {
 		output.sendMessage(new FaceUpDiscardServer(ID, cardNames));
 	}
 
-
-
 	public void setBidAmount(STATE bidding, int ID, int maxBidValue, int i) {
 		output.sendMessage(new QuestBidServer(ID, maxBidValue,i));
+	}
+
+	public void setDiscardAmount(STATE testdiscard, int ID, int cardsToBid) {
+		if(testdiscard == Player.STATE.TESTDISCARD) {
+			output.sendMessage(new QuestDiscardCardsServer(ID, cardsToBid));
+		}
 	}
 
 }
