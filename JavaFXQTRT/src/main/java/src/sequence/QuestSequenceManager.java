@@ -90,7 +90,7 @@ public class QuestSequenceManager extends SequenceManager {
 				
 				pm.flipStage(sponsor, quest.getCurrentStage());
 				quest.battleFoe(winners, pm);
-				pm.discardWeapons(winners);
+				pm.discardWeapons(participants);
 			} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 				pm.flipStage(sponsor, quest.getCurrentStage());
 				players = winners.iterator();
