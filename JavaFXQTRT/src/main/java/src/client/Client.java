@@ -379,12 +379,18 @@ class QuestBidTask extends Task {
 	public void run() {
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
-		gbc.setPlayerPerspectiveTo(player);
-		gbc.addDraggable();
-		//players can only drag over facedown pane.
+		gbc.showDecline();
+//		//players can only drag over facedown pane.
 		gbc.removeStagePaneDragOver();
-		gbc.addFaceDownPaneDragOver();
+		gbc.removeFaceDownPaneDragOver();
 		gbc.CURRENT_STATE = STATE.QUEST_BID;
+		gbc.bidSlider.setMin(min);
+		gbc.bidSlider.setMax(max);
+		gbc.bidSlider.setVisible(true);
+		gbc.bidSlider.setMajorTickUnit(2);
+		gbc.bidSlider.setShowTickLabels(true);
+		gbc.bidSlider.setBlockIncrement(1);
+		gbc.bidSlider.setSnapToTicks(true);
 	}
 }
 
@@ -401,8 +407,13 @@ class DiscardQuestTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.discardAllFaceDownCards(player);
-		
+		gbc.CURRENT_STATE = STATE.BID_DISCARD;
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.addDraggable();
+		gbc.removeStagePaneDragOver();
+		gbc.addFaceDownPaneDragOver();
 	}
 }
 

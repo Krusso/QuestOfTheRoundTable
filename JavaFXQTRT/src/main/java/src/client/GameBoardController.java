@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -36,7 +37,7 @@ import src.messages.tournament.TournamentPickCardsClient;
 public class GameBoardController implements Initializable{
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, 
-		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS,
+		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD,
 		NONE}
 
 	public STATE CURRENT_STATE = STATE.NONE;
@@ -57,6 +58,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
 	@FXML private Pane background;
+	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
 
 
@@ -138,6 +140,7 @@ public class GameBoardController implements Initializable{
 			stageCards.add(new ArrayList<AdventureCard>());
 		}
 
+		bidSlider.setVisible(false);
 		//setBackground
 		setBackground();
 		//give PlayerManager the panes
@@ -444,13 +447,10 @@ public class GameBoardController implements Initializable{
 			}
 			//TODO::verify cards are minimum number of cards
 			else if(CURRENT_STATE == STATE.QUEST_BID) {
-				//send cards 
-				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
-//				String[] cards = new String[faceDownCards.size()];
-//				for(int i = 0 ; i < cards.length ; i++) {
-//					cards[i] = faceDownCards.get(i).getName();
-//				}
-				c.send(new QuestBidClient(currentPlayer, faceDownCards.size()));
+				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
+			}else if(CURRENT_STATE == STATE.BID_DISCARD) {
+				String[] cards = discardAllFaceDownCards(currentPlayer);
+				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
 			}
 		});
 		this.accept.setOnAction(e -> {
@@ -477,6 +477,9 @@ public class GameBoardController implements Initializable{
 			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.QUEST_BID) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
+				c.send(new QuestBidClient(playerManager.getCurrentPlayer(), -1));
 			}
 		});
 		this.nextTurn.setOnAction(e -> {
@@ -514,6 +517,10 @@ public class GameBoardController implements Initializable{
 		this.accept.setVisible(true);
 		this.decline.setVisible(true);
 	}
+	public void showDecline() {
+		this.decline.setVisible(true);
+	}
+
 
 	public void showNextTurn() {
 		this.nextTurn.setVisible(true);
@@ -591,7 +598,7 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < cardNames.length;i++) {
 			cardNames[i] = fdc.get(i).getName();
 		}
-		c.send(new QuestDiscardCardsClient(p,cardNames));
+		fdc.clear();
 		return cardNames;
 	}
 
@@ -609,5 +616,6 @@ public class GameBoardController implements Initializable{
 	public void addShields(int p, int s) {
 		playerManager.addShields(p, s);
 	}
+	
 }
 

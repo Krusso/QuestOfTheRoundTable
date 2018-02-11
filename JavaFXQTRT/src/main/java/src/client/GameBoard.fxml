@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -35,7 +36,8 @@
                         <Stop color="#ffffff00" offset="1.0" />
                      </stops>
                   </LinearGradient>
-               </fill></Rectangle>
+               </fill>
+            </Rectangle>
             <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0" />
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown3" layoutX="501.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -133,5 +135,6 @@
             <Font size="52.0" />
          </font>
       </Text>
+      <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="376.0" max="13.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
    </children>
 </AnchorPane>
