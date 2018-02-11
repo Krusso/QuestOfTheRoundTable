@@ -239,4 +239,8 @@ public class PlayerManager {
 	public void setBidAmount(Player next, STATE bidding, int maxBidValue, int i) {
 		next.setBidAmount(bidding, maxBidValue, i);
 	}
+
+	public void setDiscarding(Player player, STATE testdiscard, int cardsToBid) {
+		player.setDiscardAmount(testdiscard, cardsToBid);
+	}
 }

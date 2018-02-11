@@ -89,18 +89,18 @@ public class QuestSequenceManager extends SequenceManager {
 				} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					players = winners.iterator();
-					Player bidWinner = questionPlayersForBid(players, pm, actions, card);
+					Pair bidWinner = questionPlayersForBid(players, pm, actions, card);
 					// No one decided to bid not sure if legal?
 					if(bidWinner == null) {
 						winners.clear();
 						break;
 					}
-					pm.setPlayer(bidWinner);
-					pm.setState(bidWinner, Player.STATE.TESTDISCARD);
+					pm.setPlayer(bidWinner.player);
+					pm.setDiscarding(bidWinner.player, Player.STATE.TESTDISCARD, Math.max(0, bidWinner.cardsToBid(card)));
 					QuestDiscardCardsClient qdcc = actions.take(QuestDiscardCardsClient.class);
-					pm.discardFromHand(bidWinner, qdcc.cards);
+					pm.discardFromHand(bidWinner.player, qdcc.cards);
 					winners.clear();
-					winners.add(bidWinner);
+					winners.add(bidWinner.player);
 				}
 				quest.advanceStage();
 			}
