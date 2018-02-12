@@ -49,23 +49,6 @@ public class TitleScreenController implements Initializable{
 	@FXML private MenuButton b3;
 	@FXML private MenuButton b4;
 	
-	public TitleScreenController() {
-		players = new String[4];
-		for(int i=0; i<players.length;i++) {
-			players[i] = "";
-		}
-		currShield=1;
-		try {
-			File f = new File("src/main/resources/S"+currShield+".png");
-			shieldImg = new Image (new FileInputStream(f));
-			shieldView = new ImageView();
-			shieldView.setImage(shieldImg);
-			shieldPane.getChildren().add(shieldView);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-	
 	public void setClient(Client c) {
 		client = c;
 	}
@@ -158,7 +141,20 @@ public class TitleScreenController implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// TODO Auto-generated method stub
-		
+		players = new String[4];
+		for(int i=0; i<players.length;i++) {
+			players[i] = "";
+		}
+		currShield=1;
+		try {
+			File f = new File("src/main/resources/S"+currShield+".png");
+			shieldImg = new Image (new FileInputStream(f));
+			shieldView = new ImageView();
+			shieldView.setImage(shieldImg);
+			shieldPane.getChildren().add(shieldView);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }
