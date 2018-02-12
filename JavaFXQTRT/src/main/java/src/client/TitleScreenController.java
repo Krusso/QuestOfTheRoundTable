@@ -38,7 +38,11 @@ public class TitleScreenController implements Initializable{
 	@FXML private Button start;
 	@FXML private Pane p;
 	@FXML public Pane background;
+	@FXML private Pane shieldPane;
+	@FXML private Image shieldImg;
+	@FXML private ImageView shieldView;
 	private String[] players;
+	private int currShield=0;
 	
 	@FXML private MenuButton b1;
 	@FXML private MenuButton b2;
@@ -50,7 +54,16 @@ public class TitleScreenController implements Initializable{
 		for(int i=0; i<players.length;i++) {
 			players[i] = "";
 		}
-		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
+		currShield=1;
+		try {
+			File f = new File("src/main/resources/S"+currShield+".png");
+			shieldImg = new Image (new FileInputStream(f));
+			shieldView = new ImageView();
+			shieldView.setImage(shieldImg);
+			shieldPane.getChildren().add(shieldView);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	public void setClient(Client c) {
@@ -69,6 +82,25 @@ public class TitleScreenController implements Initializable{
 	@FXML private void setAI2(ActionEvent e) throws IOException { this.players[1] = "AI"; b2.setText("AI"); }
 	@FXML private void setAI3(ActionEvent e) throws IOException { this.players[2] = "AI"; b3.setText("AI"); }
 	@FXML private void setAI4(ActionEvent e) throws IOException { this.players[3] = "AI"; b4.setText("AI"); }
+	
+	@FXML private void nextShield(ActionEvent e) throws IOException {
+		currShield = (currShield + 1) % 10;
+		if(currShield == 0) currShield++;
+		// gotta load the file each time but its easier to write code like
+		// this worry about performance later lul :D
+		try {
+			File f = new File("src/main/resources/S"+currShield+".png");
+			shieldImg = new Image (new FileInputStream(f));
+			shieldView.setImage(shieldImg);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@FXML private void prevShield(ActionEvent e) throws IOException {
+		currShield = (currShield - 1) % 10;
+		if(currShield == 0) currShield++;
+	}
 	
 	private int getNumPlayers() {
 		int num = 0;
