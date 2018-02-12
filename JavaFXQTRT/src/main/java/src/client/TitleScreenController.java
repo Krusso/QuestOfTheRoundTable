@@ -67,7 +67,7 @@ public class TitleScreenController implements Initializable{
 	@FXML private void setAI4(ActionEvent e) throws IOException { this.players[3] = "AI"; b4.setText("AI"); }
 	
 	@FXML private void nextShield(ActionEvent e) throws IOException {
-		currShield = (currShield + 1) % 10;
+		currShield = (currShield + 1) % 9;
 		if(currShield == 0) currShield++;
 		// mkay i fixed it so we only load on init file I/O is 
 		// expensive bois c:
