@@ -39,10 +39,10 @@ public class TitleScreenController implements Initializable{
 	@FXML private Pane p;
 	@FXML public Pane background;
 	@FXML private Pane shieldPane;
-	@FXML private Image shieldImg;
 	@FXML private ImageView shieldView;
 	private String[] players;
-	private int currShield=0;
+	private Image[] shieldImages;
+	private int currShield=-1;
 	
 	@FXML private MenuButton b1;
 	@FXML private MenuButton b2;
@@ -69,20 +69,22 @@ public class TitleScreenController implements Initializable{
 	@FXML private void nextShield(ActionEvent e) throws IOException {
 		currShield = (currShield + 1) % 10;
 		if(currShield == 0) currShield++;
-		// gotta load the file each time but its easier to write code like
-		// this worry about performance later lul :D
+		// mkay i fixed it so we only load on init file I/O is 
+		// expensive bois c:
 		try {
-			File f = new File("src/main/resources/S"+currShield+".png");
-			shieldImg = new Image (new FileInputStream(f));
-			shieldView.setImage(shieldImg);
+			shieldView.setImage(shieldImages[currShield]);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	@FXML private void prevShield(ActionEvent e) throws IOException {
-		currShield = (currShield - 1) % 10;
-		if(currShield == 0) currShield++;
+		if (currShield == 0) { currShield = 8; } else { currShield -= 1; }
+		try {
+			shieldView.setImage(shieldImages[currShield]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	private int getNumPlayers() {
@@ -145,12 +147,21 @@ public class TitleScreenController implements Initializable{
 		for(int i=0; i<players.length;i++) {
 			players[i] = "";
 		}
-		currShield=1;
+		shieldImages = new Image[9];
+		for(int i=1; i<=9; i++) {
+			try {
+				File f = new File("src/main/resources/S"+i+".png");
+				Image shieldImg = new Image (new FileInputStream(f));
+				shieldImages[i-1] = shieldImg;
+			} catch (Exception e) { e.printStackTrace(); }
+			System.out.println(shieldImages[i-1]);
+		}
+		currShield=0;
 		try {
-			File f = new File("src/main/resources/S"+currShield+".png");
-			shieldImg = new Image (new FileInputStream(f));
 			shieldView = new ImageView();
-			shieldView.setImage(shieldImg);
+			shieldView.setImage(shieldImages[currShield]);
+			shieldView.fitWidthProperty().bind(shieldPane.widthProperty());
+			shieldView.fitHeightProperty().bind(shieldPane.heightProperty());
 			shieldPane.getChildren().add(shieldView);
 		} catch (Exception ex) {
 			ex.printStackTrace();

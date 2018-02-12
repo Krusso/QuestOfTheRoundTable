@@ -15,7 +15,7 @@
       <Pane fx:id="p" layoutX="104.0" layoutY="26.0" prefHeight="958.0" prefWidth="708.0">
          <children>
             <Pane prefHeight="200.0" prefWidth="200.0" />
-            <Button id="green" fx:id="start" layoutX="350.0" layoutY="729.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="48.0" prefWidth="70.0" stylesheets="@application.css" text="START">
+            <Button id="green" fx:id="start" layoutX="347.0" layoutY="729.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="48.0" prefWidth="70.0" stylesheets="@application.css" text="START">
                <font>
                   <Font name="High Tower Text" size="14.0" />
                </font>
@@ -75,12 +75,9 @@
                </font>
             </Text>
             <Text fill="WHITE" layoutX="150.0" layoutY="479.0" strokeType="OUTSIDE" strokeWidth="0.0" text="MMM look at these cute ass shields why don't ya go ahead and pick one" textAlignment="CENTER" wrappingWidth="448.771484375" />
-            <Pane fx:id="shieldPane" layoutX="241.0" layoutY="504.0" prefHeight="200.0" prefWidth="295.0">
-               <children>
-                  <Button layoutX="256.0" layoutY="94.0" mnemonicParsing="false" text="&gt;" />
-                  <Button layoutX="14.0" layoutY="94.0" mnemonicParsing="false" text="&lt;" />
-               </children>
-            </Pane>
+            <Pane fx:id="shieldPane" layoutX="301.0" layoutY="500.0" prefHeight="200.0" prefWidth="160.0" />
+            <Button layoutX="257.0" layoutY="600.0" mnemonicParsing="false" onAction="#prevShield" text="&lt;" />
+            <Button layoutX="478.0" layoutY="600.0" mnemonicParsing="false" onAction="#nextShield" text="&gt;" />
          </children>
       </Pane>
    </children>
