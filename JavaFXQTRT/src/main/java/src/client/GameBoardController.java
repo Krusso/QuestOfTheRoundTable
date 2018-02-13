@@ -61,6 +61,10 @@ public class GameBoardController implements Initializable{
 	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
 
+	@FXML public ImageView shield1View;
+	@FXML public ImageView shield2View;
+	@FXML public ImageView shield3View;
+	@FXML public ImageView shield4View;
 
 	//These panes are for hold each player's respective items, e.g hand, face up card, face down cards etc
 	//When rotating, we only rotate these panes.
@@ -146,6 +150,14 @@ public class GameBoardController implements Initializable{
 		//give PlayerManager the panes
 
 	}
+	
+	public void setShields(Image shield1, Image shield2, Image shield3, Image shield4) {
+		if(shield1 != null) { shield1View.setImage(shield1); }
+		if(shield2 != null) { shield2View.setImage(shield2); }
+		if(shield3 != null) { shield3View.setImage(shield3); }
+		if(shield4 != null) { shield4View.setImage(shield4); }
+	}
+	
 	////Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers) {
 		playerManager = new UIPlayerManager(numPlayers);
@@ -569,6 +581,7 @@ public class GameBoardController implements Initializable{
 			try {
 				File file = new File(resDir.getPath() + rank);
 				Image img = new Image (new FileInputStream(file));
+				System.out.println(p);
 				playerRanks[p].setImage(img);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block

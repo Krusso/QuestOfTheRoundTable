@@ -41,6 +41,8 @@
             <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="1000.0" />
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown3" layoutX="501.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
+            <ImageView fx:id="playerRank3" fitHeight="208.0" fitWidth="142.0" layoutX="842.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield4View" fitHeight="220.0" fitWidth="134.0" layoutX="938.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
       <Pane fx:id="playerPane2" layoutX="425.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
@@ -58,6 +60,7 @@
             <Pane fx:id="playerFaceUp2" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown2" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank2" fitHeight="150.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="250.0" />
+            <ImageView fx:id="shield3View" fitHeight="182.0" fitWidth="146.0" layoutX="932.0" layoutY="218.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
       <Pane fx:id="playerPane1" layoutX="1180.0" layoutY="345.0" prefHeight="400.0" prefWidth="1080.0" rotate="-90.0">
@@ -75,6 +78,7 @@
             <Pane fx:id="playerFaceUp1" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown1" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank1" fitHeight="150.0" fitWidth="125.0" layoutX="800.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield2View" fitHeight="150.0" fitWidth="200.0" layoutX="898.0" layoutY="241.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
       <Pane fx:id="playerPane0" layoutX="457.0" layoutY="680.0" prefHeight="400.0" prefWidth="1080.0">
@@ -92,6 +96,7 @@
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="823.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield1View" fitHeight="150.0" fitWidth="144.0" layoutX="931.0" layoutY="247.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
 

@@ -38,11 +38,22 @@ public class TitleScreenController implements Initializable{
 	@FXML private Button start;
 	@FXML private Pane p;
 	@FXML public Pane background;
-	@FXML private Pane shieldPane;
-	@FXML private ImageView shieldView;
+	
 	private String[] players;
 	private Image[] shieldImages;
-	private int currShield=-1;
+	
+	@FXML private Pane shieldPane1;
+	@FXML private Pane shieldPane2;
+	@FXML private Pane shieldPane3;
+	@FXML private Pane shieldPane4;
+	@FXML private ImageView shieldView1;
+	@FXML private ImageView shieldView2;
+	@FXML private ImageView shieldView3;
+	@FXML private ImageView shieldView4;
+	private int playerShield1=-1;
+	private int playerShield2=-1;
+	private int playerShield3=-1;
+	private int playerShield4=-1;
 	
 	@FXML private MenuButton b1;
 	@FXML private MenuButton b2;
@@ -66,22 +77,86 @@ public class TitleScreenController implements Initializable{
 	@FXML private void setAI3(ActionEvent e) throws IOException { this.players[2] = "AI"; b3.setText("AI"); }
 	@FXML private void setAI4(ActionEvent e) throws IOException { this.players[3] = "AI"; b4.setText("AI"); }
 	
-	@FXML private void nextShield(ActionEvent e) throws IOException {
-		currShield = (currShield + 1) % 9;
-		if(currShield == 0) currShield++;
+	// hardcode is better than no code c:
+	@FXML private void nextShield1(ActionEvent e) throws IOException {
+		playerShield1 = (playerShield1 + 1) % 9;
+		if(playerShield1 == 0) playerShield1++;
 		// mkay i fixed it so we only load on init file I/O is 
 		// expensive bois c:
 		try {
-			shieldView.setImage(shieldImages[currShield]);
+			shieldView1.setImage(shieldImages[playerShield1]);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-
-	@FXML private void prevShield(ActionEvent e) throws IOException {
-		if (currShield == 0) { currShield = 8; } else { currShield -= 1; }
+	
+	@FXML private void nextShield2(ActionEvent e) throws IOException {
+		playerShield2 = (playerShield2 + 1) % 9;
+		if(playerShield2 == 0) playerShield1++;
+		// mkay i fixed it so we only load on init file I/O is 
+		// expensive bois c:
 		try {
-			shieldView.setImage(shieldImages[currShield]);
+			shieldView2.setImage(shieldImages[playerShield2]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@FXML private void nextShield3(ActionEvent e) throws IOException {
+		playerShield3 = (playerShield3 + 1) % 9;
+		if(playerShield3 == 0) playerShield3++;
+		// mkay i fixed it so we only load on init file I/O is 
+		// expensive bois c:
+		try {
+			shieldView3.setImage(shieldImages[playerShield3]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@FXML private void nextShield4(ActionEvent e) throws IOException {
+		playerShield4 = (playerShield4 + 1) % 9;
+		if(playerShield4 == 0) playerShield4++;
+		// mkay i fixed it so we only load on init file I/O is 
+		// expensive bois c:
+		try {
+			shieldView4.setImage(shieldImages[playerShield4]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@FXML private void prevShield1(ActionEvent e) throws IOException {
+		if (playerShield1 == 0) { playerShield1 = 8; } else { playerShield1 -= 1; }
+		try {
+			shieldView1.setImage(shieldImages[playerShield1]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@FXML private void prevShield2(ActionEvent e) throws IOException {
+		if (playerShield2 == 0) { playerShield2 = 8; } else { playerShield2 -= 1; }
+		try {
+			shieldView2.setImage(shieldImages[playerShield2]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@FXML private void prevShield3(ActionEvent e) throws IOException {
+		if (playerShield3 == 0) { playerShield3 = 8; } else { playerShield3 -= 1; }
+		try {
+			shieldView3.setImage(shieldImages[playerShield3]);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@FXML private void prevShield4(ActionEvent e) throws IOException {
+		if (playerShield4 == 0) { playerShield4 = 8; } else { playerShield4 -= 1; }
+		try {
+			shieldView4.setImage(shieldImages[playerShield4]);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -118,6 +193,10 @@ public class TitleScreenController implements Initializable{
 		GameBoardController gbc = fxmlLoader.getController();
 		gbc.setClient(client);
 		gbc.setUp();
+		gbc.setShields(shieldImages[playerShield1],
+					   shieldImages[playerShield2],
+					   shieldImages[playerShield3],
+					   shieldImages[playerShield4]);
 		client.setGameBoardController(gbc);
 		//Change the scene to the gameScene and show it.
 		
@@ -156,13 +235,35 @@ public class TitleScreenController implements Initializable{
 			} catch (Exception e) { e.printStackTrace(); }
 			System.out.println(shieldImages[i-1]);
 		}
-		currShield=0;
+		playerShield1=0;
+		playerShield2=0;
+		playerShield3=0;
+		playerShield4=0;
 		try {
-			shieldView = new ImageView();
-			shieldView.setImage(shieldImages[currShield]);
-			shieldView.fitWidthProperty().bind(shieldPane.widthProperty());
-			shieldView.fitHeightProperty().bind(shieldPane.heightProperty());
-			shieldPane.getChildren().add(shieldView);
+			shieldView1 = new ImageView();
+			shieldView1.setImage(shieldImages[playerShield1]);
+			shieldView1.fitWidthProperty().bind(shieldPane1.widthProperty());
+			shieldView1.fitHeightProperty().bind(shieldPane1.heightProperty());
+			shieldPane1.getChildren().add(shieldView1);
+			
+			shieldView2 = new ImageView();
+			shieldView2.setImage(shieldImages[playerShield2]);
+			shieldView2.fitWidthProperty().bind(shieldPane2.widthProperty());
+			shieldView2.fitHeightProperty().bind(shieldPane2.heightProperty());
+			shieldPane2.getChildren().add(shieldView2);
+			
+			shieldView3 = new ImageView();
+			shieldView3.setImage(shieldImages[playerShield3]);
+			shieldView3.fitWidthProperty().bind(shieldPane3.widthProperty());
+			shieldView3.fitHeightProperty().bind(shieldPane3.heightProperty());
+			shieldPane3.getChildren().add(shieldView3);
+			
+			shieldView4 = new ImageView();
+			shieldView4.setImage(shieldImages[playerShield4]);
+			shieldView4.fitWidthProperty().bind(shieldPane4.widthProperty());
+			shieldView4.fitHeightProperty().bind(shieldPane4.heightProperty());
+			shieldPane4.getChildren().add(shieldView4);
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
