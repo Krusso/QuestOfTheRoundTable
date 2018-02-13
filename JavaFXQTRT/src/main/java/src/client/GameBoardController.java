@@ -431,54 +431,9 @@ public class GameBoardController implements Initializable{
 		repositionCardsInHand(playerNum);
 	}
 
-	//Puts currently selected card into the specified pane with precision of d and e
-	public void playCard(Card card, Pane p, double d, double e) {
-		int currPlayer = playerManager.getCurrentPlayer();
-
-		//Gets the bounds for the current player's perspective
-		Bounds boundsHand = handPanes[currPlayer].localToScene(handPanes[currPlayer].getBoundsInLocal());// playerhand0.localToScene(playerhand0.getBoundsInLocal());
-
-		//TODO:: might make another state for choosing cards in tournament
-		if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
-			//the bounds to play will be outside of the player's hand
-			Bounds boundsPlay = p.localToScene(p.getBoundsInLocal());
-			// Cards topleft corner = boundsHand.getMinY(), boundsHand.getMinX + d
-			// give +10 on each side of the boundsPlay box to be nice to user
-			if(boundsHand.getMinY() >= boundsPlay.getMinY() - 10 &&
-					boundsHand.getMinY() <= boundsPlay.getMaxY() + 10 &&
-					// plus 200 because we want to let the user play it on the story card too just so that we dont create
-					// a gap where if the card is dropped user cant move it
-					boundsHand.getMinX() + d >= boundsPlay.getMinX() - 210 &&
-					boundsHand.getMinX() + d <= boundsPlay.getMaxX() + 10 && !card.inPlay) {
-				System.out.println("in the box");
-				handPanes[currPlayer].getChildren().remove(card.getImageView());
-				p.getChildren().add(card.getImageView());
-				card.inPlay = true;
-				playerManager.playCard((AdventureCard) card, playerManager.getCurrentPlayer());
-				repositionCardsInHand(playerManager.getCurrentPlayer());
-				//			System.out.println("Length : " + playerManager.getFaceDownLength(playerManager.getCurrentPlayer()));
-				card.getImageView().setX(100 * (playerManager.getFaceDownLength(playerManager.getCurrentPlayer()) - 1) + 10);
-				card.getImageView().setY(0);
-			}
-		} 
-		//If state is currently pick stages, we allow player to drag and drop cards into the 5 stage panes
-		if(CURRENT_STATE == STATE.PICK_STAGES) {
-
-		}
-		// TODO: let user put back to his hand
-		else {
-			System.out.println("out of the box");
-			card.returnOriginalPosition();
-		}
-
-	}
-
-
 	public void setClient(Client c) {
 		this.c = c;
 	}
-
-	
 
 	//TODO:: BG image isn't completely scaled correctly not sure why
 	public void setBackground() {

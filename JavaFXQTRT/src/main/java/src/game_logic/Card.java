@@ -86,24 +86,6 @@ public abstract class Card {
 	
 	//Simple drag motion for the card ImageView
 	public void setDraggableOn() {
-		
-		imgView.setOnMouseReleased((MouseEvent e)->{
-			if(gbc != null) {
-				gbc.playCard(this, this.faceDownPane, imgView.getX(), imgView.getY());
-			}
-		});
-//		imgView.setOnMousePressed((MouseEvent e) -> {
-//			orgStartX = imgView.getX();
-//			orgStartY = imgView.getY();
-//			startX = e.getX() - imgView.getX();
-//			startY = e.getY() - imgView.getY();
-//			e.setDragDetect(true);
-//		});
-//		imgView.setOnMouseDragged((MouseEvent e)->{
-//			imgView.setX(e.getX() - startX);
-//			imgView.setY(e.getY() - startY);
-//			
-//		});
 		imgView.setOnDragDetected(e->{
 			System.out.println("On Drag Detected");
 			Dragboard db = imgView.startDragAndDrop(TransferMode.ANY);
