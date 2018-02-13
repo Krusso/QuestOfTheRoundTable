@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
@@ -36,7 +37,7 @@ import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
-		JOIN_TOURNAMENT, 
+		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD,
 		NONE}
 
@@ -154,6 +155,52 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
+	//Returns true if the toAdd card can be added to the stageCards
+	private boolean isStageValid(ArrayList<AdventureCard> stageCards, AdventureCard toAdd) {
+		//Make sure the current stage has either 1 foe or 1 test card	
+		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			TYPE cardType = toAdd.getType();
+			//If we want to add a Test card, make sure the stageCards are empty
+			if(cardType == TYPE.TESTS) {
+				if(!stageCards.isEmpty()) {
+					return false;
+				}
+				//check if there are tests cards in any other of the stages return false
+				for(int i = 0 ; i < this.stageCards.size(); i++) {
+					for(AdventureCard c : this.stageCards.get(i)) {
+						if(c.getType() == TYPE.TESTS) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			//If we want to add a Foe card, make sure that there is no other Foe card existing in the stageCards
+			else if(cardType == TYPE.FOES) {
+				for(AdventureCard c : stageCards) {
+					if(c.getType() == cardType || c.getType() == TYPE.TESTS) {
+						return false;
+					}
+				}
+				return true;
+			}
+			//If we want to add a Weapon card, make sure a Test card or the same weapon doesn't exist in the stageCards
+			else if(cardType == TYPE.WEAPONS) {
+				for(AdventureCard c : stageCards) {
+					if(c.getType() == TYPE.TESTS || c.getName().equals(toAdd.getName())) {
+						return false;
+					}
+				}
+				return true;
+			}
+			//For adding cards to stage, they must either be a test/foe/weapon card so return false if none of the above
+			else {
+				return false;
+			}
+		}
+		return false;
+	}
+		
 	public void addStagePaneListener() {
 		//Add listeners for the stage panes
 		for(int i = 0 ; i < stages.length ; i++) {
@@ -174,12 +221,12 @@ public class GameBoardController implements Initializable{
 				public void handle(DragEvent event) {
 					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
 					Dragboard db = event.getDragboard();
-					if(db.hasImage()) {
-						//Find the id of the card and the index of the card in the player's hand
-						int cPlayer = playerManager.getCurrentPlayer();
-						int id = Integer.parseInt(db.getString());
-						int idx = playerManager.getCardIndexByID(cPlayer, id);
-						AdventureCard card = playerManager.getCardByID(cPlayer, id);
+					//Find the id of the card and the index of the card in the player's hand
+					int cPlayer = playerManager.getCurrentPlayer();
+					int id = Integer.parseInt(db.getString());
+					int idx = playerManager.getCardIndexByID(cPlayer, id);
+					AdventureCard card = playerManager.getCardByID(cPlayer, id);
+					if(db.hasImage() && isStageValid(stageCards.get(currentIndex), card)) {
 						//remove the card from the player hand pane
 						handPanes[cPlayer].getChildren().remove(idx);
 						//add the card image to the stage pane
@@ -218,6 +265,22 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
+	private boolean isTournamentCardValid(ArrayList<AdventureCard> faceDownCards, AdventureCard toAdd) {
+		if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+			TYPE cardType = toAdd.getType();
+			//if the card we want to add is a weapon we make sure one doesn't exist already
+			if(cardType == TYPE.WEAPONS) {
+				for(AdventureCard c : faceDownCards) {
+					if(c.getName().equals(toAdd.getName())) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void addFaceDownPaneDragOver() {
 		for(int i = 0 ; i < faceDownPanes.length ; i++) {
 			Pane p = faceDownPanes[i];
@@ -237,12 +300,12 @@ public class GameBoardController implements Initializable{
 				public void handle(DragEvent event) {
 					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
 					Dragboard db = event.getDragboard();
-					if(db.hasImage()) {
-						//Find the id of the card and the index of the card in the player's hand
-						int cPlayer = playerManager.getCurrentPlayer();
-						int id = Integer.parseInt(db.getString());
-						int idx = playerManager.getCardIndexByID(cPlayer, id);
-						AdventureCard card = playerManager.getCardByID(cPlayer, id);
+					//Find the id of the card and the index of the card in the player's hand
+					int cPlayer = playerManager.getCurrentPlayer();
+					int id = Integer.parseInt(db.getString());
+					int idx = playerManager.getCardIndexByID(cPlayer, id);
+					AdventureCard card = playerManager.getCardByID(cPlayer, id);
+					if(db.hasImage() && isTournamentCardValid(playerManager.getFaceDownCardsAsList(cPlayer), card)) {
 						//remove the card from the player hand pane
 						handPanes[cPlayer].getChildren().remove(idx);
 						//add the card image to the stage pane
@@ -415,78 +478,7 @@ public class GameBoardController implements Initializable{
 		this.c = c;
 	}
 
-	public void setUp() {
-		//END TURN BUTTON LISTENER
-		this.endTurn.setOnAction(e -> {
-			System.out.println("clicked end turn");
-			this.removeDraggable();
-			int currentPlayer = playerManager.getCurrentPlayer();
-			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
-				playerManager.flipFaceDownCards(currentPlayer, false);
-				c.send(new TournamentPickCardsClient(currentPlayer, 
-						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
-			}else if(CURRENT_STATE == STATE.PICK_STAGES) {
-				//TODO::Handle PICK_STAGES make sure player plays a card
-				for(int i = 0 ; i < stageCards.size(); i++) {
-					if(!stageCards.get(i).isEmpty()) {
-						String[] currentStageCards = new String[stageCards.get(i).size()];
-						for(int j = 0 ; j < stageCards.get(i).size(); j++) {
-							currentStageCards[j] = stageCards.get(i).get(j).getName();
-						}
-						c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
-					}
-				}
-			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
-				//send cards 
-				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
-				String[] cards = new String[faceDownCards.size()];
-				for(int i = 0 ; i < cards.length ; i++) {
-					cards[i] = faceDownCards.get(i).getName();
-				}
-				c.send(new QuestPickCardsClient(currentPlayer, cards));
-			}
-			//TODO::verify cards are minimum number of cards
-			else if(CURRENT_STATE == STATE.QUEST_BID) {
-				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
-			}else if(CURRENT_STATE == STATE.BID_DISCARD) {
-				String[] cards = discardAllFaceDownCards(currentPlayer);
-				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
-			}
-		});
-		this.accept.setOnAction(e -> {
-			System.out.println("accepted story");
-			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
-				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
-			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
-				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
-			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
-				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
-			}
-		});
-		this.decline.setOnAction(e -> {
-			System.out.println("declined story");
-			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
-				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
-			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
-				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
-			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
-				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
-			}else if(CURRENT_STATE == STATE.QUEST_BID) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
-				c.send(new QuestBidClient(playerManager.getCurrentPlayer(), -1));
-			}
-		});
-		this.nextTurn.setOnAction(e -> {
-			System.out.println("Clicked next turn");
-			c.send(new ContinueGameClient());
-		});
-	}
+	
 
 	//TODO:: BG image isn't completely scaled correctly not sure why
 	public void setBackground() {
@@ -617,5 +609,90 @@ public class GameBoardController implements Initializable{
 		playerManager.addShields(p, s);
 	}
 	
+	public void setUp() {
+		/*
+		 * END TURN BUTTON LISTENER
+		 */
+		this.endTurn.setOnAction(e -> {
+			System.out.println("clicked end turn");
+			this.removeDraggable();
+			int currentPlayer = playerManager.getCurrentPlayer();
+			if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+				playerManager.flipFaceDownCards(currentPlayer, false);
+				c.send(new TournamentPickCardsClient(currentPlayer, 
+						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
+			}
+			else if(CURRENT_STATE == STATE.PICK_STAGES) {
+				//TODO::Handle PICK_STAGES make sure player plays a card
+				for(int i = 0 ; i < stageCards.size(); i++) {
+					if(!stageCards.get(i).isEmpty()) {
+						String[] currentStageCards = new String[stageCards.get(i).size()];
+						for(int j = 0 ; j < stageCards.get(i).size(); j++) {
+							currentStageCards[j] = stageCards.get(i).get(j).getName();
+						}
+						c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
+					}
+				}
+			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+				//send cards 
+				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
+				String[] cards = new String[faceDownCards.size()];
+				for(int i = 0 ; i < cards.length ; i++) {
+					cards[i] = faceDownCards.get(i).getName();
+				}
+				c.send(new QuestPickCardsClient(currentPlayer, cards));
+			}
+			//TODO::verify cards are minimum number of cards
+			else if(CURRENT_STATE == STATE.QUEST_BID) {
+				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
+			}else if(CURRENT_STATE == STATE.BID_DISCARD) {
+				String[] cards = discardAllFaceDownCards(currentPlayer);
+				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
+			}
+		});
+		
+		/*
+		 * ACCEPT BUTTON LISTENER
+		 */
+		this.accept.setOnAction(e -> {
+			System.out.println("accepted story");
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
+				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
+			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
+				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
+			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
+				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
+			}
+		});
+		/*
+		 * DECLINE BUTTON LISTENER
+		 */
+		this.decline.setOnAction(e -> {
+			System.out.println("declined story");
+			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
+				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
+				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
+				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
+			}else if(CURRENT_STATE == STATE.QUEST_BID) {
+				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
+				c.send(new QuestBidClient(playerManager.getCurrentPlayer(), -1));
+			}
+		});
+		/*
+		 * NEXT TURN BUTTON LISTENER
+		 */
+		this.nextTurn.setOnAction(e -> {
+			System.out.println("Clicked next turn");
+			c.send(new ContinueGameClient());
+		});
+	}
 }
 

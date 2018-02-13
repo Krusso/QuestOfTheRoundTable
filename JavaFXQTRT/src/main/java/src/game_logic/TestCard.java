@@ -13,6 +13,7 @@ public class TestCard extends AdventureCard {
 	
 	public TestCard(String name, String path) {
 		super(name, path);
+		type = TYPE.TESTS;
 	}
 	
 	public TestCard(String name, int minBids, TYPE type) {

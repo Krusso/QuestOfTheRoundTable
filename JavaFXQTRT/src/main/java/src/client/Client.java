@@ -418,6 +418,42 @@ class DiscardQuestTask extends Task {
 }
 
 
+class JoinTournamentTask extends Task {
+	int player;
+	public JoinTournamentTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.JOIN_TOURNAMENT;
+		gbc.setButtonsInvisible();
+		gbc.showAcceptDecline();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.removeStagePaneDragOver();
+		gbc.removeFaceDownPaneDragOver();
+	}
+}
+
+class PickTournamentTask extends Task {
+	int player;
+	public PickTournamentTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.PICK_TOURNAMENT;
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.addDraggable();
+		gbc.removeStagePaneDragOver();
+		gbc.addFaceDownPaneDragOver();
+		
+	}
+}
+
 
 abstract class Task implements Runnable{
 	protected File cardDir;
@@ -482,11 +518,14 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.JOINTOURNAMENT.name())) {
 						TournamentAcceptDeclineServer request = gson.fromJson(obj, TournamentAcceptDeclineServer.class);
-						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
+
+						Platform.runLater(new JoinTournamentTask(gbc, request.player));
+//						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.PICKTOURNAMENT.name())) {
 						TournamentPickCardsServer request = gson.fromJson(obj, TournamentPickCardsServer.class);
-						Platform.runLater(new ShowEndTurn(gbc, request.player));
+						Platform.runLater(new PickTournamentTask(gbc, request.player));
+//						Platform.runLater(new ShowEndTurn(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.UPQUEST.name())) {
 						QuestUpServer request = gson.fromJson(obj, QuestUpServer.class);
