@@ -157,10 +157,10 @@ public class GameBoardController implements Initializable{
 	}
 	
 	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
-		if(!players[0].equals("")) { shield1View.setImage(shield1); }
-		if(!players[1].equals("")) { shield2View.setImage(shield2); }
-		if(!players[2].equals("")) { shield3View.setImage(shield3); }
-		if(!players[3].equals("")) { shield4View.setImage(shield4); }
+		if(!players[0].equals("")) { shield1View.setImage(shield1); p1Shields.setText("0"); }
+		if(!players[1].equals("")) { shield2View.setImage(shield2); p2Shields.setText("0"); }
+		if(!players[2].equals("")) { shield3View.setImage(shield3); p3Shields.setText("0"); }
+		if(!players[3].equals("")) { shield4View.setImage(shield4); p4Shields.setText("0"); }
 	}
 	
 	////Must call this when you click start game in title screen!
