@@ -133,13 +133,26 @@ public class UIPlayerManager {
 				return i;
 			}
 		}
+		
 		return -1;
 	}
-	public AdventureCard getCardByID(int p, int id) {
+	public AdventureCard getCardByIDInHand(int p, int id) {
+		//check the hand
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
 			if(hand.get(i).getID() == id) {
 				return hand.get(i);
+			}
+		}
+
+		return null;
+	}
+	public AdventureCard getCardByIDInFaceDown(int p, int id) {
+		//check the facedown
+		ArrayList<AdventureCard> faceDown = players[p].getFaceDownDeck().getDeck();
+		for(int i = 0 ; i < faceDown.size(); i++) {
+			if(faceDown.get(i).getID() == id) {
+				return faceDown.get(i);
 			}
 		}
 		return null;

@@ -31,6 +31,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.Card.I_AM_IN;
 import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
@@ -159,51 +160,7 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
-	//Returns true if the toAdd card can be added to the stageCards
-	private boolean isStageValid(ArrayList<AdventureCard> stageCards, AdventureCard toAdd) {
-		//Make sure the current stage has either 1 foe or 1 test card	
-		if(CURRENT_STATE == STATE.PICK_STAGES) {
-			TYPE cardType = toAdd.getType();
-			//If we want to add a Test card, make sure the stageCards are empty
-			if(cardType == TYPE.TESTS) {
-				if(!stageCards.isEmpty()) {
-					return false;
-				}
-				//check if there are tests cards in any other of the stages return false
-				for(int i = 0 ; i < this.stageCards.size(); i++) {
-					for(AdventureCard c : this.stageCards.get(i)) {
-						if(c.getType() == TYPE.TESTS) {
-							return false;
-						}
-					}
-				}
-				return true;
-			}
-			//If we want to add a Foe card, make sure that there is no other Foe card existing in the stageCards
-			else if(cardType == TYPE.FOES) {
-				for(AdventureCard c : stageCards) {
-					if(c.getType() == cardType || c.getType() == TYPE.TESTS) {
-						return false;
-					}
-				}
-				return true;
-			}
-			//If we want to add a Weapon card, make sure a Test card or the same weapon doesn't exist in the stageCards
-			else if(cardType == TYPE.WEAPONS) {
-				for(AdventureCard c : stageCards) {
-					if(c.getType() == TYPE.TESTS || c.getName().equals(toAdd.getName())) {
-						return false;
-					}
-				}
-				return true;
-			}
-			//For adding cards to stage, they must either be a test/foe/weapon card so return false if none of the above
-			else {
-				return false;
-			}
-		}
-		return false;
-	}
+
 
 	public void addStagePaneListener() {
 		//Add listeners for the stage panes
@@ -268,7 +225,7 @@ public class GameBoardController implements Initializable{
 					int cPlayer = playerManager.getCurrentPlayer();
 					int id = Integer.parseInt(db.getString());
 					int idx = playerManager.getCardIndexByID(cPlayer, id);
-					AdventureCard card = playerManager.getCardByID(cPlayer, id);
+					AdventureCard card = playerManager.getCardByIDInHand(cPlayer, id);
 					if(db.hasImage() && isStageValid(stageCards.get(currentIndex), card)) {
 						//remove the card from the player hand pane
 						handPanes[cPlayer].getChildren().remove(idx);
@@ -308,57 +265,141 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
+
+
+
+	/**
+	 * Checks if the point is within the bounds of the pane p (helper function for putIntoPane())
+	 * @param p : the pane
+	 * @param point : x, y coordinate
+	 * @return
+	 */
 	private boolean isInPane(Pane p, Point2D point) {
 		Bounds b = p.localToScene(p.getBoundsInLocal());
-		if(b.contains(point)) {
+		if(b.contains(point) && p.isVisible()) {
 			return true;
 		}
 		return false;
 	}
 
+	/**
+	 * Checks if the point is within the bounds of any possible pane
+	 * then checks what state the game is and puts the card with the id into that pane
+	 * if it valid, otherwise it returns to the original position
+	 * @param point: position of the mouse pointer
+	 * @param id:	 the id of the card we want to put into the pane
+	 */
 	public void putIntoPane(Point2D point, int id) {
 		int cPlayer = playerManager.getCurrentPlayer();
 		int idx = playerManager.getCardIndexByID(cPlayer, id);
-		handPanes[cPlayer].getChildren().remove(idx);
-		AdventureCard card = playerManager.getCardByID(cPlayer, id);
-		//Find if the current point is within one of the stage panes.
-		for(int i = 0 ; i < stages.length ; i++) {
-			if(isInPane(stages[i], point)) {
-				System.out.println("Putting card into :" + stages[i]);
-				
-				//add the card image to the stage pane
-				stages[i].getChildren().add(card.getImageView());
-				
-				//add the card name to the stage
-				stageCards.get(i).add(card);
-				
+		AdventureCard card = playerManager.getCardByIDInHand(cPlayer, id);
+		//if it's not in the player hand or face down we look at the stage cards
+		if(card == null) {
+			for(ArrayList<AdventureCard> l : stageCards) {
+				for(AdventureCard c : l) {
+					if(c.getID() == id) {
+						card = c;
+					}
+				}
+			}
+		}
+		ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(cPlayer);
+		//Check if we are suppose to put cards into the stage
+		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			//Find if the current point is within one of the stage panes.
+			for(int i = 0 ; i < stages.length ; i++) {
+				//check if the mouse is over a stage pane and check if it is valid to put it in there
+				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card)) {
+					//find which pane this card is in right now
+					
+					handPanes[cPlayer].getChildren().remove(idx);
+					//add the card image to the stage pane
+					stages[i].getChildren().add(card.getImageView());
+
+					//add the card name to the stage
+					stageCards.get(i).add(card);
+
+					//remove card from the player's hand by matching the id of the card
+					playerManager.removeCardFromPlayerHandByID(cPlayer, id);
+
+					repositionCardsInHand(playerManager.getCurrentPlayer());
+
+					//reposition cards in this pane
+					ObservableList<Node> cards = stages[i].getChildren();
+					double handPaneHeight = stages[i].getHeight();
+					for(int j = 0 ; j < cards.size(); j++) {
+						if(cards.get(j) instanceof ImageView) {
+							ImageView img = (ImageView) cards.get(j);
+							img.setX(0);
+							img.setY(handPaneHeight/cards.size() * j);
+							System.out.println("img y: " + img.getY());
+						}
+					}
+					return;
+				}
+			}
+		}
+		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+			
+			//Find if the current point is within the current player's face down pane
+			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card)) {
+				handPanes[cPlayer].getChildren().remove(idx);
+				//add the card image to the faceDownPane
+				faceDownPanes[cPlayer].getChildren().add(card.getImageView());
+
+				//add the card to the faceDown hand for the palyer
+				faceDownCards.add(card);
+
 				//remove card from the player's hand by matching the id of the card
 				playerManager.removeCardFromPlayerHandByID(cPlayer, id);
-				
 				repositionCardsInHand(playerManager.getCurrentPlayer());
 				
-				//reposition cards in this pane
-				ObservableList<Node> cards = stages[i].getChildren();
-				double handPaneHeight = stages[i].getHeight();
 
-				
+				ObservableList<Node> cards = faceDownPanes[cPlayer].getChildren();
+				double paneWidth = faceDownPanes[cPlayer].getWidth();
 				for(int j = 0 ; j < cards.size(); j++) {
 					if(cards.get(j) instanceof ImageView) {
 						ImageView img = (ImageView) cards.get(j);
-						img.setX(0);
-						img.setY(handPaneHeight/cards.size() * j);
-						System.out.println("img y: " + img.getY());
+						img.setX(paneWidth/cards.size() * j);
+						img.setY(0);
 					}
 				}
 				return;
 			}
 		}
-		System.out.println("HELLO");
-//		card.returnOriginalPosition();
-		System.out.println(card.getImageView().isVisible());
-//		System.out.println());
+		//return to original position if we don't put it into the pane
+		card.returnOriginalPosition();
+	}
+	
+	//Helper function
+	private Pane findCardInPane(AdventureCard c) {
+		
+		return null;
+		
+	}
+	//Helper Functions
+	private void moveCardIntoPane(AdventureCard c, Pane from, Pane to) {
+		ObservableList<Node> cards = from.getChildren();
+		for(int j = 0 ; j < cards.size(); j++) {
+			//check if pane has this card, if it does remove it
+			if(cards.get(j) instanceof ImageView && c.getImageView().equals(cards.get(j))) {
+				from.getChildren().remove(j);
+				//now add the image to the other pane
+				to.getChildren().add(c.getImageView());
+				return;
+			}
+		}
 	}
 
+	/* ************************************************
+	 *  VALIDATION METHODS FOR PUTTING CARDS INTO PANES
+	 **************************************************/
+	/**
+	 * Checks if we can add the toAdd card into the faceDownCards pile when it is a tournament
+	 * @param faceDownCards
+	 * @param toAdd
+	 * @return
+	 */
 	private boolean isTournamentCardValid(ArrayList<AdventureCard> faceDownCards, AdventureCard toAdd) {
 		if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 			TYPE cardType = toAdd.getType();
@@ -375,6 +416,92 @@ public class GameBoardController implements Initializable{
 		return false;
 	}
 
+	/**
+	 *  Checks if we can add the toAdd card into the stageCards pile during Pick stages
+	 * @param stageCards
+	 * @param toAdd
+	 * @return
+	 */
+	private boolean isStageValid(ArrayList<AdventureCard> stageCards, AdventureCard toAdd) {
+		//Make sure the current stage has either 1 foe or 1 test card	
+		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			TYPE cardType = toAdd.getType();
+			//If we want to add a Test card, make sure the stageCards are empty
+			if(cardType == TYPE.TESTS) {
+				if(!stageCards.isEmpty()) {
+					return false;
+				}
+				//check if there are tests cards in any other of the stages return false
+				for(int i = 0 ; i < this.stageCards.size(); i++) {
+					for(AdventureCard c : this.stageCards.get(i)) {
+						if(c.getType() == TYPE.TESTS) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			//If we want to add a Foe card, make sure that there is no other Foe card existing in the stageCards
+			else if(cardType == TYPE.FOES) {
+				for(AdventureCard c : stageCards) {
+					if(c.getType() == cardType || c.getType() == TYPE.TESTS) {
+						return false;
+					}
+				}
+				return true;
+			}
+			//If we want to add a Weapon card, make sure a Test card or the same weapon doesn't exist in the stageCards
+			else if(cardType == TYPE.WEAPONS) {
+				for(AdventureCard c : stageCards) {
+					if(c.getType() == TYPE.TESTS || c.getName().equals(toAdd.getName())) {
+						return false;
+					}
+				}
+				return true;
+			}
+			//For adding cards to stage, they must either be a test/foe/weapon card so return false if none of the above
+			else {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if we can add the toAdd card into the faceDownCards pile when it is a pick quest state
+	 * @param faceDownCards
+	 * @param toAdd
+	 * @return
+	 */
+	private boolean isPickQuestValid(ArrayList<AdventureCard> faceDownCards, AdventureCard toAdd) {
+		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+			TYPE cardType = toAdd.getType();
+			//A player cannot play 2 of the same weapon
+			if(cardType == TYPE.WEAPONS) {
+				for(AdventureCard c : faceDownCards) {
+					if(c.getName().equals(toAdd.getName())) {
+						return false;
+					}
+				}
+				return true;
+			}
+			//Check if there's only 1 amour in your facedown deck
+			if(cardType == TYPE.AMOUR) {
+				for(AdventureCard c : faceDownCards) {
+					if(c.getName().equals(toAdd.getName())) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/* ************************************************
+	 *  END OF VALIDATION METHODS FOR PUTTING CARDS INTO PANES
+	 **************************************************/
+	
 	public void addFaceDownPaneDragOver() {
 		for(int i = 0 ; i < faceDownPanes.length ; i++) {
 			Pane p = faceDownPanes[i];
@@ -389,45 +516,45 @@ public class GameBoardController implements Initializable{
 				}
 			});
 			//TODO::
-//			p.setOnDragDropped(new EventHandler<DragEvent>() {
-//				@Override
-//				public void handle(DragEvent event) {
-//					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
-//					Dragboard db = event.getDragboard();
-//					//Find the id of the card and the index of the card in the player's hand
-//					int cPlayer = playerManager.getCurrentPlayer();
-//					int id = Integer.parseInt(db.getString());
-//					int idx = playerManager.getCardIndexByID(cPlayer, id);
-//					AdventureCard card = playerManager.getCardByID(cPlayer, id);
-//					if(db.hasImage() && isTournamentCardValid(playerManager.getFaceDownCardsAsList(cPlayer), card)) {
-//						//remove the card from the player hand pane
-//						handPanes[cPlayer].getChildren().remove(idx);
-//						//add the card image to the stage pane
-//						p.getChildren().add(card.getImageView());
-//
-//
-//						AdventureCard c = playerManager.getCardByID(cPlayer, id);
-//						playerManager.playCard(c,cPlayer);
-//						//remove card from the player's hand by matching the id of the card
-//						playerManager.removeCardFromPlayerHandByID(cPlayer, id);
-//
-//						//lastly reposition the hand and reposition the card in this pane
-//						repositionCardsInHand(cPlayer);
-//						//reposition cards in this pane
-//						ObservableList<Node> cards = p.getChildren();
-//						double handPaneWidth = p.getHeight();
-//
-//						for(int i = 0 ; i < cards.size(); i++) {
-//							if(cards.get(i) instanceof ImageView) {
-//								ImageView img = (ImageView) cards.get(i);
-//								img.setX(handPaneWidth/cards.size() * i);
-//								img.setY(0);
-//							}
-//						}
-//					}
-//					event.consume();
-//				}
-//			});
+			//			p.setOnDragDropped(new EventHandler<DragEvent>() {
+			//				@Override
+			//				public void handle(DragEvent event) {
+			//					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
+			//					Dragboard db = event.getDragboard();
+			//					//Find the id of the card and the index of the card in the player's hand
+			//					int cPlayer = playerManager.getCurrentPlayer();
+			//					int id = Integer.parseInt(db.getString());
+			//					int idx = playerManager.getCardIndexByID(cPlayer, id);
+			//					AdventureCard card = playerManager.getCardByID(cPlayer, id);
+			//					if(db.hasImage() && isTournamentCardValid(playerManager.getFaceDownCardsAsList(cPlayer), card)) {
+			//						//remove the card from the player hand pane
+			//						handPanes[cPlayer].getChildren().remove(idx);
+			//						//add the card image to the stage pane
+			//						p.getChildren().add(card.getImageView());
+			//
+			//
+			//						AdventureCard c = playerManager.getCardByID(cPlayer, id);
+			//						playerManager.playCard(c,cPlayer);
+			//						//remove card from the player's hand by matching the id of the card
+			//						playerManager.removeCardFromPlayerHandByID(cPlayer, id);
+			//
+			//						//lastly reposition the hand and reposition the card in this pane
+			//						repositionCardsInHand(cPlayer);
+			//						//reposition cards in this pane
+			//						ObservableList<Node> cards = p.getChildren();
+			//						double handPaneWidth = p.getHeight();
+			//
+			//						for(int i = 0 ; i < cards.size(); i++) {
+			//							if(cards.get(i) instanceof ImageView) {
+			//								ImageView img = (ImageView) cards.get(i);
+			//								img.setX(handPaneWidth/cards.size() * i);
+			//								img.setY(0);
+			//							}
+			//						}
+			//					}
+			//					event.consume();
+			//				}
+			//			});
 		}
 	}
 	public void removeFaceDownPaneDragOver() {
