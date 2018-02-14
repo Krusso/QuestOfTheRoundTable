@@ -61,6 +61,15 @@ public class GameBoardController implements Initializable{
 	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
 
+	@FXML public Text p1Shields;
+	@FXML public Text p2Shields;
+	@FXML public Text p3Shields;
+	@FXML public Text p4Shields;
+	
+	@FXML public ImageView shield1View;
+	@FXML public ImageView shield2View;
+	@FXML public ImageView shield3View;
+	@FXML public ImageView shield4View;
 
 	//These panes are for hold each player's respective items, e.g hand, face up card, face down cards etc
 	//When rotating, we only rotate these panes.
@@ -146,6 +155,14 @@ public class GameBoardController implements Initializable{
 		//give PlayerManager the panes
 
 	}
+	
+	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
+		if(!players[0].equals("")) { shield1View.setImage(shield1); }
+		if(!players[1].equals("")) { shield2View.setImage(shield2); }
+		if(!players[2].equals("")) { shield3View.setImage(shield3); }
+		if(!players[3].equals("")) { shield4View.setImage(shield4); }
+	}
+	
 	////Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers) {
 		playerManager = new UIPlayerManager(numPlayers);
@@ -569,6 +586,7 @@ public class GameBoardController implements Initializable{
 			try {
 				File file = new File(resDir.getPath() + rank);
 				Image img = new Image (new FileInputStream(file));
+				System.out.println(p);
 				playerRanks[p].setImage(img);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -615,6 +633,14 @@ public class GameBoardController implements Initializable{
 	
 	public void addShields(int p, int s) {
 		playerManager.addShields(p, s);
+		if(p==1) p1Shields.setText(getShields(p)+"");
+		if(p==2) p2Shields.setText(getShields(p)+"");
+		if(p==3) p3Shields.setText(getShields(p)+"");
+		if(p==4) p4Shields.setText(getShields(p)+"");
+	}
+	
+	public int getShields(int p) {
+		return playerManager.getShields(p);
 	}
 	
 }
