@@ -358,7 +358,7 @@ class ShieldCountTask extends Task {
 	}
 	@Override
 	public void run() {
-//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a statae for shields
+//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a state for shields
 		gbc.addShields(player, shields);
 	}
 }

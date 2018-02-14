@@ -193,7 +193,8 @@ public class TitleScreenController implements Initializable{
 		GameBoardController gbc = fxmlLoader.getController();
 		gbc.setClient(client);
 		gbc.setUp();
-		gbc.setShields(shieldImages[playerShield1],
+		gbc.setShields(players,
+					   shieldImages[playerShield1],
 					   shieldImages[playerShield2],
 					   shieldImages[playerShield3],
 					   shieldImages[playerShield4]);
