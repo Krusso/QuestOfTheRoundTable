@@ -8,7 +8,7 @@ import src.player.UIPlayer;
 
 public class UIPlayerManager {
 	
-	private UIPlayer[] players;
+	public UIPlayer[] players;
 	private int currentPlayer;
 	public UIPlayerManager(int numPlayers) {
 		players = new UIPlayer[numPlayers];
@@ -120,7 +120,7 @@ public class UIPlayerManager {
 	public void removeCardFromPlayerHandByID(int p, int id) {
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
-			if(hand.get(i).getID() == id) {
+			if(hand.get(i).id == id) {
 				hand.remove(i);
 				return;
 			}
@@ -129,7 +129,7 @@ public class UIPlayerManager {
 	public int getCardIndexByID(int p, int id) {
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
-			if(hand.get(i).getID() == id) {
+			if(hand.get(i).id == id) {
 				return i;
 			}
 		}
@@ -140,7 +140,7 @@ public class UIPlayerManager {
 		//check the hand
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
-			if(hand.get(i).getID() == id) {
+			if(hand.get(i).id == id) {
 				return hand.get(i);
 			}
 		}
@@ -151,7 +151,7 @@ public class UIPlayerManager {
 		//check the facedown
 		ArrayList<AdventureCard> faceDown = players[p].getFaceDownDeck().getDeck();
 		for(int i = 0 ; i < faceDown.size(); i++) {
-			if(faceDown.get(i).getID() == id) {
+			if(faceDown.get(i).id == id) {
 				return faceDown.get(i);
 			}
 		}

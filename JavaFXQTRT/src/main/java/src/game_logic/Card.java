@@ -23,11 +23,12 @@ import javafx.util.Duration;
 import src.client.GameBoardController;
 
 public abstract class Card {
-	public static enum I_AM_IN {HAND_PANE, STAGE_PANE, FACE_DOWN_PANE, FACE_UP_PANE}
+	public static enum I_AM_IN {HAND_PANE, FACE_DOWN_PANE, FACE_UP_PANE,
+		STAGE_PANE_0,STAGE_PANE_1,STAGE_PANE_2,STAGE_PANE_3,STAGE_PANE_4}
 	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
 	public I_AM_IN childNodeOf;
-	final int id = NEXT_ID.getAndIncrement();
+	public final int id = NEXT_ID.getAndIncrement();
 	public static double DEFAULT_WIDTH = 100;
 	public static double DEFAULT_HEIGHT = 150;
 	private String name;
@@ -205,10 +206,6 @@ public abstract class Card {
         rotator.setInterpolator(Interpolator.LINEAR);
         return rotator;
     }
-	
-	public int getID() {
-		return id;
-	}
 	public void revertImagePosition() {
 		imgView.setX(orgStartX);
 		imgView.setY(orgStartY);
