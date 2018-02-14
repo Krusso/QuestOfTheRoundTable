@@ -8,8 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -86,15 +89,98 @@ public abstract class Card {
 	
 	//Simple drag motion for the card ImageView
 	public void setDraggableOn() {
-		imgView.setOnDragDetected(e->{
-			System.out.println("On Drag Detected");
-			Dragboard db = imgView.startDragAndDrop(TransferMode.ANY);
-			ClipboardContent content = new ClipboardContent();
-			content.putString(id+"");
-			content.putImage(imgView.getImage());
-			db.setContent(content);
-			e.consume();
-		});
+
+		
+//		imgView.setOnMouseReleased(e->{
+//			imgView.setMouseTransparent(false);
+//			e.consume();
+//		});
+//		
+//		imgView.setOnMousePressed(e->{
+//			System.out.println("img mouse pressed");
+//			orgStartX = imgView.getX();
+//			orgStartY = imgView.getY();
+//			startX = e.getX() - imgView.getX();
+//			startY = e.getY() - imgView.getY();
+//			imgView.setMouseTransparent(true);
+//			e.setDragDetect(true);
+//			imgView.setPickOnBounds(false);
+//		});
+//		
+//		imgView.setOnDragDetected(e->{
+//			System.out.println("Mouse Drag Entered");
+//			Clipboard clipboard = Clipboard.getSystemClipboard();
+//			ClipboardContent content = new ClipboardContent();
+//			content.putString(id+"");
+//			content.putImage(imgView.getImage());
+//			clipboard.setContent(content);	
+////			imgView.startFullDrag();
+//		});
+//		imgView.setOnMouseDragged(e->{
+//			imgView.setX(e.getX() - startX);
+//			imgView.setY(e.getY() - startY);
+//			e.setDragDetect(false);
+//		});
+		
+//		imgView.setOnDragDetected(e->{
+//			System.out.println("On Drag Detected");
+//			Dragboard db = imgView.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+////			db.setDragView(new Image());
+//			ClipboardContent content = new ClipboardContent();
+//			content.putString(id+"");
+//			content.putImage(imgView.getImage());
+//			db.setContent(content);
+////			e.consume();
+//		});
+		imgView.setOnMousePressed(new EventHandler <MouseEvent>()
+		{
+            public void handle(MouseEvent event)
+            {
+    			orgStartX = imgView.getX();
+    			orgStartY = imgView.getY();
+    			startX = imgView.getX() - imgView.getX();
+    			startY = imgView.getY() - imgView.getY();
+            	imgView.setMouseTransparent(true);
+            	System.out.println("Event on Source: mouse pressed");
+            	event.setDragDetect(true);
+            }
+        });
+
+		imgView.setOnMouseReleased(new EventHandler <MouseEvent>()
+		{
+            public void handle(MouseEvent event)
+            {
+            	imgView.setMouseTransparent(false);
+            	System.out.println("Event on Source: mouse released");
+            	Point2D p = new Point2D(event.getSceneX(), event.getSceneY());
+            	System.out.println("POINT: " + p.toString());
+            	gbc.putIntoPane(p, id);
+            	System.out.println(imgView.getX() + " " + imgView.getY());
+            	event.consume();
+            }
+        });
+
+		imgView.setOnMouseDragged(new EventHandler <MouseEvent>()
+		{
+            public void handle(MouseEvent event)
+            {
+            	System.out.println("Event on Source: mouse dragged");
+            	event.setDragDetect(false);
+            	imgView.setMouseTransparent(true);
+    			imgView.setX(event.getX() - startX);
+    			imgView.setY(event.getY() - startY);
+            }
+        });
+
+		imgView.setOnDragDetected(new EventHandler <MouseEvent>()
+		{
+            public void handle(MouseEvent event)
+            {
+            	imgView.startFullDrag();
+            	System.out.println("Event on Source: drag detected");
+            }
+        });
+		
 	}
 	public ImageView getImageView() {
 		return imgView;
@@ -164,6 +250,12 @@ public abstract class Card {
 	
 	public int getID() {
 		return id;
+	}
+	public void revertImagePosition() {
+		imgView.setX(orgStartX);
+		imgView.setY(orgStartY);
+		System.out.println(imgView.getX() + " " + imgView.getY());
+		System.out.println(imgView.getParent());
 	}
 	
 }

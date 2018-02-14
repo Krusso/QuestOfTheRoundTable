@@ -377,36 +377,40 @@ class QuestBidTask extends Task {
 	}
 	@Override
 	public void run() {
+
 		gbc.setButtonsInvisible();
-		gbc.showEndTurn();
-		gbc.showDecline();
-//		//players can only drag over facedown pane.
-		gbc.removeStagePaneDragOver();
-		gbc.removeFaceDownPaneDragOver();
-		gbc.CURRENT_STATE = STATE.QUEST_BID;
-		gbc.bidSlider.setMin(min);
-		gbc.bidSlider.setMax(max);
-		gbc.bidSlider.setVisible(true);
-		gbc.bidSlider.setMajorTickUnit(2);
-		gbc.bidSlider.setShowTickLabels(true);
-		gbc.bidSlider.setBlockIncrement(1);
-		gbc.bidSlider.setSnapToTicks(true);
+		//this means the player can't bid higher than the max
+		if(min > max) {
+			gbc.showDecline();
+		}else {
+			gbc.showEndTurn();
+			gbc.showDecline();
+//			//players can only drag over facedown pane.
+			gbc.removeStagePaneDragOver();
+			gbc.removeFaceDownPaneDragOver();
+			gbc.CURRENT_STATE = STATE.QUEST_BID;
+			gbc.bidSlider.setMin(min);
+			gbc.bidSlider.setMax(max);
+			gbc.bidSlider.setVisible(true);
+			gbc.bidSlider.setMajorTickUnit(2);
+			gbc.bidSlider.setShowTickLabels(true);
+			gbc.bidSlider.setBlockIncrement(1);
+			gbc.bidSlider.setSnapToTicks(true);
+		}
 	}
 }
 
 class DiscardQuestTask extends Task {
-	private int min;
-	private int max;
 	private int player;
 	public DiscardQuestTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		this.min = min;
-		this.max = max;
 		
 	}
 	@Override
 	public void run() {
+		//the task that is run before this is the bidquest so we have to hide the bidslider now
+		gbc.bidSlider.setVisible(false);
 		gbc.CURRENT_STATE = STATE.BID_DISCARD;
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
