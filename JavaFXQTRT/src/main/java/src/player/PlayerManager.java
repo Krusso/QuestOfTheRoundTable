@@ -170,9 +170,6 @@ public class PlayerManager {
 		players[currentPlayer].setFaceDown(cards);
 	}
 
-	public void currentFaceUp(String cards) {
-		players[currentPlayer].setFaceUp(cards.split(","));
-	}
 
 	public void questDown(Player sponsor, List<List<Card>> cards) {
 		sponsor.setQuestDown(cards);
@@ -220,10 +217,6 @@ public class PlayerManager {
 		player.removeCards(cards);
 	}
 
-	public void discardFaceUp(Player player) {
-		player.discardFaceUp();
-	}
-
 	public boolean rankUp() {
 		AtomicBoolean winners = new AtomicBoolean();
 		round().forEachRemaining(player ->{
@@ -242,5 +235,10 @@ public class PlayerManager {
 
 	public void setDiscarding(Player player, STATE testdiscard, int cardsToBid) {
 		player.setDiscardAmount(testdiscard, cardsToBid);
+	}
+
+	public void setStates(List<Player> winners, STATE win) {
+		winners.forEach(i -> i.setState(win));
+		pvs.forEach(i -> i.win(winners, win));
 	}
 }

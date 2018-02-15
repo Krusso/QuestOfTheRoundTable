@@ -31,7 +31,7 @@ public abstract class SequenceManager {
 		Queue<Player> notDropped = new LinkedList<Player>();
 		players.forEachRemaining(i -> notDropped.add(i));
 		int maxBidValue = Integer.MIN_VALUE;
-		BidCalculator bc = new BidCalculator();
+		BidCalculator bc = new BidCalculator(pm);
 		if(notDropped.size() == 1) {
 			Player next = notDropped.poll();
 			pm.setPlayer(next);

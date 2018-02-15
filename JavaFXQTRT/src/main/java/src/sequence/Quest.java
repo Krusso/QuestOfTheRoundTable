@@ -106,7 +106,7 @@ public class Quest {
 			pm.flipCards(players.next());	
 		}
 		
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		bpc.getFoeWinners(participants, getFoeBP());
 	}
 }

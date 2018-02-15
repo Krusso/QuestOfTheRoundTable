@@ -29,7 +29,7 @@ public class A2 extends AbstractAI {
 
 	@Override
 	public List<Card> playCardsForTournament() {
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		int currentBp = bpc.calculatePoints(listPlayer).get(0);
 		if(currentBp >= 50) {
 			return null;

@@ -1,6 +1,7 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -8,6 +9,12 @@ import src.game_logic.AdventureDeck;
 import src.game_logic.Rank.RANKS;
 
 public class BattlePointCalculator {
+	
+	private PlayerManager pm;
+	
+	public BattlePointCalculator(PlayerManager pm) {
+		this.pm = pm;
+	}
 	
 	public ArrayList<Integer> calculatePoints(List<Player> participants){
 		ArrayList<Integer> scores = new ArrayList<Integer>();
@@ -54,7 +61,13 @@ public class BattlePointCalculator {
 			score += 20;
 		}
 		
-		if(player.hasTristanIseultBoost()) {
+		boolean foundIseult = false;
+		Iterator<Player> players = pm.round();
+		while(players.hasNext()) {
+			if(players.next().iseult == true) foundIseult = true;
+		}
+		
+		if(player.tristan && foundIseult) {
 			score += 10;
 		}
 		

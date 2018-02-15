@@ -21,7 +21,7 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 			pm.flipCards(players.next());	
 		}
 		
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		List<Player> winners = bpc.calculateHighest(participants);
 		pm.setState(winners, Player.STATE.GAMEWON);
 		
