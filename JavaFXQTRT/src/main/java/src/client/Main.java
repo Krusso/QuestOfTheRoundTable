@@ -47,6 +47,8 @@ public class Main extends Application {
 						
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
+//			primaryStage.setMaxHeight(900);
+//			primaryStage.setMaxWidth(1400);
 			primaryStage.show();
 			
 		} catch(Exception e) {

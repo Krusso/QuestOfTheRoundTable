@@ -29,7 +29,9 @@ public class UIPlayer extends Player{
 		this.playerRankUI = playerRank;
 	}
 	
-
+	public int getShields(int s) {
+		return shields;
+	}
 	public void addShields(int s) {
 		shields += s;
 	}

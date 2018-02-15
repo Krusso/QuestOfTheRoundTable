@@ -16,7 +16,7 @@ public class UIPlayerManager {
 			players[i] = new UIPlayer(i);
 		}
 	}
-	//Some dank raunch way of setting up our UIPlayers :^) :V) :^) :V) :^) :V) :^)
+	//Some dank raunch way of setting up our UIPlayers :^) :V) :^) :V) :^) :V) :^) :^(
 	
 
 //	public void setPlayerPanes()
@@ -25,7 +25,9 @@ public class UIPlayerManager {
 	public void addShields(int p, int shields) {
 		players[p].addShields(shields);
 	}
-
+	public int getShields(int p) {
+		return players[p].getShields();
+	}
 	public Rank.RANKS getPlayerRank(int playerNum){
 		return players[playerNum].getRank();
 	}
