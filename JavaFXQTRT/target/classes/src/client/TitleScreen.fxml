@@ -12,6 +12,7 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.TitleScreenController">
    <children>
+
       <Pane fx:id="background" layoutX="-6.0" layoutY="7.0" prefHeight="1080.0" prefWidth="1920.0">
          <children>
             <Circle layoutX="467.0" layoutY="523.0" radius="511.0" stroke="BLACK" strokeType="INSIDE" />

@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="768.0" maxWidth="1024.0" minHeight="1080.0" minWidth="1920.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
+<AnchorPane maxHeight="1080.0" maxWidth="1920.0" minHeight="1080.0" minWidth="1920.0" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.client.GameBoardController">
    <children>
       <Pane fx:id="background" prefHeight="1080.0" prefWidth="1920.0">
          <children>
@@ -26,7 +26,42 @@
             </ImageView>
          </children>
       </Pane>
-      <Pane fx:id="playerPane3" layoutX="-340.0" layoutY="385.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
+
+      <StackPane layoutX="525.0" layoutY="375.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
+         <children>
+            <Pane prefHeight="400.0" prefWidth="500.0">
+               <children>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="400.0" opacity="0.54" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="897.0" />
+                  <Pane fx:id="pickStage0" layoutX="203.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage1" layoutX="313.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage2" layoutX="438.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage3" layoutX="563.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage4" layoutX="688.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="storyCardContainer" layoutX="35.0" prefHeight="150.0" prefWidth="100.0" />
+                  <Text fx:id="toast" layoutX="35.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
+                     <font>
+                        <Font name="Britannic Bold" size="69.0" />
+                     </font>
+                  </Text>
+                  <VBox layoutX="897.0" layoutY="100.0" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+
+                        <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Continue" textFill="WHITE">
+                           <font>
+                              <Font name="Mistral" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Accept" textFill="WHITE" />
+                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Decline" textFill="WHITE" />
+                        <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="End Turn" textFill="WHITE" />
+
+                     </children>
+                  </VBox>
+               </children>
+            </Pane>
+         </children>
+      </StackPane>
+      <Pane fx:id="playerPane3" layoutX="-336.0" layoutY="342.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
          <children>
             <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
                <fill>
@@ -61,6 +96,7 @@
                      </stops>
                   </LinearGradient>
                </fill></Rectangle>
+
             <Pane fx:id="playerHand2" layoutY="250.0" prefHeight="150.0" prefWidth="754.0" />
             <Pane fx:id="playerFaceUp2" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown2" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -96,7 +132,7 @@
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="playerPane0" layoutX="457.0" layoutY="680.0" prefHeight="400.0" prefWidth="1080.0">
+      <Pane fx:id="playerPane0" layoutX="450.0" layoutY="680.0" prefHeight="400.0" prefWidth="1080.0">
          <children>
             <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
                <fill>
@@ -119,42 +155,6 @@
             </Text>
          </children>
       </Pane>
-
-      <StackPane layoutX="525.0" layoutY="375.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
-         <children>
-            <Pane prefHeight="400.0" prefWidth="500.0">
-               <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="400.0" opacity="0.54" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="897.0" />
-                  <Pane fx:id="storyCardContainer" layoutX="2.0" layoutY="125.0" prefHeight="150.0" prefWidth="100.0" />
-                  <Pane fx:id="pickStage0" layoutX="203.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage1" layoutX="313.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage2" layoutX="438.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage3" layoutX="563.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage4" layoutX="688.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="storyCardContainer" layoutX="35.0" prefHeight="150.0" prefWidth="100.0" />
-                  <Text fx:id="toast" layoutX="35.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
-                     <font>
-                        <Font name="Britannic Bold" size="69.0" />
-                     </font>
-                  </Text>
-                  <VBox layoutX="897.0" layoutY="100.0" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-
-                        <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Continue" textFill="WHITE">
-                           <font>
-                              <Font name="Mistral" size="12.0" />
-                           </font>
-                        </Button>
-                        <Button fx:id="accept" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Accept" textFill="WHITE" />
-                        <Button fx:id="decline" mnemonicParsing="false" prefHeight="49.0" prefWidth="164.0" styleClass="record-sales" stylesheets="@application.css" text="Decline" textFill="WHITE" />
-                        <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="End Turn" textFill="WHITE" />
-
-                     </children>
-                  </VBox>
-               </children>
-            </Pane>
-         </children>
-      </StackPane>
       <Text fx:id="playerNumber" fill="WHITE" layoutX="354.0" layoutY="917.0" strokeType="OUTSIDE" strokeWidth="0.0" text="#0" wrappingWidth="101.0000228881836">
          <font>
             <Font size="52.0" />
