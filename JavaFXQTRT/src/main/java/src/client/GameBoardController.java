@@ -175,6 +175,7 @@ public class GameBoardController implements Initializable{
 
 
 
+	//TODO::
 	public void addStagePaneListener() {
 		//Add listeners for the stage panes
 		System.out.println("Adding listener for stage");
@@ -226,7 +227,7 @@ public class GameBoardController implements Initializable{
 
 	/* ********************************
 	 *	REPOSITIONING FUNCTIONS 
-	  *******************************/
+	 *******************************/
 	public void repositionStageCards() {
 		//reposition all the cards in the stages
 		for(int i = 0 ; i < stages.length; i++) {
@@ -241,7 +242,22 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
-	
+
+	public void repositionFaceDownCards(int p) {
+		ObservableList<Node> cards = faceDownPanes[p].getChildren();
+		double handPaneWidth = faceDownPanes[p].getWidth();
+		for(int j = 0 ; j < cards.size(); j++) {
+			if(cards.get(j) instanceof ImageView) {
+				ImageView img = (ImageView) cards.get(j);
+				System.out.println("Before X: " + img.getX() +"Y: " + img.getY());
+				img.setX(handPaneWidth/cards.size() * j);
+				img.setY(0);
+				System.out.println("After X: " + img.getX() +"Y: " + img.getY());
+			}
+		}
+
+	}
+
 	private void repositionCardsInHand(int pNum) {
 		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(pNum);
 		ObservableList<Node> cards = handPanes[pNum].getChildren();
@@ -255,8 +271,8 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
-	
-	
+
+
 	/* ***************************************************
 	 * HELPER FUNCTION FOR MOVING IMAGE VIEWS TO ANOTHER PANE
 	 ****************************************************/
@@ -268,6 +284,9 @@ public class GameBoardController implements Initializable{
 	 */
 	private boolean isInPane(Pane p, Point2D point) {
 		Bounds b = p.localToScene(p.getBoundsInLocal());
+
+		System.out.println("bounds"+b);
+		System.out.println("point" + p);
 		if(b.contains(point) && p.isVisible()) {
 			return true;
 		}
@@ -293,19 +312,18 @@ public class GameBoardController implements Initializable{
 		}
 
 		//check faceDownPanes
-		//		for(Pane p : faceDownPanes) {
-		//			Bounds b = p.localToScene(p.getBoundsInLocal());
-		//			if(b.contains(point)) {
-		//				System.out.println("mouse over Face Down Panes");
-		//				return p;
-		//			}
-		//		}
-
+		for(Pane p : faceDownPanes) {
+			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
+				System.out.println("mouse over Face Down Panes");
+				return p;
+			}
+		}
+		System.out.println("ERROR WE DIDN'T FIND ANY PANES OVER THE MOUSE!");
 		//otherwise return null
 		return null;
 	}
-	
-	
+
+
 
 	/**
 	 * Checks if the point is within the bounds of any possible pane
@@ -317,6 +335,7 @@ public class GameBoardController implements Initializable{
 	public void putIntoPane(Point2D point, int id) {
 		int cPlayer = playerManager.getCurrentPlayer();
 		int idx = playerManager.getCardIndexByID(cPlayer, id);
+		ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(cPlayer);
 		AdventureCard card = playerManager.getCardByIDInHand(cPlayer, id);
 		//if it's not in the player hand or face down we look at the stage cards
 		if(card == null) {
@@ -328,7 +347,10 @@ public class GameBoardController implements Initializable{
 				}
 			}
 		}
-		ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(cPlayer);
+		//if it's still null, check the face down panes
+		if(card == null) {
+			card = playerManager.getCardByIDInFaceDown(cPlayer, id);
+		}
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
 			//Find if the current point is within one of the stage panes.
@@ -337,36 +359,50 @@ public class GameBoardController implements Initializable{
 				System.out.println(isInPane(stages[i], point)+ " " + isStageValid(stageCards.get(i), card) );
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
 						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
-					Pane from = card.childOf;
-					ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
-					from.getChildren().remove(card.getImageView());
-					toRemove.remove(card);
-					//find which pane we want to place the card into right now
-					Pane to = mouseOverPane(point);
-					System.out.println("to:" + to);
-					
-					ArrayList<AdventureCard> toAdd = paneDeckMap.get(to);
-					System.out.println("toAdd" + toAdd);
-					to.getChildren().add(card.getImageView());
-					toAdd.add(card);
-
-					System.out.println("toAdd" + toAdd);
-					card.childOf = to;
-					repositionCardsInHand(playerManager.getCurrentPlayer());
-					repositionStageCards();
-					//todo reposition the stage cards
+					doPutCardIntoPane(point, card);
 					return;
 				}
 			}
 		}
-		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
-			if(isPickQuestValid(, card)) {
-//				TODO::
+		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
+		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS || CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+			System.out.println(isInPane(faceDownPanes[cPlayer], point) );
+			System.out.println( isInPane(faceDownPanes[cPlayer], point)+" "+isPickQuestValid(faceDownCards, card));
+
+			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
+					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+				doPutCardIntoPane(point, card);
 			}
 		}
 		//return to original position if we don't put it into the pane
 		card.returnOriginalPosition();
 	}
+	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
+		Pane from = card.childOf;
+		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
+		from.getChildren().remove(card.getImageView());
+		toRemove.remove(card);
+		//find which pane we want to place the card into right now
+		Pane to = mouseOverPane(point);
+		System.out.println("to:" + to);
+
+		System.out.println("");
+		ArrayList<AdventureCard> toAdd = paneDeckMap.get(to);
+		System.out.println("toAdd" + toAdd);
+		to.getChildren().add(card.getImageView());
+		toAdd.add(card);
+
+		System.out.println("toAdd" + toAdd);
+		card.childOf = to;
+		
+		repositionCardsInHand(playerManager.getCurrentPlayer());
+		repositionStageCards();
+		repositionFaceDownCards(playerManager.getCurrentPlayer());
+
+		//reset the original position of this card cards
+		card.setOriginalPosition(card.getImageView().getX(), card.getImageView().getY());
+	}
+
 
 	/* ************************************************
 	 *  VALIDATION METHODS FOR PUTTING CARDS INTO PANES
@@ -455,7 +491,7 @@ public class GameBoardController implements Initializable{
 	 * @return
 	 */
 	private boolean isPickQuestValid(ArrayList<AdventureCard> faceDownCards, AdventureCard toAdd) {
-		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS || CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 			TYPE cardType = toAdd.getType();
 			//A player cannot play 2 of the same weapon
 			if(cardType == TYPE.WEAPONS) {
@@ -479,10 +515,37 @@ public class GameBoardController implements Initializable{
 		return false;
 	}
 
+	/**
+	 * Checks if the stages satisfy the current quest card (should be called before player ends turn)
+	 * We only check if the stages are empty or contains either a test/foe not since when players play cards into the pane, a validation already occurs
+	 * @return boolean
+	 */
+	private boolean areQuestStagesValid() {
+		//check visible stages (visible stages must have cards in them)
+		for(int i = 0 ; i < stages.length ; i++) {
+			if(stages[i].isVisible()) {
+				//must have cards in all visible panes
+				if(stageCards.get(i).isEmpty()) {
+					return false;
+				}
+				boolean hasTestOrFoe = false;
+				for(AdventureCard c: stageCards.get(i)) {
+					if(c.getType() == TYPE.TESTS || c.getType() == TYPE.FOES) {	
+						hasTestOrFoe = true;
+						break;
+					}
+				}
+				if(hasTestOrFoe == false) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	/* ************************************************
 	 *  END OF VALIDATION METHODS FOR PUTTING CARDS INTO PANES
 	 **************************************************/
-	
+
 	//important for making sure players won't be dragging cards into the wrong stage panes
 	public void setPickStageOn(int numStage) {
 		for(int i = 0 ; i < stages.length ; i++) {
@@ -699,8 +762,6 @@ public class GameBoardController implements Initializable{
 		 * END TURN BUTTON LISTENER
 		 */
 		this.endTurn.setOnAction(e -> {
-			System.out.println("clicked end turn");
-			this.removeDraggable();
 			int currentPlayer = playerManager.getCurrentPlayer();
 			if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
@@ -709,15 +770,21 @@ public class GameBoardController implements Initializable{
 			}
 			else if(CURRENT_STATE == STATE.PICK_STAGES) {
 				//TODO::Handle PICK_STAGES make sure player plays a card
-				for(int i = 0 ; i < stageCards.size(); i++) {
-					if(!stageCards.get(i).isEmpty()) {
-						String[] currentStageCards = new String[stageCards.get(i).size()];
-						for(int j = 0 ; j < stageCards.get(i).size(); j++) {
-							currentStageCards[j] = stageCards.get(i).get(j).getName();
+				if(areQuestStagesValid()) {
+					for(int i = 0 ; i < stageCards.size(); i++) {
+						if(!stageCards.get(i).isEmpty()) {
+							String[] currentStageCards = new String[stageCards.get(i).size()];
+							for(int j = 0 ; j < stageCards.get(i).size(); j++) {
+								currentStageCards[j] = stageCards.get(i).get(j).getName();
+							}
+							c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
 						}
-						c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
 					}
+				}else {
+					//TODO:: display some message saying quest stages are not valid
+					System.out.println("Quest stages are not valid");
 				}
+
 			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
 				//send cards 
 				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);

@@ -1,5 +1,5 @@
-package src.client;
 
+package src.client;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.net.Socket;
 import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
