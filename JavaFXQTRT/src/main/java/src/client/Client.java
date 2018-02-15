@@ -301,7 +301,6 @@ class QuestPickCardsTask extends Task {
 		gbc.showEndTurn();
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
-		gbc.addFaceDownPaneDragOver();
 	}
 }
 class FaceDownCardsTask extends Task {
@@ -392,7 +391,6 @@ class QuestBidTask extends Task {
 			gbc.showDecline();
 //			//players can only drag over facedown pane.
 			gbc.removeStagePaneDragOver();
-			gbc.removeFaceDownPaneDragOver();
 			gbc.CURRENT_STATE = STATE.QUEST_BID;
 			gbc.bidSlider.setMin(min);
 			gbc.bidSlider.setMax(max);
@@ -422,7 +420,6 @@ class DiscardQuestTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
-		gbc.addFaceDownPaneDragOver();
 	}
 }
 
@@ -440,7 +437,6 @@ class JoinTournamentTask extends Task {
 		gbc.showAcceptDecline();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.removeStagePaneDragOver();
-		gbc.removeFaceDownPaneDragOver();
 	}
 }
 
@@ -458,7 +454,6 @@ class PickTournamentTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
-		gbc.addFaceDownPaneDragOver();
 		
 	}
 }

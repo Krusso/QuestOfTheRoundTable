@@ -116,7 +116,7 @@ public class GameBoardController implements Initializable{
 	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -163,12 +163,14 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < numPlayers ; i++) {
 			setPlayerRank(i, Rank.RANKS.SQUIRE);
 		}
-	    paneDeckMap = new HashMap<Pane,ArrayList<AdventureCard>>();
-	    for(int i = 0 ; i < playerManager.getNumPlayers(); i++) {
-	    	paneDeckMap.put(handPanes[i], playerManager.getPlayerHand(i));
-	    	paneDeckMap.put(faceDownPanes[i], playerManager.getFaceDownCardsAsList(i));
-	    	paneDeckMap.put(stages[i], stageCards.get(i));
-	    }
+		paneDeckMap = new HashMap<Pane,ArrayList<AdventureCard>>();
+		for(int i = 0 ; i < playerManager.getNumPlayers(); i++) {
+			paneDeckMap.put(handPanes[i], playerManager.getPlayerHand(i));
+			paneDeckMap.put(faceDownPanes[i], playerManager.getFaceDownCardsAsList(i));
+		}
+		for(int i = 0 ; i < stages.length ; i ++) {
+			paneDeckMap.put(stages[i], stageCards.get(i));
+		}
 	}
 
 
@@ -183,8 +185,8 @@ public class GameBoardController implements Initializable{
 			p.setOnMouseDragEntered(new EventHandler <MouseDragEvent>()
 			{
 				public void handle(MouseDragEvent event)
-				{
-//					System.out.println("Event on Target: mouse dragged");
+				{	
+					//					System.out.println("Event on Target: mouse dragged");
 				}
 			});
 
@@ -192,7 +194,7 @@ public class GameBoardController implements Initializable{
 			{
 				public void handle(MouseDragEvent event)
 				{
-//					System.out.println("Event on Target: mouse drag over");
+					//					System.out.println("Event on Target: mouse drag over");
 				}
 			});
 
@@ -201,7 +203,7 @@ public class GameBoardController implements Initializable{
 				public void handle(MouseDragEvent event)
 				{
 					//	            	p.setText(sourceFld.getSelectedText());
-//					System.out.println("Event on Target: mouse drag released");
+					//					System.out.println("Event on Target: mouse drag released");
 				}
 			});
 
@@ -209,63 +211,9 @@ public class GameBoardController implements Initializable{
 			{
 				public void handle(MouseDragEvent event)
 				{
-//					System.out.println("Event on Target: mouse drag exited");
+					//					System.out.println("Event on Target: mouse drag exited");
 				}
-			});
-
-			//			p.setOnDragOver(new EventHandler<DragEvent>() {
-			//				@Override
-			//				public void handle(DragEvent event) {
-			//					System.out.println("hello");
-			//					if(event.getGestureSource() != pickStage0 && event.getDragboard().hasString()) {
-			//						event.acceptTransferModes(TransferMode.ANY);
-			//					}
-			//					event.consume();
-			//				}
-			//			});
-
-
-
-			//TODO::
-			p.setOnDragDropped(new EventHandler<DragEvent>() {
-				@Override
-				public void handle(DragEvent event) {
-					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
-					Dragboard db = event.getDragboard();
-					//Find the id of the card and the index of the card in the player's hand
-					int cPlayer = playerManager.getCurrentPlayer();
-					int id = Integer.parseInt(db.getString());
-					int idx = playerManager.getCardIndexByID(cPlayer, id);
-					AdventureCard card = playerManager.getCardByIDInHand(cPlayer, id);
-					if(db.hasImage() && isStageValid(stageCards.get(currentIndex), card)) {
-						//remove the card from the player hand pane
-						handPanes[cPlayer].getChildren().remove(idx);
-						//add the card image to the stage pane
-						p.getChildren().add(card.getImageView());
-
-
-						//add the card name to the stage
-						stageCards.get(currentIndex).add(card);
-						//remove card from the player's hand by matching the id of the card
-						playerManager.removeCardFromPlayerHandByID(cPlayer, id);
-
-						//lastly reposition the hand and reposition the card in this pane
-						repositionCardsInHand(cPlayer);
-						//reposition cards in this pane
-						ObservableList<Node> cards = p.getChildren();
-						double handPaneHeight = p.getHeight();
-
-						for(int i = 0 ; i < cards.size(); i++) {
-							if(cards.get(i) instanceof ImageView) {
-								ImageView img = (ImageView) cards.get(i);
-								img.setX(0);
-								img.setY(handPaneHeight/cards.size() * i);
-							}
-						}
-					}
-					event.consume();
-				}
-			});
+			});	
 		}
 	}
 
@@ -276,9 +224,42 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
+	/* ********************************
+	 *	REPOSITIONING FUNCTIONS 
+	  *******************************/
+	public void repositionStageCards() {
+		//reposition all the cards in the stages
+		for(int i = 0 ; i < stages.length; i++) {
+			ObservableList<Node> cards = stages[i].getChildren();
+			double handPaneHeight = stages[i].getHeight();
+			for(int j = 0 ; j < cards.size(); j++) {
+				if(cards.get(j) instanceof ImageView) {
+					ImageView img = (ImageView) cards.get(j);
+					img.setX(0);
+					img.setY(handPaneHeight/cards.size() * j);
+				}
+			}
+		}
+	}
+	
+	private void repositionCardsInHand(int pNum) {
+		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(pNum);
+		ObservableList<Node> cards = handPanes[pNum].getChildren();
+		double handPaneWidth = handPanes[pNum].getWidth();
 
-
-
+		for(int i = 0 ; i < cards.size(); i++) {
+			if(cards.get(i) instanceof ImageView) {
+				ImageView img = (ImageView) cards.get(i);
+				img.setX(handPaneWidth/cards.size() * i);
+				img.setY(0);
+			}
+		}
+	}
+	
+	
+	/* ***************************************************
+	 * HELPER FUNCTION FOR MOVING IMAGE VIEWS TO ANOTHER PANE
+	 ****************************************************/
 	/**
 	 * Checks if the point is within the bounds of the pane p (helper function for putIntoPane()) and if the pane is visible
 	 * @param p : the pane
@@ -287,49 +268,44 @@ public class GameBoardController implements Initializable{
 	 */
 	private boolean isInPane(Pane p, Point2D point) {
 		Bounds b = p.localToScene(p.getBoundsInLocal());
-		System.out.println("is in pane" + p);
 		if(b.contains(point) && p.isVisible()) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 
 	 * @param point : x, y coordinate
 	 * @return the pane the mouse is over
 	 */
 	private Pane mouseOverPane(Point2D point) {		
+		//check handPanes
+		Bounds b = handPanes[playerManager.getCurrentPlayer()].localToScene(handPanes[playerManager.getCurrentPlayer()].getBoundsInLocal());
+		if(b.contains(point)) {
+			return handPanes[playerManager.getCurrentPlayer()];
+		}
 		//check stage panes
 		for(Pane p : stages) {
-			Bounds b = p.localToScene(p.getBoundsInLocal());
-			if(b.contains(point)) {
-				System.out.println("mouse over stages");
+			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
 				return p;
 			}
 		}
-		//check handPanes
-		System.out.println("POINT: " + point);
-		for(Pane p : handPanes) {
-			Bounds b = p.localToScene(p.getBoundsInLocal());
-			System.out.println(b);
-			if(b.contains(point)) {
-				System.out.println("mouse over Hand Pane");
-				return p;
-			}
-		}
+
 		//check faceDownPanes
-//		for(Pane p : faceDownPanes) {
-//			Bounds b = p.localToScene(p.getBoundsInLocal());
-//			if(b.contains(point)) {
-//				System.out.println("mouse over Face Down Panes");
-//				return p;
-//			}
-//		}
+		//		for(Pane p : faceDownPanes) {
+		//			Bounds b = p.localToScene(p.getBoundsInLocal());
+		//			if(b.contains(point)) {
+		//				System.out.println("mouse over Face Down Panes");
+		//				return p;
+		//			}
+		//		}
 
 		//otherwise return null
 		return null;
 	}
+	
+	
 
 	/**
 	 * Checks if the point is within the bounds of any possible pane
@@ -358,120 +334,38 @@ public class GameBoardController implements Initializable{
 			//Find if the current point is within one of the stage panes.
 			for(int i = 0 ; i < stages.length ; i++) {
 				//check if the mouse is over a stage pane and check if it is valid to put it in there
-				if(i == 0) System.out.println(isInPane(stages[i], point) + " " + isStageValid(stageCards.get(i), card));
-				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card)) {
-					System.out.println("hello");
-					//find which pane the card originated from
-					Pane from = findPaneWithCard(card);
-					//find which pane we want to place the card into right now
-					Pane to = mouseOverPane(point); //TODO error here
-					System.out.println("TO PANE: " + to);
-					//get the arraylist the card should be removed from
+				System.out.println(isInPane(stages[i], point)+ " " + isStageValid(stageCards.get(i), card) );
+				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
+						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+					Pane from = card.childOf;
 					ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
 					from.getChildren().remove(card.getImageView());
 					toRemove.remove(card);
-
+					//find which pane we want to place the card into right now
+					Pane to = mouseOverPane(point);
+					System.out.println("to:" + to);
 					
 					ArrayList<AdventureCard> toAdd = paneDeckMap.get(to);
+					System.out.println("toAdd" + toAdd);
 					to.getChildren().add(card.getImageView());
 					toAdd.add(card);
-					
-					repositionCardsInHand(playerManager.getCurrentPlayer());
 
-					//reposition cards in this pane
-					ObservableList<Node> cards = stages[i].getChildren();
-					double handPaneHeight = stages[i].getHeight();
-					for(int j = 0 ; j < cards.size(); j++) {
-						if(cards.get(j) instanceof ImageView) {
-							ImageView img = (ImageView) cards.get(j);
-							img.setX(0);
-							img.setY(handPaneHeight/cards.size() * j);
-							System.out.println("img y: " + img.getY());
-						}
-					}
+					System.out.println("toAdd" + toAdd);
+					card.childOf = to;
+					repositionCardsInHand(playerManager.getCurrentPlayer());
+					repositionStageCards();
+					//todo reposition the stage cards
 					return;
 				}
 			}
 		}
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
-			
-			//Find if the current point is within the current player's face down pane
-			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card)) {
-				handPanes[cPlayer].getChildren().remove(idx);
-				//add the card image to the faceDownPane
-				faceDownPanes[cPlayer].getChildren().add(card.getImageView());
-
-				//add the card to the faceDown hand for the palyer
-				faceDownCards.add(card);
-
-				//remove card from the player's hand by matching the id of the card
-				playerManager.removeCardFromPlayerHandByID(cPlayer, id);
-				repositionCardsInHand(playerManager.getCurrentPlayer());
-				
-
-				ObservableList<Node> cards = faceDownPanes[cPlayer].getChildren();
-				double paneWidth = faceDownPanes[cPlayer].getWidth();
-				for(int j = 0 ; j < cards.size(); j++) {
-					if(cards.get(j) instanceof ImageView) {
-						ImageView img = (ImageView) cards.get(j);
-						img.setX(paneWidth/cards.size() * j);
-						img.setY(0);
-					}
-				}
-				return;
+			if(isPickQuestValid(, card)) {
+//				TODO::
 			}
 		}
 		//return to original position if we don't put it into the pane
 		card.returnOriginalPosition();
-	}
-	
-	//Helper function
-	private Pane findPaneWithCard(AdventureCard c) {
-		if(c.childNodeOf == I_AM_IN.HAND_PANE) {return handPanes[playerManager.getCurrentPlayer()];}
-		if(c.childNodeOf == I_AM_IN.FACE_DOWN_PANE) {return faceDownPanes[playerManager.getCurrentPlayer()];}
-		if(c.childNodeOf == I_AM_IN.STAGE_PANE_0) {return stages[0];}
-		if(c.childNodeOf == I_AM_IN.STAGE_PANE_1) {return stages[1];}
-		if(c.childNodeOf == I_AM_IN.STAGE_PANE_2) {return stages[2];}
-		if(c.childNodeOf == I_AM_IN.STAGE_PANE_3) {return stages[3];}
-		if(c.childNodeOf == I_AM_IN.STAGE_PANE_4) {return stages[4];}
-		if(c.childNodeOf == I_AM_IN.FACE_UP_PANE) {return faceUpPanes[playerManager.getCurrentPlayer()];}
-		return null;
-	}
-	//Returns the arraylist that holds this card for the current player
-	private ArrayList<AdventureCard> findCardList(AdventureCard c) {
-		int currPlayer = playerManager.getCurrentPlayer();
-//		check player hand
-		AdventureCard inHand = playerManager.getCardByIDInHand(currPlayer, c.id);
-		if(inHand != null) {
-			return playerManager.getPlayerHand(currPlayer);
-		}
-//		check player facedown
-		AdventureCard inFaceDown = playerManager.getCardByIDInFaceDown(currPlayer, c.id);
-		if(inFaceDown != null) {
-			return playerManager.getFaceDownCardsAsList(currPlayer);
-		}
-		//check stage cards
-		for(ArrayList<AdventureCard> stage: stageCards) {
-			for(AdventureCard sCard : stage) {
-				if(sCard.id == c.id) {
-					return stage;
-				}
-			}
-		}
-		return null;
-	}
-	//Helper Functions
-	private void moveCardIntoPane(AdventureCard c, Pane from, Pane to) {
-		ObservableList<Node> cards = from.getChildren();
-		for(int j = 0 ; j < cards.size(); j++) {
-			//check if pane has this card, if it does remove it
-			if(cards.get(j) instanceof ImageView && c.getImageView().equals(cards.get(j))) {
-				from.getChildren().remove(j);
-				//now add the image to the other pane
-				to.getChildren().add(c.getImageView());
-				return;
-			}
-		}		
 	}
 
 	/* ************************************************
@@ -517,6 +411,10 @@ public class GameBoardController implements Initializable{
 				//check if there are tests cards in any other of the stages return false
 				for(int i = 0 ; i < this.stageCards.size(); i++) {
 					for(AdventureCard c : this.stageCards.get(i)) {
+						//if they are the same card we can move it around
+						if(c.id == toAdd.id) {
+							return true;
+						}
 						if(c.getType() == TYPE.TESTS) {
 							return false;
 						}
@@ -580,71 +478,11 @@ public class GameBoardController implements Initializable{
 		}
 		return false;
 	}
-	
+
 	/* ************************************************
 	 *  END OF VALIDATION METHODS FOR PUTTING CARDS INTO PANES
 	 **************************************************/
 	
-	public void addFaceDownPaneDragOver() {
-		for(int i = 0 ; i < faceDownPanes.length ; i++) {
-			Pane p = faceDownPanes[i];
-			final int currentIndex = i;
-			p.setOnDragOver(new EventHandler<DragEvent>() {
-				@Override
-				public void handle(DragEvent event) {
-					if(event.getGestureSource() != pickStage0 && event.getDragboard().hasString()) {
-						event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-					}
-					event.consume();
-				}
-			});
-			//TODO::
-			//			p.setOnDragDropped(new EventHandler<DragEvent>() {
-			//				@Override
-			//				public void handle(DragEvent event) {
-			//					//Dragboard should have a string that holds the card ID (integer) and the card image (could probably do without the card image tho);
-			//					Dragboard db = event.getDragboard();
-			//					//Find the id of the card and the index of the card in the player's hand
-			//					int cPlayer = playerManager.getCurrentPlayer();
-			//					int id = Integer.parseInt(db.getString());
-			//					int idx = playerManager.getCardIndexByID(cPlayer, id);
-			//					AdventureCard card = playerManager.getCardByID(cPlayer, id);
-			//					if(db.hasImage() && isTournamentCardValid(playerManager.getFaceDownCardsAsList(cPlayer), card)) {
-			//						//remove the card from the player hand pane
-			//						handPanes[cPlayer].getChildren().remove(idx);
-			//						//add the card image to the stage pane
-			//						p.getChildren().add(card.getImageView());
-			//
-			//
-			//						AdventureCard c = playerManager.getCardByID(cPlayer, id);
-			//						playerManager.playCard(c,cPlayer);
-			//						//remove card from the player's hand by matching the id of the card
-			//						playerManager.removeCardFromPlayerHandByID(cPlayer, id);
-			//
-			//						//lastly reposition the hand and reposition the card in this pane
-			//						repositionCardsInHand(cPlayer);
-			//						//reposition cards in this pane
-			//						ObservableList<Node> cards = p.getChildren();
-			//						double handPaneWidth = p.getHeight();
-			//
-			//						for(int i = 0 ; i < cards.size(); i++) {
-			//							if(cards.get(i) instanceof ImageView) {
-			//								ImageView img = (ImageView) cards.get(i);
-			//								img.setX(handPaneWidth/cards.size() * i);
-			//								img.setY(0);
-			//							}
-			//						}
-			//					}
-			//					event.consume();
-			//				}
-			//			});
-		}
-	}
-	public void removeFaceDownPaneDragOver() {
-		for(Pane p: faceDownPanes) {
-			//TODO:: remove panes listener
-		}
-	}
 	//important for making sure players won't be dragging cards into the wrong stage panes
 	public void setPickStageOn(int numStage) {
 		for(int i = 0 ; i < stages.length ; i++) {
@@ -662,6 +500,7 @@ public class GameBoardController implements Initializable{
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		c.gbc = this;
 		c.faceDownPane = faceDownPanes[playerNum];
+		c.childOf = handPanes[playerNum];
 		playerManager.addCardToHand(c, playerNum);
 		handPanes[playerNum].getChildren().add(c.getImageView());
 		repositionCardsInHand(playerNum);
@@ -705,20 +544,7 @@ public class GameBoardController implements Initializable{
 			playerPanes[i].setRotate(playerPanes[i].getRotate() + 90);
 		}
 	}
-	//Repositions the cards in the hand of this player
-	private void repositionCardsInHand(int pNum) {
-		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(pNum);
-		ObservableList<Node> cards = handPanes[pNum].getChildren();
-		double handPaneWidth = handPanes[pNum].getWidth();
 
-		for(int i = 0 ; i < cards.size(); i++) {
-			if(cards.get(i) instanceof ImageView) {
-				ImageView img = (ImageView) cards.get(i);
-				img.setX(handPaneWidth/cards.size() * i);
-				img.setY(0);
-			}
-		}
-	}
 
 	public void setPlayerTurn(int p) {
 		setPlayerPerspectiveTo(p);

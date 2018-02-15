@@ -28,6 +28,8 @@ public abstract class Card {
 	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
 	public I_AM_IN childNodeOf;
+	
+	public Pane childOf;
 	public final int id = NEXT_ID.getAndIncrement();
 	public static double DEFAULT_WIDTH = 100;
 	public static double DEFAULT_HEIGHT = 150;
@@ -117,6 +119,8 @@ public abstract class Card {
             public void handle(MouseEvent event)
             {
             	imgView.setMouseTransparent(false);
+            	System.out.println(event.getX() + " " + event.getY());
+            	System.out.println(event.getScreenX()+ " " + event.getScreenY());
             	Point2D p = new Point2D(event.getSceneX(), event.getSceneY());
             	System.out.println("id:" + id );
             	gbc.putIntoPane(p, id);
