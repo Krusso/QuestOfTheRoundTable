@@ -23,11 +23,8 @@ import javafx.util.Duration;
 import src.client.GameBoardController;
 
 public abstract class Card {
-	public static enum I_AM_IN {HAND_PANE, FACE_DOWN_PANE, FACE_UP_PANE,
-		STAGE_PANE_0,STAGE_PANE_1,STAGE_PANE_2,STAGE_PANE_3,STAGE_PANE_4}
-	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
-	public I_AM_IN childNodeOf;
+	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
 	public Pane childOf;
 	public final int id = NEXT_ID.getAndIncrement();

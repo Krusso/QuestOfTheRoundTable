@@ -33,7 +33,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
-import src.game_logic.Card.I_AM_IN;
 import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;

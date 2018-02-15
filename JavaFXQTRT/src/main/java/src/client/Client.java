@@ -17,7 +17,7 @@ import com.google.gson.JsonParser;
 import javafx.application.Platform;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
-import src.game_logic.Card.I_AM_IN;
+import src.game_logic.AllyCard;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
@@ -58,10 +58,9 @@ class AddCardsTask extends Task{
 				if (f.getName().contains(card+".jpg")) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
-						AdventureCard c = new AdventureCard(card, f.getPath());
+						AllyCard c = new AllyCard(card, f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						c.faceDown();
-						c.childNodeOf = I_AM_IN.HAND_PANE;
 						gbc.addCardToHand(c, player);
 						break;
 					}
@@ -70,7 +69,6 @@ class AddCardsTask extends Task{
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
-						c.childNodeOf = I_AM_IN.HAND_PANE;
 						break;
 					}
 					case 'T' : {
@@ -78,7 +76,6 @@ class AddCardsTask extends Task{
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
-						c.childNodeOf = I_AM_IN.HAND_PANE;
 						break;
 					}
 					case 'W':{
@@ -86,7 +83,6 @@ class AddCardsTask extends Task{
 						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						gbc.addCardToHand(weapon, player);
 						weapon.faceDown();
-						weapon.childNodeOf = I_AM_IN.HAND_PANE;
 						break;
 					}
 					default:{
