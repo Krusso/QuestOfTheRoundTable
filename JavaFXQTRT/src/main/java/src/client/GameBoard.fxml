@@ -29,14 +29,14 @@
 
       <StackPane layoutX="525.0" layoutY="375.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
          <children>
-            <Pane prefHeight="400.0" prefWidth="500.0">
+            <Pane prefHeight="269.0" prefWidth="700.0">
                <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="400.0" opacity="0.54" stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" width="897.0" />
-                  <Pane fx:id="pickStage0" layoutX="203.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage1" layoutX="313.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage2" layoutX="438.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage3" layoutX="563.0" prefHeight="400.0" prefWidth="125.0" />
-                  <Pane fx:id="pickStage4" layoutX="688.0" prefHeight="400.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage0" layoutX="203.0" layoutY="50.0" prefHeight="350.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage1" layoutX="329.0" layoutY="50.0" prefHeight="350.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage2" layoutX="454.0" layoutY="50.0" prefHeight="350.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage3" layoutX="579.0" layoutY="50.0" prefHeight="350.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage4" layoutX="704.0" layoutY="50.0" prefHeight="350.0" prefWidth="125.0" />
                   <Pane fx:id="storyCardContainer" layoutX="35.0" prefHeight="150.0" prefWidth="100.0" />
                   <Text fx:id="toast" layoutX="35.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLayer 1 Won the Tournament" visible="false" wrappingWidth="529.9999809265137">
                      <font>
@@ -57,6 +57,31 @@
 
                      </children>
                   </VBox>
+                  <Text fx:id="bpTextStage0" fill="#ff7700" layoutX="227.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font name="Bodoni MT" size="40.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="bpTextStage1" fill="#ff7700" layoutX="353.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font name="Bodoni MT" size="40.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="bpTextStage2" fill="#ff7700" layoutX="476.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font name="Bodoni MT" size="40.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="bpTextStage3" fill="#ff7700" layoutX="606.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font name="Bodoni MT" size="40.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="bpTextStage4" fill="#ff7700" layoutX="722.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <font>
+                        <Font name="Bodoni MT" size="40.0" />
+                     </font>
+                  </Text>
                </children>
             </Pane>
          </children>
@@ -85,7 +110,7 @@
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="playerPane2" layoutX="425.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
+      <Pane fx:id="playerPane2" layoutX="424.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
          <children>
             <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
                <fill>
@@ -95,9 +120,10 @@
                         <Stop color="#ffffff00" offset="1.0" />
                      </stops>
                   </LinearGradient>
-               </fill></Rectangle>
+               </fill>
+            </Rectangle>
 
-            <Pane fx:id="playerHand2" layoutY="250.0" prefHeight="150.0" prefWidth="754.0" />
+                                          <Pane fx:id="playerHand2" layoutY="250.0" prefHeight="150.0" prefWidth="754.0" />
             <Pane fx:id="playerFaceUp2" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown2" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank2" fitHeight="140.0" fitWidth="107.0" layoutX="-3.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="250.0" />
@@ -147,7 +173,7 @@
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="823.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="shield1View" fitHeight="150.0" fitWidth="144.0" layoutX="931.0" layoutY="247.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield1View" fitHeight="150.0" fitWidth="144.0" layoutX="929.0" layoutY="247.0" pickOnBounds="true" preserveRatio="true" />
             <Text fx:id="p1Shields" fill="WHITE" layoutX="1020.0" layoutY="383.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="16.499996289610863">
                <font>
                   <Font name="System Bold" size="18.0" />
@@ -158,6 +184,11 @@
       <Text fx:id="playerNumber" fill="WHITE" layoutX="354.0" layoutY="917.0" strokeType="OUTSIDE" strokeWidth="0.0" text="#0" wrappingWidth="101.0000228881836">
          <font>
             <Font size="52.0" />
+         </font>
+      </Text>
+      <Text fx:id="currBP" fill="#ff7700" layoutX="1500.0" layoutY="875.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+         <font>
+            <Font name="Bodoni MT" size="40.0" />
          </font>
       </Text>
       <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="372.0" majorTickUnit="1.0" max="13.0" minorTickCount="0" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />

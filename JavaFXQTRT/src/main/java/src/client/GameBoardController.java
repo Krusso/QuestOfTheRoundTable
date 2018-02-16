@@ -123,11 +123,26 @@ public class GameBoardController implements Initializable{
 	private Pane[] stages = new Pane[5];
 	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
+	@FXML private Text bpTextStage0;
+	@FXML private Text bpTextStage1;
+	@FXML private Text bpTextStage2;
+	@FXML private Text bpTextStage3;
+	@FXML private Text bpTextStage4;
+	private Text[] bpTexts;
+
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
+	
+	@FXML private Text currBP;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		bpTexts[0] = bpTextStage0;
+		bpTexts[1] = bpTextStage1;
+		bpTexts[2] = bpTextStage2;
+		bpTexts[3] = bpTextStage3;
+		bpTexts[4] = bpTextStage4;
+		
 		playerPanes[0] = playerPane0;
 		playerPanes[1] = playerPane1;
 		playerPanes[2] = playerPane2;
