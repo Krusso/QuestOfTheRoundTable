@@ -7,7 +7,7 @@ import src.game_logic.Rank;
 import src.player.UIPlayer;
 
 public class UIPlayerManager {
-	public final int MAX_HAND_SIZE = 13;
+	public final int MAX_HAND_SIZE = 12;
 	
 	public UIPlayer[] players;
 	private int currentPlayer;
