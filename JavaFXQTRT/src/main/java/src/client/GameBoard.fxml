@@ -160,6 +160,6 @@
             <Font size="52.0" />
          </font>
       </Text>
-      <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="372.0" majorTickUnit="1.0" max="13.0" minorTickCount="0" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />
+      <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="372.0" majorTickUnit="1.0" max="13.0" minorTickCount="1" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />
    </children>
 </AnchorPane>
