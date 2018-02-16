@@ -2,6 +2,19 @@
 
 .root { -fx-font-size: 26px; }
 
+.mainbutton {
+	-fx-text-fill: white;
+	-fx-background-color: black;
+}
+
+.mainbutton:hover {
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #84c3ff 0%, #386c9e 100%),
+        #386c9e,
+        #84c3ff,
+        radial-gradient(center 50% 50%, radius 100%, #84c3ff, #386c9e);
+}
+
 .slider {
 	-fx-font-size: 20;
 }

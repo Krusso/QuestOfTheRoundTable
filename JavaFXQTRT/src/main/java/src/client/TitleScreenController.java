@@ -39,6 +39,15 @@ public class TitleScreenController implements Initializable{
 	@FXML private Pane p;
 	@FXML public Pane background;
 	
+	@FXML public Pane menuPane;
+	@FXML public Button newGame;
+	@FXML public Pane playerSelect;
+	/* placeholders for now
+	@FXML public Pane audioSelect;
+	@FXML public Pane help;
+	@FXML public Pane quit;
+	 */
+	
 	private String[] players;
 	private Image[] shieldImages;
 	
@@ -170,6 +179,9 @@ public class TitleScreenController implements Initializable{
 		return num;
 	}
 	
+	public void hideMenu() { menuPane.setVisible(false); }
+	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); }
+	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
 		
@@ -265,6 +277,7 @@ public class TitleScreenController implements Initializable{
 			shieldView4.fitHeightProperty().bind(shieldPane4.heightProperty());
 			shieldPane4.getChildren().add(shieldView4);
 			
+			playerSelect.setVisible(false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
