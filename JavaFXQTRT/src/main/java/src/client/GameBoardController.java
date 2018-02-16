@@ -37,6 +37,7 @@ import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.messages.game.ContinueGameClient;
+import src.messages.hand.HandFullClient;
 import src.messages.quest.*;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
@@ -62,8 +63,9 @@ public class GameBoardController implements Initializable{
 	@FXML private Button endTurn;
 	@FXML private Button accept;
 	@FXML private Button decline;
-	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
+	@FXML private Button discard;
+	@FXML private Text playerNumber;
 	@FXML private Pane background;
 	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
@@ -606,6 +608,12 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		playerManager.setCurrentPlayer(playerNum);
+		
+		//after we set the perspective to this player number, check if the player has over the card hand limit
+		//if it's full, we must discard cards.
+		if(playerManager.isHandFull(playerNum)) {
+			setDiscardVisibility(true);
+		}
 
 	}
 
@@ -661,11 +669,15 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
+	/* *****************
+	 * BUTTON VISIBILITY
+	 ******************/
 	public void setButtonsInvisible() {
 		this.endTurn.setVisible(false);
 		this.accept.setVisible(false);
 		this.decline.setVisible(false);
 		this.nextTurn.setVisible(false);
+		this.discard.setVisible(false);
 		System.out.println("Called");
 	}
 
@@ -684,6 +696,10 @@ public class GameBoardController implements Initializable{
 
 	public void showEndTurn() {
 		this.endTurn.setVisible(true);
+	}
+
+	public void setDiscardVisibility(boolean b) {
+		this.endTurn.setVisible(b);
 	}
 
 	public void removeDraggable() {
@@ -787,6 +803,11 @@ public class GameBoardController implements Initializable{
 		 * END TURN BUTTON LISTENER
 		 */
 		this.endTurn.setOnAction(e -> {
+			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+				System.out.println("Your hand is too full!");
+				return;
+			}
+			
 			int currentPlayer = playerManager.getCurrentPlayer();
 			if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
@@ -833,6 +854,10 @@ public class GameBoardController implements Initializable{
 		 */
 		this.accept.setOnAction(e -> {
 			System.out.println("accepted story");
+			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+				System.out.println("Your hand is too full!");
+				return;
+			}
 			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
@@ -849,6 +874,10 @@ public class GameBoardController implements Initializable{
 		 */
 		this.decline.setOnAction(e -> {
 			System.out.println("declined story");
+			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+				System.out.println("Your hand is too full!");
+				return;
+			}
 			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
@@ -869,6 +898,19 @@ public class GameBoardController implements Initializable{
 		this.nextTurn.setOnAction(e -> {
 			System.out.println("Clicked next turn");
 			c.send(new ContinueGameClient());
+		});
+		/*
+		 * button dedicated for handling discarding :>
+		 */
+		this.discard.setOnAction(e->{
+			System.out.println("Clicked Discard");
+			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+				System.out.println("Your hand is too full!");
+			}else {
+				String[] cards = discardAllFaceDownCards(playerManager.getCurrentPlayer());
+				setDiscardVisibility(false);
+				c.send(new HandFullClient(playerManager.getCurrentPlayer(), cards));
+			}
 		});
 	}
 }
