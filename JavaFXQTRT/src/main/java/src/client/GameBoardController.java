@@ -55,7 +55,6 @@ public class GameBoardController implements Initializable{
 	private UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
-
 	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
@@ -165,6 +164,8 @@ public class GameBoardController implements Initializable{
 
 
 	}
+	
+	public void showToast(String text) { toast.setText(text); }
 	
 	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
 		if(!players[0].equals("")) { shield1View.setImage(shield1); p1Shields.setText("0"); }
