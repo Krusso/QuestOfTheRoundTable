@@ -188,19 +188,6 @@ public class Player {
 	public int getCardCount() {
 		return hand.size();
 	}
-	
-	public List<AdventureCard> listOfTypeDecreasingBp(TYPE type){
-		// p1 and p2 being flipped is not a typo :) 
-		return hand.getDeck().stream().
-		sorted((p2,p1) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
-		filter(i -> i.getType() == type).
-		collect(Collectors.toList());
-	}
-	
-	public List<AdventureCard> uniqueListOfTypeDecreasingBp(TYPE type){
-		return listOfTypeDecreasingBp(type).stream().map(i -> i.getName()).distinct().map(i -> hand.findCardByName(i))
-				.collect(Collectors.toList());
-	}
 
 	public void setBidAmount(STATE bidding, int maxBidValue, int i) {
 		this.question = bidding;
