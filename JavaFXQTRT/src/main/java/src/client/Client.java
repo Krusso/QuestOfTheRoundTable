@@ -268,6 +268,7 @@ class QuestPickStagesTask extends Task {
 		gbc.addDraggable();
 		gbc.showEndTurn();
 		gbc.addStagePaneListener();
+		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
 	}
@@ -309,6 +310,8 @@ class QuestPickCardsTask extends Task {
 		gbc.showEndTurn();
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.clearHighlight();
+		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select Cards for current stage");
 	}
@@ -470,6 +473,8 @@ class PickTournamentTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.clearHighlight();
+		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select cards to use for the tournament");
 		
