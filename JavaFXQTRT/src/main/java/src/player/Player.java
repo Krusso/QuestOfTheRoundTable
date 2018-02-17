@@ -148,7 +148,7 @@ public class Player {
 	
 	public void flipStage(int stage) {
 		questUp.add(questDown.get(stage));
-		if(pv != null) pv.updateQuestUp(questDown.get(stage), stage, ID);
+		if(pv != null) pv.updateQuestUp(questDown.get(stage), ID, stage);
 	}
 
 	public RANKS getRank() {
