@@ -73,7 +73,7 @@ public class GameBoardController implements Initializable{
 	@FXML public Text p2Shields;
 	@FXML public Text p3Shields;
 	@FXML public Text p4Shields;
-	
+
 	@FXML public ImageView shield1View;
 	@FXML public ImageView shield2View;
 	@FXML public ImageView shield3View;
@@ -125,6 +125,9 @@ public class GameBoardController implements Initializable{
 	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
+	
+	@FXML private Pane discardPane;
+	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -166,17 +169,17 @@ public class GameBoardController implements Initializable{
 
 
 	}
-	
+
 	public void showToast(String text) { toast.setText(text); }
 	public void clearToast() { toast.setText(""); }
-	
+
 	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
 		if(!players[0].equals("")) { shield1View.setImage(shield1); p1Shields.setText("0"); }
 		if(!players[1].equals("")) { shield2View.setImage(shield2); p2Shields.setText("0"); }
 		if(!players[2].equals("")) { shield3View.setImage(shield3); p3Shields.setText("0"); }
 		if(!players[3].equals("")) { shield4View.setImage(shield4); p4Shields.setText("0"); }
 	}
-	
+
 	////Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers) {
 		playerManager = new UIPlayerManager(numPlayers);
@@ -191,6 +194,7 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < stages.length ; i ++) {
 			paneDeckMap.put(stages[i], stageCards.get(i));
 		}
+		paneDeckMap.put(discardPane, discardPile );
 	}
 
 
@@ -291,6 +295,19 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	private void repositionDiscardPile() {
+		ArrayList<AdventureCard> currHand = discardPile;
+		ObservableList<Node> cards = discardPane.getChildren();
+		double height = discardPane.getHeight();
+
+		for(int i = 0 ; i < cards.size(); i++) {
+			if(cards.get(i) instanceof ImageView) {
+				ImageView img = (ImageView) cards.get(i);
+				img.setX(0);
+				img.setY(height/cards.size() * i);
+			}
+		}
+	}
 
 
 	/* ***************************************************
@@ -338,7 +355,15 @@ public class GameBoardController implements Initializable{
 				return p;
 			}
 		}
+		//check discard pane
+		if(discardPane.localToScene(discardPane.getBoundsInLocal()).contains(point)) {
+			System.out.println("mouse over discard pane");
+			return discardPane;
+		}
+		
 		System.out.println("ERROR WE DIDN'T FIND ANY PANES OVER THE MOUSE!");
+		//if we wish to add drag and drop for new panes, make sure we add it below here:
+		
 		//otherwise return null
 		return null;
 	}
@@ -356,8 +381,9 @@ public class GameBoardController implements Initializable{
 		int cPlayer = playerManager.getCurrentPlayer();
 		int idx = playerManager.getCardIndexByID(cPlayer, id);
 		ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(cPlayer);
+		
+		//Find where this card is on the game board (it must be either in player hand, face down pane, discard pile or stage)
 		AdventureCard card = playerManager.getCardByIDInHand(cPlayer, id);
-		//if it's not in the player hand or face down we look at the stage cards
 		if(card == null) {
 			for(ArrayList<AdventureCard> l : stageCards) {
 				for(AdventureCard c : l) {
@@ -371,6 +397,13 @@ public class GameBoardController implements Initializable{
 		if(card == null) {
 			card = playerManager.getCardByIDInFaceDown(cPlayer, id);
 		}
+		if(card == null) {
+			for(AdventureCard c : discardPile) {
+				if(c.id == id) {
+					card = c;
+				}
+			}
+		}
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
 			//Find if the current point is within one of the stage panes.
@@ -380,7 +413,6 @@ public class GameBoardController implements Initializable{
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
 						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 					doPutCardIntoPane(point, card);
-					return;
 				}
 			}
 		}
@@ -394,6 +426,17 @@ public class GameBoardController implements Initializable{
 				doPutCardIntoPane(point, card);
 			}
 		}
+		//if the current player has too many cards, we can allow him to play cards into the discard pile
+		if(playerManager.isHandFull(cPlayer)) {
+			System.out.println("PLAYER HAND IS FULL!");
+			System.out.println(isInPane(discardPane, point));
+			if(isInPane(discardPane, point)) {
+				doPutCardIntoPane(point, card);
+			}
+		}else if(isInPane(discardPane, point)){
+			toast.setText("Cannot add more cards into discard pile");
+		}
+		
 		//return to original position if we don't put it into the pane
 		card.returnOriginalPosition();
 	}
@@ -414,10 +457,11 @@ public class GameBoardController implements Initializable{
 
 		System.out.println("toAdd" + toAdd);
 		card.childOf = to;
-		
+
 		repositionCardsInHand(playerManager.getCurrentPlayer());
 		repositionStageCards();
 		repositionFaceDownCards(playerManager.getCurrentPlayer());
+		repositionDiscardPile();
 
 		//reset the original position of this card cards
 		card.setOriginalPosition(card.getImageView().getX(), card.getImageView().getY());
@@ -610,7 +654,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		playerManager.setCurrentPlayer(playerNum);
-		
+
 		//after we set the perspective to this player number, check if the player has over the card hand limit
 		//if it's full, we must discard cards.
 		if(playerManager.isHandFull(playerNum)) {
@@ -701,7 +745,7 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void setDiscardVisibility(boolean b) {
-		this.endTurn.setVisible(b);
+		this.discard.setVisible(b);
 	}
 
 	public void removeDraggable() {
@@ -795,7 +839,7 @@ public class GameBoardController implements Initializable{
 		if(p==3) p3Shields.setText(getShields(p)+"");
 		if(p==4) p4Shields.setText(getShields(p)+"");
 	}
-	
+
 	public int getShields(int p) {
 		return playerManager.getShields(p);
 	}
@@ -805,11 +849,7 @@ public class GameBoardController implements Initializable{
 		 * END TURN BUTTON LISTENER
 		 */
 		this.endTurn.setOnAction(e -> {
-			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
-				System.out.println("Your hand is too full!");
-				return;
-			}
-			
+
 			int currentPlayer = playerManager.getCurrentPlayer();
 			if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
@@ -830,10 +870,24 @@ public class GameBoardController implements Initializable{
 					}
 				}else {
 					//TODO:: display some message saying quest stages are not valid
+					toast.setText("Quest stages are not valid");
 					System.out.println("Quest stages are not valid");
 				}
 
 			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+				//force the player to discard cards before they can end turn if their current hand size is > 12
+				if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+					setDiscardVisibility(true);
+					toast.setText("Your hand is too full! discard " + 
+							(playerManager.getPlayerHand(currentPlayer).size() - playerManager.MAX_HAND_SIZE) + 
+							" card(s) before end turn");
+					System.out.println("Your hand is too full!");
+					return;
+				}else {
+					setDiscardVisibility(false);
+				}
+
+
 				//send cards 
 				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
 				String[] cards = new String[faceDownCards.size()];
@@ -857,8 +911,11 @@ public class GameBoardController implements Initializable{
 		this.accept.setOnAction(e -> {
 			System.out.println("accepted story");
 			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+				setDiscardVisibility(true);
 				System.out.println("Your hand is too full!");
 				return;
+			}else {
+				setDiscardVisibility(false);
 			}
 			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
@@ -876,6 +933,13 @@ public class GameBoardController implements Initializable{
 		 */
 		this.decline.setOnAction(e -> {
 			System.out.println("declined story");
+			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
+				setDiscardVisibility(true);
+				System.out.println("Your hand is too full!");
+				return;
+			}else {
+				setDiscardVisibility(false);
+			}
 			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
 				System.out.println("Your hand is too full!");
 				return;
@@ -906,13 +970,22 @@ public class GameBoardController implements Initializable{
 		 */
 		this.discard.setOnAction(e->{
 			System.out.println("Clicked Discard");
-			if(playerManager.isHandFull(playerManager.getCurrentPlayer())) {
-				System.out.println("Your hand is too full!");
-			}else {
-				String[] cards = discardAllFaceDownCards(playerManager.getCurrentPlayer());
-				setDiscardVisibility(false);
-				c.send(new HandFullClient(playerManager.getCurrentPlayer(), cards));
+			String[] cards = new String[discardPile.size()];
+			for(int i = 0 ; i < cards.length ; i++) {
+				cards[i] = discardPile.get(i).getName();
 			}
+			if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() > playerManager.MAX_HAND_SIZE) {
+				toast.setText("You must discard exactly " + 
+						(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() - playerManager.MAX_HAND_SIZE) + 
+						" card(s)");
+				System.out.println("Your hand is too full!");
+				return;
+			}
+			setDiscardVisibility(false);
+			System.out.println("discard: " + cards.toString());
+			c.send(new HandFullClient(playerManager.getCurrentPlayer(), cards));
+			discardPile.clear();
+
 		});
 	}
 }
