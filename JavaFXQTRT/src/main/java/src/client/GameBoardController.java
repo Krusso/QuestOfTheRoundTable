@@ -640,22 +640,38 @@ public class GameBoardController implements Initializable{
 				playerManager.faceDownPlayerHand(i);
 			}
 		}
+		
 		playerManager.setCurrentPlayer(playerNum);
-
+		
+		//readjust the player pane's scale
+		for(int i = 0 ; i < handPanes.length; i++) {
+			if(i == playerNum) {
+				playerPanes[i].setScaleX(1);
+				playerPanes[i].setScaleY(1);
+			}else {
+				playerPanes[i].setScaleX(0.6);
+				playerPanes[i].setScaleY(0.6);
+			}
+			System.out.println("scaleX:" + handPanes[i].getScaleX());
+			System.out.println("scaleY:" + handPanes[i].getScaleY());
+		}
 	}
 
 	//This rotates the player's pane clockwise 90 degrees
 	private void rotatePlayerPosition() {
 		double posX3 = playerPanes[3].getLayoutX();
 		double posY3 = playerPanes[3].getLayoutY();	
+		double rotate3 = playerPanes[3].getRotate();
+		
 		for(int i = playerPanes.length-1 ; i >= 0 ; i--) {
 			int pos = i-1 < 0 ? 3 : i-1;
 			if(i == 0) {
 				playerPanes[i].relocate(posX3, posY3);
+				playerPanes[i].setRotate(rotate3);
 			}else {
 				playerPanes[i].relocate(playerPanes[pos].getLayoutX(), playerPanes[pos].getLayoutY());
+				playerPanes[i].setRotate(playerPanes[pos].getRotate());;
 			}
-			playerPanes[i].setRotate(playerPanes[i].getRotate() + 90);
 		}
 	}
 

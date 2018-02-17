@@ -64,7 +64,7 @@
             </Pane>
          </children>
       </StackPane>
-      <Pane fx:id="playerPane3" layoutX="-336.0" layoutY="342.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
+      <Pane fx:id="playerPane3" layoutX="-224.0" layoutY="-27.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
          <children>
             <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
             <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="780.0" />
@@ -82,7 +82,7 @@
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="playerPane2" layoutX="425.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
+      <Pane fx:id="playerPane2" layoutX="409.0" layoutY="-27.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
          <children>
             <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
 
@@ -101,7 +101,7 @@
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="playerPane1" layoutX="1180.0" layoutY="345.0" prefHeight="400.0" prefWidth="1080.0" rotate="-90.0">
+      <Pane fx:id="playerPane1" layoutX="1057.0" layoutY="-27.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
          <children>
             <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
             <Pane fx:id="playerHand1" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="746.0" />
