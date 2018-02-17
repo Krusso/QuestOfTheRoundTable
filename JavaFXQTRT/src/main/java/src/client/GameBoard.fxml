@@ -8,8 +8,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -63,16 +61,7 @@
       </StackPane>
       <Pane fx:id="playerPane3" layoutX="-336.0" layoutY="342.0" prefHeight="400.0" prefWidth="1080.0" rotate="90.0">
          <children>
-            <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
-               <fill>
-                  <LinearGradient endX="1.0" endY="0.23333333333333323" startX="1.0" startY="1.0">
-                     <stops>
-                        <Stop color="#c4501a" />
-                        <Stop color="#ffffff00" offset="1.0" />
-                     </stops>
-                  </LinearGradient>
-               </fill>
-            </Rectangle>
+            <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
             <Pane fx:id="playerHand3" layoutY="250.0" prefHeight="150.0" prefWidth="780.0" />
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown3" layoutX="501.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -87,15 +76,7 @@
       </Pane>
       <Pane fx:id="playerPane2" layoutX="425.0" prefHeight="400.0" prefWidth="1080.0" rotate="180.0">
          <children>
-            <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
-               <fill>
-                  <LinearGradient endX="1.0" endY="0.23333333333333323" startX="1.0" startY="1.0">
-                     <stops>
-                        <Stop color="#ff8242" />
-                        <Stop color="#ffffff00" offset="1.0" />
-                     </stops>
-                  </LinearGradient>
-               </fill></Rectangle>
+            <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutY="250.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
 
             <Pane fx:id="playerHand2" layoutY="250.0" prefHeight="150.0" prefWidth="754.0" />
             <Pane fx:id="playerFaceUp2" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -111,15 +92,7 @@
       </Pane>
       <Pane fx:id="playerPane1" layoutX="1180.0" layoutY="345.0" prefHeight="400.0" prefWidth="1080.0" rotate="-90.0">
          <children>
-            <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
-               <fill>
-                  <LinearGradient endX="1.0" endY="0.0999999999999999" startX="1.0" startY="0.7904761904761904">
-                     <stops>
-                        <Stop color="#ff8242" />
-                        <Stop color="#ffffff00" offset="1.0" />
-                     </stops>
-                  </LinearGradient>
-               </fill></Rectangle>
+            <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
             <Pane fx:id="playerHand1" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="746.0" />
             <Pane fx:id="playerFaceUp1" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown1" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
@@ -134,15 +107,7 @@
       </Pane>
       <Pane fx:id="playerPane0" layoutX="450.0" layoutY="680.0" prefHeight="400.0" prefWidth="1080.0">
          <children>
-            <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
-               <fill>
-                  <LinearGradient endX="1.0" endY="0.23333333333333323" startX="1.0" startY="1.0">
-                     <stops>
-                        <Stop color="#ff8242" />
-                        <Stop color="#ffffff00" offset="1.0" />
-                     </stops>
-                  </LinearGradient>
-               </fill></Rectangle>
+            <Rectangle fx:id="r1" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="150.0" layoutX="40.0" layoutY="250.0" opacity="0.5" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" width="1000.0" />
             <Pane fx:id="playerhand0" layoutX="40.0" layoutY="250.0" prefHeight="150.0" prefWidth="750.0" />
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />

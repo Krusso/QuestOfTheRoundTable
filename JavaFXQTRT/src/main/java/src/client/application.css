@@ -99,3 +99,15 @@
 #shiny-orange:pressed {
 	-fx-background-color: #ffe23f;
 }
+
+.playerButton {
+	-fx-background-color: black;
+}
+
+.accordion > .titled-pane {
+    -fx-padding: 0 0 2em 0;
+}
+
+.titled-pane > .title {
+	-fx-background-color: black;
+}
