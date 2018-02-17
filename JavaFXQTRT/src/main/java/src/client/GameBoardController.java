@@ -25,6 +25,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
@@ -63,6 +64,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
 	@FXML private Pane background;
+	@FXML private Pane questBoard;
 	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
 
@@ -75,6 +77,7 @@ public class GameBoardController implements Initializable{
 	@FXML public ImageView shield2View;
 	@FXML public ImageView shield3View;
 	@FXML public ImageView shield4View;
+	public ImageView[] shieldViews= new ImageView[4];
 
 	//These panes are for hold each player's respective items, e.g hand, face up card, face down cards etc
 	//When rotating, we only rotate these panes.
@@ -89,6 +92,8 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerHand2;
 	@FXML private Pane playerHand3;
 	@FXML private Pane[] handPanes = new Pane[4];
+	
+	@FXML private Rectangle pRec0, pRec1, pRec2, pRec3;
 
 	//The panes that govern the player's facedown cards
 	@FXML private Pane playerFaceDown0;
@@ -112,6 +117,13 @@ public class GameBoardController implements Initializable{
 
 	@FXML public Text toast;
 
+	@FXML private ImageView stage0View;
+	@FXML private ImageView stage1View;
+	@FXML private ImageView stage2View;
+	@FXML private ImageView stage3View;
+	@FXML private ImageView stage4View;
+	private ImageView[] stageViews = new ImageView[5];
+	
 	/*Panes for picking stages (maximum number of stages is 5)*/
 	@FXML private Pane pickStage0;
 	@FXML private Pane pickStage1;
@@ -146,6 +158,10 @@ public class GameBoardController implements Initializable{
 		playerRanks[1] = playerRank1;
 		playerRanks[2] = playerRank2;
 		playerRanks[3] = playerRank3;
+		shieldViews[0] = shield1View;
+		shieldViews[1] = shield2View;
+		shieldViews[2] = shield3View;
+		shieldViews[3] = shield4View;
 
 		stages[0] = pickStage0;
 		stages[1] = pickStage1;
@@ -161,7 +177,30 @@ public class GameBoardController implements Initializable{
 		setBackground();
 		//map the connection between panes and hands
 
-
+		pRec0.setVisible(false);
+		pRec1.setVisible(false);
+		pRec2.setVisible(false);
+		pRec3.setVisible(false);
+		
+		stageViews[0] = stage0View;
+		stageViews[1] = stage1View;
+		stageViews[2] = stage2View;
+		stageViews[3] = stage3View;
+		stageViews[4] = stage4View;
+	}
+	
+	public void clearHighlight() {
+		pRec0.setVisible(false);
+		pRec1.setVisible(false);
+		pRec2.setVisible(false);
+		pRec3.setVisible(false);
+	}
+	
+	public void highlightFaceUp(int p) {
+		if(p==0) { pRec0.setVisible(true); }
+		if(p==1) { pRec1.setVisible(true); }
+		if(p==2) { pRec2.setVisible(true); }
+		if(p==3) { pRec3.setVisible(true); }
 	}
 	
 	public void showToast(String text) { toast.setText(text); }
@@ -295,9 +334,6 @@ public class GameBoardController implements Initializable{
 	 */
 	private boolean isInPane(Pane p, Point2D point) {
 		Bounds b = p.localToScene(p.getBoundsInLocal());
-
-		System.out.println("bounds"+b);
-		System.out.println("point" + p);
 		if(b.contains(point) && p.isVisible()) {
 			return true;
 		}
@@ -313,11 +349,13 @@ public class GameBoardController implements Initializable{
 		//check handPanes
 		Bounds b = handPanes[playerManager.getCurrentPlayer()].localToScene(handPanes[playerManager.getCurrentPlayer()].getBoundsInLocal());
 		if(b.contains(point)) {
+			System.out.println("moused over handpanes");
 			return handPanes[playerManager.getCurrentPlayer()];
 		}
 		//check stage panes
 		for(Pane p : stages) {
 			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
+				System.out.println("Moused over stage panes");
 				return p;
 			}
 		}
@@ -367,7 +405,6 @@ public class GameBoardController implements Initializable{
 			//Find if the current point is within one of the stage panes.
 			for(int i = 0 ; i < stages.length ; i++) {
 				//check if the mouse is over a stage pane and check if it is valid to put it in there
-				System.out.println(isInPane(stages[i], point)+ " " + isStageValid(stageCards.get(i), card) );
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
 						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 					doPutCardIntoPane(point, card);
@@ -377,9 +414,6 @@ public class GameBoardController implements Initializable{
 		}
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS || CURRENT_STATE == STATE.PICK_TOURNAMENT) {
-			System.out.println(isInPane(faceDownPanes[cPlayer], point) );
-			System.out.println( isInPane(faceDownPanes[cPlayer], point)+" "+isPickQuestValid(faceDownCards, card));
-
 			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
@@ -580,22 +614,40 @@ public class GameBoardController implements Initializable{
 				playerManager.faceDownPlayerHand(i);
 			}
 		}
+		
 		playerManager.setCurrentPlayer(playerNum);
-
+		
+		//readjust the player pane's scale as well as the orientation of the rank/shield cards
+		for(int i = 0 ; i < handPanes.length; i++) {
+			if(i == playerNum) {
+				playerPanes[i].setScaleX(1);
+				playerPanes[i].setScaleY(1);
+				playerRanks[i].setRotate(0);
+				shieldViews[i].setRotate(0);
+			}else {
+				playerPanes[i].setScaleX(0.6);
+				playerPanes[i].setScaleY(0.6);
+				playerRanks[i].setRotate(180);
+				shieldViews[i].setRotate(180);
+			}
+		}
 	}
 
 	//This rotates the player's pane clockwise 90 degrees
 	private void rotatePlayerPosition() {
 		double posX3 = playerPanes[3].getLayoutX();
 		double posY3 = playerPanes[3].getLayoutY();	
+		double rotate3 = playerPanes[3].getRotate();
+		
 		for(int i = playerPanes.length-1 ; i >= 0 ; i--) {
 			int pos = i-1 < 0 ? 3 : i-1;
 			if(i == 0) {
 				playerPanes[i].relocate(posX3, posY3);
+				playerPanes[i].setRotate(rotate3);
 			}else {
 				playerPanes[i].relocate(playerPanes[pos].getLayoutX(), playerPanes[pos].getLayoutY());
+				playerPanes[i].setRotate(playerPanes[pos].getRotate());;
 			}
-			playerPanes[i].setRotate(playerPanes[i].getRotate() + 90);
 		}
 	}
 
@@ -617,6 +669,17 @@ public class GameBoardController implements Initializable{
 
 	public void setClient(Client c) {
 		this.c = c;
+	}
+	
+	public void setQuestStageBanners(int num) {
+		try {
+			File f = new File(resDir + "/Red_Banner_Clipart_Picture.png");
+			Image banner = new Image(new FileInputStream(f));
+			for(int i=0; i<num; i++) { stageViews[i].setImage(banner); }
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	//TODO:: BG image isn't completely scaled correctly not sure why
@@ -697,6 +760,19 @@ public class GameBoardController implements Initializable{
 		playerManager.flipFaceUpCards(p);
 	}
 
+	public void setStageCardVisibility( boolean isShow, int... stageNum) {
+		for(int i: stageNum) {
+			ArrayList<AdventureCard> cards = stageCards.get(i);
+			for(AdventureCard c : cards) {
+				if(isShow) {
+					c.faceUp();
+				}else {
+					c.faceDown();
+				}
+			}
+		}
+	}
+	
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
@@ -792,6 +868,7 @@ public class GameBoardController implements Initializable{
 								currentStageCards[j] = stageCards.get(i).get(j).getName();
 							}
 							c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
+							setStageCardVisibility(false, i);
 						}
 					}
 				}else {

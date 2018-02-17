@@ -15,8 +15,10 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Journey Through the Enchanted Forest",3,"Evil Knight"),1);
 //		addCard(new QuestCard("Vanquish King Arthur's Enemies",3,"None"),2);
 //		addCard(new QuestCard("Slay the Dragon",3,"Dragon"),1);
+		
 		addCard(new QuestCard("Boar Hunt",2,"Boar"),2);
 		addCard(new QuestCard("Repel the Saxon Raiders",2,"All Saxons"),2);
+
 		
 //		addCard(new TournamentCard("Tournament at Camelot",3),1);
 //		addCard(new TournamentCard("Tournament at Orkney",2),1);
