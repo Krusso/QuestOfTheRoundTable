@@ -34,13 +34,13 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Slay the Dragon",3,"Dragon"),1);
 //		addCard(new QuestCard("Boar Hunt",2,"Boar"),2);
 //		addCard(new QuestCard("Repel the Saxon Raiders",2,"All Saxons"),2);
-=======
+
 //		
 //		addCard(new TournamentCard("Tournament at Camelot",3),1);
 //		addCard(new TournamentCard("Tournament at Orkney",2),1);
 //		addCard(new TournamentCard("Tournament at Tintagel",1),1);
 //		addCard(new TournamentCard("Tournament at York",0),1);
->>>>>>> 2db880653a4e45827656c43b2c2f4183d871e156
+
 		
 //		addCard(new EventCard("King's Recognition"),2);
 //		addCard(new EventCard("Queen's Favor"),2);

@@ -985,6 +985,7 @@ public class GameBoardController implements Initializable{
 			System.out.println("discard: " + cards.toString());
 			c.send(new HandFullClient(playerManager.getCurrentPlayer(), cards));
 			discardPile.clear();
+			discardPane.getChildren().clear();
 
 		});
 	}
