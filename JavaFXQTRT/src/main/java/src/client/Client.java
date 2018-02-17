@@ -340,7 +340,8 @@ class UpQuestTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
-		gbc.flipStageCards(this.stage, true);
+//		gbc.flipStageCards(this.stage, true);
+		gbc.setStageCardVisibility(true, stage);
 	}
 }
 class DiscardFaceDownTask extends Task {

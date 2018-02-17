@@ -267,10 +267,8 @@ public class GameBoardController implements Initializable{
 		for(int j = 0 ; j < cards.size(); j++) {
 			if(cards.get(j) instanceof ImageView) {
 				ImageView img = (ImageView) cards.get(j);
-				System.out.println("Before X: " + img.getX() +"Y: " + img.getY());
 				img.setX(handPaneWidth/cards.size() * j);
 				img.setY(0);
-				System.out.println("After X: " + img.getX() +"Y: " + img.getY());
 			}
 		}
 
@@ -302,9 +300,6 @@ public class GameBoardController implements Initializable{
 	 */
 	private boolean isInPane(Pane p, Point2D point) {
 		Bounds b = p.localToScene(p.getBoundsInLocal());
-
-		System.out.println("bounds"+b);
-		System.out.println("point" + p);
 		if(b.contains(point) && p.isVisible()) {
 			return true;
 		}
@@ -320,11 +315,13 @@ public class GameBoardController implements Initializable{
 		//check handPanes
 		Bounds b = handPanes[playerManager.getCurrentPlayer()].localToScene(handPanes[playerManager.getCurrentPlayer()].getBoundsInLocal());
 		if(b.contains(point)) {
+			System.out.println("moused over handpanes");
 			return handPanes[playerManager.getCurrentPlayer()];
 		}
 		//check stage panes
 		for(Pane p : stages) {
 			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
+				System.out.println("Moused over stage panes");
 				return p;
 			}
 		}
@@ -374,7 +371,6 @@ public class GameBoardController implements Initializable{
 			//Find if the current point is within one of the stage panes.
 			for(int i = 0 ; i < stages.length ; i++) {
 				//check if the mouse is over a stage pane and check if it is valid to put it in there
-				System.out.println(isInPane(stages[i], point)+ " " + isStageValid(stageCards.get(i), card) );
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
 						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 					doPutCardIntoPane(point, card);
@@ -384,9 +380,6 @@ public class GameBoardController implements Initializable{
 		}
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS || CURRENT_STATE == STATE.PICK_TOURNAMENT) {
-			System.out.println(isInPane(faceDownPanes[cPlayer], point) );
-			System.out.println( isInPane(faceDownPanes[cPlayer], point)+" "+isPickQuestValid(faceDownCards, card));
-
 			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
@@ -716,6 +709,19 @@ public class GameBoardController implements Initializable{
 		playerManager.flipFaceDownCards(p, isShow);
 	}
 
+	public void setStageCardVisibility( boolean isShow, int... stageNum) {
+		for(int i: stageNum) {
+			ArrayList<AdventureCard> cards = stageCards.get(i);
+			for(AdventureCard c : cards) {
+				if(isShow) {
+					c.faceUp();
+				}else {
+					c.faceDown();
+				}
+			}
+		}
+	}
+	
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
@@ -805,6 +811,7 @@ public class GameBoardController implements Initializable{
 								currentStageCards[j] = stageCards.get(i).get(j).getName();
 							}
 							c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
+							setStageCardVisibility(false, i);
 						}
 					}
 				}else {
