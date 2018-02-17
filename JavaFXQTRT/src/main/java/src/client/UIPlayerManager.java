@@ -8,7 +8,7 @@ import src.player.UIPlayer;
 
 public class UIPlayerManager {
 	
-	private UIPlayer[] players;
+	public UIPlayer[] players;
 	private int currentPlayer;
 	public UIPlayerManager(int numPlayers) {
 		players = new UIPlayer[numPlayers];
@@ -16,11 +16,18 @@ public class UIPlayerManager {
 			players[i] = new UIPlayer(i);
 		}
 	}
+	//Some dank raunch way of setting up our UIPlayers :^) :V) :^) :V) :^) :V) :^) :^(
+	
+
+//	public void setPlayerPanes()
+	
 	
 	public void addShields(int p, int shields) {
 		players[p].addShields(shields);
 	}
-
+	public int getShields(int p) {
+		return players[p].getShields();
+	}
 	public Rank.RANKS getPlayerRank(int playerNum){
 		return players[playerNum].getRank();
 	}
@@ -115,7 +122,7 @@ public class UIPlayerManager {
 	public void removeCardFromPlayerHandByID(int p, int id) {
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
-			if(hand.get(i).getID() == id) {
+			if(hand.get(i).id == id) {
 				hand.remove(i);
 				return;
 			}
@@ -124,17 +131,30 @@ public class UIPlayerManager {
 	public int getCardIndexByID(int p, int id) {
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
-			if(hand.get(i).getID() == id) {
+			if(hand.get(i).id == id) {
 				return i;
 			}
 		}
+		
 		return -1;
 	}
-	public AdventureCard getCardByID(int p, int id) {
+	public AdventureCard getCardByIDInHand(int p, int id) {
+		//check the hand
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
-			if(hand.get(i).getID() == id) {
+			if(hand.get(i).id == id) {
 				return hand.get(i);
+			}
+		}
+
+		return null;
+	}
+	public AdventureCard getCardByIDInFaceDown(int p, int id) {
+		//check the facedown
+		ArrayList<AdventureCard> faceDown = players[p].getFaceDownDeck().getDeck();
+		for(int i = 0 ; i < faceDown.size(); i++) {
+			if(faceDown.get(i).id == id) {
+				return faceDown.get(i);
 			}
 		}
 		return null;

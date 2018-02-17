@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import src.game_logic.AdventureCard;
 import src.socket.Server;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -48,6 +47,8 @@ public class Main extends Application {
 						
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
+//			primaryStage.setMaxHeight(900);
+//			primaryStage.setMaxWidth(1400);
 			primaryStage.show();
 			
 		} catch(Exception e) {

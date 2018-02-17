@@ -27,16 +27,27 @@ public abstract class SequenceManager {
 		}
 	}
 
-	protected Player questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, QuestCard card) {
+	protected Pair questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, QuestCard card) {
 		Queue<Player> notDropped = new LinkedList<Player>();
 		players.forEachRemaining(i -> notDropped.add(i));
 		int maxBidValue = Integer.MIN_VALUE;
 		BidCalculator bc = new BidCalculator();
+		if(notDropped.size() == 1) {
+			Player next = notDropped.poll();
+			pm.setPlayer(next);
+			int playerMaxBid = bc.maxBid(next, card);			
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue + 1));
+			QuestBidClient qbc = actions.take(QuestBidClient.class);
+			if(qbc.bid != -1) {
+				notDropped.add(next);
+			}
+			return new Pair(qbc.bid, notDropped.poll(), bc);
+		}
 		while(notDropped.size() > 1) {
 			Player next = notDropped.poll();
 			pm.setPlayer(next);
 			int playerMaxBid = bc.maxBid(next, card);			
-			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue));
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue + 1));
 			QuestBidClient qbc = actions.take(QuestBidClient.class);
 			if(qbc.bid != -1) {
 				maxBidValue = qbc.bid;
@@ -44,6 +55,20 @@ public abstract class SequenceManager {
 			}
 		}
 		
-		return notDropped.poll();
+		return new Pair(maxBidValue, notDropped.poll(), bc);
+	}
+}
+
+class Pair{
+	public Player player;
+	public int toBid;
+	private BidCalculator bc;
+	public Pair(int toBid, Player player, BidCalculator bc) {
+		this.player = player;
+		this.bc = bc;
+		this.toBid = toBid;
+	}
+	public int cardsToBid(QuestCard quest) {
+		return bc.cardsToBid(toBid, player, quest);
 	}
 }

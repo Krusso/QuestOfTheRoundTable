@@ -6,10 +6,14 @@ import src.game_logic.QuestCard;
 public class BidCalculator {
 
 	public int maxBid(Player player, QuestCard quest) {
+		return freeBids(player, quest) + player.hand.size();
+	}
+
+	private int freeBids(Player player, QuestCard quest) {
 		int freeBids = 0;
 		// this should probably go into the card?
 		for(Card c : player.getFaceUp().getDeck()) {
-			if(c.getName().equals("King Pellinore") && 
+			if(c.getName().equals("Sir Pellinore") && 
 					quest.getName().equals("Search for the Questing Beast")) {
 				freeBids += 4;
 			} else if(c.getName().equals("Amour")) {
@@ -26,7 +30,11 @@ public class BidCalculator {
 				}
 			}
 		}
-		return freeBids + player.hand.size();
+		return freeBids;
+	}
+
+	public int cardsToBid(int toBid, Player player, QuestCard quest) {
+		return toBid - freeBids(player, quest);
 	}
 
 	// Feels bad when you have a sick lambda but no use for it :( 

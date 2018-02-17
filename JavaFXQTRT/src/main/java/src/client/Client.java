@@ -1,5 +1,5 @@
-package src.client;
 
+package src.client;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -10,13 +10,14 @@ import java.net.Socket;
 import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
+import src.game_logic.AllyCard;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
@@ -57,7 +58,7 @@ class AddCardsTask extends Task{
 				if (f.getName().contains(card+".jpg")) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
-						AdventureCard c = new AdventureCard(card, f.getPath());
+						AllyCard c = new AllyCard(card, f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
 						c.faceDown();
 						gbc.addCardToHand(c, player);
@@ -145,6 +146,7 @@ class QuestSponsorTask extends Task {
 		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
 		gbc.setButtonsInvisible();
 		gbc.showAcceptDecline();
+		gbc.showToast("Sponsor Quest?");
 	}
 }
 
@@ -159,7 +161,7 @@ class TournamentWonTask extends Task{
 	public void run() {
 		winners[player] = true;
 
-		String display = "Player(s) ";
+		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
 
 			System.out.println("pnum " + i + " winners: " + winners[i]) ;
@@ -169,9 +171,16 @@ class TournamentWonTask extends Task{
 			System.out.println(display);
 		}
 		display = display.substring(0, display.length()-2);
-		display = display + " won the tournmanet!";
-		gbc.toast.setText(display);
-		gbc.toast.setVisible(true);
+		// sorry this was triggering me
+		if(display.length()>1) {
+			display = "Players " + display + " won the tournament!";
+		} else { 
+			display = "Player " + display + " won the tournament!";
+		}
+		gbc.clearToast();
+		gbc.showToast(display);
+//		gbc.toast.setText(display);
+//		gbc.toast.setVisible(true);
 
 	}
 }
@@ -259,6 +268,8 @@ class QuestPickStagesTask extends Task {
 		gbc.addDraggable();
 		gbc.showEndTurn();
 		gbc.addStagePaneListener();
+		gbc.clearToast();
+		gbc.showToast("Select cards for each Stage");
 	}
 	
 }
@@ -276,6 +287,8 @@ class QuestJoinTask extends Task {
 		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();
 		gbc.addDraggable();
+		gbc.clearToast();
+		gbc.showToast("Join Quest?");
 	}
 	
 }
@@ -296,7 +309,8 @@ class QuestPickCardsTask extends Task {
 		gbc.showEndTurn();
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
-		gbc.addFaceDownPaneDragOver();
+		gbc.clearToast();
+		gbc.showToast("Select Cards for current stage");
 	}
 }
 class FaceDownCardsTask extends Task {
@@ -358,12 +372,107 @@ class ShieldCountTask extends Task {
 	}
 	@Override
 	public void run() {
-//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a statae for shields
+//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a state for shields
 		gbc.addShields(player, shields);
 	}
 }
 
+//TODO::server gives us min and max as well later
+class QuestBidTask extends Task {
+	private int min;
+	private int max;
+	private int player;
+	public QuestBidTask(GameBoardController gbc, int player, int min, int max) {
+		super(gbc);
+		this.player = player;
+		this.min = min;
+		this.max = max;
+		
+	}
+	@Override
+	public void run() {
 
+		gbc.setButtonsInvisible();
+		//this means the player can't bid higher than the max
+		if(min > max) {
+			gbc.showDecline();
+		}else {
+			gbc.showEndTurn();
+			gbc.showDecline();
+//			//players can only drag over facedown pane.
+			gbc.removeStagePaneDragOver();
+			gbc.CURRENT_STATE = STATE.QUEST_BID;
+			gbc.bidSlider.setMin(min);
+			gbc.bidSlider.setMax(max);
+			gbc.bidSlider.setVisible(true);
+			gbc.bidSlider.setMajorTickUnit(2);
+			gbc.bidSlider.setShowTickLabels(true);
+			gbc.bidSlider.setBlockIncrement(1);
+			gbc.bidSlider.setSnapToTicks(true);
+			gbc.clearToast();
+			gbc.showToast("Use the slider to enter how many cards you want to bid.");
+		}
+	}
+}
+
+class DiscardQuestTask extends Task {
+	private int player;
+	public DiscardQuestTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		//the task that is run before this is the bidquest so we have to hide the bidslider now
+		gbc.bidSlider.setVisible(false);
+		gbc.CURRENT_STATE = STATE.BID_DISCARD;
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.addDraggable();
+		gbc.removeStagePaneDragOver();
+	}
+}
+
+
+class JoinTournamentTask extends Task {
+	int player;
+	public JoinTournamentTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.JOIN_TOURNAMENT;
+		gbc.setButtonsInvisible();
+		gbc.showAcceptDecline();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.removeStagePaneDragOver();
+		gbc.clearToast();
+		gbc.showToast("Join Tournament?");
+	}
+}
+
+class PickTournamentTask extends Task {
+	int player;
+	public PickTournamentTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.PICK_TOURNAMENT;
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.addDraggable();
+		gbc.removeStagePaneDragOver();
+		gbc.clearToast();
+		gbc.showToast("Select cards to use for the tournament");
+		
+	}
+}
 
 
 abstract class Task implements Runnable{
@@ -429,11 +538,14 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.JOINTOURNAMENT.name())) {
 						TournamentAcceptDeclineServer request = gson.fromJson(obj, TournamentAcceptDeclineServer.class);
-						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
+
+						Platform.runLater(new JoinTournamentTask(gbc, request.player));
+//						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.PICKTOURNAMENT.name())) {
 						TournamentPickCardsServer request = gson.fromJson(obj, TournamentPickCardsServer.class);
-						Platform.runLater(new ShowEndTurn(gbc, request.player));
+						Platform.runLater(new PickTournamentTask(gbc, request.player));
+//						Platform.runLater(new ShowEndTurn(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.UPQUEST.name())) {
 						QuestUpServer request = gson.fromJson(obj, QuestUpServer.class);
@@ -483,6 +595,18 @@ public class Client implements Runnable {
 						
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new ShieldCountTask(gbc, request.player, request.shields));
+					}
+					if(message.equals(MESSAGETYPES.BIDQUEST.name())) {
+						QuestBidServer request = gson.fromJson(obj, QuestBidServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new QuestBidTask(gbc, request.player, request.minBidValue, request.maxBidValue));
+					}
+					if(message.equals(MESSAGETYPES.DISCARDQUEST.name())) {
+						QuestDiscardCardsServer request = gson.fromJson(obj, QuestDiscardCardsServer.class);
+						
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new DiscardQuestTask(gbc, request.player));
 					}
 				}
 			}

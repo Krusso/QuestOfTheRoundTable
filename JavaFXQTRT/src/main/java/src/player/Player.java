@@ -155,7 +155,7 @@ public class Player {
 		return this.rank;
 	}
 
-	protected void flipCards() {
+	public void flipCards() {
 		faceUp.addCards(faceDown.drawTopCards(faceDown.size()));
 		if(pv != null) pv.updateFaceUp(faceUp, ID);
 	}
@@ -211,5 +211,10 @@ public class Player {
 	public void setBidAmount(STATE bidding, int maxBidValue, int i) {
 		this.question = bidding;
 		if(pv != null) this.pv.setBidAmount(bidding, this.ID, maxBidValue, i);
+	}
+
+	public void setDiscardAmount(STATE testdiscard, int cardsToBid) {
+		this.question = testdiscard;
+		if(pv != null) this.pv.setDiscardAmount(testdiscard, this.ID, cardsToBid);
 	}
 }
