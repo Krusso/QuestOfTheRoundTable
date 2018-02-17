@@ -64,6 +64,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Text playerNumber;
 	@FXML private Button nextTurn;
 	@FXML private Pane background;
+	@FXML private Pane questBoard;
 	@FXML public Slider bidSlider;
 	//The pane that holds the other players' hand
 
@@ -90,6 +91,8 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerHand2;
 	@FXML private Pane playerHand3;
 	@FXML private Pane[] handPanes = new Pane[4];
+	
+	@FXML private Rectangle pRec0, pRec1, pRec2, pRec3;
 
 	//The panes that govern the player's facedown cards
 	@FXML private Pane playerFaceDown0;
@@ -113,6 +116,13 @@ public class GameBoardController implements Initializable{
 
 	@FXML public Text toast;
 
+	@FXML private ImageView stage0View;
+	@FXML private ImageView stage1View;
+	@FXML private ImageView stage2View;
+	@FXML private ImageView stage3View;
+	@FXML private ImageView stage4View;
+	private ImageView[] stageViews = new ImageView[5];
+	
 	/*Panes for picking stages (maximum number of stages is 5)*/
 	@FXML private Pane pickStage0;
 	@FXML private Pane pickStage1;
@@ -162,7 +172,30 @@ public class GameBoardController implements Initializable{
 		setBackground();
 		//map the connection between panes and hands
 
-
+		pRec0.setVisible(false);
+		pRec1.setVisible(false);
+		pRec2.setVisible(false);
+		pRec3.setVisible(false);
+		
+		stageViews[0] = stage0View;
+		stageViews[1] = stage1View;
+		stageViews[2] = stage2View;
+		stageViews[3] = stage3View;
+		stageViews[4] = stage4View;
+	}
+	
+	public void clearHighlight() {
+		pRec0.setVisible(false);
+		pRec1.setVisible(false);
+		pRec2.setVisible(false);
+		pRec3.setVisible(false);
+	}
+	
+	public void highlightFaceUp(int p) {
+		if(p==0) { pRec0.setVisible(true); }
+		if(p==1) { pRec1.setVisible(true); }
+		if(p==2) { pRec2.setVisible(true); }
+		if(p==3) { pRec3.setVisible(true); }
 	}
 	
 	public void showToast(String text) { toast.setText(text); }
@@ -644,6 +677,17 @@ public class GameBoardController implements Initializable{
 
 	public void setClient(Client c) {
 		this.c = c;
+	}
+	
+	public void setQuestStageBanners(int num) {
+		try {
+			File f = new File(resDir + "/Red_Banner_Clipart_Picture.png");
+			Image banner = new Image(new FileInputStream(f));
+			for(int i=0; i<num; i++) { stageViews[i].setImage(banner); }
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	//TODO:: BG image isn't completely scaled correctly not sure why
