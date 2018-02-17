@@ -754,7 +754,8 @@ public class GameBoardController implements Initializable{
 	
 	public void moveToFaceUpPane(int p) {
 		playerManager.players[p].flipCards();
-		while(faceDownPanes[p].getChildren().size() != 0) { faceUpPanes[p].getChildren().add(faceDownPanes[p].getChildren().remove(0));}
+		// one element is the rectangle
+		while(faceDownPanes[p].getChildren().size() > 1) { faceUpPanes[p].getChildren().add(faceDownPanes[p].getChildren().remove(1));}
 		repositionFaceUpCards(p);
 		repositionFaceDownCards(p);
 		playerManager.flipFaceUpCards(p);

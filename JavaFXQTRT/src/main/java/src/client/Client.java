@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import com.google.gson.Gson;
@@ -30,7 +31,6 @@ import src.messages.game.TurnNextServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
 import src.messages.hand.FaceUpDiscardServer;
-import src.messages.hand.FaceUpServer;
 import src.messages.quest.QuestBidServer;
 import src.messages.quest.QuestDiscardCardsServer;
 import src.messages.quest.QuestJoinServer;
@@ -365,6 +365,7 @@ class DiscardFaceUpTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
+		System.out.println("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
 	}
 }
@@ -609,6 +610,7 @@ public class Client implements Runnable {
 								Platform.runLater(new Runnable(){
 									@Override
 									public void run(){
+										gbc.setButtonsInvisible();
 										gbc.endTurn.setVisible(true);
 										gbc.endTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
@@ -626,6 +628,26 @@ public class Client implements Runnable {
 					 */
 					if(message.equals(MESSAGETYPES.FACEUPCARDS.name())) {
 						Platform.runLater(new RevealAllCards(gbc));
+						synchronized (this) {
+							try {
+								Platform.runLater(new Runnable(){
+									@Override
+									public void run(){
+										gbc.clearToast();
+										// TODO fill this in
+										gbc.showToast("Players #:... survived");
+										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+										gbc.setButtonsInvisible();
+										gbc.endTurn.setVisible(true);
+										gbc.endTurn.setText("Continue");
+										gbc.CURRENT_STATE = STATE.CHILLING;
+									}
+								});
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 					if(message.equals(MESSAGETYPES.SPONSERQUEST.name())) {
 						QuestSponsorServer request = gson.fromJson(obj, QuestSponsorServer.class);
@@ -641,6 +663,8 @@ public class Client implements Runnable {
 					}					
 					if(message.equals(MESSAGETYPES.PICKQUEST.name())) {
 						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
+						toDiscard.forEach(i -> Platform.runLater(i));
+						toDiscard.clear();
 						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
