@@ -166,6 +166,7 @@ public class GameBoardController implements Initializable{
 	}
 	
 	public void showToast(String text) { toast.setText(text); }
+	public void clearToast() { toast.setText(""); }
 	
 	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
 		if(!players[0].equals("")) { shield1View.setImage(shield1); p1Shields.setText("0"); }

@@ -146,6 +146,7 @@ class QuestSponsorTask extends Task {
 		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
 		gbc.setButtonsInvisible();
 		gbc.showAcceptDecline();
+		gbc.showToast("Sponsor Quest?");
 	}
 }
 
@@ -160,7 +161,7 @@ class TournamentWonTask extends Task{
 	public void run() {
 		winners[player] = true;
 
-		String display = "Player(s) ";
+		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
 
 			System.out.println("pnum " + i + " winners: " + winners[i]) ;
@@ -170,9 +171,16 @@ class TournamentWonTask extends Task{
 			System.out.println(display);
 		}
 		display = display.substring(0, display.length()-2);
-		display = display + " won the tournmanet!";
-		gbc.toast.setText(display);
-		gbc.toast.setVisible(true);
+		// sorry this was triggering me
+		if(display.length()>1) {
+			display = "Players " + display + " won the tournament!";
+		} else { 
+			display = "Player " + display + " won the tournament!";
+		}
+		gbc.clearToast();
+		gbc.showToast(display);
+//		gbc.toast.setText(display);
+//		gbc.toast.setVisible(true);
 
 	}
 }
@@ -260,6 +268,8 @@ class QuestPickStagesTask extends Task {
 		gbc.addDraggable();
 		gbc.showEndTurn();
 		gbc.addStagePaneListener();
+		gbc.clearToast();
+		gbc.showToast("Select cards for each Stage");
 	}
 	
 }
@@ -277,6 +287,8 @@ class QuestJoinTask extends Task {
 		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();
 		gbc.addDraggable();
+		gbc.clearToast();
+		gbc.showToast("Join Quest?");
 	}
 	
 }
@@ -297,6 +309,8 @@ class QuestPickCardsTask extends Task {
 		gbc.showEndTurn();
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.clearToast();
+		gbc.showToast("Select Cards for current stage");
 	}
 }
 class FaceDownCardsTask extends Task {
@@ -395,6 +409,8 @@ class QuestBidTask extends Task {
 			gbc.bidSlider.setShowTickLabels(true);
 			gbc.bidSlider.setBlockIncrement(1);
 			gbc.bidSlider.setSnapToTicks(true);
+			gbc.clearToast();
+			gbc.showToast("Use the slider to enter how many cards you want to bid.");
 		}
 	}
 }
@@ -433,6 +449,8 @@ class JoinTournamentTask extends Task {
 		gbc.showAcceptDecline();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.removeStagePaneDragOver();
+		gbc.clearToast();
+		gbc.showToast("Join Tournament?");
 	}
 }
 
@@ -450,6 +468,8 @@ class PickTournamentTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.clearToast();
+		gbc.showToast("Select cards to use for the tournament");
 		
 	}
 }
