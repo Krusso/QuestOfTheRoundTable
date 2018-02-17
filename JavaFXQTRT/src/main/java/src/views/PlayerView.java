@@ -78,6 +78,7 @@ public class PlayerView {
 	}
 
 	public void updateFaceDown(List<AdventureCard> list, int ID) {
+		System.out.println("Printed out: ---- " + list);
 		String[] cardNames = list.stream().map(e -> e.getName()).toArray(size -> new String[size]);
 		output.sendMessage(new FaceDownServer(ID, cardNames));
 	}
@@ -95,10 +96,10 @@ public class PlayerView {
 		output.sendMessage(new QuestUpServer(ID, cards, stage));
 	}
 
-	public void updateFaceUp(AdventureDeck faceUp, int ID) {
-		String[] cardNames = faceUp.getDeck().stream().map(e -> e.getName()).toArray(size -> new String[size]);
-		output.sendMessage(new FaceUpServer(ID, cardNames));
-	}
+//	public void updateFaceUp(AdventureDeck faceUp, int ID) {
+//		String[] cardNames = faceUp.getDeck().stream().map(e -> e.getName()).toArray(size -> new String[size]);
+//		output.sendMessage(new FaceUpServer(ID, cardNames));
+//	}
 
 	public void updateState(STATE question, int ID, int i, TYPE type) {
 		output.sendMessage(new EventDiscardCardsServer(ID, i, type));

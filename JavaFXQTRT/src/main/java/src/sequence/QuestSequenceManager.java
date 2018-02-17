@@ -74,15 +74,16 @@ public class QuestSequenceManager extends SequenceManager {
 				if (quest.currentStageType() == Quest.TYPE.FOE) {
 					players = winners.iterator();
 					// some constraints when choosing cards... can be done on client side c:
-					
+					System.out.println("Winners: " + winners);
 					while(players.hasNext()) {
 						Player pick = players.next();
+						System.out.println("--------- setting player: " + pick.getID());
 						pm.setPlayer(pick);
 						pm.setState(pick, Player.STATE.QUESTPICKING);
 						QuestPickCardsClient qpcc = actions.take(QuestPickCardsClient.class);
 						pm.currentFaceDown(qpcc.cards); 
 					}
-
+					System.out.println("here-------");
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					quest.battleFoe(winners, pm);
 					pm.discardWeapons(participants);

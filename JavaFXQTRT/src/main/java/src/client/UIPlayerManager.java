@@ -7,7 +7,7 @@ import src.game_logic.Rank;
 import src.player.UIPlayer;
 
 public class UIPlayerManager {
-	
+
 	public UIPlayer[] players;
 	private int currentPlayer;
 	public UIPlayerManager(int numPlayers) {
@@ -17,12 +17,12 @@ public class UIPlayerManager {
 		}
 	}
 	//Some dank raunch way of setting up our UIPlayers :^) :V) :^) :V) :^) :V) :^) :^(
-	
 
-//	public void setPlayerPanes()
-	
-	
-	public void addShields(int p, int shields) {
+
+	//	public void setPlayerPanes()
+
+
+	public void setShields(int p, int shields) {
 		players[p].addShields(shields);
 	}
 	public int getShields(int p) {
@@ -32,29 +32,29 @@ public class UIPlayerManager {
 		return players[playerNum].getRank();
 	}
 	public void setPlayerRank(int p, Rank.RANKS r){
-		 players[p].setPlayerRank(r);
-		 
+		players[p].setPlayerRank(r);
+
 	}
 	public void playCard(AdventureCard card, int currentPlayer2) {
 		players[currentPlayer2].playCard(card);
 	}
-	
+
 	public int getCurrentPlayer() {
 		return currentPlayer;
 	}
-	
+
 	public boolean removeCardFromHand(AdventureCard c, int playerNum) {
 		return players[playerNum].removeCard(c);
 	}
-	
+
 	public void addCardToHand(AdventureCard c, int playerNum) {
 		players[playerNum].addCard(c);
 	}
-	
+
 	public void showPlayerHand(int playerNum) {
 		ArrayList<AdventureCard> p = getPlayerHand(playerNum);
 		p.forEach(card-> {
-//			System.out.println("Show card: " + card.getName());
+			//			System.out.println("Show card: " + card.getName());
 			card.show();
 		});
 	}
@@ -75,23 +75,32 @@ public class UIPlayerManager {
 		ArrayList<AdventureCard> p = getFaceDownCardsAsList(playerNum);
 		p.forEach(card-> {
 			if(isShow) {
-				card.faceUp();
+				card.flipUp().play();
 			}else {
-				card.faceDown();
+				card.flipDown().play();
 			}
 		});
 	}
+
+	public void flipFaceUpCards(int playerNum) {
+		System.out.println("Flipping cards");
+		ArrayList<AdventureCard> p = getFaceUpCardsAsList(playerNum);
+		p.forEach(card-> {
+			card.flipUp().play();
+		});
+	}
+
 	public void setCurrentPlayer(int p) {
 		currentPlayer = p;
-//		for(int i = 0; i < players.length ; i++) {
-//			if(i == p) {
-//				showPlayerHand(p);
-//			}else {
-////				hidePlayerHand(i);
-//			}
-//		}
+		//		for(int i = 0; i < players.length ; i++) {
+		//			if(i == p) {
+		//				showPlayerHand(p);
+		//			}else {
+		////				hidePlayerHand(i);
+		//			}
+		//		}
 	}
-	
+
 	public ArrayList<AdventureCard> getPlayerHand(int pNum){
 		return players[pNum].getPlayerHandAsList();
 	}
@@ -102,10 +111,15 @@ public class UIPlayerManager {
 	public String getFaceDownCards(int currentPlayer2) {
 		return players[currentPlayer2].getFaceDown();
 	}
-	
+
 	public ArrayList<AdventureCard> getFaceDownCardsAsList(int playerNum){
 		return players[playerNum].getFaceDownDeck().getDeck();
 	}
+	
+	public ArrayList<AdventureCard> getFaceUpCardsAsList(int playerNum){
+		return players[playerNum].getFaceUp().getDeck();
+	}
+	
 	public String[] getFaceDownCardNames(int playerNum){
 		ArrayList<AdventureCard> faceDownCards = players[playerNum].getFaceDownDeck().getDeck();
 		String[] cardNames = new String[faceDownCards.size()];
@@ -114,11 +128,11 @@ public class UIPlayerManager {
 		}
 		return cardNames;
 	}
-	
+
 	public int getNumPlayers() {
 		return players.length;
 	}
-	
+
 	public void removeCardFromPlayerHandByID(int p, int id) {
 		ArrayList<AdventureCard> hand = players[p].getPlayerHandAsList();
 		for(int i = 0 ; i < hand.size(); i++) {
@@ -135,7 +149,7 @@ public class UIPlayerManager {
 				return i;
 			}
 		}
-		
+
 		return -1;
 	}
 	public AdventureCard getCardByIDInHand(int p, int id) {

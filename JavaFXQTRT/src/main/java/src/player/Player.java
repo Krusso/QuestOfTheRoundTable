@@ -157,7 +157,6 @@ public class Player {
 
 	public void flipCards() {
 		faceUp.addCards(faceDown.drawTopCards(faceDown.size()));
-		if(pv != null) pv.updateFaceUp(faceUp, ID);
 	}
 
 	public final AdventureDeck getFaceUp() {

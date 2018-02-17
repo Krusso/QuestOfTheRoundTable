@@ -6,24 +6,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
-
-import org.junit.experimental.theories.internal.SpecificDataPointsSupplier;
+import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
 import src.client.GameBoardController.STATE;
-import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
+import src.game_logic.FoeCard;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
-import src.game_logic.WeaponCard;
-import src.game_logic.FoeCard;
 import src.game_logic.TestCard;
+import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.MiddleCardServer;
@@ -32,13 +30,18 @@ import src.messages.game.TurnNextServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
 import src.messages.hand.FaceUpDiscardServer;
+import src.messages.hand.FaceUpServer;
+import src.messages.quest.QuestBidServer;
+import src.messages.quest.QuestDiscardCardsServer;
+import src.messages.quest.QuestJoinServer;
+import src.messages.quest.QuestPickCardsServer;
+import src.messages.quest.QuestPickStagesServer;
+import src.messages.quest.QuestSponsorServer;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
-import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
-import src.messages.quest.*;
 
 class AddCardsTask extends Task{
 	private int player;
@@ -123,7 +126,7 @@ class MiddleCardTask extends Task{
 		System.out.println("Processing msg: middle card:" + card);
 		//find story card
 		File[] list = cardDir.listFiles();
-//		System.out.println("Finding " + card + " card");
+		//		System.out.println("Finding " + card + " card");
 		for(File c : list) {
 			if(c.getName().contains(card)) {
 				StoryCard sc= new StoryCard(card, c.getPath());
@@ -145,6 +148,7 @@ class QuestSponsorTask extends Task {
 	public void run() {
 		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
 		gbc.setButtonsInvisible();
+		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
 		gbc.showToast("Sponsor Quest?");
 	}
@@ -179,8 +183,8 @@ class TournamentWonTask extends Task{
 		}
 		gbc.clearToast();
 		gbc.showToast(display);
-//		gbc.toast.setText(display);
-//		gbc.toast.setVisible(true);
+		//		gbc.toast.setText(display);
+		//		gbc.toast.setVisible(true);
 
 	}
 }
@@ -246,7 +250,6 @@ class ShowTurnFaceDownFieldUp extends Task{
 	@Override
 	public void run() {
 		gbc.flipFaceDownPane(player, true);
-
 	}
 }
 
@@ -258,7 +261,7 @@ class QuestPickStagesTask extends Task {
 		super(gbc);
 		this.player = player;
 		this.numStages = numStages;
-		
+
 	}
 	@Override
 	public void run() {
@@ -266,12 +269,13 @@ class QuestPickStagesTask extends Task {
 		gbc.CURRENT_STATE = STATE.PICK_STAGES;
 		gbc.setPickStageOn(numStages);
 		gbc.addDraggable();
+		gbc.setPlayerPerspectiveTo(player);
 		gbc.showEndTurn();
 		gbc.addStagePaneListener();
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
 	}
-	
+
 }
 class QuestJoinTask extends Task {
 
@@ -279,18 +283,19 @@ class QuestJoinTask extends Task {
 	public QuestJoinTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		
+
 	}
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
 		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();
+		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.clearToast();
 		gbc.showToast("Join Quest?");
 	}
-	
+
 }
 
 class QuestPickCardsTask extends Task {
@@ -299,7 +304,7 @@ class QuestPickCardsTask extends Task {
 	public QuestPickCardsTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		
+
 	}
 	@Override
 	public void run() {
@@ -319,7 +324,7 @@ class FaceDownCardsTask extends Task {
 	public FaceDownCardsTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		
+
 	}
 	@Override
 	public void run() {
@@ -335,7 +340,7 @@ class UpQuestTask extends Task {
 		super(gbc);
 		this.player = player;
 		this.stage = stage;
-		
+
 	}
 	@Override
 	public void run() {
@@ -343,20 +348,20 @@ class UpQuestTask extends Task {
 		gbc.flipStageCards(this.stage, true);
 	}
 }
-class DiscardFaceDownTask extends Task {
+class DiscardFaceUpTask extends Task {
 
 	private String[] cardsToDiscard;
 	private int player;
-	public DiscardFaceDownTask(GameBoardController gbc, int player, String[] cardsDiscarded) {
+	public DiscardFaceUpTask(GameBoardController gbc, int player, String[] cardsDiscarded) {
 		super(gbc);
 		this.player = player;
 		this.cardsToDiscard = cardsDiscarded;
-		
+
 	}
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
-		gbc.discardFaceDownCards(player,cardsToDiscard);
+		gbc.discardFaceUpCards(player,cardsToDiscard);
 	}
 }
 
@@ -368,12 +373,12 @@ class ShieldCountTask extends Task {
 		super(gbc);
 		this.player = player;
 		this.shields = shields;
-		
+
 	}
 	@Override
 	public void run() {
-//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a state for shields
-		gbc.addShields(player, shields);
+		//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a state for shields
+		gbc.setShield(player, shields);
 	}
 }
 
@@ -387,7 +392,7 @@ class QuestBidTask extends Task {
 		this.player = player;
 		this.min = min;
 		this.max = max;
-		
+
 	}
 	@Override
 	public void run() {
@@ -399,7 +404,7 @@ class QuestBidTask extends Task {
 		}else {
 			gbc.showEndTurn();
 			gbc.showDecline();
-//			//players can only drag over facedown pane.
+			//			//players can only drag over facedown pane.
 			gbc.removeStagePaneDragOver();
 			gbc.CURRENT_STATE = STATE.QUEST_BID;
 			gbc.bidSlider.setMin(min);
@@ -420,7 +425,7 @@ class DiscardQuestTask extends Task {
 	public DiscardQuestTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		
+
 	}
 	@Override
 	public void run() {
@@ -470,7 +475,19 @@ class PickTournamentTask extends Task {
 		gbc.removeStagePaneDragOver();
 		gbc.clearToast();
 		gbc.showToast("Select cards to use for the tournament");
-		
+
+	}
+}
+
+class RevealAllCards extends Task {
+	public RevealAllCards(GameBoardController gbc) {
+		super(gbc);
+	}
+
+	@Override
+	public void run() {
+		this.gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+		IntStream.range(0,this.gbc.playerManager.getNumPlayers()).forEach(i -> this.gbc.moveToFaceUpPane(i));
 	}
 }
 
@@ -517,7 +534,7 @@ public class Client implements Runnable {
 			client = new Socket(host, port);
 			writeStream = new PrintStream(client.getOutputStream());
 			readStream = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
+			ArrayList<DiscardFaceUpTask> toDiscard = new ArrayList<DiscardFaceUpTask>();
 			while(client.isConnected()) {
 				if(readStream.ready()) {
 					currentMessage = readStream.readLine();
@@ -530,7 +547,29 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.TURNNEXT.name())) {
 						TurnNextServer request = gson.fromJson(obj, TurnNextServer.class);
+						toDiscard.forEach(i -> Platform.runLater(i));
+						toDiscard.clear();
 						Platform.runLater(new TurnNextTask(gbc, request.player));
+						synchronized (this) {
+							try {
+								Platform.runLater(new Runnable(){
+									@Override
+									public void run(){
+										gbc.clearToast();
+										gbc.showToast("Player #: " + request.player + " turn");
+										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+										gbc.setButtonsInvisible();
+										gbc.endTurn.setVisible(true);
+										gbc.endTurn.setText("Start Turn");
+										gbc.CURRENT_STATE = STATE.CHILLING;
+									}
+								});
+								System.out.println("waiting here boysss");
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 					if(message.equals(MESSAGETYPES.SHOWMIDDLECARD.name())) {
 						MiddleCardServer request = gson.fromJson(obj, MiddleCardServer.class);
@@ -540,12 +579,12 @@ public class Client implements Runnable {
 						TournamentAcceptDeclineServer request = gson.fromJson(obj, TournamentAcceptDeclineServer.class);
 
 						Platform.runLater(new JoinTournamentTask(gbc, request.player));
-//						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
+						//						Platform.runLater(new ShowAcceptDeclineTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.PICKTOURNAMENT.name())) {
 						TournamentPickCardsServer request = gson.fromJson(obj, TournamentPickCardsServer.class);
 						Platform.runLater(new PickTournamentTask(gbc, request.player));
-//						Platform.runLater(new ShowEndTurn(gbc, request.player));
+						//						Platform.runLater(new ShowEndTurn(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.UPQUEST.name())) {
 						QuestUpServer request = gson.fromJson(obj, QuestUpServer.class);
@@ -558,10 +597,30 @@ public class Client implements Runnable {
 					if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
 						TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
 						Platform.runLater(new TournamentWonTask(gbc, request.player));
+						Platform.runLater(new RevealAllCards(gbc));
+						synchronized (this) {
+							try {
+								Platform.runLater(new Runnable(){
+									@Override
+									public void run(){
+										gbc.endTurn.setVisible(true);
+										gbc.endTurn.setText("Continue");
+										gbc.CURRENT_STATE = STATE.CHILLING;
+									}
+								});
+								System.out.println("waiting here boysss");
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 					/*
 					 * Dealing with Quest state
 					 */
+					if(message.equals(MESSAGETYPES.FACEUPCARDS.name())) {
+						Platform.runLater(new RevealAllCards(gbc));
+					}
 					if(message.equals(MESSAGETYPES.SPONSERQUEST.name())) {
 						QuestSponsorServer request = gson.fromJson(obj, QuestSponsorServer.class);
 						Platform.runLater(new QuestSponsorTask(gbc, request.player));
@@ -579,32 +638,33 @@ public class Client implements Runnable {
 						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
-//						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
+						//						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
 						FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);
-						
+
 						Platform.runLater(new FaceDownCardsTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.DISCARDFACEUP.name())) {
 						FaceUpDiscardServer request = gson.fromJson(obj, FaceUpDiscardServer.class);
-						
+
 						//Discard "Face Down" cards because that is where players play their cards.
-						Platform.runLater(new DiscardFaceDownTask(gbc, request.player, request.cardsDiscarded));
+						//Platform.runLater(new DiscardFaceDownTask(gbc, request.player, request.cardsDiscarded));
+						toDiscard.add(new DiscardFaceUpTask(gbc, request.player, request.cardsDiscarded));
 					}
 					if(message.equals(MESSAGETYPES.SHIELDCOUNT.name())) {
 						ShieldCountServer request = gson.fromJson(obj, ShieldCountServer.class);
-						
+
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new ShieldCountTask(gbc, request.player, request.shields));
 					}
 					if(message.equals(MESSAGETYPES.BIDQUEST.name())) {
 						QuestBidServer request = gson.fromJson(obj, QuestBidServer.class);
-						
+
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new QuestBidTask(gbc, request.player, request.minBidValue, request.maxBidValue));
 					}
 					if(message.equals(MESSAGETYPES.DISCARDQUEST.name())) {
 						QuestDiscardCardsServer request = gson.fromJson(obj, QuestDiscardCardsServer.class);
-						
+
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new DiscardQuestTask(gbc, request.player));
 					}
