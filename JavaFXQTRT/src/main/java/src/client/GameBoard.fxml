@@ -161,18 +161,14 @@
          </font>
       </Text>
       <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="372.0" majorTickUnit="1.0" max="13.0" minorTickCount="1" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />
-<<<<<<< Upstream, based on master
             <Pane layoutX="560.0" layoutY="307.0" prefHeight="58.0" prefWidth="827.0">
-=======
-      <Pane layoutX="560.0" layoutY="307.0" prefHeight="58.0" prefWidth="827.0">
->>>>>>> b0c82b2 basic toast for tasks
-         <children>
-            <Text fx:id="toast" fill="WHITE" layoutX="8.0" layoutY="-30.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="805.8034057617188">
-               <font>
-                  <Font name="High Tower Text" size="52.0" />
-               </font>
-            </Text>
-         </children>
-      </Pane>
+	         <children>
+	            <Text fx:id="toast" fill="WHITE" layoutX="8.0" layoutY="-30.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="805.8034057617188">
+	               <font>
+	                  <Font name="High Tower Text" size="52.0" />
+	               </font>
+	            </Text>
+	         </children>
+      		</Pane>
    </children>
 </AnchorPane>
