@@ -219,6 +219,11 @@ public class PlayerManager {
 	public void discardFromHand(Player player, String[] cards) {
 		player.removeCards(cards);
 	}
+	
+
+	public void discardFromHand(int player, String[] cards) {
+		discardFromHand(players[player], cards);
+	}
 
 	public void discardFaceUp(Player player) {
 		player.discardFaceUp();
@@ -243,4 +248,5 @@ public class PlayerManager {
 	public void setDiscarding(Player player, STATE testdiscard, int cardsToBid) {
 		player.setDiscardAmount(testdiscard, cardsToBid);
 	}
+
 }

@@ -6,7 +6,6 @@ import src.game_logic.DeckManager;
 import src.game_logic.StoryCard;
 import src.messages.QOTRTQueue;
 import src.messages.game.ContinueGameClient;
-import src.messages.game.TurnNextClient;
 import src.player.PlayerManager;
 import src.sequence.GameSequenceManager;
 import src.sequence.SequenceManager;
@@ -35,6 +34,7 @@ public class Game extends Thread{
 		pm.subscribe(pv);
 		bm.subscribe(pv);
 		pm.start();
+		actions.setPlayerManager(pm);
 
 		GameSequenceManager gsm = new GameSequenceManager();
 		while(true) {
