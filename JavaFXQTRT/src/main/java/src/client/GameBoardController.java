@@ -77,6 +77,7 @@ public class GameBoardController implements Initializable{
 	@FXML public ImageView shield2View;
 	@FXML public ImageView shield3View;
 	@FXML public ImageView shield4View;
+	public ImageView[] shieldViews= new ImageView[4];
 
 	//These panes are for hold each player's respective items, e.g hand, face up card, face down cards etc
 	//When rotating, we only rotate these panes.
@@ -157,6 +158,10 @@ public class GameBoardController implements Initializable{
 		playerRanks[1] = playerRank1;
 		playerRanks[2] = playerRank2;
 		playerRanks[3] = playerRank3;
+		shieldViews[0] = shield1View;
+		shieldViews[1] = shield2View;
+		shieldViews[2] = shield3View;
+		shieldViews[3] = shield4View;
 
 		stages[0] = pickStage0;
 		stages[1] = pickStage1;
@@ -640,22 +645,40 @@ public class GameBoardController implements Initializable{
 				playerManager.faceDownPlayerHand(i);
 			}
 		}
+		
 		playerManager.setCurrentPlayer(playerNum);
-
+		
+		//readjust the player pane's scale as well as the orientation of the rank/shield cards
+		for(int i = 0 ; i < handPanes.length; i++) {
+			if(i == playerNum) {
+				playerPanes[i].setScaleX(1);
+				playerPanes[i].setScaleY(1);
+				playerRanks[i].setRotate(0);
+				shieldViews[i].setRotate(0);
+			}else {
+				playerPanes[i].setScaleX(0.6);
+				playerPanes[i].setScaleY(0.6);
+				playerRanks[i].setRotate(180);
+				shieldViews[i].setRotate(180);
+			}
+		}
 	}
 
 	//This rotates the player's pane clockwise 90 degrees
 	private void rotatePlayerPosition() {
 		double posX3 = playerPanes[3].getLayoutX();
 		double posY3 = playerPanes[3].getLayoutY();	
+		double rotate3 = playerPanes[3].getRotate();
+		
 		for(int i = playerPanes.length-1 ; i >= 0 ; i--) {
 			int pos = i-1 < 0 ? 3 : i-1;
 			if(i == 0) {
 				playerPanes[i].relocate(posX3, posY3);
+				playerPanes[i].setRotate(rotate3);
 			}else {
 				playerPanes[i].relocate(playerPanes[pos].getLayoutX(), playerPanes[pos].getLayoutY());
+				playerPanes[i].setRotate(playerPanes[pos].getRotate());;
 			}
-			playerPanes[i].setRotate(playerPanes[i].getRotate() + 90);
 		}
 	}
 
