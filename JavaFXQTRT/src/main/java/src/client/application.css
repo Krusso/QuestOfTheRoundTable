@@ -2,6 +2,48 @@
 
 .root { -fx-font-size: 26px; }
 
+.mainbutton {
+	-fx-text-fill: white;
+	-fx-background-color: black;
+}
+
+.mainbutton:hover {
+    -fx-background-color: 
+        linear-gradient(from 0% 93% to 0% 100%, #84c3ff 0%, #386c9e 100%),
+        #386c9e,
+        #84c3ff,
+        radial-gradient(center 50% 50%, radius 100%, #84c3ff, #386c9e);
+}
+
+.slider {
+	-fx-font-size: 20;
+}
+
+.slider .axis { 
+	-fx-tick-label-fill: white;
+}
+
+.slider .track {
+	-fx-text-fill: white;
+	-fx-padding: 10;
+	-fx-body-color: #3a1701;
+	-fx-focus-color: #e5a472;
+	-fx-inner-border: #e5a472;
+	-fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-body-color;
+    -fx-background-insets: -1, 1, 2, -1.4, 2.6;
+    -fx-background-radius: 3, 2, 1, 4, 1;
+}
+
+.slider .thumb {
+	-fx-padding: 10;
+	-fx-body-color: #3a1701;
+	-fx-focus-color: #e5a472;
+	-fx-inner-border: #e5a472;
+	-fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-body-color;
+    -fx-background-insets: -1, 1, 2, -1.4, 2.6;
+    -fx-background-radius: 3, 2, 1, 4, 1;
+}
+
 .record-sales {
     -fx-padding: 8 15 15 15;
     -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
@@ -56,4 +98,16 @@
 
 #shiny-orange:pressed {
 	-fx-background-color: #ffe23f;
+}
+
+.playerButton {
+	-fx-background-color: black;
+}
+
+.accordion > .titled-pane {
+    -fx-padding: 0 0 2em 0;
+}
+
+.titled-pane > .title {
+	-fx-background-color: black;
 }

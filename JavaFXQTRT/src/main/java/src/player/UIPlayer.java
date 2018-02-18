@@ -33,7 +33,7 @@ public class UIPlayer extends Player{
 		return shields;
 	}
 	public void addShields(int s) {
-		shields += s;
+		shields = s;
 	}
 	public int faceDownLength() {
 		return faceDownDeckLength();

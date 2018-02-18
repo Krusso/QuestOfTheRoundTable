@@ -33,7 +33,7 @@ public class TournamentSequenceManager extends SequenceManager {
 				pm.setState(next, Player.STATE.NO);
 			}
 		}
-		
+
 		// determining if anyone joined
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		if(participants.size() == 0) {
@@ -46,14 +46,13 @@ public class TournamentSequenceManager extends SequenceManager {
 
 		players = participants.iterator();
 		questionPlayersTournament(players, pm, actions);
-		
+
+
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
 		players = participants.iterator();
-		while(players.hasNext()) {
-			pm.flipCards(players.next());	
-		}
-		
+		pm.flipCards(players);	
+
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		List<Player> winners = bpc.calculateHighest(participants);
 		if(winners.size() != 1) {
@@ -61,12 +60,10 @@ public class TournamentSequenceManager extends SequenceManager {
 			pm.discardWeapons(participants);
 			players = winners.iterator();
 			questionPlayersTournament(players, pm, actions);
-			
+
 			players = winners.iterator();
-			while(players.hasNext()) {
-				pm.flipCards(players.next());	
-			}
-			
+			pm.flipCards(players);
+
 			winners = bpc.calculateHighest(winners);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);

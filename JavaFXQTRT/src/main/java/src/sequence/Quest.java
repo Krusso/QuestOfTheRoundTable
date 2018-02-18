@@ -16,7 +16,7 @@ import java.util.Iterator;
 import src.player.BattlePointCalculator;
 
 public class Quest {
-	
+
 	public static enum TYPE {
 		FOE, TEST
 	}
@@ -33,7 +33,7 @@ public class Quest {
 		this.sponsor = sponsor;
 		this.quest = new ArrayList<List<Card>>();
 	}
-	
+
 	// verification for quest stages will be done on client side
 	public void setUpQuest(QOTRTQueue actions, PlayerManager pm) {
 		while(quest.size()<stages) {
@@ -61,7 +61,7 @@ public class Quest {
 			pm.questDown(sponsor, quest);
 		}
 	}
-	
+
 	public TYPE currentStageType() {
 		for(Card card : quest.get(currentStage)) {
 			if (card instanceof FoeCard) {
@@ -72,11 +72,11 @@ public class Quest {
 		}
 		return null;
 	}
-	
+
 	public void advanceStage() { this.currentStage++; }
 	public int getCurrentStage() { return this.currentStage; }
 	public int getNumStages() { return this.stages; }
-	
+
 	public int getNumCards() {
 		int count = 0;
 		for(List<Card> stage : quest) {
@@ -84,7 +84,7 @@ public class Quest {
 		}
 		return count;
 	}
-	
+
 	public int getFoeBP() {
 		int fbp = 0;
 		for(Card card : quest.get(currentStage)) {
@@ -99,13 +99,11 @@ public class Quest {
 		}
 		return fbp;
 	}
-	
+
 	public void battleFoe(List<Player> participants, PlayerManager pm) {
 		Iterator<Player> players = participants.iterator();
-		while(players.hasNext()) {
-			pm.flipCards(players.next());	
-		}
-		
+		pm.flipCards(players);	
+
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		bpc.getFoeWinners(participants, getFoeBP());
 	}
