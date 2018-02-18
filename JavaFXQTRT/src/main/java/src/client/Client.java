@@ -192,6 +192,8 @@ class TournamentWonTask extends Task{
 		gbc.showToast(display);
 		//		gbc.toast.setText(display);
 		//		gbc.toast.setVisible(true);
+		//reset merlin power
+		gbc.resetMerlinUse();
 
 	}
 }
