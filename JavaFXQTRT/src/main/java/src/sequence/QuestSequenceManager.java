@@ -67,23 +67,20 @@ public class QuestSequenceManager extends SequenceManager {
 
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		List<Player> winners = new ArrayList<Player>(participants);
-		
+
 		if(participants.size() != 0) {
 			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
 				pm.drawCards(winners, 1);
 				if (quest.currentStageType() == Quest.TYPE.FOE) {
 					players = winners.iterator();
 					// some constraints when choosing cards... can be done on client side c:
-					System.out.println("Winners: " + winners);
 					while(players.hasNext()) {
 						Player pick = players.next();
-						System.out.println("--------- setting player: " + pick.getID());
 						pm.setPlayer(pick);
 						pm.setState(pick, Player.STATE.QUESTPICKING);
 						QuestPickCardsClient qpcc = actions.take(QuestPickCardsClient.class);
 						pm.currentFaceDown(qpcc.cards); 
 					}
-					System.out.println("here-------");
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					quest.battleFoe(winners, pm);
 					pm.discardWeapons(participants);
@@ -104,13 +101,15 @@ public class QuestSequenceManager extends SequenceManager {
 					winners.add(bidWinner.player);
 				}
 				quest.advanceStage();
+				pm.passStage(winners);
 			}
+			pm.passQuest(winners);
 		}
-			if(winners.size() > 0) {
-				pm.changeShields(winners, quest.getNumStages());
-			}
-			
-			// TODO: discard all cards from participants except Allies
-			pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
+		if(winners.size() > 0) {
+			pm.changeShields(winners, quest.getNumStages());
 		}
+
+		// TODO: discard all cards from participants except Allies
+		pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
 	}
+}

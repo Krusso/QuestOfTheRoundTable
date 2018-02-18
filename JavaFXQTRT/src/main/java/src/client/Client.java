@@ -8,7 +8,10 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -34,6 +37,8 @@ import src.messages.hand.FaceUpDiscardServer;
 import src.messages.quest.QuestBidServer;
 import src.messages.quest.QuestDiscardCardsServer;
 import src.messages.quest.QuestJoinServer;
+import src.messages.quest.QuestPassAllServer;
+import src.messages.quest.QuestPassStageServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
 import src.messages.quest.QuestSponsorServer;
@@ -107,6 +112,8 @@ class TurnNextTask extends Task{
 	//Msg should be a string with a number which indicates which players has the turn
 	@Override
 	public void run() {
+		gbc.removeDraggable();
+		gbc.removeDraggableFaceDown();
 		gbc.setPlayerTurn(player);
 		gbc.showPlayerHand(player);
 
@@ -360,7 +367,6 @@ class DiscardFaceUpTask extends Task {
 		super(gbc);
 		this.player = player;
 		this.cardsToDiscard = cardsDiscarded;
-
 	}
 	@Override
 	public void run() {
@@ -494,6 +500,7 @@ class RevealAllCards extends Task {
 	@Override
 	public void run() {
 		this.gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+		this.gbc.removeDraggable();
 		IntStream.range(0,this.gbc.playerManager.getNumPlayers()).forEach(i -> this.gbc.moveToFaceUpPane(i));
 	}
 }
@@ -571,7 +578,6 @@ public class Client implements Runnable {
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
-								System.out.println("waiting here boysss");
 								this.wait();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
@@ -616,7 +622,6 @@ public class Client implements Runnable {
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
-								System.out.println("waiting here boysss");
 								this.wait();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
@@ -626,7 +631,9 @@ public class Client implements Runnable {
 					/*
 					 * Dealing with Quest state
 					 */
-					if(message.equals(MESSAGETYPES.FACEUPCARDS.name())) {
+					if(message.equals(MESSAGETYPES.PASSALL.name())) {
+						QuestPassAllServer qpss = gson.fromJson(obj, QuestPassAllServer.class);
+						int[] players = qpss.players;
 						Platform.runLater(new RevealAllCards(gbc));
 						synchronized (this) {
 							try {
@@ -635,7 +642,44 @@ public class Client implements Runnable {
 									public void run(){
 										gbc.clearToast();
 										// TODO fill this in
-										gbc.showToast("Players #:... survived");
+										if(players.length == 1) {
+											gbc.showToast("Player #: " + players[0] + " passed the quest");
+										} else if (players.length == 0) {
+											gbc.showToast("No players passed the quest");
+										} else {
+											gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> i + "").collect(Collectors.joining(",")) + " passed the quest");
+										}
+										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+										gbc.setButtonsInvisible();
+										gbc.endTurn.setVisible(true);
+										gbc.endTurn.setText("Continue");
+										gbc.CURRENT_STATE = STATE.CHILLING;
+									}
+								});
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					if(message.equals(MESSAGETYPES.PASSSTAGE.name())) {
+						QuestPassStageServer qpss = gson.fromJson(obj, QuestPassStageServer.class);
+						int[] players = qpss.players;
+						Platform.runLater(new RevealAllCards(gbc));
+						synchronized (this) {
+							try {
+								Platform.runLater(new Runnable(){
+									@Override
+									public void run(){
+										gbc.clearToast();
+										// TODO fill this in
+										if(players.length == 1) {
+											gbc.showToast("Player #: " + players[0] + " passed the stage");
+										} else if (players.length == 0) {
+											gbc.showToast("No players passed the stage");
+										} else {
+											gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> i + "").collect(Collectors.joining(",")) + " passed");
+										}
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
 										gbc.endTurn.setVisible(true);

@@ -2,12 +2,15 @@ package src.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.Card;
 import src.messages.game.TurnNextServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.hand.ShowHandServer;
+import src.messages.quest.QuestPassAllServer;
+import src.messages.quest.QuestPassStageServer;
 import src.player.Player;
 import src.socket.OutputController;
 
@@ -29,6 +32,14 @@ public class PlayersView {
 
 	public void showFaceUp(Iterator<Player> round) {
 		output.sendMessage(new FaceUpServer(round));
+	}
+
+	public void passStage(List<Player> winners) {
+		output.sendMessage(new QuestPassStageServer(winners));
+	}
+
+	public void passQuest(List<Player> winners) {
+		output.sendMessage(new QuestPassAllServer(winners));
 	}
 
 }
