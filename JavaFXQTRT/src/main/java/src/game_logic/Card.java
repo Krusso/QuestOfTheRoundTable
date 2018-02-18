@@ -119,7 +119,7 @@ public abstract class Card {
             	System.out.println(event.getX() + " " + event.getY());
             	System.out.println(event.getScreenX()+ " " + event.getScreenY());
             	Point2D p = new Point2D(event.getSceneX(), event.getSceneY());
-            	System.out.println("id:" + id );
+            	System.out.println("Moving Card:" + name +" id:" + id );
             	gbc.putIntoPane(p, id);
             	event.consume();
             }
