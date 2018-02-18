@@ -357,6 +357,7 @@ class UpQuestTask extends Task {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
 //		gbc.flipStageCards(this.stage, true);
 		gbc.setStageCardVisibility(true, stage);
+		gbc.repositionStageCards(stage);
 	}
 }
 class DiscardFaceUpTask extends Task {

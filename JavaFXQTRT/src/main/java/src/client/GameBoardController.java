@@ -95,7 +95,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerHand2;
 	@FXML private Pane playerHand3;
 	@FXML private Pane[] handPanes = new Pane[4];
-	
+
 	@FXML private Rectangle pRec0, pRec1, pRec2, pRec3;
 
 	//The panes that govern the player's facedown cards
@@ -126,7 +126,7 @@ public class GameBoardController implements Initializable{
 	@FXML private ImageView stage3View;
 	@FXML private ImageView stage4View;
 	private ImageView[] stageViews = new ImageView[5];
-	
+
 	/*Panes for picking stages (maximum number of stages is 5)*/
 	@FXML private Pane pickStage0;
 	@FXML private Pane pickStage1;
@@ -187,21 +187,21 @@ public class GameBoardController implements Initializable{
 		pRec1.setVisible(false);
 		pRec2.setVisible(false);
 		pRec3.setVisible(false);
-		
+
 		stageViews[0] = stage0View;
 		stageViews[1] = stage1View;
 		stageViews[2] = stage2View;
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
 	}
-	
+
 	public void clearHighlight() {
 		pRec0.setVisible(false);
 		pRec1.setVisible(false);
 		pRec2.setVisible(false);
 		pRec3.setVisible(false);
 	}
-	
+
 	public void highlightFaceUp(int p) {
 		if(p==0) { pRec0.setVisible(true); }
 		if(p==1) { pRec1.setVisible(true); }
@@ -306,6 +306,33 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	public void repositionStageCards(int stageNum) {
+		//reposition all the cards in the stages
+		ObservableList<Node> cards = stages[stageNum].getChildren();
+		double handPaneHeight = stages[stageNum].getHeight();
+		for(int j = 0 ; j < cards.size(); j++) {
+			if(cards.get(j) instanceof ImageView) {
+				ImageView img = (ImageView) cards.get(j);
+				img.setX(0);
+				img.setY(handPaneHeight/cards.size() * j);
+			}
+		}
+	}
+
+	public void stackStageCards() {
+		//reposition all the cards in the stages
+		for(int i = 0 ; i < stages.length; i++) {
+			ObservableList<Node> cards = stages[i].getChildren();
+			for(int j = 0 ; j < cards.size(); j++) {
+				if(cards.get(j) instanceof ImageView) {
+					ImageView img = (ImageView) cards.get(j);
+					img.setX(0);
+					img.setY(0);
+				}
+			}
+		}
+	}
+
 
 	public void repositionFaceDownCards(int p) {
 		reposition(faceDownPanes[p].getChildren(), faceDownPanes[p].getWidth());
@@ -492,10 +519,15 @@ public class GameBoardController implements Initializable{
 		card.childOf = to;
 
 		repositionCardsInHand(playerManager.getCurrentPlayer());
-		repositionStageCards();
 		repositionFaceDownCards(playerManager.getCurrentPlayer());
+
+		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			repositionStageCards();
+		}
+
 		repositionFaceUpCards(playerManager.getCurrentPlayer());
 		repositionDiscardPile();
+
 
 		//reset the original position of this card cards
 		card.setOriginalPosition(card.getImageView().getX(), card.getImageView().getY());
@@ -665,7 +697,7 @@ public class GameBoardController implements Initializable{
 				playerManager.faceDownPlayerHand(i);
 			}
 		}
-		
+
 		playerManager.setCurrentPlayer(playerNum);
 
 		//after we set the perspective to this player number, check if the player has over the card hand limit
@@ -674,7 +706,6 @@ public class GameBoardController implements Initializable{
 			setDiscardVisibility(true);
 		}
 
-		
 		//readjust the player pane's scale as well as the orientation of the rank/shield cards
 		for(int i = 0 ; i < handPanes.length; i++) {
 			if(i == playerNum) {
@@ -691,12 +722,13 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
+
 	//This rotates the player's pane clockwise 90 degrees
 	private void rotatePlayerPosition() {
 		double posX3 = playerPanes[3].getLayoutX();
 		double posY3 = playerPanes[3].getLayoutY();	
 		double rotate3 = playerPanes[3].getRotate();
-		
+
 		for(int i = playerPanes.length-1 ; i >= 0 ; i--) {
 			int pos = i-1 < 0 ? 3 : i-1;
 			if(i == 0) {
@@ -728,7 +760,7 @@ public class GameBoardController implements Initializable{
 	public void setClient(Client c) {
 		this.c = c;
 	}
-	
+
 	public void setQuestStageBanners(int num) {
 		try {
 			File f = new File(resDir + "/Red_Banner_Clipart_Picture.png");
@@ -850,7 +882,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
-	
+
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
@@ -879,7 +911,9 @@ public class GameBoardController implements Initializable{
 				//find cards to discard in fdc  and the image view from the pane
 				if(fdc.get(i).getName().equalsIgnoreCase(n)) {
 					faceUpPanes[p].getChildren().remove(i);
+
 					fdc.remove(i);
+					System.out.println(fdc + " " + faceDownPanes[p].getChildren().size());
 				}
 			}
 		}
@@ -949,6 +983,7 @@ public class GameBoardController implements Initializable{
 							}
 							c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
 							setStageCardVisibility(false, i);
+							stackStageCards();
 						}
 					}
 				}else {
