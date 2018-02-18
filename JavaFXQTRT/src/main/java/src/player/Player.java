@@ -148,7 +148,7 @@ public class Player {
 	
 	public void flipStage(int stage) {
 		questUp.add(questDown.get(stage));
-		if(pv != null) pv.updateQuestUp(questDown.get(stage), stage, ID);
+		if(pv != null) pv.updateQuestUp(questDown.get(stage), ID, stage);
 	}
 
 	public RANKS getRank() {
@@ -157,7 +157,6 @@ public class Player {
 
 	public void flipCards() {
 		faceUp.addCards(faceDown.drawTopCards(faceDown.size()));
-		if(pv != null) pv.updateFaceUp(faceUp, ID);
 	}
 
 	public final AdventureDeck getFaceUp() {

@@ -43,7 +43,9 @@ public abstract class Message {
 		WINTOURNAMENT, 
 		DOWNQUEST, 
 		SHIELDCOUNT, 
-		DISCARDFACEUP
-
+		DISCARDFACEUP, 
+		DISCARDHANDFULL, 
+		PASSSTAGE, 
+		PASSALL
 	};
 }

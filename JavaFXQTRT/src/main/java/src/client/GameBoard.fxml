@@ -48,6 +48,7 @@
                   </Text>
                   <VBox layoutX="897.0" layoutY="100.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
+                        <Button fx:id="discard" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Discard" textFill="WHITE" />
 
                         <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Continue" textFill="WHITE">
                            <font>
@@ -60,6 +61,7 @@
 
                      </children>
                   </VBox>
+                  <Pane fx:id="discardPane" layoutX="762.0" prefHeight="400.0" prefWidth="125.0" />
                </children>
             </Pane>
          </children>
