@@ -7,6 +7,7 @@ import src.game_logic.Rank;
 import src.player.UIPlayer;
 
 public class UIPlayerManager {
+	public final int MAX_HAND_SIZE = 12;
 	
 	public UIPlayer[] players;
 	private int currentPlayer;
@@ -153,5 +154,12 @@ public class UIPlayerManager {
 			}
 		}
 		return null;
+	}
+	
+	public boolean isHandFull(int p) {
+		if(players[p].getPlayerHandAsList().size() > MAX_HAND_SIZE) {
+			return true;
+		}
+		return false;
 	}
 }

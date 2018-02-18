@@ -355,7 +355,6 @@ class DiscardFaceDownTask extends Task {
 		super(gbc);
 		this.player = player;
 		this.cardsToDiscard = cardsDiscarded;
-		
 	}
 	@Override
 	public void run() {
