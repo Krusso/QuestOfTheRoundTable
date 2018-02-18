@@ -174,11 +174,11 @@ public abstract class Card {
 	 */
 	public SequentialTransition flipUp() {
         // first 90  -> show back
-        RotateTransition rotator1 = createRotator(0, 90);
+        RotateTransition rotator1 = createRotator(180, 270);
 
         // from 90 to 180 show front
         rotator1.setOnFinished(evt -> this.faceUp());
-        RotateTransition rotator2 = createRotator(90, 180);
+        RotateTransition rotator2 = createRotator(270, 360);
 
         SequentialTransition rotator = new SequentialTransition(rotator1, rotator2);
         rotator.setCycleCount(1);
@@ -200,7 +200,7 @@ public abstract class Card {
 	
 	private RotateTransition createRotator(double fromAngle, double toAngle) {
         // animation length proportional to the rotation angle
-        RotateTransition rotator = new RotateTransition(Duration.millis(Math.abs(1000 * (fromAngle - toAngle) / 360)), imgView);
+        RotateTransition rotator = new RotateTransition(Duration.millis(Math.abs(1000 * (fromAngle - toAngle) / 360) * 5), imgView);
         rotator.setAxis(Rotate.Y_AXIS);
         rotator.setFromAngle(fromAngle);
         rotator.setToAngle(toAngle);

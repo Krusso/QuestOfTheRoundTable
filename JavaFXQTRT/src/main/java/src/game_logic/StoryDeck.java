@@ -5,7 +5,8 @@ public class StoryDeck extends Deck<StoryCard> {
 	public StoryDeck() {
 		super();
 	}
-	
+
+
 	void populate() {
 		addCard(new QuestCard("Search for the Holy Grail",5,"All"),1);
 		addCard(new QuestCard("Test of the Green Knight",4,"Green Knight"),1);
@@ -17,6 +18,7 @@ public class StoryDeck extends Deck<StoryCard> {
 		addCard(new QuestCard("Slay the Dragon",3,"Dragon"),1);
 		addCard(new QuestCard("Boar Hunt",2,"Boar"),2);
 		addCard(new QuestCard("Repel the Saxon Raiders",2,"All Saxons"),2);
+
 		
 //		addCard(new TournamentCard("Tournament at Camelot",3),1);
 //		addCard(new TournamentCard("Tournament at Orkney",2),1);
@@ -32,6 +34,13 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Slay the Dragon",3,"Dragon"),1);
 //		addCard(new QuestCard("Boar Hunt",2,"Boar"),2);
 //		addCard(new QuestCard("Repel the Saxon Raiders",2,"All Saxons"),2);
+
+//		
+//		addCard(new TournamentCard("Tournament at Camelot",3),1);
+//		addCard(new TournamentCard("Tournament at Orkney",2),1);
+//		addCard(new TournamentCard("Tournament at Tintagel",1),1);
+//		addCard(new TournamentCard("Tournament at York",0),1);
+
 		
 //		addCard(new EventCard("King's Recognition"),2);
 //		addCard(new EventCard("Queen's Favor"),2);
