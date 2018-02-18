@@ -86,11 +86,6 @@ public class BattlePointCalculator {
 				filter(i -> i.getType() == type).
 				collect(Collectors.toList());
 	}
-	
-	
-	private int specialBp(AdventureCard p, String questOrTournamentCard) {
-		
-	}
 
 	public List<AdventureCard> uniqueListOfTypeDecreasingBp(Player player, TYPE type, String questOrTournamentCard){
 		return this.listOfTypeDecreasingBp(player, type, questOrTournamentCard).stream().
