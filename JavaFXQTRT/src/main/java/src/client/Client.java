@@ -268,6 +268,7 @@ class QuestPickStagesTask extends Task {
 		gbc.addDraggable();
 		gbc.showEndTurn();
 		gbc.addStagePaneListener();
+		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
 	}
@@ -309,6 +310,8 @@ class QuestPickCardsTask extends Task {
 		gbc.showEndTurn();
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.clearHighlight();
+		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select Cards for current stage");
 	}
@@ -340,7 +343,8 @@ class UpQuestTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
-		gbc.flipStageCards(this.stage, true);
+//		gbc.flipStageCards(this.stage, true);
+		gbc.setStageCardVisibility(true, stage);
 	}
 }
 class DiscardFaceDownTask extends Task {
@@ -372,6 +376,7 @@ class ShieldCountTask extends Task {
 	@Override
 	public void run() {
 //		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a state for shields
+		System.out.println("player: " + player );
 		gbc.addShields(player, shields);
 	}
 }
@@ -467,6 +472,8 @@ class PickTournamentTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.clearHighlight();
+		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select cards to use for the tournament");
 		
