@@ -44,6 +44,8 @@ public abstract class Message {
 		DOWNQUEST, 
 		SHIELDCOUNT, 
 		DISCARDFACEUP, 
-		DISCARDHANDFULL
+		DISCARDHANDFULL, 
+		PASSSTAGE, 
+		PASSALL
 	};
 }

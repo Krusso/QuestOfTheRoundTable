@@ -55,7 +55,11 @@ public class Game extends Thread{
 			}
 
 			// wait until client is ready for the next turn
-			actions.take(ContinueGameClient.class);
+			//actions.take(ContinueGameClient.class);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
 		}
 
 	}
