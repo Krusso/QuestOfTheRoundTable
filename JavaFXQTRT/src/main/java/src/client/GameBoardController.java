@@ -93,7 +93,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerHand3;
 	@FXML private Pane[] handPanes = new Pane[4];
 	
-	@FXML private Rectangle pRec0, pRec1, pRec2, pRec3;
+	@FXML private Rectangle , pRec1, pRec2, pRec3;
 
 	//The panes that govern the player's facedown cards
 	@FXML private Pane playerFaceDown0;
@@ -685,7 +685,7 @@ public class GameBoardController implements Initializable{
 
 	public void setPlayerTurn(int p) {
 		setPlayerPerspectiveTo(p);
-		this.playerNumber.setText("#" + p);
+		this.playerNumber.setText("Player " + (p+1));
 	}
 
 	public void setStoryCard(StoryCard sc) {

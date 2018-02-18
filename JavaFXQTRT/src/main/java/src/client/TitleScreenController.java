@@ -88,7 +88,7 @@ public class TitleScreenController implements Initializable{
 	
 	// hardcode is better than no code c:
 	@FXML private void nextShield1(ActionEvent e) throws IOException {
-		playerShield1 = (playerShield1 + 1) % 9;
+		playerShield1 = (playerShield1 + 1) % shieldImages.length;
 		if(playerShield1 == 0) playerShield1++;
 		// mkay i fixed it so we only load on init file I/O is 
 		// expensive bois c:
@@ -100,7 +100,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void nextShield2(ActionEvent e) throws IOException {
-		playerShield2 = (playerShield2 + 1) % 9;
+		playerShield2 = (playerShield2 + 1) % shieldImages.length;
 		if(playerShield2 == 0) playerShield1++;
 		// mkay i fixed it so we only load on init file I/O is 
 		// expensive bois c:
@@ -112,7 +112,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void nextShield3(ActionEvent e) throws IOException {
-		playerShield3 = (playerShield3 + 1) % 9;
+		playerShield3 = (playerShield3 + 1) % shieldImages.length;
 		if(playerShield3 == 0) playerShield3++;
 		// mkay i fixed it so we only load on init file I/O is 
 		// expensive bois c:
@@ -124,7 +124,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void nextShield4(ActionEvent e) throws IOException {
-		playerShield4 = (playerShield4 + 1) % 9;
+		playerShield4 = (playerShield4 + 1) % shieldImages.length;
 		if(playerShield4 == 0) playerShield4++;
 		// mkay i fixed it so we only load on init file I/O is 
 		// expensive bois c:
@@ -136,7 +136,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void prevShield1(ActionEvent e) throws IOException {
-		if (playerShield1 == 0) { playerShield1 = 8; } else { playerShield1 -= 1; }
+		if (playerShield1 == 0) { playerShield1 = shieldImages.length-1; } else { playerShield1 -= 1; }
 		try {
 			shieldView1.setImage(shieldImages[playerShield1]);
 		} catch (Exception ex) {
@@ -145,7 +145,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void prevShield2(ActionEvent e) throws IOException {
-		if (playerShield2 == 0) { playerShield2 = 8; } else { playerShield2 -= 1; }
+		if (playerShield2 == 0) { playerShield2 = shieldImages.length-1; } else { playerShield2 -= 1; }
 		try {
 			shieldView2.setImage(shieldImages[playerShield2]);
 		} catch (Exception ex) {
@@ -154,7 +154,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void prevShield3(ActionEvent e) throws IOException {
-		if (playerShield3 == 0) { playerShield3 = 8; } else { playerShield3 -= 1; }
+		if (playerShield3 == 0) { playerShield3 = shieldImages.length-1; } else { playerShield3 -= 1; }
 		try {
 			shieldView3.setImage(shieldImages[playerShield3]);
 		} catch (Exception ex) {
@@ -163,7 +163,7 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	@FXML private void prevShield4(ActionEvent e) throws IOException {
-		if (playerShield4 == 0) { playerShield4 = 8; } else { playerShield4 -= 1; }
+		if (playerShield4 == 0) { playerShield4 = shieldImages.length-1; } else { playerShield4 -= 1; }
 		try {
 			shieldView4.setImage(shieldImages[playerShield4]);
 		} catch (Exception ex) {
@@ -239,8 +239,8 @@ public class TitleScreenController implements Initializable{
 		for(int i=0; i<players.length;i++) {
 			players[i] = "";
 		}
-		shieldImages = new Image[9];
-		for(int i=1; i<=9; i++) {
+		shieldImages = new Image[4];
+		for(int i=1; i<=shieldImages.length; i++) {
 			try {
 				File f = new File("src/main/resources/S"+i+".png");
 				Image shieldImg = new Image (new FileInputStream(f));
