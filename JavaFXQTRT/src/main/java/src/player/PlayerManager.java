@@ -31,7 +31,7 @@ public class PlayerManager {
 	private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
 
-	private Player[] players;
+	public Player[] players;
 
 	public PlayerManager(int numPlayers, DeckManager dm) {
 		this.players = new Player[numPlayers];
@@ -63,8 +63,8 @@ public class PlayerManager {
 			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 			cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
-			//cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-			cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
 			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 			//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));

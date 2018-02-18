@@ -31,6 +31,7 @@ import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
+import src.messages.game.CalculatePlayerClient;
 import src.messages.game.ContinueGameClient;
 import src.messages.quest.QuestBidClient;
 import src.messages.quest.QuestDiscardCardsClient;
@@ -357,7 +358,6 @@ public class GameBoardController implements Initializable{
 	}
 	
 	private void repositionDiscardPile() {
-		ArrayList<AdventureCard> currHand = discardPile;
 		ObservableList<Node> cards = discardPane.getChildren();
 		double height = discardPane.getHeight();
 
@@ -439,7 +439,6 @@ public class GameBoardController implements Initializable{
 	 */
 	public void putIntoPane(Point2D point, int id) {
 		int cPlayer = playerManager.getCurrentPlayer();
-		int idx = playerManager.getCardIndexByID(cPlayer, id);
 		ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(cPlayer);
 		
 		//Find where this card is on the game board (it must be either in player hand, face down pane, discard pile or stage)
@@ -482,6 +481,11 @@ public class GameBoardController implements Initializable{
 			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(card);
+				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck());
+				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
+				c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
 			}
 		}
 		//if the current player has too many cards, we can allow him to play cards into the discard pile
@@ -514,7 +518,6 @@ public class GameBoardController implements Initializable{
 		to.getChildren().add(card.getImageView());
 		toAdd.add(card);
 
-		System.out.println("to: " + to);
 		System.out.println("toAdd" + toAdd);
 		card.childOf = to;
 

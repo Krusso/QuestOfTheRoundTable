@@ -7,9 +7,12 @@ import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 import src.game_logic.AdventureCard;
-import src.game_logic.AdventureDeck;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.AdventureDeck;
+import src.game_logic.Card;
+import src.game_logic.QuestCard;
 import src.game_logic.Rank.RANKS;
+import src.game_logic.StoryCard;
 
 public class BattlePointCalculator {
 
@@ -19,6 +22,26 @@ public class BattlePointCalculator {
 		this.pm = pm;
 	}
 
+	public int calculatePoints(Player player, boolean iseultExists) {
+		int score = 0;
+		RANKS rank = player.getRank();
+		if(rank == RANKS.SQUIRE) {
+			score += 5;
+		} else if(rank == RANKS.KNIGHT) {
+			score += 10;
+		} else {
+			score += 20;
+		}
+
+		if(player.tristan && iseultExists) {
+			score += 10;
+		}
+
+		AdventureDeck cards = player.getFaceUp();
+		score += cards.getBP();
+		return score;
+	}
+	
 	public ArrayList<Integer> calculatePoints(List<Player> participants){
 		ArrayList<Integer> scores = new ArrayList<Integer>();
 		participants.forEach(player -> {
@@ -79,18 +102,81 @@ public class BattlePointCalculator {
 		return score;
 	}
 
-	public List<AdventureCard> listOfTypeDecreasingBp(Player player, TYPE type, String questOrTournamentCard){
-		// p1 and p2 being flipped is not a typo :) 
+	public List<AdventureCard> listOfTypeDecreasingBp(Player player, TYPE type, QuestCard card, Boolean othersHaveIseult){
+		
+		for(AdventureCard c: player.hand.getDeck()) {
+			if(c.getName().equals("Queen Iseult")) othersHaveIseult = true;
+		}
+		
+		// p1 and p2 being flipped is not a typo :)
+		final boolean foundIseult1 = othersHaveIseult;
 		return player.hand.getDeck().stream().
-				sorted((p2,p1) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
+				sorted((p2,p1) -> Integer.compare(getPoints(p1, foundIseult1, card), getPoints(p2, foundIseult1, card))).
 				filter(i -> i.getType() == type).
 				collect(Collectors.toList());
 	}
+	
+	public int getPoints(AdventureCard c, Boolean foundIseult, QuestCard card) {
+		if(card != null && c.checkIfNamed(card.getFoe())) {
+			return c.getNamedBattlePoints();
+		} else if(c.getName().equals("Sir Tristan") && foundIseult) {
+			return c.getNamedBattlePoints();
+		}
+		
+		return c.getBattlePoints();
+	}
 
-	public List<AdventureCard> uniqueListOfTypeDecreasingBp(Player player, TYPE type, String questOrTournamentCard){
-		return this.listOfTypeDecreasingBp(player, type, questOrTournamentCard).stream().
+	public List<AdventureCard> uniqueListOfTypeDecreasingBp(Player player, TYPE type, QuestCard questCard, Boolean othersHaveIseult){
+		return this.listOfTypeDecreasingBp(player, type, questCard, othersHaveIseult).stream().
 				map(i -> i.getName()).distinct().
 				map(i -> player.hand.findCardByName(i)).
 				collect(Collectors.toList());
 	}
+
+	public int calculatePlayer(int player, String[] cards, StoryCard storyCard) {
+		Player p = pm.players[player];
+		int score = 0;
+		RANKS rank = p.getRank();
+		if(rank == RANKS.SQUIRE) {
+			score += 5;
+		} else if(rank == RANKS.KNIGHT) {
+			score += 10;
+		} else {
+			score += 20;
+		}
+		if(storyCard.getType() != src.game_logic.StoryCard.TYPE.QUEST) {
+			return 0;
+		}
+
+		boolean foundIseult = false;
+		Iterator<Player> players = pm.round();
+		while(players.hasNext()) {
+			if(players.next().iseult == true) foundIseult = true;
+		}
+		
+		for(String c: cards) {
+			AdventureCard card = p.getFaceUp().findCardByName(c);
+			if(card == null) {
+				card = p.hand.findCardByName(c);
+			}
+
+			if(card.checkIfNamed(((QuestCard) storyCard).getFoe())) {
+				score += card.getNamedBattlePoints();
+			} else {
+				score += card.getBattlePoints();
+			}
+			
+			if(c.equals("Queen Iseult")) {
+				foundIseult = true;
+			}
+		}
+		
+		for(String c: cards) {
+			if(c.equals("Sir Tristan") && foundIseult) {
+				score += 10;
+			}
+		}
+		return score;
+	}
+
 }

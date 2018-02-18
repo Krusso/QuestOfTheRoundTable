@@ -1,23 +1,32 @@
 package src.player;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-
+import org.junit.Before;
 import org.junit.Test;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AllyCard;
 import src.game_logic.WeaponCard;
-import src.game_logic.AdventureCard.TYPE;
 
 public class TestBattlePointCalculator {
 	
+	PlayerManager pm;
+	Player p1;
+	ArrayList<AdventureCard> cards;
+	@Before
+	public void before() {
+		pm = new PlayerManager(1, null);
+		p1 = new Player(0);
+		pm.players[0] = p1;
+		cards = new ArrayList<AdventureCard>();
+		pm.nextTurn();
+	}
+	
 	@Test
 	public void testTristanIseult() {
-		Player p1 = new Player(0);
-		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
 		p1.addCards(cards);
@@ -25,14 +34,12 @@ public class TestBattlePointCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		ArrayList<Integer> scores = new BattlePointCalculator().calculatePoints(participants);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants);
 		assertEquals(25,scores.get(0).intValue());
 	}
 	
 	@Test
 	public void testAllies() {
-		Player p1 = new Player(0);
-		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Sir Pellinore",10,10,0,4, TYPE.ALLIES));
@@ -41,17 +48,24 @@ public class TestBattlePointCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		ArrayList<Integer> scores = new BattlePointCalculator().calculatePoints(participants);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants);
 		assertEquals(40,scores.get(0).intValue());
 	}
 	
 	@Test
 	public void testWeaponCalculations() {
+		pm = new PlayerManager(5, null);
 		Player p1 = new Player(0);
 		Player p2 = new Player(1);
-		Player p3 = new Player(3);
-		Player p4 = new Player(4);
-		Player p5 = new Player(5);
+		Player p3 = new Player(2);
+		Player p4 = new Player(3);
+		Player p5 = new Player(4);
+		pm.players[0] = p1;
+		pm.players[1] = p2;
+		pm.players[2] = p3;
+		pm.players[3] = p4;
+		pm.players[4] = p5;
+		pm.nextTurn();
 		
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -84,7 +98,7 @@ public class TestBattlePointCalculator {
 		participants.add(p3);
 		participants.add(p4);
 		participants.add(p5);
-		ArrayList<Integer> scores = new BattlePointCalculator().calculatePoints(participants);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants);
 		assertEquals(95,scores.get(0).intValue());
 		assertEquals(55,scores.get(1).intValue());
 		assertEquals(70,scores.get(2).intValue());

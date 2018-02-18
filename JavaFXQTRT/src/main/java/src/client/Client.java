@@ -28,6 +28,7 @@ import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.CalculatePlayerServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
@@ -162,15 +163,17 @@ class QuestSponsorTask extends Task {
 }
 
 class TournamentWonTask extends Task{
-	private int player;
-	public TournamentWonTask(GameBoardController gbc, int player) {
+	private int[] player;
+	public TournamentWonTask(GameBoardController gbc, int[] players) {
 		super(gbc);
-		this.player = player;
+		this.player = players;
 	}
 
 	@Override
 	public void run() {
-		winners[player] = true;
+		for(int i: player) {
+			winners[i] = true;
+		}
 
 		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
@@ -493,6 +496,23 @@ class PickTournamentTask extends Task {
 	}
 }
 
+class UpdateBattlePointTask extends Task {
+	int player;
+	int points;
+	public UpdateBattlePointTask(GameBoardController gbc, int player, int points) {
+		super(gbc);
+		this.player = player;
+		this.points = points;
+	}
+
+	@Override
+	public void run() {
+		if(gbc.playerManager.getCurrentPlayer() == player) {
+			// TODO
+		}
+	}
+}
+
 class RevealAllCards extends Task {
 	public RevealAllCards(GameBoardController gbc) {
 		super(gbc);
@@ -585,6 +605,10 @@ public class Client implements Runnable {
 							}
 						}
 					}
+					if(message.equals(MESSAGETYPES.CALCULATEPLAYER.name())) {
+						CalculatePlayerServer cps = gson.fromJson(obj, CalculatePlayerServer.class);
+						Platform.runLater(new UpdateBattlePointTask(gbc, cps.player, cps.points));
+					}
 					if(message.equals(MESSAGETYPES.SHOWMIDDLECARD.name())) {
 						MiddleCardServer request = gson.fromJson(obj, MiddleCardServer.class);
 						Platform.runLater(new MiddleCardTask(gbc, request.card));
@@ -610,7 +634,7 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
 						TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
-						Platform.runLater(new TournamentWonTask(gbc, request.player));
+						Platform.runLater(new TournamentWonTask(gbc, request.players));
 						Platform.runLater(new RevealAllCards(gbc));
 						synchronized (this) {
 							try {
