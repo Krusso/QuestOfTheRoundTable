@@ -1,4 +1,3 @@
-
 package src.client;
 import java.io.BufferedReader;
 import java.io.File;
@@ -298,6 +297,7 @@ class QuestJoinTask extends Task {
 	}
 	@Override
 	public void run() {
+		gbc.resetMerlinUse();
 		gbc.setButtonsInvisible();
 		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();

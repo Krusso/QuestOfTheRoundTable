@@ -65,6 +65,10 @@ public class PlayerManager {
 			cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
 			cards.add(new FoeCard("Thieves",5, TYPE.FOES));
 			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			//cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			cards.add(new AllyCard("Merlin", TYPE.ALLIES));
 			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 			//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
@@ -154,7 +158,7 @@ public class PlayerManager {
 	public void setState(List<Player> participants, Player.STATE state) {
 		participants.forEach(e -> e.setState(state));
 	}
-	
+
 
 	public void setState(Player participant, STATE sponsoring, int numStages) {
 		participant.setState(sponsoring, numStages);
@@ -183,12 +187,12 @@ public class PlayerManager {
 
 	public void flipCards(Iterator<Player> players) {
 		// TODO: should be its own method imo
-//		for(int i = 0; i < players.length; i++) {
-//			if(players[i]== next) {
-//				players[i].flipCards();
-//				return;
-//			}
-//		}
+		//		for(int i = 0; i < players.length; i++) {
+		//			if(players[i]== next) {
+		//				players[i].flipCards();
+		//				return;
+		//			}
+		//		}
 		players.forEachRemaining(i -> i.flipCards());
 		pvs.forEach(i -> i.showFaceUp(this.round()));
 	}
@@ -220,7 +224,7 @@ public class PlayerManager {
 	public void discardFromHand(Player player, String[] cards) {
 		player.removeCards(cards);
 	}
-	
+
 
 	public void discardFromHand(int player, String[] cards) {
 		discardFromHand(players[player], cards);
