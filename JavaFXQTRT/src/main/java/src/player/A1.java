@@ -20,13 +20,13 @@ public class A1 extends AbstractAI {
 	public A1(UIPlayer player, UIPlayerManager pm) {
 		super(player, pm);
 	}
-	
+
 	@Override
 	public boolean doIParticipateInTournament() {
 		int length = pm.getNumPlayers();
 		for(int i = 0; i < length; i++) {
 			// TODO check shields as well
-			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION) {
+			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
 				return true;
 			}
 		}
@@ -36,11 +36,19 @@ public class A1 extends AbstractAI {
 
 	@Override
 	public List<Card> playCardsForTournament() {
-		// TODO check if anyone who has participated can win
-		// if yes go HAM
-
 		List<Card> cards = new ArrayList<Card>();
-		List<AdventureCard> weapons = player.listOfTypeDecreasingBp(TYPE.WEAPONS);
+		for(int i = 0; i < pm.getNumPlayers(); i++) {
+			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
+				List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
+				List<AdventureCard> sortedallies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, null, pm.iseultExists());
+				cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, null, pm.iseultExists()));
+				cards.addAll(sortedweapons);
+				cards.addAll(sortedallies);
+				return cards;
+			}
+		}
+
+		List<AdventureCard> weapons = bpc.listOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
 		Set<String> uniqueCards = new HashSet<String>();
 		for(AdventureCard card: weapons) {
 			if(uniqueCards.contains(card.getName())) {
@@ -58,16 +66,15 @@ public class A1 extends AbstractAI {
 	public List<List<Card>> doISponserAQuest(List<Player> participants, QuestCard questCard) {
 		int length = pm.getNumPlayers();
 		for(int i = 0; i < length; i++) {
-			// TODO check shields as well
-			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION) {
+			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
 				return null;
 			}
 		}
 
 		List<List<Card>> cards = new ArrayList<List<Card>>();
-		List<AdventureCard> sortedfoes = player.listOfTypeDecreasingBp(TYPE.FOES);
-		List<AdventureCard> sortedweapons = player.uniqueListOfTypeDecreasingBp(TYPE.WEAPONS);
-		List<AdventureCard> test = player.listOfTypeDecreasingBp(TYPE.TESTS);
+		List<AdventureCard> sortedfoes = bpc.listOfTypeDecreasingBp(player, TYPE.FOES, questCard, pm.iseultExists());
+		List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists());
+		List<AdventureCard> test = bpc.listOfTypeDecreasingBp(player, TYPE.TESTS, questCard, pm.iseultExists());
 
 		int stages = questCard.getNumStages();
 
@@ -144,23 +151,23 @@ public class A1 extends AbstractAI {
 	}
 
 	@Override
-	public List<Card> playCardsForFoeQuest(boolean lastStage) {
+	public List<Card> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
 		List<Card> cards = new ArrayList<Card>();
 		if(lastStage) {
-			cards.addAll(player.listOfTypeDecreasingBp(TYPE.ALLIES));
-			cards.addAll(player.listOfTypeDecreasingBp(TYPE.AMOUR));
-			cards.addAll(player.uniqueListOfTypeDecreasingBp(TYPE.WEAPONS));
+			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists()));
+			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
+			cards.addAll(bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists()));
 		} else {
-			cards.addAll(player.listOfTypeDecreasingBp(TYPE.ALLIES));
-			cards.addAll(player.listOfTypeDecreasingBp(TYPE.AMOUR));
+			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists()));
+			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
 			while(cards.size() > 2) cards.remove(0);
-			
+
 			if(cards.size() != 2) {
-				List<AdventureCard> weapons = player.uniqueListOfTypeDecreasingBp(TYPE.WEAPONS);
+				List<AdventureCard> weapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists());
 				Collections.reverse(weapons);
 				while(cards.size() < 2 && weapons.size() != 0) cards.add(weapons.remove(0));
 			}
-			
+
 		}
 		return cards;
 	}
@@ -178,7 +185,7 @@ public class A1 extends AbstractAI {
 	@Override
 	public List<Card> discardAfterWinningTest(int round) {
 		if(round == 1) {
-			return player.listOfTypeDecreasingBp(TYPE.FOES).stream().
+			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 20).collect(Collectors.toList());
 		} else {
 			return null;

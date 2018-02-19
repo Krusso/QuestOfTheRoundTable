@@ -2,9 +2,6 @@ package src.sequence;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import src.game_logic.BoardModel;
 import src.game_logic.TournamentCard;
 import src.messages.QOTRTQueue;
@@ -36,56 +33,45 @@ public class TournamentSequenceManager extends SequenceManager {
 				pm.setState(next, Player.STATE.NO);
 			}
 		}
-		
-		// cause tracing logs sucks
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		
+
 		// determining if anyone joined
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		if(participants.size() == 0) {
 			return;
 		} else if(participants.size() == 1) {
 			pm.changeShields(participants, card.getShields() + 1);
-			pm.setState(participants.get(0), Player.STATE.WIN);
+			pm.setStates(participants, Player.STATE.WIN);
 			return;
-		} else {
-			players = participants.iterator();
-			questionPlayersTournament(players, pm, actions);
-		}
-		
+		} 
+
+		players = participants.iterator();
+		questionPlayersTournament(players, pm, actions);
+
+
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
 		players = participants.iterator();
-		while(players.hasNext()) {
-			pm.flipCards(players.next());	
-		}
-		
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		pm.flipCards(players);	
+
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		List<Player> winners = bpc.calculateHighest(participants);
 		if(winners.size() != 1) {
 			// tie do tournament again
 			pm.discardWeapons(participants);
 			players = winners.iterator();
 			questionPlayersTournament(players, pm, actions);
-			
+
 			players = winners.iterator();
-			while(players.hasNext()) {
-				pm.flipCards(players.next());	
-			}
-			
+			pm.flipCards(players);
+
 			winners = bpc.calculateHighest(winners);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			pm.setState(winners, Player.STATE.WIN);
+			pm.setStates(winners, Player.STATE.WIN);
 		} else {
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			pm.setState(winners, Player.STATE.WIN);
+			pm.setStates(winners, Player.STATE.WIN);
 		}
 	}
 }

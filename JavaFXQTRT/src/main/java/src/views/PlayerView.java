@@ -64,8 +64,6 @@ public class PlayerView {
 			output.sendMessage(new QuestSponsorServer(ID));
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage(new TournamentPickCardsServer(ID));
-		} else if(state == Player.STATE.WIN) {
-			output.sendMessage(new TournamentWinServer(ID));
 		} else if(state == Player.STATE.WINNING) {
 			output.sendMessage(new FinalTournamentNotifyServer(ID));
 		} else if(state == Player.STATE.GAMEWON) {
@@ -78,6 +76,7 @@ public class PlayerView {
 	}
 
 	public void updateFaceDown(List<AdventureCard> list, int ID) {
+		System.out.println("Printed out: ---- " + list);
 		String[] cardNames = list.stream().map(e -> e.getName()).toArray(size -> new String[size]);
 		output.sendMessage(new FaceDownServer(ID, cardNames));
 	}
@@ -95,10 +94,10 @@ public class PlayerView {
 		output.sendMessage(new QuestUpServer(ID, cards, stage));
 	}
 
-	public void updateFaceUp(AdventureDeck faceUp, int ID) {
-		String[] cardNames = faceUp.getDeck().stream().map(e -> e.getName()).toArray(size -> new String[size]);
-		output.sendMessage(new FaceUpServer(ID, cardNames));
-	}
+//	public void updateFaceUp(AdventureDeck faceUp, int ID) {
+//		String[] cardNames = faceUp.getDeck().stream().map(e -> e.getName()).toArray(size -> new String[size]);
+//		output.sendMessage(new FaceUpServer(ID, cardNames));
+//	}
 
 	public void updateState(STATE question, int ID, int i, TYPE type) {
 		output.sendMessage(new EventDiscardCardsServer(ID, i, type));

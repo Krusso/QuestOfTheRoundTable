@@ -37,8 +37,8 @@ import src.views.PlayersView;
 public class TestQuests {
 
 	@Test
-	public void testDontNeedToBidAnything() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+	public void testDiscardForQuests() throws InterruptedException {
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -46,7 +46,7 @@ public class TestQuests {
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
-		
+
 		// decline to sponsor as first 3 players, accept to sponsor as 4th
 		for(int i = 0; i < 4; i++) {
 			while(true) {
@@ -65,7 +65,63 @@ public class TestQuests {
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
 		}
-		
+
+		while(true) {
+			Message string = actualOutput.take();
+			System.out.println(string);
+			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
+		}
+
+		// sending cards for each stage
+		input.put(new QuestPickStagesClient(3, new String[] {"Boar"}, 0) );
+
+		// agree to participate as all players
+		for(int i = 0; i < 3; i++) {
+			while(true) {
+				Message string = actualOutput.take();
+				System.out.println(string);
+				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
+			}
+			input.put(new QuestJoinClient(i, true));
+			Thread.sleep(100);
+			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
+		}
+
+		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+		cards.add(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
+	}
+
+
+	@Test
+	public void testDontNeedToBidAnything() throws InterruptedException {
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
+		QOTRTQueue input = new QOTRTQueue();
+		Runnable task2 = () -> { qsm.start(input, pm, bm); };
+		new Thread(task2).start();
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
+		Iterator<Player> iter = pm.round();
+		ArrayList<Player> players = new ArrayList<Player>();
+		iter.forEachRemaining(i -> players.add(i));
+
+		// decline to sponsor as first 3 players, accept to sponsor as 4th
+		for(int i = 0; i < 4; i++) {
+			while(true) {
+				Message string = actualOutput.take();
+				System.out.println(string);
+				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
+			}
+			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
+			if(i<3) {
+				input.put(new QuestSponsorClient(i, false));
+				Thread.sleep(100);
+				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
+			} else {
+				input.put(new QuestSponsorClient(i, true));
+				Thread.sleep(100);
+				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
+			}
+		}
+
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(string);
@@ -92,7 +148,7 @@ public class TestQuests {
 				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 			}
 		}
-		
+
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
@@ -107,7 +163,7 @@ public class TestQuests {
 
 		Thread.sleep(100);
 		assertEquals(Player.STATE.TESTDISCARD, players.get(0).getQuestion());
-		
+
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(gson.toJson(string));
@@ -117,10 +173,10 @@ public class TestQuests {
 			}
 		}
 	}
-	
+
 	@Test
 	public void test2PlayerBidding() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -128,7 +184,7 @@ public class TestQuests {
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
-		
+
 		// decline to sponsor as first 3 players, accept to sponsor as 4th
 		for(int i = 0; i < 4; i++) {
 			while(true) {
@@ -147,12 +203,12 @@ public class TestQuests {
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
 		}
-		
-		while(true) {
-			Message string = actualOutput.take();
-			System.out.println(string);
-			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
-		}
+
+				while(true) {
+					Message string = actualOutput.take();
+					System.out.println(string);
+					if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
+				}
 
 		// sending cards for each stage
 		input.put(new QuestPickStagesClient(3, new String[] {"Test of Valor"}, 0) );
@@ -182,13 +238,13 @@ public class TestQuests {
 
 		Thread.sleep(100);
 		assertEquals(Player.STATE.TESTDISCARD, players.get(0).getQuestion());
-		
+
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(gson.toJson(string));
 			if(string.message == MESSAGETYPES.DISCARDQUEST && string.player == 0) break;
 		}
-		
+
 		input.put(new QuestDiscardCardsClient(2, new String[]{"Thieves", "Saxons", "Saxons"}));
 		Thread.sleep(100);
 		assertEquals(10, players.get(0).getCardCount());
@@ -197,10 +253,10 @@ public class TestQuests {
 		assertEquals(0, players.get(2).getShields());
 		assertEquals(0, players.get(3).getShields());
 	}
-	
+
 	@Test
 	public void testNoSponsor() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -208,7 +264,7 @@ public class TestQuests {
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
-		
+
 		// decline to sponsor as each player
 		for(int i = 0; i < 4; i++) {
 			while(true) {
@@ -228,10 +284,10 @@ public class TestQuests {
 		assertEquals(0,players.get(2).getShields());
 		assertEquals(0,players.get(3).getShields());
 	}
-	
+
 	@Test
 	public void testNoParticipants() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -239,7 +295,7 @@ public class TestQuests {
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
-		
+
 		// decline to sponsor as first 3 players, accept to sponsor as 4th
 		for(int i = 0; i < 4; i++) {
 			while(true) {
@@ -264,7 +320,7 @@ public class TestQuests {
 			System.out.println(string);
 			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 		}
-		
+
 		// sending cards for each stage
 		input.put(new QuestPickStagesClient(3, new String[] {"Boar"}, 0) );
 		input.put(new QuestPickStagesClient(3, new String[] {"Saxons"}, 1) );
@@ -282,10 +338,10 @@ public class TestQuests {
 			assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 		}
 	}
-	
+
 	@Test
 	public void testBidding() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -293,7 +349,7 @@ public class TestQuests {
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
-		
+
 		// decline to sponsor as first 3 players, accept to sponsor as 4th
 		for(int i = 0; i < 4; i++) {
 			while(true) {
@@ -312,7 +368,7 @@ public class TestQuests {
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
 		}
-		
+
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(string);
@@ -345,21 +401,21 @@ public class TestQuests {
 		assertEquals(Player.STATE.BIDDING, players.get(2).getQuestion());
 		input.put(new QuestBidClient(2, 2));
 
-		
+
 		// bidding second time
 		Thread.sleep(100);
 		assertEquals(Player.STATE.BIDDING, players.get(0).getQuestion());
 		input.put(new QuestBidClient(0, -1));
-		
+
 		Thread.sleep(100);
 		assertEquals(Player.STATE.TESTDISCARD, players.get(2).getQuestion());
-		
+
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(gson.toJson(string));
 			if(string.message == MESSAGETYPES.DISCARDQUEST && string.player == 2) break;
 		}
-		
+
 		input.put(new QuestDiscardCardsClient(2, new String[]{"Thieves", "Saxons"}));
 		Thread.sleep(100);
 		assertEquals(11, players.get(2).getCardCount());
@@ -367,12 +423,12 @@ public class TestQuests {
 		assertEquals(0, players.get(1).getShields());
 		assertEquals(1, players.get(2).getShields());
 		assertEquals(0, players.get(3).getShields());
-		
+
 	}
-	
+
 	@Test
 	public void testFightingFoe() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",2,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",2,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -380,7 +436,7 @@ public class TestQuests {
 		Iterator<Player> iter = pm.round();
 		ArrayList<Player> players = new ArrayList<Player>();
 		iter.forEachRemaining(i -> players.add(i));
-		
+
 		// decline to sponsor as first 3 players, accept to sponsor as 4th
 		for(int i = 0; i < 4; i++) {
 			while(true) {
@@ -399,7 +455,7 @@ public class TestQuests {
 				assertEquals(Player.STATE.SPONSORING, players.get(i).getQuestion());
 			}
 		}
-		
+
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(string);
@@ -421,7 +477,7 @@ public class TestQuests {
 			Thread.sleep(100);
 			assertEquals(Player.STATE.YES, players.get(i).getQuestion());
 		}
-		
+
 		Thread.sleep(100);
 		assertEquals(Player.STATE.QUESTPICKING, players.get(0).getQuestion());
 		input.put(new QuestPickCardsClient(0, new String[] {"Lance"}));
@@ -437,7 +493,7 @@ public class TestQuests {
 			System.out.println(gson.toJson(string));
 			if(string.message == MESSAGETYPES.PICKQUEST && string.player == 0) break;
 		}
-		
+
 		Thread.sleep(100);
 		assertEquals(Player.STATE.QUESTPICKING, players.get(0).getQuestion());
 		input.put(new QuestPickCardsClient(0, new String[] {"Lance"}));
@@ -446,14 +502,15 @@ public class TestQuests {
 		input.put(new QuestPickCardsClient(1, new String[] {"Lance","Excalibur"}));
 		Thread.sleep(100);
 		assertEquals(Player.STATE.QUESTPICKING, players.get(2).getQuestion());
-		input.put(new QuestPickCardsClient(2, new String[] {"Dagger"}));
-		
+		input.put(new QuestPickCardsClient(2, new String[] {}));
+
 		Thread.sleep(100);
-		assertEquals(12, players.get(2).getCardCount());
+		assertEquals(13, players.get(2).getCardCount());
 		assertEquals(2, players.get(0).getShields());
 		assertEquals(2, players.get(1).getShields());
 		assertEquals(0, players.get(2).getShields());
 		assertEquals(0, players.get(3).getShields());
+
 	}
 
 	DeckManager dm;

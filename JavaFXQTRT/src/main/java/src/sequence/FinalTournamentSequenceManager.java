@@ -15,16 +15,15 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
 		List<Player> participants = pm.getAllWithState(Player.STATE.WINNING);
 		questionPlayersTournament(participants.listIterator(), pm, actions);
-		
+
 		Iterator<Player> players = participants.iterator();
-		while(players.hasNext()) {
-			pm.flipCards(players.next());	
-		}
-		
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		pm.flipCards(players);	
+
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
+
 		List<Player> winners = bpc.calculateHighest(participants);
 		pm.setState(winners, Player.STATE.GAMEWON);
-		
+
 	}
 
 }

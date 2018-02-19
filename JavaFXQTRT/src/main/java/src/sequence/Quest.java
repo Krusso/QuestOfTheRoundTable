@@ -16,7 +16,7 @@ import java.util.Iterator;
 import src.player.BattlePointCalculator;
 
 public class Quest {
-	
+
 	public static enum TYPE {
 		FOE, TEST
 	}
@@ -33,7 +33,7 @@ public class Quest {
 		this.sponsor = sponsor;
 		this.quest = new ArrayList<List<Card>>();
 	}
-	
+
 	// verification for quest stages will be done on client side
 	public void setUpQuest(QOTRTQueue actions, PlayerManager pm) {
 		while(quest.size()<stages) {
@@ -47,7 +47,7 @@ public class Quest {
 					System.out.println(sponsor.hand());
 					System.out.println(cards[i]);
 					System.out.println(card);
-					if (card.checkIfNamed(questCard.getName(), questCard.getFoe())) card.name();
+					if (card.checkIfNamed(questCard.getFoe())) card.name();
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
@@ -61,7 +61,7 @@ public class Quest {
 			pm.questDown(sponsor, quest);
 		}
 	}
-	
+
 	public TYPE currentStageType() {
 		for(Card card : quest.get(currentStage)) {
 			if (card instanceof FoeCard) {
@@ -72,11 +72,11 @@ public class Quest {
 		}
 		return null;
 	}
-	
+
 	public void advanceStage() { this.currentStage++; }
 	public int getCurrentStage() { return this.currentStage; }
 	public int getNumStages() { return this.stages; }
-	
+
 	public int getNumCards() {
 		int count = 0;
 		for(List<Card> stage : quest) {
@@ -84,7 +84,7 @@ public class Quest {
 		}
 		return count;
 	}
-	
+
 	public int getFoeBP() {
 		int fbp = 0;
 		for(Card card : quest.get(currentStage)) {
@@ -92,6 +92,8 @@ public class Quest {
 			if (advCard.getType() == AdventureCard.TYPE.FOES) {
 				if (advCard.isNamed()) {
 					fbp += advCard.getNamedBattlePoints();
+				} else {
+					fbp += advCard.getBattlePoints();
 				}
 			} else {
 				fbp += advCard.getBattlePoints();
@@ -99,14 +101,12 @@ public class Quest {
 		}
 		return fbp;
 	}
-	
+
 	public void battleFoe(List<Player> participants, PlayerManager pm) {
 		Iterator<Player> players = participants.iterator();
-		while(players.hasNext()) {
-			pm.flipCards(players.next());	
-		}
-		
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		pm.flipCards(players);	
+
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		bpc.getFoeWinners(participants, getFoeBP());
 	}
 }

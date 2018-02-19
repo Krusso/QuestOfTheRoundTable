@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AllyCard;
 import src.game_logic.DeckManager;
 import src.game_logic.FoeCard;
 import src.game_logic.Rank;
@@ -30,7 +31,7 @@ public class PlayerManager {
 	private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
 
-	private Player[] players;
+	public Player[] players;
 
 	public PlayerManager(int numPlayers, DeckManager dm) {
 		this.players = new Player[numPlayers];
@@ -63,6 +64,11 @@ public class PlayerManager {
 			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 			cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
 			cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			//cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+			//cards.add(new AllyCard("Merlin", TYPE.ALLIES));
 			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 			//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
@@ -125,8 +131,8 @@ public class PlayerManager {
 	}
 
 	public Iterator<Player> round(){
-		List<Player> list = Arrays.asList(players).subList(actualPlayer, players.length);
-		list.addAll(Arrays.asList(players).subList(0, actualPlayer));
+		List<Player> list = new ArrayList<Player>(Arrays.asList(players)).subList(actualPlayer, players.length);
+		list.addAll(new ArrayList<Player>(Arrays.asList(players)).subList(0, actualPlayer));
 		return list.iterator();
 	}
 
@@ -152,7 +158,7 @@ public class PlayerManager {
 	public void setState(List<Player> participants, Player.STATE state) {
 		participants.forEach(e -> e.setState(state));
 	}
-	
+
 
 	public void setState(Player participant, STATE sponsoring, int numStages) {
 		participant.setState(sponsoring, numStages);
@@ -170,9 +176,6 @@ public class PlayerManager {
 		players[currentPlayer].setFaceDown(cards);
 	}
 
-	public void currentFaceUp(String cards) {
-		players[currentPlayer].setFaceUp(cards.split(","));
-	}
 
 	public void questDown(Player sponsor, List<List<Card>> cards) {
 		sponsor.setQuestDown(cards);
@@ -182,14 +185,16 @@ public class PlayerManager {
 		sponsor.flipStage(stage);
 	}
 
-	public void flipCards(Player next) {
+	public void flipCards(Iterator<Player> players) {
 		// TODO: should be its own method imo
-		for(int i = 0; i < players.length; i++) {
-			if(players[i]== next) {
-				players[i].flipCards();
-				return;
-			}
-		}
+		//		for(int i = 0; i < players.length; i++) {
+		//			if(players[i]== next) {
+		//				players[i].flipCards();
+		//				return;
+		//			}
+		//		}
+		players.forEachRemaining(i -> i.flipCards());
+		pvs.forEach(i -> i.showFaceUp(this.round()));
 	}
 
 	public void changeShields(List<Player> winners, int shields) {
@@ -220,8 +225,9 @@ public class PlayerManager {
 		player.removeCards(cards);
 	}
 
-	public void discardFaceUp(Player player) {
-		player.discardFaceUp();
+
+	public void discardFromHand(int player, String[] cards) {
+		discardFromHand(players[player], cards);
 	}
 
 	public boolean rankUp() {
@@ -243,4 +249,17 @@ public class PlayerManager {
 	public void setDiscarding(Player player, STATE testdiscard, int cardsToBid) {
 		player.setDiscardAmount(testdiscard, cardsToBid);
 	}
+
+	public void setStates(List<Player> winners, STATE win) {
+		winners.forEach(i -> i.setState(win));
+		pvs.forEach(i -> i.win(winners, win));
+	}
+	public void passStage(List<Player> winners) {
+		pvs.forEach(i -> i.passStage(winners));
+	}
+
+	public void passQuest(List<Player> winners) {
+		pvs.forEach(i -> i.passQuest(winners));
+	}
+
 }
