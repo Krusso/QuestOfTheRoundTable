@@ -138,8 +138,8 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane pickStage2;
 	@FXML private Pane pickStage3;
 	@FXML private Pane pickStage4;
-	private Pane[] stages = new Pane[5];
-	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
+	public Pane[] stages = new Pane[5];
+	public ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
 	
 	@FXML public Text bpTextStage0;
@@ -502,12 +502,20 @@ public class GameBoardController implements Initializable{
 		System.out.println("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+				doPutCardIntoPane(point, card);
+				for(int i = 0; i < stages.length; i++) {
+					if(stages[i].isVisible()) {
+						c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));	
+					}
+				}
+				return;
+			}
 			//Find if the current point is within one of the stage panes.
 			for(int i = 0 ; i < stages.length ; i++) {
 				//we allow player to put the cards into the stage panes, hand panes or if it is a merlin card, we allow the player to put
 				//it into the face up pane if they choose to use its power
-				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
-						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card)) {
 					doPutCardIntoPane(point, card);
 					c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));
 				}

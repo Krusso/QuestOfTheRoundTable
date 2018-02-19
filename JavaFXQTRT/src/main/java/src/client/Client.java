@@ -29,6 +29,7 @@ import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculatePlayerServer;
+import src.messages.game.CalculateStageClient;
 import src.messages.game.CalculateStageServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
@@ -289,8 +290,8 @@ class QuestPickStagesTask extends Task {
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
 	}
-
 }
+
 class QuestJoinTask extends Task {
 
 	private int player;
@@ -760,6 +761,11 @@ public class Client implements Runnable {
 					if(message.equals(MESSAGETYPES.PICKSTAGES.name())) {
 						QuestPickStagesServer request = gson.fromJson(obj, QuestPickStagesServer.class);
 						Platform.runLater(new QuestPickStagesTask(gbc, request.player, request.numStages));
+						for(int i = 0; i < gbc.stages.length; i++) {
+							if(gbc.stages[i].isVisible()) {
+								this.send(new CalculateStageClient(gbc.playerManager.getCurrentPlayer(),gbc.stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));	
+							}
+						}
 					}
 					if(message.equals(MESSAGETYPES.JOINQUEST.name())) {
 						QuestJoinServer request = gson.fromJson(obj, QuestJoinServer.class);
