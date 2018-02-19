@@ -176,4 +176,27 @@ public class UIPlayerManager {
 		}
 		return false;
 	}
+	
+	public boolean iseultExists() {
+		for(UIPlayer p: players) {
+			for(AdventureCard c : p.getFaceUp().getDeck()) {
+				if(c.getName().equals("Queen Iseult")){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public void rememberStage(int pNum, int stage) {
+		players[pNum].viewableStage = stage;
+	}
+	public int viewableStage(int pNum) {
+		return players[pNum].viewableStage;
+	}
+	public void resetMerlinViewableStage() {
+		for(UIPlayer p : players) {
+			p.viewableStage = -1;
+		}
+	}
+		
 }

@@ -41,7 +41,7 @@ public class TestQuests {
 	final static Logger logger = LogManager.getLogger(TestQuests.class);
 	@Test
 	public void testDiscardForQuests() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -97,7 +97,7 @@ public class TestQuests {
 
 	@Test
 	public void testDontNeedToBidAnything() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -179,7 +179,7 @@ public class TestQuests {
 
 	@Test
 	public void test2PlayerBidding() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -259,7 +259,7 @@ public class TestQuests {
 
 	@Test
 	public void testNoSponsor() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -290,7 +290,7 @@ public class TestQuests {
 
 	@Test
 	public void testNoParticipants() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -344,7 +344,7 @@ public class TestQuests {
 
 	@Test
 	public void testBidding() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -431,7 +431,7 @@ public class TestQuests {
 
 	@Test
 	public void testFightingFoe() throws InterruptedException {
-		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",2,"Dragon"));
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",2,new String[] {"Dragon"}));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { qsm.start(input, pm, bm); };
 		new Thread(task2).start();
@@ -505,14 +505,15 @@ public class TestQuests {
 		input.put(new QuestPickCardsClient(1, new String[] {"Lance","Excalibur"}));
 		Thread.sleep(100);
 		assertEquals(Player.STATE.QUESTPICKING, players.get(2).getQuestion());
-		input.put(new QuestPickCardsClient(2, new String[] {"Dagger"}));
+		input.put(new QuestPickCardsClient(2, new String[] {}));
 
 		Thread.sleep(100);
-		assertEquals(12, players.get(2).getCardCount());
+		assertEquals(13, players.get(2).getCardCount());
 		assertEquals(2, players.get(0).getShields());
 		assertEquals(2, players.get(1).getShields());
 		assertEquals(0, players.get(2).getShields());
 		assertEquals(0, players.get(3).getShields());
+
 	}
 
 	DeckManager dm;

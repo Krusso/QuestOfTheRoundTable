@@ -28,6 +28,7 @@ import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.CalculatePlayerServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
@@ -162,15 +163,17 @@ class QuestSponsorTask extends Task {
 }
 
 class TournamentWonTask extends Task{
-	private int player;
-	public TournamentWonTask(GameBoardController gbc, int player) {
+	private int[] players;
+	public TournamentWonTask(GameBoardController gbc, int[] players) {
 		super(gbc);
-		this.player = player;
+		this.players = players;
 	}
 
 	@Override
 	public void run() {
-		winners[player] = true;
+		for(int i = 0 ; i < players.length;i++) {
+			winners[players[i]] = true;
+		}
 
 		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
@@ -192,6 +195,8 @@ class TournamentWonTask extends Task{
 		gbc.showToast(display);
 		//		gbc.toast.setText(display);
 		//		gbc.toast.setVisible(true);
+		//reset merlin power
+		gbc.resetMerlinUse();
 
 	}
 }
@@ -355,7 +360,7 @@ class UpQuestTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
-//		gbc.flipStageCards(this.stage, true);
+		//		gbc.flipStageCards(this.stage, true);
 		gbc.setStageCardVisibility(true, stage);
 		gbc.repositionStageCards(stage);
 	}
@@ -493,6 +498,25 @@ class PickTournamentTask extends Task {
 	}
 }
 
+
+class UpdateBattlePointTask extends Task {
+	int player;
+	int points;
+	public UpdateBattlePointTask(GameBoardController gbc, int player, int points) {
+		super(gbc);
+		this.player = player;
+		this.points = points;
+	}
+
+	@Override
+	public void run() {
+		if(gbc.playerManager.getCurrentPlayer() == player) {
+			// TODO
+		}
+	}
+}
+
+
 class RevealAllCards extends Task {
 	public RevealAllCards(GameBoardController gbc) {
 		super(gbc);
@@ -574,8 +598,8 @@ public class Client implements Runnable {
 										gbc.showToast("Player #: " + request.player + " turn");
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Start Turn");
+										gbc.startTurn.setVisible(true);
+										gbc.startTurn.setText("Start Turn");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
@@ -585,6 +609,11 @@ public class Client implements Runnable {
 							}
 						}
 					}
+					if(message.equals(MESSAGETYPES.CALCULATEPLAYER.name())) {
+						CalculatePlayerServer cps = gson.fromJson(obj, CalculatePlayerServer.class);
+						Platform.runLater(new UpdateBattlePointTask(gbc, cps.player, cps.points));
+					}
+
 					if(message.equals(MESSAGETYPES.SHOWMIDDLECARD.name())) {
 						MiddleCardServer request = gson.fromJson(obj, MiddleCardServer.class);
 						Platform.runLater(new MiddleCardTask(gbc, request.card));
@@ -610,7 +639,7 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
 						TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
-						Platform.runLater(new TournamentWonTask(gbc, request.player));
+						Platform.runLater(new TournamentWonTask(gbc, request.players));
 						Platform.runLater(new RevealAllCards(gbc));
 						synchronized (this) {
 							try {
@@ -618,8 +647,8 @@ public class Client implements Runnable {
 									@Override
 									public void run(){
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Continue");
+										gbc.showStartTurn();
+										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
@@ -652,8 +681,9 @@ public class Client implements Runnable {
 										}
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Continue");
+
+										gbc.startTurn.setVisible(true);
+										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
@@ -683,8 +713,8 @@ public class Client implements Runnable {
 										}
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Continue");
+										gbc.startTurn.setVisible(true);
+										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});

@@ -38,15 +38,17 @@ public class AdventureCard extends Card{
 	public int getBattlePoints() { return this.battlePoints; }
 	public int getNamedBattlePoints() { return this.namedBattlePoints; }
 	
-	public boolean checkIfNamed(String quest, String foe) {
-	    List<String> questwords = Arrays.asList(quest.split(" ")); 
-	    for (String word : questwords) {
-	        if(word.equals(foe)){ 
-	        	return true;
-	        }
-	    } return false;
-	}
-	
 	public boolean isNamed() { return this.named; }
 	public void name() { this.named = true; }
+
+	public boolean checkIfNamed(String[] foe) {
+		for(String c: foe) {
+			if(c.equals("All") && this.type != TYPE.ALLIES) {
+				return true;
+			} else if(c.equals(this.getName())) {
+				return true;
+			}
+		}
+	    return false;
+	}
 }

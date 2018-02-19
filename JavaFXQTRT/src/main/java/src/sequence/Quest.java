@@ -44,7 +44,7 @@ public class Quest {
 				List<Card> cardlist = new ArrayList<Card>();
 				for(int i=0; i<cards.length; i++) {
 					AdventureCard card = (AdventureCard) sponsor.getCard(cards[i]);
-					if (card.checkIfNamed(questCard.getName(), questCard.getFoe())) card.name();
+					if (card.checkIfNamed(questCard.getFoe())) card.name();
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
@@ -88,6 +88,8 @@ public class Quest {
 			if (advCard.getType() == AdventureCard.TYPE.FOES) {
 				if (advCard.isNamed()) {
 					fbp += advCard.getNamedBattlePoints();
+				} else {
+					fbp += advCard.getBattlePoints();
 				}
 			} else {
 				fbp += advCard.getBattlePoints();
@@ -100,7 +102,7 @@ public class Quest {
 		Iterator<Player> players = participants.iterator();
 		pm.flipCards(players);	
 
-		BattlePointCalculator bpc = new BattlePointCalculator();
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
 		bpc.getFoeWinners(participants, getFoeBP());
 	}
 }

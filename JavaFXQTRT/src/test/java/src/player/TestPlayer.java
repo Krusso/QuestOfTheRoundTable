@@ -23,11 +23,11 @@ public class TestPlayer {
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		assertTrue(!p1.hasTristanIseultBoost());
+		assertTrue(!p1.tristan && !p1.iseult);
 		p1.addCards(cards);
 		p1.setFaceDown(cards.stream().map(i -> i.getName()).toArray(String[]::new));
 		p1.flipCards();
-		assertTrue(p1.hasTristanIseultBoost());
+		assertTrue(p1.tristan && p1.iseult);
 	}
 	
 	@Test

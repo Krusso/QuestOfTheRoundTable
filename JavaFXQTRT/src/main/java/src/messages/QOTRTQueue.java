@@ -7,9 +7,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import src.game_logic.BoardModel;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.CalculatePlayerClient;
+import src.messages.game.CalculatePlayerServer;
 import src.messages.hand.HandFullClient;
+import src.player.BattlePointCalculator;
 import src.player.PlayerManager;
+import src.socket.OutputController;
 
 public class QOTRTQueue extends LinkedBlockingQueue<String> {
 	/**
@@ -19,7 +24,9 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 	private Gson gson = new Gson();
 	private JsonParser json = new JsonParser();
 	private PlayerManager pm;
-	
+	private OutputController output; 
+	private BoardModel bm;
+
 	@Override
 	public String take() {
 		String message = null;
@@ -37,6 +44,10 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 					if(pm != null) {
 						this.pm.discardFromHand(hfc.player, hfc.cards);
 					}
+				} else if(x.get("message").getAsString().equals(MESSAGETYPES.CALCULATEPLAYER.name())) {
+					BattlePointCalculator bc = new BattlePointCalculator(pm);
+					CalculatePlayerClient cpc = gson.fromJson(x, CalculatePlayerClient.class);
+					output.sendMessage(new CalculatePlayerServer(bc.calculatePlayer(cpc.player, cpc.cards, bm.getCard()), cpc.player));
 				} else {
 					break;
 				}
@@ -48,7 +59,7 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 		}
 		return message;
 	}
-	
+
 	public void put(Message message) {
 		try {
 			super.put(gson.toJson(message));
@@ -56,18 +67,27 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// generics woooo 
 	public <T extends Message> T take(Class<T> c) {
 		while(true) {
 			try {
-			T x = gson.fromJson(this.take(), c);
-			return x;
+				T x = gson.fromJson(this.take(), c);
+				return x;
 			} catch (JsonSyntaxException e) {
-				
+
 			}
 		}
 	}
+	
+	public void setBoardModel(BoardModel bm) {
+		this.bm = bm;
+	}
+	
+	public void setOutputController(OutputController output) {
+		this.output = output;
+	}
+	
 	public void setPlayerManager(PlayerManager pm2) {
 		this.pm = pm2;
 	}
