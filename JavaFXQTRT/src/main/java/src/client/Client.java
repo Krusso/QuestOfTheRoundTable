@@ -63,7 +63,7 @@ class AddCardsTask extends Task{
 		for(String card: cards) {
 			//find file associated to name
 			for(File f : list) {
-				if (f.getName().contains(card+".png")) {
+				if (f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
 						AllyCard c = new AllyCard(card, f.getPath());

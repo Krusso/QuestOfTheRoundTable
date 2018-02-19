@@ -22,6 +22,11 @@
                   <Image url="@../../../resources/gameboardbg3.jpg" />
                </image>
             </ImageView>
+            <Text fx:id="playerNumber" fill="WHITE" layoutX="128.0" layoutY="936.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player" wrappingWidth="318.5999967176467">
+               <font>
+                  <Font size="52.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
       <Button fx:id="useMerlin" layoutX="250.0" layoutY="800.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Use Merlin" textFill="WHITE" />
@@ -141,11 +146,6 @@
             </Text>
          </children>
       </Pane>
-      <Text fx:id="playerNumber" fill="WHITE" layoutX="136.0" layoutY="861.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player" wrappingWidth="318.5999967176467">
-         <font>
-            <Font size="52.0" />
-         </font>
-      </Text>
       <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="372.0" majorTickUnit="1.0" max="13.0" minorTickCount="1" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />
             <Pane layoutX="427.0" layoutY="307.0" prefHeight="58.0" prefWidth="1040.0">
 	         <children>
