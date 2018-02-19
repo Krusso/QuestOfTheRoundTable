@@ -16,6 +16,8 @@ public class UIPlayer extends Player{
 	private Pane faceUpPaneUI;
 	private ImageView playerRankUI;
 	
+	public int viewableStage = -1;
+	
 	
 	public UIPlayer(int id) {
 		super(id);
