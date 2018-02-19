@@ -187,4 +187,16 @@ public class UIPlayerManager {
 		}
 		return false;
 	}
+	public void rememberStage(int pNum, int stage) {
+		players[pNum].viewableStage = stage;
+	}
+	public int viewableStage(int pNum) {
+		return players[pNum].viewableStage;
+	}
+	public void resetMerlinViewableStage() {
+		for(UIPlayer p : players) {
+			p.viewableStage = -1;
+		}
+	}
+		
 }

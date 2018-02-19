@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,12 +32,13 @@ import src.messages.quest.QuestPickStagesClient;
 import src.messages.quest.QuestSponsorClient;
 import src.player.Player;
 import src.player.PlayerManager;
+import src.player.TestA2;
 import src.socket.OutputController;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
 public class TestQuests {
-
+	final static Logger logger = LogManager.getLogger(TestQuests.class);
 	@Test
 	public void testDiscardForQuests() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
@@ -51,7 +54,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -68,7 +71,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 		}
 
@@ -79,7 +82,7 @@ public class TestQuests {
 		for(int i = 0; i < 3; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
 			}
 			input.put(new QuestJoinClient(i, true));
@@ -107,7 +110,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -124,7 +127,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 		}
 
@@ -135,7 +138,7 @@ public class TestQuests {
 		for(int i = 0; i < 3; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
 			}
 			if(i == 0) {
@@ -166,7 +169,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(gson.toJson(string));
+			logger.info(gson.toJson(string));
 			if(string.message == MESSAGETYPES.DISCARDQUEST && string.player == 0) {
 				assertTrue(((QuestDiscardCardsServer) string).cardsToDiscard == 0);
 				break;
@@ -189,7 +192,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -206,7 +209,7 @@ public class TestQuests {
 
 				while(true) {
 					Message string = actualOutput.take();
-					System.out.println(string);
+					logger.info(string);
 					if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 				}
 
@@ -217,7 +220,7 @@ public class TestQuests {
 		for(int i = 0; i < 3; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
 			}
 			if(i == 0) {
@@ -241,7 +244,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(gson.toJson(string));
+			logger.info(gson.toJson(string));
 			if(string.message == MESSAGETYPES.DISCARDQUEST && string.player == 0) break;
 		}
 
@@ -269,7 +272,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(gson.toJson(string));
+				logger.info(gson.toJson(string));
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -300,7 +303,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -317,7 +320,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 		}
 
@@ -330,7 +333,7 @@ public class TestQuests {
 		for(int i = 0; i < 3; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
 			}
 			input.put(new QuestJoinClient(i, false));
@@ -354,7 +357,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -371,7 +374,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 		}
 
@@ -382,7 +385,7 @@ public class TestQuests {
 		for(int i = 0; i < 3; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
 			}
 			input.put(new QuestJoinClient(i, true));
@@ -412,7 +415,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(gson.toJson(string));
+			logger.info(gson.toJson(string));
 			if(string.message == MESSAGETYPES.DISCARDQUEST && string.player == 2) break;
 		}
 
@@ -441,7 +444,7 @@ public class TestQuests {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.SPONSERQUEST && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTQUESTIONED, players.get(i).getQuestion());
@@ -458,7 +461,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
 		}
 
@@ -470,7 +473,7 @@ public class TestQuests {
 		for(int i = 0; i < 3; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINQUEST && string.player == i) break;
 			}
 			input.put(new QuestJoinClient(i, true));
@@ -490,7 +493,7 @@ public class TestQuests {
 
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(gson.toJson(string));
+			logger.info(gson.toJson(string));
 			if(string.message == MESSAGETYPES.PICKQUEST && string.player == 0) break;
 		}
 
@@ -525,7 +528,7 @@ public class TestQuests {
 		output = new LinkedBlockingQueue<String>();
 		oc = new OutputController(output);
 		dm = new DeckManager();
-		pm = new PlayerManager(4, dm);
+		pm = new PlayerManager(4, dm, true);
 		bm = new BoardModel();
 		pv = new PlayerView(oc);
 		pm.subscribe(pv);

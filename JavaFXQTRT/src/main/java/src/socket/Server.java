@@ -11,11 +11,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /*
  * A chat server that delivers public and private messages.
  */
 public class Server {
-
+	final static Logger logger = LogManager.getLogger(Server.class);
 	// The server socket.
 	private static ServerSocket serverSocket = null;
 	// The client socket.
@@ -29,7 +32,7 @@ public class Server {
 		try {
 			serverSocket = new ServerSocket(portNumber);
 		} catch (IOException e) {
-			System.out.println(e);
+			logger.error(e);
 		}
 
 		/*
@@ -58,7 +61,7 @@ public class Server {
 				input.start();
 				output.start();
 			} catch (IOException e) {
-				System.out.println(e);
+				logger.error(e);
 			}
 		}
 	}
@@ -122,7 +125,6 @@ class ClientRead extends Thread {
 
 			Stream<String> stream = Stream.generate(socketInput);
 			stream.map(s -> {
-				System.out.println("Socket recieved: " + s);
 				queue.add(s);
 				return s;
 			})

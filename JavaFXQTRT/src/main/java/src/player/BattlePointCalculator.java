@@ -144,9 +144,7 @@ public class BattlePointCalculator {
 		} else {
 			score += 20;
 		}
-		if(storyCard.getType() != src.game_logic.StoryCard.TYPE.QUEST) {
-			return 0;
-		}
+
 
 		boolean foundIseult = false;
 		Iterator<Player> players = pm.round();
@@ -160,7 +158,8 @@ public class BattlePointCalculator {
 				card = p.hand.findCardByName(c);
 			}
 
-			if(card.checkIfNamed(((QuestCard) storyCard).getFoe())) {
+			if(storyCard.getType() == src.game_logic.StoryCard.TYPE.QUEST && 
+					card.checkIfNamed(((QuestCard) storyCard).getFoe())) {
 				score += card.getNamedBattlePoints();
 			} else {
 				score += card.getBattlePoints();
@@ -176,6 +175,29 @@ public class BattlePointCalculator {
 				score += 10;
 			}
 		}
+		return score;
+	}
+
+	public int calculateStage(int player, String[] cards, StoryCard storyCard) {
+		if(storyCard.getType() != src.game_logic.StoryCard.TYPE.QUEST) {
+			return 0;
+		}
+		
+		int score = 0;
+		Player p = pm.players[player];
+		for(String c: cards) {
+			AdventureCard card = p.getFaceUp().findCardByName(c);
+			if(card == null) {
+				card = p.hand.findCardByName(c);
+			}
+			
+			if(card.checkIfNamed(((QuestCard) storyCard).getFoe())){
+				score += card.getNamedBattlePoints();
+			} else {
+				score += card.getBattlePoints();
+			}
+		}
+		
 		return score;
 	}
 

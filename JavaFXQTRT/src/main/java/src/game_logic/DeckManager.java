@@ -15,7 +15,12 @@ public class DeckManager {
 	}
 	
 	public ArrayList<StoryCard> getStoryCard(int n) {
-		return storyDeck.drawRandomCards(n);
+		if(storyDeck.size() == 0) {
+			storyDeck.reshuffle();
+		}
+		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
+		storyDeck.discards.addAll(toReturn);
+		return toReturn;
 	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {

@@ -105,7 +105,7 @@ public class TestEvents {
 	@Test
 	public void testKingsRecognition() {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Recognition"));
-		PlayerManager pm = new PlayerManager(0, null);
+		PlayerManager pm = new PlayerManager(0, null, true);
 		BoardModel bm = new BoardModel();
 		assertEquals(false, bm.isSetKingRecognition());
 		esm.start(new QOTRTQueue(), pm, bm);
@@ -121,7 +121,7 @@ public class TestEvents {
 	public void before() {
 		output = new LinkedBlockingQueue<String>();
 		dm = new DeckManager();
-		pm = new PlayerManager(2, dm);
+		pm = new PlayerManager(2, dm, true);
 		bm = new BoardModel();
 		pv = new PlayerView(new OutputController(output));
 		pm.subscribe(pv);

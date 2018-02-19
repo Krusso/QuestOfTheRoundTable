@@ -47,6 +47,7 @@ public abstract class Message {
 		DISCARDHANDFULL, 
 		PASSSTAGE, 
 		PASSALL, 
-		CALCULATEPLAYER
+		CALCULATEPLAYER, 
+		CALCULATESTAGE
 	};
 }

@@ -12,9 +12,7 @@ public class FaceUpServer extends Message {
 
 	public FaceUpServer(Iterator<Player> round) {
 		ArrayList<Pair> pairs = new ArrayList<Pair>();
-		System.out.println("Player stuff -----: " + round);
 		round.forEachRemaining(i -> {
-			System.out.println(i.getFaceUp().getDeck());
 			pairs.add(new Pair(
 					i.getFaceUp().getDeck().stream().map(c -> c.getName()).toArray(size -> new String[size]),
 					i.getID()));

@@ -5,8 +5,11 @@ import src.messages.Message;
 //Client
 public class GameStartClient extends Message {
 	
-	public GameStartClient(int players) {
+	public boolean rigged;
+	
+	public GameStartClient(int players, boolean rigged) {
 		super(players);
+		this.rigged = rigged;
 	}
 	
 	@Override

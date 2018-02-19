@@ -44,14 +44,11 @@ public class Quest {
 				List<Card> cardlist = new ArrayList<Card>();
 				for(int i=0; i<cards.length; i++) {
 					AdventureCard card = (AdventureCard) sponsor.getCard(cards[i]);
-					System.out.println(sponsor.hand());
-					System.out.println(cards[i]);
-					System.out.println(card);
+					System.out.println(card + " " + questCard);
 					if (card.checkIfNamed(questCard.getFoe())) card.name();
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
-				//System.out.println("Quest Stage recieved: " + string);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

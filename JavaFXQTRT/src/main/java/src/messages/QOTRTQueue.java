@@ -11,6 +11,8 @@ import src.game_logic.BoardModel;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculatePlayerServer;
+import src.messages.game.CalculateStageClient;
+import src.messages.game.CalculateStageServer;
 import src.messages.hand.HandFullClient;
 import src.player.BattlePointCalculator;
 import src.player.PlayerManager;
@@ -48,7 +50,11 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 					BattlePointCalculator bc = new BattlePointCalculator(pm);
 					CalculatePlayerClient cpc = gson.fromJson(x, CalculatePlayerClient.class);
 					output.sendMessage(new CalculatePlayerServer(bc.calculatePlayer(cpc.player, cpc.cards, bm.getCard()), cpc.player));
-				} else {
+				} else if(x.get("message").getAsString().equals(MESSAGETYPES.CALCULATESTAGE.name())) {
+					BattlePointCalculator bc = new BattlePointCalculator(pm);
+					CalculateStageClient csc = gson.fromJson(x, CalculateStageClient.class);
+					output.sendMessage(new CalculateStageServer(bc.calculateStage(csc.player, csc.cards, bm.getCard()), csc.player, csc.stage));
+				}else {
 					break;
 				}
 				message = super.take();
@@ -79,15 +85,15 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 			}
 		}
 	}
-	
+
 	public void setBoardModel(BoardModel bm) {
 		this.bm = bm;
 	}
-	
+
 	public void setOutputController(OutputController output) {
 		this.output = output;
 	}
-	
+
 	public void setPlayerManager(PlayerManager pm2) {
 		this.pm = pm2;
 	}

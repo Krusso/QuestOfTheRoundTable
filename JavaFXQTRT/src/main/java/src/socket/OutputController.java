@@ -33,7 +33,6 @@ public class OutputController extends Thread {
 			queue.add(gson.toJson(s));
 			return s;
 		}).allMatch(s -> s != null);
-		System.out.println("here");
 	}
 	
 	

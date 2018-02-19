@@ -1,11 +1,14 @@
 package src.game_logic;
 
+import java.util.ArrayList;
+
 public class StoryDeck extends Deck<StoryCard> {
 	
 	public StoryDeck() {
 		super();
 	}
-
+	
+	public ArrayList<StoryCard> discards = new ArrayList<StoryCard>();
 
 	void populate() {
 //		addCard(new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"}),1);
@@ -32,5 +35,10 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new EventCard("Chivalrous Deed"),1);
 //		addCard(new EventCard("Prosperity Throughout the Realm"),1);
 //		addCard(new EventCard("King's Call to Arms"),1);
+	}
+
+
+	public void reshuffle() {
+		this.deck.addAll(discards);
 	}
 }
