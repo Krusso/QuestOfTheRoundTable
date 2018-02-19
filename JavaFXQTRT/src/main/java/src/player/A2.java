@@ -13,6 +13,7 @@ import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Card;
 import src.game_logic.QuestCard;
+import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 
 public class A2 extends AbstractAI {
@@ -28,7 +29,7 @@ public class A2 extends AbstractAI {
 
 
 	@Override
-	public List<Card> playCardsForTournament() {
+	public List<AdventureCard> playCardsForTournament() {
 		int currentBp = bpc.calculatePoints(player, pm.iseultExists());
 		if(currentBp >= 50) {
 			return null;
@@ -36,7 +37,7 @@ public class A2 extends AbstractAI {
 		
 		List<AdventureCard> allies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, null, pm.iseultExists());
 		List<AdventureCard> weapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
-		List<Card> cardsToUse = new ArrayList<Card>();
+		List<AdventureCard> cardsToUse = new ArrayList<AdventureCard>();
 		for(AdventureCard card: allies) {
 			if(currentBp >= 50) {
 				break;
@@ -58,24 +59,25 @@ public class A2 extends AbstractAI {
 	}
 
 	@Override
-	public List<List<Card>> doISponserAQuest(List<Player> participants, QuestCard questCard) {
-		for(Player player: participants) {
-			if(player.getRank() == RANKS.CHAMPION && player.getShields() >= 10 - questCard.getNumStages()) {
-				return new ArrayList<List<Card>>();
+	public List<List<AdventureCard>> implDoISponserAQuest(QuestCard questCard) {
+		int length = pm.getNumPlayers();
+		for(int i = 0; i < length; i++) {
+			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
+				return null;
 			}
 		}
 
-		List<List<Card>> cards = new ArrayList<List<Card>>();
+		List<List<AdventureCard>> cards = new ArrayList<List<AdventureCard>>();
 		List<AdventureCard> sortedfoes = bpc.listOfTypeDecreasingBp(player, TYPE.FOES, questCard, pm.iseultExists());
 		List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists());
 		List<AdventureCard> test = bpc.listOfTypeDecreasingBp(player, TYPE.TESTS, questCard, pm.iseultExists());
 
 		int stages = questCard.getNumStages();
 
-		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<Card>()));
+		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<AdventureCard>()));
 
 		//set up last stage to be atleast 40
-		if(sortedfoes.size() <= 0) return new ArrayList<List<Card>>();
+		if(sortedfoes.size() <= 0) return new ArrayList<List<AdventureCard>>();
 
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
@@ -86,7 +88,7 @@ public class A2 extends AbstractAI {
 				cards.get(stages).add(biggestWeapon);
 		}
 
-		if(bp < 40) return new ArrayList<List<Card>>();
+		if(bp < 40) return new ArrayList<List<AdventureCard>>();
 
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
@@ -117,8 +119,8 @@ public class A2 extends AbstractAI {
 
 		cards.remove(0);
 
-		for(List<Card> i: cards) {
-			if(i.size() == 0) return new ArrayList<List<Card>>();	
+		for(List<AdventureCard> i: cards) {
+			if(i.size() == 0) return new ArrayList<List<AdventureCard>>();	
 		}
 
 		// TODO: make sure stage before last is less bp than last stage
@@ -149,8 +151,8 @@ public class A2 extends AbstractAI {
 	}
 
 	@Override
-	public List<Card> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
-		List<Card> cards = new ArrayList<Card>();
+	public List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
+		List<AdventureCard> cards = new ArrayList<AdventureCard>();
 
 		List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists());
 		List<AdventureCard> sortedallies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists());
@@ -184,8 +186,8 @@ public class A2 extends AbstractAI {
 	}
 
 	@Override
-	public int nextBid(int round, int prevBid) {
-		List<Card> cards = discardAfterWinningTest(round);
+	public int implNextBid(int prevBid) {
+		List<AdventureCard> cards = discardAfterWinningTest();
 		if(cards == null || cards.size() <= prevBid) {
 			return -1;
 		} else {
@@ -194,12 +196,12 @@ public class A2 extends AbstractAI {
 	}
 
 	@Override
-	public List<Card> discardAfterWinningTest(int round) {
-		if(round == 1) {
+	public List<AdventureCard> discardAfterWinningTest() {
+		if(rounds == 1) {
 			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 25).collect(Collectors.toList());
-		} else if(round == 2) {
-			List<Card> cards = new ArrayList<Card>();
+		} else if(rounds == 2) {
+			List<AdventureCard> cards = new ArrayList<AdventureCard>();
 			Set<String> uniqueCards = new HashSet<String>();
 			for(AdventureCard card: player.hand.getDeck()) {
 				if(card.getType() == TYPE.FOES && card.getBattlePoints() < 25) {

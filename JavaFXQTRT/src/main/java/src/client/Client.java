@@ -8,8 +8,12 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -20,6 +24,7 @@ import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
 import src.game_logic.FoeCard;
+import src.game_logic.QuestCard;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
@@ -50,6 +55,7 @@ import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
+import src.sequence.Quest.TYPE;
 
 class AddCardsTask extends Task{
 	private int player;
@@ -142,6 +148,39 @@ class MiddleCardTask extends Task{
 				StoryCard sc= new StoryCard(card, c.getPath());
 				gbc.setStoryCard(sc);
 				System.out.println("Set story card to:" + sc.getName());
+				// hell yaaaaaaaaaaaa!!!
+				switch(sc.getName()) {
+				case "Search for the Holy Grail":
+					gbc.questCard = new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"});
+					break;
+				case "Test of the Green Knight":
+					gbc.questCard = new QuestCard("Test of the Green Knight",4,new String[] {"Green Knight", "Sir Gawain"});
+					break;
+				case "Search for the Questing Beast":
+					gbc.questCard = new QuestCard("Search for the Questing Beast",4,new String[] {});
+					break;
+				case "Defend the Queen's Honor":
+					gbc.questCard = new QuestCard("Defend the Queen's Honor",4,new String[] {"All", "Sir Lancelot"});
+				case "Rescue the Fair Maiden":
+					gbc.questCard = new QuestCard("Rescue the Fair Maiden",3,new String[] {"Black Knight"});
+					break;
+				case "Journey Through the Enchanted Forest":
+					gbc.questCard = new QuestCard("Journey Through the Enchanted Forest",3,new String[] {"Evil Knight"});
+					break;
+				case "Vanquish King Arthur's Enemies":
+					gbc.questCard = new QuestCard("Vanquish King Arthur's Enemies",3,new String[] {});
+					break;
+				case "Slay the Dragon":
+					gbc.questCard = new QuestCard("Slay the Dragon",3,new String[] {"Dragon"});
+					break;
+				case "Boar Hunt":
+					gbc.questCard = new QuestCard("Boar Hunt",2,new String[] {"Boar"});
+					break;
+				case "Repel the Saxon Raiders":
+					gbc.questCard = new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"});
+					break;
+				}
+				return;
 			}
 		}
 	}
@@ -161,6 +200,13 @@ class QuestSponsorTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
 		gbc.showToast("Sponsor Quest?");
+		if(gbc.playerManager.getAI(player) != null) {
+			if(gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard) != null) {
+				gbc.accept.fire();
+			} else {
+				gbc.decline.fire();
+			}
+		}
 	}
 }
 
@@ -236,22 +282,6 @@ class ShowEndTurn extends Task {
 	}
 }
 
-class ShowAcceptDeclineTask extends Task{
-	private int player;
-	public ShowAcceptDeclineTask(GameBoardController gbc, int player) {
-		super(gbc);
-		this.player = player;
-	}
-
-	// no msg expected
-	@Override
-	public void run() {
-		System.out.println("Processing msg: accept/decline tournament");
-		gbc.CURRENT_STATE = STATE.JOIN_TOURNAMENT;
-		gbc.showAcceptDecline();
-	}
-}
-
 class ShowTurnFaceDownFieldUp extends Task{
 	private int player;
 	private String[][] cards;
@@ -289,6 +319,15 @@ class QuestPickStagesTask extends Task {
 		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
+		if(gbc.playerManager.getAI(player) != null) {
+			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard);
+			for(int i = 0; i < cards.size(); i++) {
+				for(int j = 0; j < cards.get(i).size(); j++) {
+					gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.stages[i], cards.get(i).get(j));	
+				}
+			}
+			gbc.endTurn.fire();
+		}
 	}
 }
 
@@ -309,6 +348,13 @@ class QuestJoinTask extends Task {
 		gbc.addDraggable();
 		gbc.clearToast();
 		gbc.showToast("Join Quest?");
+		if(gbc.playerManager.getAI(player) != null) {
+			if(gbc.playerManager.getAI(player).doIParticipateInQuest(gbc.questCard)) {
+				gbc.accept.fire();
+			} else {
+				gbc.decline.fire();
+			}
+		}
 	}
 
 }
@@ -333,6 +379,12 @@ class QuestPickCardsTask extends Task {
 		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select Cards for current stage");
+		if(gbc.playerManager.getAI(player) != null) {
+			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard.getNumStages() == gbc.currentStage + 1, 
+					gbc.questCard);
+			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			gbc.endTurn.fire();
+		}
 	}
 }
 class FaceDownCardsTask extends Task {
@@ -401,7 +453,6 @@ class ShieldCountTask extends Task {
 	}
 }
 
-//TODO::server gives us min and max as well later
 class QuestBidTask extends Task {
 	private int min;
 	private int max;
@@ -420,6 +471,9 @@ class QuestBidTask extends Task {
 		//this means the player can't bid higher than the max
 		if(min > max) {
 			gbc.showDecline();
+			if(gbc.playerManager.getAI(player) != null) {
+				gbc.decline.fire();
+			}
 		}else {
 			gbc.showEndTurn();
 			gbc.showDecline();
@@ -435,6 +489,11 @@ class QuestBidTask extends Task {
 			gbc.bidSlider.setSnapToTicks(true);
 			gbc.clearToast();
 			gbc.showToast("Use the slider to enter how many cards you want to bid.");
+			if(gbc.playerManager.getAI(player) != null) {
+				int amount = gbc.playerManager.getAI(player).nextBid(min);
+				gbc.bidSlider.setValue(amount);
+				gbc.endTurn.fire();
+			}
 		}
 	}
 }
@@ -456,11 +515,17 @@ class DiscardQuestTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		if(gbc.playerManager.getAI(player) != null) {
+			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
+			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			gbc.endTurn.fire();
+		}
 	}
 }
 
 
 class JoinTournamentTask extends Task {
+	final static Logger logger = LogManager.getLogger(JoinTournamentTask.class);
 	int player;
 	public JoinTournamentTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -475,10 +540,19 @@ class JoinTournamentTask extends Task {
 		gbc.removeStagePaneDragOver();
 		gbc.clearToast();
 		gbc.showToast("Join Tournament?");
+		logger.info("Processing join tournament message");
+		if(gbc.playerManager.getAI(player) != null) {
+			if(gbc.playerManager.getAI(player).doIParticipateInTournament()) {
+				gbc.accept.fire();
+			} else {
+				gbc.decline.fire();
+			}
+		}
 	}
 }
 
 class PickTournamentTask extends Task {
+	final static Logger logger = LogManager.getLogger(PickTournamentTask.class);
 	int player;
 	public PickTournamentTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -496,7 +570,12 @@ class PickTournamentTask extends Task {
 		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select cards to use for the tournament");
-
+		logger.info("Processing pick tournament cards message");
+		if(gbc.playerManager.getAI(player) != null) {
+			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).playCardsForTournament();
+			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			gbc.endTurn.fire();
+		}
 	}
 }
 
@@ -511,7 +590,7 @@ class UpdateStageBattlePointTask extends Task {
 		this.points = points;
 		this.stage = stage;
 	}
-	
+
 	@Override
 	public void run() {
 		if(gbc.playerManager.getCurrentPlayer() == player) {
@@ -694,14 +773,12 @@ public class Client implements Runnable {
 					if(message.equals(MESSAGETYPES.PASSALL.name())) {
 						QuestPassAllServer qpss = gson.fromJson(obj, QuestPassAllServer.class);
 						int[] players = qpss.players;
-						Platform.runLater(new RevealAllCards(gbc));
 						synchronized (this) {
 							try {
 								Platform.runLater(new Runnable(){
 									@Override
 									public void run(){
 										gbc.clearToast();
-										// TODO fill this in
 										if(players.length == 1) {
 											gbc.showToast("Player #: " + players[0] + " passed the quest");
 										} else if (players.length == 0) {
@@ -733,7 +810,6 @@ public class Client implements Runnable {
 									@Override
 									public void run(){
 										gbc.clearToast();
-										// TODO fill this in
 										if(players.length == 1) {
 											gbc.showToast("Player #: " + players[0] + " passed the stage");
 										} else if (players.length == 0) {

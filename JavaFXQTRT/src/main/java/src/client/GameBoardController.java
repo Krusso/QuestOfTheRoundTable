@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -31,6 +34,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.QuestCard;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.messages.game.CalculatePlayerClient;
@@ -47,6 +51,7 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
+	final static Logger logger = LogManager.getLogger(GameBoardController.class);
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
@@ -64,8 +69,8 @@ public class GameBoardController implements Initializable{
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
 	@FXML public Button endTurn;
-	@FXML private Button accept;
-	@FXML private Button decline;
+	@FXML public Button accept;
+	@FXML public Button decline;
 	@FXML private Button nextTurn;
 	@FXML private Button discard;
 	@FXML public Button useMerlin;
@@ -95,20 +100,20 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerPane3;
 	private Pane playerPanes[] = new Pane[4];
 
-	@FXML private Pane playerhand0;
-	@FXML private Pane playerHand1;
-	@FXML private Pane playerHand2;
-	@FXML private Pane playerHand3;
-	@FXML private Pane[] handPanes = new Pane[4];
+	@FXML public Pane playerhand0;
+	@FXML public Pane playerHand1;
+	@FXML public Pane playerHand2;
+	@FXML public Pane playerHand3;
+	@FXML public Pane[] handPanes = new Pane[4];
 
 	@FXML private Rectangle pRec0, pRec1, pRec2, pRec3;
 
 	//The panes that govern the player's facedown cards
-	@FXML private Pane playerFaceDown0;
-	@FXML private Pane playerFaceDown1;
-	@FXML private Pane playerFaceDown2;
-	@FXML private Pane playerFaceDown3;
-	private Pane[] faceDownPanes = new Pane[4];
+	@FXML public Pane playerFaceDown0;
+	@FXML public Pane playerFaceDown1;
+	@FXML public Pane playerFaceDown2;
+	@FXML public Pane playerFaceDown3;
+	public Pane[] faceDownPanes = new Pane[4];
 
 	//The panes that govern the player's faceup cards
 	@FXML private Pane playerFaceUp0;
@@ -155,6 +160,7 @@ public class GameBoardController implements Initializable{
 
 	@FXML private Pane discardPane;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
+	public QuestCard questCard;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -241,8 +247,9 @@ public class GameBoardController implements Initializable{
 	}
 
 	////Must call this when you click start game in title screen!
-	public void initPlayerManager(int numPlayers) {
+	public void initPlayerManager(int numPlayers, List<Integer> list) {
 		playerManager = new UIPlayerManager(numPlayers);
+		playerManager.setAI(list);
 		for(int i = 0 ; i < numPlayers ; i++) {
 			setPlayerRank(i, Rank.RANKS.SQUIRE);
 		}
@@ -564,23 +571,14 @@ public class GameBoardController implements Initializable{
 		card.returnOriginalPosition();
 	}
 
-	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
-		Pane from = card.childOf;
-		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
-		from.getChildren().remove(card.getImageView());
-		toRemove.remove(card);
-		//find which pane we want to place the card into right now
-		Pane to = mouseOverPane(point);
-		System.out.println("to:" + to);
-
+	private void putCardIntoPane(Pane to, AdventureCard card) {
+		// adding card to the to pane
 		ArrayList<AdventureCard> toAdd = paneDeckMap.get(to);
-		System.out.println("toAdd" + toAdd);
 		to.getChildren().add(card.getImageView());
 		toAdd.add(card);
 
-		System.out.println("toAdd" + toAdd);
 		card.childOf = to;
-
+		
 		repositionCardsInHand(playerManager.getCurrentPlayer());
 		repositionFaceDownCards(playerManager.getCurrentPlayer());
 
@@ -594,6 +592,29 @@ public class GameBoardController implements Initializable{
 
 		//reset the original position of this card cards
 		card.setOriginalPosition(card.getImageView().getX(), card.getImageView().getY());
+	}
+	
+	private void removeFromPane(Pane from, AdventureCard card) {
+		// removing card from the from pane
+		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
+		from.getChildren().remove(card.getImageView());
+		toRemove.remove(card);
+	}
+	
+	public void moveCardBetweenPanes(Pane from, Pane to, AdventureCard card) {
+		logger.info("Putting card: " + card.getName() + " into: " + to + " from: " + from);
+		removeFromPane(from, card);
+		putCardIntoPane(to, card);
+	}
+	
+	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
+		Pane from = card.childOf;
+		removeFromPane(from, card);
+		
+		//find which pane we want to place the card into right now
+		Pane to = mouseOverPane(point);
+		
+		putCardIntoPane(to, card);
 	}
 
 
@@ -957,6 +978,7 @@ public class GameBoardController implements Initializable{
 
 	public void setStageCardVisibility( boolean isShow, int... stageNum) {
 		for(int i: stageNum) {
+			currentStage = i;
 			ArrayList<AdventureCard> cards = stageCards.get(i);
 			for(AdventureCard c : cards) {
 				if(isShow) {

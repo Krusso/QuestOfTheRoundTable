@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -181,6 +182,16 @@ public class TitleScreenController implements Initializable{
 		return num;
 	}
 	
+	private List<Integer> getAI() {
+		ArrayList<Integer> ais = new ArrayList<Integer>();
+		for(int i = 0; i < players.length; i++) {
+			if(players[i].equals("AI")) {
+				ais.add(i);
+			}
+		}
+		return ais;
+	}
+	
 	public void hideMenu() { menuPane.setVisible(false); }
 	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); }
 	
@@ -220,7 +231,7 @@ public class TitleScreenController implements Initializable{
 		stage.show();
 		
 		//Setup player manager
-		gbc.initPlayerManager(getNumPlayers());
+		gbc.initPlayerManager(getNumPlayers(), getAI());
 		
 		//send gameStart message.
 		client.send(new GameStartClient(getNumPlayers(), rigged));

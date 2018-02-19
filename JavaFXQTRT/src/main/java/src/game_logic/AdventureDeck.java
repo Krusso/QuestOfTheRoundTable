@@ -24,7 +24,7 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		addCard(new FoeCard("Mordred",30, TYPE.FOES),4);
 		addCard(new FoeCard("Green Knight",25,40, TYPE.FOES),2);
 		addCard(new FoeCard("Black Knight",25,35, TYPE.FOES),3);
-		addCard(new FoeCard("Evil Knight",20,30, TYPE.FOES),60);
+		addCard(new FoeCard("Evil Knight",20,30, TYPE.FOES),6);
 		addCard(new FoeCard("Saxon Knight",15,25, TYPE.FOES),8);
 		addCard(new FoeCard("Robber Knight",15, TYPE.FOES),7);
 		addCard(new FoeCard("Saxons",10,20, TYPE.FOES),5);
