@@ -63,32 +63,32 @@ class AddCardsTask extends Task{
 		for(String card: cards) {
 			//find file associated to name
 			for(File f : list) {
-				if (f.getName().contains(card+".jpg")) {
+				if (f.getName().contains(card+".png")) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
 						AllyCard c = new AllyCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						c.faceDown();
 						gbc.addCardToHand(c, player);
 						break;
 					}
 					case 'F' : {
 						FoeCard c = new FoeCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
 						break;
 					}
 					case 'T' : {
 						TestCard c = new TestCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
 						break;
 					}
 					case 'W':{
 						WeaponCard weapon = new WeaponCard(card, f.getPath());
-						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(weapon, player);
 						weapon.faceDown();
 						break;
@@ -426,8 +426,11 @@ class QuestBidTask extends Task {
 			gbc.bidSlider.setShowTickLabels(true);
 			gbc.bidSlider.setBlockIncrement(1);
 			gbc.bidSlider.setSnapToTicks(true);
+			gbc.setPlayerPerspectiveTo(player);
+			gbc.addDraggable();
 			gbc.clearToast();
 			gbc.showToast("Use the slider to enter how many cards you want to bid.");
+			gbc.showDiscard();
 		}
 	}
 }

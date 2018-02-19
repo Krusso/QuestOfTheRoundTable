@@ -61,6 +61,7 @@
 
                      </children>
                   </VBox>
+                  <Rectangle fx:id="discardRec" arcHeight="5.0" arcWidth="5.0" fill="#80303094" height="382.0" layoutX="758.0" stroke="BLACK" strokeType="INSIDE" width="125.0" />
                   <Pane fx:id="discardPane" layoutX="762.0" prefHeight="400.0" prefWidth="125.0" />
                </children>
             </Pane>
@@ -73,7 +74,7 @@
             <Pane fx:id="playerFaceUp3" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown3" layoutX="501.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0">
                <children>
-                  <Rectangle fx:id="pRec3" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="150.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="511.0" />
+                  <Rectangle fx:id="pRec3" arcHeight="15.0" arcWidth="15.0" fill="#ffbb0055" height="150.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" width="511.0" />
                </children></Pane>
             <ImageView fx:id="playerRank3" fitHeight="154.0" fitWidth="121.0" layoutX="730.0" layoutY="249.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="shield4View" fitHeight="150.0" fitWidth="115.0" layoutX="846.0" layoutY="251.0" pickOnBounds="true" preserveRatio="true" />
@@ -92,7 +93,7 @@
             <Pane fx:id="playerFaceUp2" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown2" layoutX="500.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0">
                <children>
-                  <Rectangle fx:id="pRec2" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="150.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="511.0" />
+                  <Rectangle fx:id="pRec2" arcHeight="15.0" arcWidth="15.0" fill="#ffbb005c" height="150.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" width="511.0" />
                </children></Pane>
             <ImageView fx:id="playerRank2" fitHeight="153.0" fitWidth="107.0" layoutX="-17.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="250.0" />
             <ImageView fx:id="shield3View" fitHeight="149.0" fitWidth="109.0" layoutX="891.0" layoutY="251.0" pickOnBounds="true" preserveRatio="true" />
@@ -110,7 +111,7 @@
             <Pane fx:id="playerFaceUp1" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown1" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0">
                <children>
-                  <Rectangle fx:id="pRec1" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="150.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="511.0" />
+                  <Rectangle fx:id="pRec1" arcHeight="15.0" arcWidth="15.0" fill="#ffbb004f" height="150.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" width="511.0" />
                </children></Pane>
             <ImageView fx:id="playerRank1" fitHeight="150.0" fitWidth="120.0" layoutX="824.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="shield2View" fitHeight="153.0" fitWidth="110.0" layoutX="921.0" layoutY="256.0" pickOnBounds="true" preserveRatio="true" />
@@ -128,7 +129,7 @@
             <Pane fx:id="playerFaceUp0" layoutX="40.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" layoutY="100.0" prefHeight="150.0" prefWidth="500.0">
                <children>
-                  <Rectangle fx:id="pRec0" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="130.0" layoutX="2.0" layoutY="10.0" nodeOrientation="LEFT_TO_RIGHT" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="500.0" />
+                  <Rectangle fx:id="pRec0" arcHeight="15.0" arcWidth="15.0" fill="#ffbb0047" height="147.0" layoutX="2.0" layoutY="-1.0" nodeOrientation="LEFT_TO_RIGHT" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" width="500.0" />
                </children></Pane>
             <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="116.0" layoutX="820.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="shield1View" fitHeight="147.0" fitWidth="116.0" layoutX="931.0" layoutY="250.0" pickOnBounds="true" preserveRatio="true" />

@@ -139,6 +139,7 @@ public class GameBoardController implements Initializable{
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
 	
 	@FXML private Pane discardPane;
+	@FXML private Rectangle discardRec;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 
 	@Override
@@ -193,7 +194,12 @@ public class GameBoardController implements Initializable{
 		stageViews[2] = stage2View;
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
+		
+		hideDiscard();
 	}
+	
+	public void hideDiscard() { discardRec.setVisible(false); }
+	public void showDiscard() { discardRec.setVisible(true); }
 
 	public void clearHighlight() {
 		pRec0.setVisible(false);
@@ -886,9 +892,9 @@ public class GameBoardController implements Initializable{
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
-		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.jpg";
-		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.jpg";
-		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.jpg";
+		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.png";
+		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.png";
+		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.png";
 		//		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 		if(!rank.isEmpty()) {
 			try {
