@@ -28,6 +28,7 @@ import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.CalculatePlayerServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
@@ -359,7 +360,7 @@ class UpQuestTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
-//		gbc.flipStageCards(this.stage, true);
+		//		gbc.flipStageCards(this.stage, true);
 		gbc.setStageCardVisibility(true, stage);
 		gbc.repositionStageCards(stage);
 	}
@@ -497,6 +498,25 @@ class PickTournamentTask extends Task {
 	}
 }
 
+
+class UpdateBattlePointTask extends Task {
+	int player;
+	int points;
+	public UpdateBattlePointTask(GameBoardController gbc, int player, int points) {
+		super(gbc);
+		this.player = player;
+		this.points = points;
+	}
+
+	@Override
+	public void run() {
+		if(gbc.playerManager.getCurrentPlayer() == player) {
+			// TODO
+		}
+	}
+}
+
+
 class RevealAllCards extends Task {
 	public RevealAllCards(GameBoardController gbc) {
 		super(gbc);
@@ -589,6 +609,11 @@ public class Client implements Runnable {
 							}
 						}
 					}
+					if(message.equals(MESSAGETYPES.CALCULATEPLAYER.name())) {
+						CalculatePlayerServer cps = gson.fromJson(obj, CalculatePlayerServer.class);
+						Platform.runLater(new UpdateBattlePointTask(gbc, cps.player, cps.points));
+					}
+
 					if(message.equals(MESSAGETYPES.SHOWMIDDLECARD.name())) {
 						MiddleCardServer request = gson.fromJson(obj, MiddleCardServer.class);
 						Platform.runLater(new MiddleCardTask(gbc, request.card));
@@ -656,7 +681,7 @@ public class Client implements Runnable {
 										}
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										
+
 										gbc.startTurn.setVisible(true);
 										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
