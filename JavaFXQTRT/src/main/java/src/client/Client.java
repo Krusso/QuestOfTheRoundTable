@@ -162,15 +162,17 @@ class QuestSponsorTask extends Task {
 }
 
 class TournamentWonTask extends Task{
-	private int player;
-	public TournamentWonTask(GameBoardController gbc, int player) {
+	private int[] players;
+	public TournamentWonTask(GameBoardController gbc, int[] players) {
 		super(gbc);
-		this.player = player;
+		this.players = players;
 	}
 
 	@Override
 	public void run() {
-		winners[player] = true;
+		for(int i = 0 ; i < players.length;i++) {
+			winners[players[i]] = true;
+		}
 
 		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
@@ -612,7 +614,7 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
 						TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
-						Platform.runLater(new TournamentWonTask(gbc, request.player));
+						Platform.runLater(new TournamentWonTask(gbc, request.players));
 						Platform.runLater(new RevealAllCards(gbc));
 						synchronized (this) {
 							try {
