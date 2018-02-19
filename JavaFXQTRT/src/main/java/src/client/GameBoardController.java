@@ -34,6 +34,7 @@ import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.messages.game.CalculatePlayerClient;
+import src.messages.game.CalculateStageClient;
 import src.messages.game.ContinueGameClient;
 import src.messages.hand.HandFullClient;
 import src.messages.quest.QuestBidClient;
@@ -137,10 +138,20 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane pickStage2;
 	@FXML private Pane pickStage3;
 	@FXML private Pane pickStage4;
-	private Pane[] stages = new Pane[5];
-	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
+	public Pane[] stages = new Pane[5];
+	public ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
+	
+	@FXML public Text bpTextStage0;
+	@FXML public Text bpTextStage1;
+	@FXML public Text bpTextStage2;
+	@FXML public Text bpTextStage3;
+	@FXML public Text bpTextStage4;
+	public Text[] bpTexts = new Text[5];
+	
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
+	
+	@FXML public Text currBP;
 
 	@FXML private Pane discardPane;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
@@ -148,6 +159,12 @@ public class GameBoardController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		bpTexts[0] = bpTextStage0;
+		bpTexts[1] = bpTextStage1;
+		bpTexts[2] = bpTextStage2;
+		bpTexts[3] = bpTextStage3;
+		bpTexts[4] = bpTextStage4;
+		
 		playerPanes[0] = playerPane0;
 		playerPanes[1] = playerPane1;
 		playerPanes[2] = playerPane2;
@@ -485,13 +502,22 @@ public class GameBoardController implements Initializable{
 		System.out.println("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+				doPutCardIntoPane(point, card);
+				for(int i = 0; i < stages.length; i++) {
+					if(stages[i].isVisible()) {
+						c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));	
+					}
+				}
+				return;
+			}
 			//Find if the current point is within one of the stage panes.
 			for(int i = 0 ; i < stages.length ; i++) {
 				//we allow player to put the cards into the stage panes, hand panes or if it is a merlin card, we allow the player to put
 				//it into the face up pane if they choose to use its power
-				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
-						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card)) {
 					doPutCardIntoPane(point, card);
+					c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));
 				}
 			}
 		}
@@ -518,10 +544,9 @@ public class GameBoardController implements Initializable{
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(card);
 				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck());
 				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
-				c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
+				c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(String[]::new)));
 			}
 		}
 		//if the current player has too many cards, we can allow him to play cards into the discard pile
@@ -662,6 +687,23 @@ public class GameBoardController implements Initializable{
 		return false;
 	}
 
+	
+	private boolean stagesIncreasing() {
+		int lastBp = Integer.MIN_VALUE;
+		for(int i = 0; i < stages.length; i++) {
+			if(stages[i].isVisible()) {
+				if(bpTexts[i].getText().equals("")) {
+					return false;
+				} else if(Integer.parseInt(bpTexts[i].getText()) <= lastBp){
+					return false;
+				}
+				lastBp = Integer.parseInt(bpTexts[i].getText());
+			}
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * Checks if the stages satisfy the current quest card (should be called before player ends turn)
 	 * We only check if the stages are empty or contains either a test/foe not since when players play cards into the pane, a validation already occurs
@@ -1025,7 +1067,7 @@ public class GameBoardController implements Initializable{
 			}
 			else if(CURRENT_STATE == STATE.PICK_STAGES) {
 				//TODO::Handle PICK_STAGES make sure player plays a card
-				if(areQuestStagesValid()) {
+				if(areQuestStagesValid() && stagesIncreasing()) {
 					for(int i = 0 ; i < stageCards.size(); i++) {
 						if(!stageCards.get(i).isEmpty()) {
 							String[] currentStageCards = new String[stageCards.get(i).size()];
@@ -1039,9 +1081,13 @@ public class GameBoardController implements Initializable{
 						}
 					}
 				}else {
-					//TODO:: display some message saying quest stages are not valid
-					toast.setText("Quest stages are not valid");
-					System.out.println("Quest stages are not valid");
+					if(!areQuestStagesValid()) {
+						toast.setText("Quest stages are not valid. Each stage needs 1 foe or 1 test");
+						System.out.println("Quest stages are not valid. Each stage needs 1 foe or 1 test");
+					} else {
+						toast.setText("Quest stages are not valid. Each stage needs an increasing amount of bp");
+						System.out.println("Quest stages are not valid. Each stage needs an increasing amount of bp");
+					}
 				}
 
 			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
@@ -1082,6 +1128,7 @@ public class GameBoardController implements Initializable{
 				String[] cards = discardAllFaceDownCards(currentPlayer);
 				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
 			}
+			
 		});
 
 		/*
