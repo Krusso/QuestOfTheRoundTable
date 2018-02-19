@@ -18,7 +18,7 @@ public class TestBattlePointCalculator {
 	ArrayList<AdventureCard> cards;
 	@Before
 	public void before() {
-		pm = new PlayerManager(1, null);
+		pm = new PlayerManager(1, null, true);
 		p1 = new Player(0);
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();
@@ -54,7 +54,7 @@ public class TestBattlePointCalculator {
 	
 	@Test
 	public void testWeaponCalculations() {
-		pm = new PlayerManager(5, null);
+		pm = new PlayerManager(5, null, true);
 		Player p1 = new Player(0);
 		Player p2 = new Player(1);
 		Player p3 = new Player(2);

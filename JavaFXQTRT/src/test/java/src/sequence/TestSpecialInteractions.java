@@ -61,7 +61,7 @@ public class TestSpecialInteractions {
 		output = new LinkedBlockingQueue<String>();
 		oc = new OutputController(output);
 		dm = new DeckManager();
-		pm = new PlayerManager(4, dm);
+		pm = new PlayerManager(4, dm, true);
 		bm = new BoardModel();
 		pv = new PlayerView(oc);
 		pm.subscribe(pv);
