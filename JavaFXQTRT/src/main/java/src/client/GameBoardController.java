@@ -1,6 +1,5 @@
 package src.client;
 
-import java.awt.Dialog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,8 +18,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Slider;
@@ -28,7 +25,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -37,15 +33,15 @@ import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
+import src.messages.game.CalculatePlayerClient;
 import src.messages.game.ContinueGameClient;
+import src.messages.hand.HandFullClient;
 import src.messages.quest.QuestBidClient;
 import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
 import src.messages.quest.QuestPickCardsClient;
 import src.messages.quest.QuestPickStagesClient;
 import src.messages.quest.QuestSponsorClient;
-import src.messages.hand.HandFullClient;
-import src.messages.quest.*;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
@@ -144,7 +140,7 @@ public class GameBoardController implements Initializable{
 	private ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
-	
+
 	@FXML private Pane discardPane;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 
@@ -241,10 +237,7 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < stages.length ; i ++) {
 			paneDeckMap.put(stages[i], stageCards.get(i));
 		}
-		
-		paneDeckMap.put(discardPane, discardPile);
-		
-		
+		paneDeckMap.put(discardPane, discardPile );
 	}
 
 
@@ -357,17 +350,16 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
-	
+
 	private void repositionCardsInHand(int pNum) {
 		reposition(handPanes[pNum].getChildren(), handPanes[pNum].getWidth());
 	}
-	
+
 	private void repositionFaceUpCards(int pNum) {
 		reposition(faceUpPanes[pNum].getChildren(),  faceUpPanes[pNum].getWidth());
 	}
-	
+
 	private void repositionDiscardPile() {
-		ArrayList<AdventureCard> currHand = discardPile;
 		ObservableList<Node> cards = discardPane.getChildren();
 		double height = discardPane.getHeight();
 
@@ -430,17 +422,17 @@ public class GameBoardController implements Initializable{
 			System.out.println("mouse over discard pane");
 			return discardPane;
 		}
-		//check faceupPanes
+
 		for(Pane p : faceUpPanes) {
 			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
 				System.out.println("mouse over Face up Pane");
 				return p;
 			}
 		}
-		
+
 		System.out.println("ERROR WE DIDN'T FIND ANY PANES OVER THE MOUSE!");
 		//if we wish to add drag and drop for new panes, make sure we add it below here:
-		
+
 		//otherwise return null
 		return null;
 	}
@@ -456,9 +448,8 @@ public class GameBoardController implements Initializable{
 	 */
 	public void putIntoPane(Point2D point, int id) {
 		int cPlayer = playerManager.getCurrentPlayer();
-		int idx = playerManager.getCardIndexByID(cPlayer, id);
 		ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(cPlayer);
-		
+
 		//Find where this card is on the game board (it must be either in player hand, face down pane, discard pile or stage)
 		AdventureCard card = playerManager.getCardByIDInHand(cPlayer, id);
 		if(card == null) {
@@ -490,7 +481,6 @@ public class GameBoardController implements Initializable{
 				}
 			}
 		}
-		
 		System.out.println("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
@@ -499,7 +489,7 @@ public class GameBoardController implements Initializable{
 				//we allow player to put the cards into the stage panes, hand panes or if it is a merlin card, we allow the player to put
 				//it into the face up pane if they choose to use its power
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card) || 
-						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer]) ) {
+						isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 					doPutCardIntoPane(point, card);
 				}
 			}
@@ -513,11 +503,16 @@ public class GameBoardController implements Initializable{
 				doPutCardIntoPane(point, card);
 			}
 		}
-		
+
 		if( CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(card);
+				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck());
+				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
+				c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
 			}
 		}
 		//if the current player has too many cards, we can allow him to play cards into the discard pile
@@ -530,11 +525,11 @@ public class GameBoardController implements Initializable{
 		}else if(isInPane(discardPane, point)){
 			toast.setText("Cannot add more cards into discard pile");
 		}
-		
+
 		//return to original position if we don't put it into the pane
 		card.returnOriginalPosition();
 	}
-	
+
 	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
 		Pane from = card.childOf;
 		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
@@ -543,13 +538,12 @@ public class GameBoardController implements Initializable{
 		//find which pane we want to place the card into right now
 		Pane to = mouseOverPane(point);
 		System.out.println("to:" + to);
-		
+
 		ArrayList<AdventureCard> toAdd = paneDeckMap.get(to);
 		System.out.println("toAdd" + toAdd);
 		to.getChildren().add(card.getImageView());
 		toAdd.add(card);
 
-		System.out.println("to: " + to);
 		System.out.println("toAdd" + toAdd);
 		card.childOf = to;
 
@@ -870,7 +864,7 @@ public class GameBoardController implements Initializable{
 			currHand.get(i).setDraggableOff();
 		}
 	}
-	
+
 	public void addDraggable() {
 		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
 		for(int i = 0 ; i < currHand.size(); i++) {
@@ -891,7 +885,7 @@ public class GameBoardController implements Initializable{
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
 	}
-	
+
 	public void moveToFaceUpPane(int p) {
 		playerManager.players[p].getFaceDownDeck().getDeck().forEach(i -> {
 			i.faceDown();
@@ -954,7 +948,7 @@ public class GameBoardController implements Initializable{
 		}
 		repositionFaceUpCards(p);
 	}
-	
+
 	//discards all cards and returns the string[] name of them
 	public String[] discardAllFaceDownCards(int p) {
 		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
@@ -1039,6 +1033,7 @@ public class GameBoardController implements Initializable{
 				}else {
 					setDiscardVisibility(false);
 				}
+
 
 				//send cards 
 				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
@@ -1140,7 +1135,7 @@ public class GameBoardController implements Initializable{
 			discardPane.getChildren().clear();
 
 		});
-		
+
 		/*
 		 * Setup merlin button
 		 */
@@ -1165,12 +1160,12 @@ public class GameBoardController implements Initializable{
 					d.setTitle("Using Merlin Power");
 					d.setHeaderText("Select a stage to show");
 					d.setContentText("Stage #:");
-				    Optional<String> result = d.showAndWait();
-				    if(result.isPresent() && c.tryUseMerlin()) {
-				    	int s = Integer.parseInt(result.get()) - 1;
-				    	setStageCardVisibility(true,s);
-				    	repositionStageCards(s);
-				    }
+					Optional<String> result = d.showAndWait();
+					if(result.isPresent() && c.tryUseMerlin()) {
+						int s = Integer.parseInt(result.get()) - 1;
+						setStageCardVisibility(true,s);
+						repositionStageCards(s);
+					}
 					return;
 				}
 			}

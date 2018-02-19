@@ -1,10 +1,18 @@
 package src.player;
 
+import java.util.Iterator;
+
 import src.game_logic.Card;
 import src.game_logic.QuestCard;
 
 public class BidCalculator {
 
+	private PlayerManager pm;
+	
+	public BidCalculator(PlayerManager pm) {
+		this.pm = pm;
+	}
+	
 	public int maxBid(Player player, QuestCard quest) {
 		return freeBids(player, quest) + player.hand.size();
 	}
@@ -23,7 +31,12 @@ public class BidCalculator {
 			} else if(c.getName().equals("Queen Guinevere")) {
 				freeBids += 3;
 			} else if(c.getName().equals("Queen Iseult")) {
-				if(player.hasTristanIseultBoost()) {
+				boolean foundTristan = false;
+				Iterator<Player> players = pm.round();
+				while(players.hasNext()) {
+					if(players.next().tristan == true) foundTristan = true;
+				}
+				if(foundTristan) {
 					freeBids += 4;	
 				} else {
 					freeBids += 2;

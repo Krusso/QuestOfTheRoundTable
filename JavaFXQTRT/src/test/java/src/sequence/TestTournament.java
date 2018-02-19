@@ -147,7 +147,7 @@ public class TestTournament {
 		while(true) {
 			Message string = actualOutput.take();
 			System.out.println(string);
-			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 1) break;
+			if(string.message == MESSAGETYPES.WINTOURNAMENT) break;
 		}
 		assertEquals(7,players.get(0).getShields());
 		assertEquals(7,players.get(1).getShields());
