@@ -67,7 +67,10 @@ public class GameBoardController implements Initializable{
 	@FXML private Button decline;
 	@FXML private Button nextTurn;
 	@FXML private Button discard;
+	
 	@FXML public Button useMerlin;
+	@FXML public Button useMordred;
+	
 	@FXML private Text playerNumber;
 	@FXML private Pane background;
 	@FXML private Pane questBoard;
@@ -1199,7 +1202,6 @@ public class GameBoardController implements Initializable{
 							numStages++;
 						}
 					}
-					//TODO:: USE MERLIN POWER!
 					ChoiceDialog<String> d = new ChoiceDialog<>(null, dialogChoices);
 					d.setTitle("Using Merlin Power");
 					d.setHeaderText("Select a stage to show");
@@ -1216,6 +1218,67 @@ public class GameBoardController implements Initializable{
 			}
 			System.out.println("You do not have Merlin in play");
 		});
+		
+//		this.useMordred.setOnAction(e->{
+//			//check if current player has mordred
+//			String[] mordredCard = new String[1];
+//			String[] otherAllyCard = new String[1];
+//			int currentPlayer = playerManager.getCurrentPlayer();
+//			ArrayList<AdventureCard> hand = playerManager.getPlayerHand(currentPlayer);
+//			AdventureCard mordred = null;
+//			int mIndex = -1;
+//			for(int i = 0 ; i < hand.size(); i++) {
+//				if(hand.get(i).isMordred()) {
+//					mordred = hand.get(i);
+//					mIndex = i;
+//				}
+//			}
+//			//if it's not in either hand or facedown field then player does not have mordred
+//			if(mordred == null) {
+//				System.out.println("You do not have Mordred");
+//				return;
+//			}
+//			mordredCard[0] = mordred.getName();
+//			
+//			//setup dialog to choose which card to delete
+//			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
+//			ArrayList<String> choices = new ArrayList<String>();
+//			//get all the face up cards on the board
+//			for(int p = 0 ; p < playerManager.getNumPlayers() ; p++) {
+//				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(p);
+//				for(int i = 0 ; i < fuc.size(); i++) {
+//					Integer[] pNumAndCardID = new Integer[3];
+//					pNumAndCardID[0] = p;			//idx 0 = playerNum
+//					pNumAndCardID[1] = fuc.get(i).id;//idx 1= cardid
+//					pNumAndCardID[3] = i;			//idx 2 = idx of the card in list
+//					dialogChoices.put("Player #" + p + " " + fuc.get(i).getName(), pNumAndCardID);
+//					choices.add("Player #" + p + " " + fuc.get(i).getName());
+//				}
+//			}
+//		    
+//			ChoiceDialog<String> d = new ChoiceDialog<>(null, choices);
+//			d.setTitle("Using Mordred's Power");
+//			d.setHeaderText("Select an opponent's ally card to destroy");
+//			d.setContentText("Ally Card:");
+//			Optional<String> result = d.showAndWait();
+//			if(result.isPresent()) {
+//				Integer[] pNumAndCard = dialogChoices.get(result);
+//				System.out.println("Player Num: " + pNumAndCard[0] + " cardID:" + pNumAndCard[1] + "idx" + pNumAndCard[2]);
+//				
+//				
+//				//dicard the current mordred card
+//				Pane mordredContainer = mordred.childOf;
+//				mordredContainer.getChildren().remove(mIndex);
+//				playerManager.removeCardFromHand(mordred, currentPlayer);
+//				c.send(new QuestDiscardCardsClient(currentPlayer, mordredCard));
+//				
+//				faceUpPanes[pNumAndCard[0]].getChildren().remove((Integer)pNumAndCard[2].intValue());
+//				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(pNumAndCard[0]);
+//				fuc.remove((Integer)pNumAndCard[2].intValue());
+//				
+//			}
+//			
+//		});
 	}
 	public void resetMerlinUse() {
 		//find the merlins and reset their charge to 1
@@ -1229,5 +1292,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	
+	
 }
 

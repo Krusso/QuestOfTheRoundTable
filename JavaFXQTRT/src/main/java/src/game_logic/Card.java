@@ -220,6 +220,13 @@ public abstract class Card {
 		return false;
 	}
 	
+	public boolean isMordred() {
+		if(name.equalsIgnoreCase("Mordred")) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean tryUseMerlin() {
 		if(merlinUses > 0) {
 			merlinUses--;
