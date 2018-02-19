@@ -1,3 +1,4 @@
+
 package src.client;
 import java.io.BufferedReader;
 import java.io.File;
@@ -162,16 +163,16 @@ class QuestSponsorTask extends Task {
 }
 
 class TournamentWonTask extends Task{
-	private int[] player;
+	private int[] players;
 	public TournamentWonTask(GameBoardController gbc, int[] players) {
 		super(gbc);
-		this.player = players;
+		this.players = players;
 	}
 
 	@Override
 	public void run() {
-		for(int i: player) {
-			winners[i] = true;
+		for(int i = 0 ; i < players.length;i++) {
+			winners[players[i]] = true;
 		}
 
 		String display = "";
@@ -194,6 +195,8 @@ class TournamentWonTask extends Task{
 		gbc.showToast(display);
 		//		gbc.toast.setText(display);
 		//		gbc.toast.setVisible(true);
+		//reset merlin power
+		gbc.resetMerlinUse();
 
 	}
 }
@@ -297,7 +300,6 @@ class QuestJoinTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.resetMerlinUse();
 		gbc.setButtonsInvisible();
 		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();
@@ -358,7 +360,7 @@ class UpQuestTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.UP_QUEST;
-//		gbc.flipStageCards(this.stage, true);
+		//		gbc.flipStageCards(this.stage, true);
 		gbc.setStageCardVisibility(true, stage);
 		gbc.repositionStageCards(stage);
 	}
@@ -496,6 +498,7 @@ class PickTournamentTask extends Task {
 	}
 }
 
+
 class UpdateBattlePointTask extends Task {
 	int player;
 	int points;
@@ -514,6 +517,7 @@ class UpdateBattlePointTask extends Task {
 		}
 	}
 }
+
 
 class RevealAllCards extends Task {
 	public RevealAllCards(GameBoardController gbc) {
@@ -596,8 +600,8 @@ public class Client implements Runnable {
 										gbc.showToast("Player #: " + request.player + " turn");
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Start Turn");
+										gbc.startTurn.setVisible(true);
+										gbc.startTurn.setText("Start Turn");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
@@ -611,6 +615,7 @@ public class Client implements Runnable {
 						CalculatePlayerServer cps = gson.fromJson(obj, CalculatePlayerServer.class);
 						Platform.runLater(new UpdateBattlePointTask(gbc, cps.player, cps.points));
 					}
+
 					if(message.equals(MESSAGETYPES.SHOWMIDDLECARD.name())) {
 						MiddleCardServer request = gson.fromJson(obj, MiddleCardServer.class);
 						Platform.runLater(new MiddleCardTask(gbc, request.card));
@@ -644,8 +649,8 @@ public class Client implements Runnable {
 									@Override
 									public void run(){
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Continue");
+										gbc.showStartTurn();
+										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
@@ -678,8 +683,9 @@ public class Client implements Runnable {
 										}
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Continue");
+
+										gbc.startTurn.setVisible(true);
+										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
@@ -709,8 +715,8 @@ public class Client implements Runnable {
 										}
 										gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 										gbc.setButtonsInvisible();
-										gbc.endTurn.setVisible(true);
-										gbc.endTurn.setText("Continue");
+										gbc.startTurn.setVisible(true);
+										gbc.startTurn.setText("Continue");
 										gbc.CURRENT_STATE = STATE.CHILLING;
 									}
 								});
