@@ -29,7 +29,7 @@ public class TestBidCalculator {
 	ArrayList<AdventureCard> cards;
 	@Before
 	public void before() {
-		pm = new PlayerManager(1, null);
+		pm = new PlayerManager(1, null, false);
 		p1 = new Player(0);
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();

@@ -68,6 +68,8 @@ public class TitleScreenController implements Initializable{
 	@FXML private MenuButton b2;
 	@FXML private MenuButton b3;
 	@FXML private MenuButton b4;
+
+	private boolean rigged;
 	
 	public void setClient(Client c) {
 		client = c;
@@ -221,7 +223,7 @@ public class TitleScreenController implements Initializable{
 		gbc.initPlayerManager(getNumPlayers());
 		
 		//send gameStart message.
-		client.send(new GameStartClient(getNumPlayers()));
+		client.send(new GameStartClient(getNumPlayers(), rigged));
 	}
 	
 	//Gives the capability to scale the screen based on the scale factor (1.0 = 100%, 0.5 = 50% etc)
@@ -281,6 +283,9 @@ public class TitleScreenController implements Initializable{
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	public void setRigged(boolean b) {
+		this.rigged = b;
 	}
 
 }

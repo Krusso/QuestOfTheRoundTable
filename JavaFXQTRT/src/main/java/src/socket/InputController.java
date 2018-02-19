@@ -4,6 +4,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +16,7 @@ import src.messages.QOTRTQueue;
 import src.messages.game.GameStartClient;
 
 public class InputController extends Thread {
-	
+	final static Logger logger = LogManager.getLogger(InputController.class);
 	private LinkedBlockingQueue<String> inputQueue;
 	private QOTRTQueue actionQueue;
 	private Game game;
@@ -29,7 +32,7 @@ public class InputController extends Thread {
 	}
 
 	public void run() {
-		System.out.println("Waiting");
+		logger.info("Processing inputs");
 		Supplier<String> socketOutput = () -> {
 			try {
 				return inputQueue.take();
@@ -43,12 +46,10 @@ public class InputController extends Thread {
 			handle(s);
 			return s;
 		}) .allMatch(s -> s != null);
-		
-		System.out.println("Done waiting");
 	}
 	
 	public void handle(String message) {
-		System.out.println("Server Received: " + message);
+		logger.info("Server Received: " + message);
 		JsonObject obj = json.parse(message).getAsJsonObject();
 		if(obj.get("TYPE") == null || !obj.get("TYPE").getAsString().equals("GAME")){
 			return;
@@ -58,6 +59,7 @@ public class InputController extends Thread {
 			GameStartClient gsc = gson.fromJson(obj, GameStartClient.class);
 			gm.setNumPlayers(gsc.player);
 			game.setActionQueue(actionQueue);
+			game.setRigged(gsc.rigged);
 			game.start();
 		} else {
 			actionQueue.add(message);
