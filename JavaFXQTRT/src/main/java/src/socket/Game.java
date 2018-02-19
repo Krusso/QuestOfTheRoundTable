@@ -1,6 +1,9 @@
 package src.socket;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.StoryCard;
@@ -14,9 +17,12 @@ import src.views.PlayersView;
 
 public class Game extends Thread{
 
+	final static Logger logger = LogManager.getLogger(Game.class);
+	
 	private OutputController output;
 	private GameModel gm;
 	private QOTRTQueue actions;
+	private boolean rigged;
 
 	public Game(OutputController output, GameModel gm) {
 		this.output = output;
@@ -27,7 +33,7 @@ public class Game extends Thread{
 		
 		BoardModel bm = new BoardModel();
 		DeckManager dm = new DeckManager();
-		PlayerManager pm = new PlayerManager(gm.getNumPlayers(), dm);
+		PlayerManager pm = new PlayerManager(gm.getNumPlayers(), dm, rigged);
 		PlayersView pvs = new PlayersView(output);
 		pm.subscribe(pvs);
 		PlayerView pv = new PlayerView(output);
@@ -38,12 +44,12 @@ public class Game extends Thread{
 
 		GameSequenceManager gsm = new GameSequenceManager();
 		while(true) {
+			logger.info("Next Turn");
 			pm.nextTurn();
-			//System.out.println("deck size: " + dm.storySize());
+			StoryCard s = dm.getStoryCard(1).get(0);
+			logger.info("Next card being played: " + s.getName());
 			bm.setCard(dm.getStoryCard(1).get(0));
-			if(dm.storySize() == 0) {
-				break;
-			}
+
 			SequenceManager sm = gsm.createStoryManager(bm.getCard());
 			sm.start(actions, pm, bm);
 			
@@ -55,17 +61,17 @@ public class Game extends Thread{
 			}
 
 			// wait until client is ready for the next turn
-			//actions.take(ContinueGameClient.class);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
+			actions.take(ContinueGameClient.class);
 		}
 
 	}
 
 	public void setActionQueue(QOTRTQueue actionQueue) {
 		this.actions = actionQueue;
+	}
+
+	public void setRigged(boolean rigged) {
+		this.rigged = rigged;
 	}
 
 }

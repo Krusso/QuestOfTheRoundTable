@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import src.game_logic.AdventureCard.TYPE;
@@ -19,7 +21,7 @@ import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 
 public class TestA2 {
-	
+	final static Logger logger = LogManager.getLogger(TestA2.class);
 	@Test
 	public void doIParticipateInTournament() {
 		AbstractAI player = new A2(new UIPlayer(0), null);
@@ -69,7 +71,7 @@ public class TestA2 {
 	
 	@Test
 	public void doISponserAQuest() {
-		System.out.println("Testing 1");
+		logger.info("Testing 1");
 		UIPlayer p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
@@ -79,7 +81,7 @@ public class TestA2 {
 				new QuestCard("Repel the Saxon Raiders",2,"All Saxons")), 
 				new String[][] {}));
 		
-		System.out.println("Testing 2");
+		logger.info("Testing 2");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Mordred",30, TYPE.FOES));
 		p1.addCard(new FoeCard("Green Knight",25,40, TYPE.FOES));
@@ -88,7 +90,7 @@ public class TestA2 {
 				new QuestCard("Repel the Saxon Raiders",2,"All Saxons")), 
 				new String[][] {}));
 		
-		System.out.println("Testing 3");
+		logger.info("Testing 3");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Saxon Knight",15,25, TYPE.FOES));
@@ -99,7 +101,7 @@ public class TestA2 {
 				new QuestCard("Repel the Saxon Raiders",2,"All Saxons")), 
 				new String[][] {{"Thieves"}, {"Dragon"}}));
 		
-		System.out.println("Testing 4");
+		logger.info("Testing 4");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
@@ -111,7 +113,7 @@ public class TestA2 {
 				new QuestCard("Repel the Saxon Raiders",2,"All Saxons")), 
 				new String[][] {{"Thieves"}, {"Dragon"}}));
 		
-		System.out.println("Testing 5");
+		logger.info("Testing 5");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
@@ -127,28 +129,28 @@ public class TestA2 {
 	
 	@Test
 	public void doIParticipateInQuest() {
-		System.out.println("Testing 1");
+		logger.info("Testing 1");
 		UIPlayer p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		AbstractAI player = new A2(p1, null);
 		assertEquals(false, player.doIParticipateInQuest(new QuestCard("Repel the Saxon Raiders",2,"All Saxons")));
 		
-		System.out.println("Testing 2");
+		logger.info("Testing 2");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Mordred",30, TYPE.FOES));
 		p1.addCard(new FoeCard("Green Knight",25,40, TYPE.FOES));
 		player = new A2(p1, null);
 		assertEquals(false, player.doIParticipateInQuest(new QuestCard("Repel the Saxon Raiders",2,"All Saxons")));
 		
-		System.out.println("Testing 3");
+		logger.info("Testing 3");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		player = new A2(p1, null);
 		assertEquals(false, player.doIParticipateInQuest(new QuestCard("Repel the Saxon Raiders",2,"All Saxons")));
 		
-		System.out.println("Testing 4");
+		logger.info("Testing 4");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
@@ -157,7 +159,7 @@ public class TestA2 {
 		player = new A2(p1, null);
 		assertEquals(false, player.doIParticipateInQuest(new QuestCard("Repel the Saxon Raiders",2,"All Saxons")));
 		
-		System.out.println("Testing 5");
+		logger.info("Testing 5");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
@@ -169,7 +171,7 @@ public class TestA2 {
 	
 	@Test
 	public void playCardsForFoeQuest() {
-		System.out.println("Testing 1");
+		logger.info("Testing 1");
 		UIPlayer p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
@@ -177,7 +179,7 @@ public class TestA2 {
 		assertTrue(compare(player.playCardsForFoeQuest(false), 
 				new String[] {}));
 		
-		System.out.println("Testing 2");
+		logger.info("Testing 2");
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
@@ -185,7 +187,7 @@ public class TestA2 {
 		assertTrue(compare(player.playCardsForFoeQuest(false), 
 				new String[] {"Sword"}));
 		
-		System.out.println("Testing 3");
+		logger.info("Testing 3");
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
@@ -195,7 +197,7 @@ public class TestA2 {
 		assertTrue(compare(player.playCardsForFoeQuest(false), 
 				new String[] {"King Arthur"}));
 		
-		System.out.println("Testing 4");
+		logger.info("Testing 4");
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
@@ -205,7 +207,7 @@ public class TestA2 {
 		assertTrue(compare(player.playCardsForFoeQuest(false), 
 				new String[] {"Amour"}));
 		
-		System.out.println("Testing 5");
+		logger.info("Testing 5");
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
@@ -218,42 +220,42 @@ public class TestA2 {
 	
 	@Test
 	public void nextBid() {
-		System.out.println("Testing 1");
+		logger.info("Testing 1");
 		UIPlayer p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		AbstractAI player = new A2(p1, null);
 		assertTrue(-1 == player.nextBid(1, Integer.MAX_VALUE));
 		
-		System.out.println("Testing 2");
+		logger.info("Testing 2");
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		player = new A2(p1, null);
 		assertTrue(-1 == player.nextBid(1, 0));
 		
-		System.out.println("Testing 3");
+		logger.info("Testing 3");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Giant",40, TYPE.FOES));
 		player = new A2(p1, null);
 		assertTrue(-1 == player.nextBid(1, 0));
 		
-		System.out.println("Testing 4");
+		logger.info("Testing 4");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		player = new A2(p1, null);
 		assertTrue(2 == player.nextBid(1, 0));
 		
-		System.out.println("Testing 5");
+		logger.info("Testing 5");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		player = new A2(p1, null);
 		assertTrue(1 == player.nextBid(2, 0));
 		
-		System.out.println("Testing 6");
+		logger.info("Testing 6");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
@@ -262,7 +264,7 @@ public class TestA2 {
 		player = new A2(p1, null);
 		assertTrue(3 == player.nextBid(2, 0));
 		
-		System.out.println("Testing 7");
+		logger.info("Testing 7");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
@@ -278,42 +280,42 @@ public class TestA2 {
 	
 	@Test
 	public void discardAfterWinningTest() {
-		System.out.println("Testing 1");
+		logger.info("Testing 1");
 		UIPlayer p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		AbstractAI player = new A2(p1, null);
 		assertTrue(compare(player.discardAfterWinningTest(1), new String[] {}));
 		
-		System.out.println("Testing 2");
+		logger.info("Testing 2");
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		player = new A2(p1, null);
 		assertTrue(compare(player.discardAfterWinningTest(1), new String[] {}));
 		
-		System.out.println("Testing 3");
+		logger.info("Testing 3");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Giant",40, TYPE.FOES));
 		player = new A2(p1, null);
 		assertTrue(compare(player.discardAfterWinningTest(1), new String[] {}));
 		
-		System.out.println("Testing 4");
+		logger.info("Testing 4");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		player = new A2(p1, null);
 		assertTrue(compare(player.discardAfterWinningTest(1), new String[] {"Thieves", "Thieves"}));
 		
-		System.out.println("Testing 5");
+		logger.info("Testing 5");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		player = new A2(p1, null);
 		assertTrue(compare(player.discardAfterWinningTest(2), new String[] {"Dragon"}));
 		
-		System.out.println("Testing 6");
+		logger.info("Testing 6");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
@@ -322,7 +324,7 @@ public class TestA2 {
 		player = new A2(p1, null);
 		assertTrue(compare(player.discardAfterWinningTest(2), new String[] {"Dragon", "Dragon", "Dragon"}));
 		
-		System.out.println("Testing 7");
+		logger.info("Testing 7");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
@@ -338,7 +340,7 @@ public class TestA2 {
 
 	public static boolean compareList(List<List<Card>> playCardsForTournmanet, String[][] strings) {
 		boolean flag = true;
-		System.out.println("3: " + playCardsForTournmanet);
+		logger.info("3: " + playCardsForTournmanet);
 		if(strings.length != playCardsForTournmanet.size()) return false;
 		
 		for(int i = 0; i < strings.length;i++) {
@@ -349,8 +351,8 @@ public class TestA2 {
 	
 	public static boolean compare( List<Card> playCardsForTournament, String[] string) {
 		ArrayList<String> cards = new ArrayList<String>(Arrays.asList(string));
-		System.out.println("1: " + cards);
-		System.out.println("2: " + playCardsForTournament);
+		logger.info("1: " + cards);
+		logger.info("2: " + playCardsForTournament);
 		for(Card card: playCardsForTournament) {
 			for(int i = 0; i < cards.size(); i++) {
 				if(cards.get(i).equals(card.getName())) {

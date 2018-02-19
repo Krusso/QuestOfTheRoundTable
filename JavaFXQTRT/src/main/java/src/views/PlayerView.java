@@ -78,7 +78,6 @@ public class PlayerView {
 	}
 
 	public void updateFaceDown(List<AdventureCard> list, int ID) {
-		System.out.println("Printed out: ---- " + list);
 		String[] cardNames = list.stream().map(e -> e.getName()).toArray(size -> new String[size]);
 		output.sendMessage(new FaceDownServer(ID, cardNames));
 	}

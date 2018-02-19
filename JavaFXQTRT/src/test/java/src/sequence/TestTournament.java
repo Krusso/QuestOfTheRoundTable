@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,12 +21,13 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 import src.player.Player;
 import src.player.PlayerManager;
+import src.player.TestA2;
 import src.socket.OutputController;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
 public class TestTournament {
-
+	final static Logger logger = LogManager.getLogger(TestTournament.class);
 	@Test
 	public void testWinSecondRound() throws InterruptedException {
 		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
@@ -40,7 +43,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
@@ -53,7 +56,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
@@ -68,7 +71,7 @@ public class TestTournament {
 		for(int i = 0; i < 2; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
@@ -83,7 +86,7 @@ public class TestTournament {
 		// player 0 won and player 1 won
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 0) break;
 		}
 		assertEquals(7,players.get(0).getShields());
@@ -107,7 +110,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
@@ -120,7 +123,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
@@ -135,7 +138,7 @@ public class TestTournament {
 		for(int i = 0; i < 2; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
@@ -146,7 +149,7 @@ public class TestTournament {
 		// player 0 won and player 1 won
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 1) break;
 		}
 		assertEquals(7,players.get(0).getShields());
@@ -170,7 +173,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			input.put(new TournamentAcceptDeclineClient(i, false));
@@ -200,7 +203,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
@@ -237,7 +240,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.JOINTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.QUESTIONED, players.get(i).getQuestion());
@@ -250,7 +253,7 @@ public class TestTournament {
 		for(int i = 0; i < 4; i++) {
 			while(true) {
 				Message string = actualOutput.take();
-				System.out.println(string);
+				logger.info(string);
 				if(string.message == MESSAGETYPES.PICKTOURNAMENT && string.player == i) break;
 			}
 			assertEquals(Player.STATE.PICKING, players.get(i).getQuestion());
@@ -269,7 +272,7 @@ public class TestTournament {
 		// player 0 won
 		while(true) {
 			Message string = actualOutput.take();
-			System.out.println(string);
+			logger.info(string);
 			if(string.message == MESSAGETYPES.WINTOURNAMENT && string.player == 0) break;
 		}
 		assertEquals(7,players.get(0).getShields());
@@ -290,7 +293,7 @@ public class TestTournament {
 		output = new LinkedBlockingQueue<String>();
 		oc = new OutputController(output);
 		dm = new DeckManager();
-		pm = new PlayerManager(4, dm);
+		pm = new PlayerManager(4, dm, true);
 		bm = new BoardModel();
 		pv = new PlayerView(oc);
 		pm.subscribe(pv);

@@ -30,13 +30,13 @@ public class PlayerManager {
 	// Note: using arraylists but for now only have one instance of a view. Might change
 	private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
-
+	private boolean rigged;
 	private Player[] players;
 
-	public PlayerManager(int numPlayers, DeckManager dm) {
+	public PlayerManager(int numPlayers, DeckManager dm, boolean rigged) {
 		this.players = new Player[numPlayers];
 		this.dm = dm;
-
+		this.rigged = rigged;
 		for(int i = numPlayers; i > 0; i--) {
 			players[i - 1] = new Player(i - 1);
 		}
@@ -45,39 +45,36 @@ public class PlayerManager {
 	// Used just so there is an animation at the start of all players getting cards
 	public void start() {
 		for(int i = players.length; i > 0; i--) {
-			/**
-			 *  RIGGING the game needs to be removed/be triggered another way
-			 *  maybe a message?
-			 *  game deck: rigged?
-			 */
-			ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-			cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-			//cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-			//cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-			cards.add(new TestCard("Test of Valor", TYPE.TESTS));
-			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-			cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-			cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
-			//cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-			cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
-			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
-			//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
-			//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
-			cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
-			//players[i - 1].addCards(dm.getAdventureCard(12));
-			players[i - 1].addCards(cards);
+			if(rigged) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
+				//cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+			} else {
+				players[i - 1].addCards(dm.getAdventureCard(12));	
+			}
 		}
 	}
 
 
 	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> {
-			//System.out.println(player.hand);
 			player.addCards(dm.getAdventureCard(cards));
 		});
 	}
