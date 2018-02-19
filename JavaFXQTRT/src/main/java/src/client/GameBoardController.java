@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import javafx.scene.effect.Glow;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -214,6 +215,10 @@ public class GameBoardController implements Initializable{
 		stageViews[2] = stage2View;
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
+	}
+	
+	public void setGlow(int p) {
+		playerRanks[p].setEffect(new Glow(1.0));
 	}
 
 	public void clearHighlight() {
@@ -971,9 +976,9 @@ public class GameBoardController implements Initializable{
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
-		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.jpg";
-		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.jpg";
-		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.jpg";
+		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.png";
+		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.png";
+		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.png";
 		//		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 		if(!rank.isEmpty()) {
 			try {
@@ -1146,6 +1151,7 @@ public class GameBoardController implements Initializable{
 			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
+				setGlow(playerManager.getCurrentPlayer());
 			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
@@ -1164,6 +1170,7 @@ public class GameBoardController implements Initializable{
 				}
 				
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
+				setGlow(playerManager.getCurrentPlayer());
 			}
 		});
 		/*
