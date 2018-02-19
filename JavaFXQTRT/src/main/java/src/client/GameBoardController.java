@@ -915,9 +915,9 @@ public class GameBoardController implements Initializable{
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
-		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.jpg";
-		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.jpg";
-		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.jpg";
+		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.png";
+		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.png";
+		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.png";
 		//		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 		if(!rank.isEmpty()) {
 			try {

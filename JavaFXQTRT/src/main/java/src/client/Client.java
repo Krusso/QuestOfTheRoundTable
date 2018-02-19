@@ -1,4 +1,3 @@
-
 package src.client;
 import java.io.BufferedReader;
 import java.io.File;
@@ -783,3 +782,4 @@ public class Client implements Runnable {
 		System.out.println("Sending message: " + message);
 		writeStream.println(gson.toJson(message));
 	}
+}
