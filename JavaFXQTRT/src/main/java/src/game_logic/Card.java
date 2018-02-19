@@ -42,6 +42,8 @@ public abstract class Card {
 	private double orgStartX = 0;
 	private double orgStartY = 0;
 	public boolean inPlay = false;
+	
+	private int merlinUses = 1;
 
 	public Card(String name) {
 		this.name = name;
@@ -119,7 +121,7 @@ public abstract class Card {
             	System.out.println(event.getX() + " " + event.getY());
             	System.out.println(event.getScreenX()+ " " + event.getScreenY());
             	Point2D p = new Point2D(event.getSceneX(), event.getSceneY());
-            	System.out.println("Moving Card:" + name +" id:" + id );
+            	System.out.println("Moving Card:" + name +" id:" + id + " childOf: " + childOf);
             	gbc.putIntoPane(p, id);
             	event.consume();
             }
@@ -211,5 +213,23 @@ public abstract class Card {
 		imgView.setX(orgStartX);
 		imgView.setY(orgStartY);
 	}
+	public boolean isMerlin() {
+		if(name.equalsIgnoreCase("Merlin")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean tryUseMerlin() {
+		if(merlinUses > 0) {
+			merlinUses--;
+			return true;
+		}
+		return false;
+	}
+	public void resetMerlinCharges() {
+		merlinUses = 1;
+	}
+	
 	
 }

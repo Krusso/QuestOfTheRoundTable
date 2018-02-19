@@ -6,8 +6,10 @@ import src.messages.Message;
 // from server
 public class TournamentWinServer extends Message {
 
-	public TournamentWinServer(int player) {
-		super(player);
+	public int[] players;
+	
+	public TournamentWinServer(int[] is) {
+		this.players = is;
 	}
 	
 	@Override

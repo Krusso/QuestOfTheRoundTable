@@ -35,6 +35,8 @@ public class Game extends Thread{
 		bm.subscribe(pv);
 		pm.start();
 		actions.setPlayerManager(pm);
+		actions.setBoardModel(bm);
+		actions.setOutputController(output);
 
 		GameSequenceManager gsm = new GameSequenceManager();
 		while(true) {

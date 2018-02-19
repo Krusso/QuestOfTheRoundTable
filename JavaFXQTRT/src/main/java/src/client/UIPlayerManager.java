@@ -176,4 +176,15 @@ public class UIPlayerManager {
 		}
 		return false;
 	}
+	
+	public boolean iseultExists() {
+		for(UIPlayer p: players) {
+			for(AdventureCard c : p.getFaceUp().getDeck()) {
+				if(c.getName().equals("Queen Iseult")){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

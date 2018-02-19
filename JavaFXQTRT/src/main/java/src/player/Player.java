@@ -30,8 +30,8 @@ public class Player {
 	private final int ID;
 	private STATE question;
 	protected int shields;
-	private boolean tristan = false;
-	private boolean iseult = false;
+	public boolean tristan = false;
+	public boolean iseult = false;
 	
 	public Player(int id) {
 		rank = Rank.RANKS.SQUIRE;
@@ -70,10 +70,6 @@ public class Player {
 			hand.addCard(card, 1);
 		}
 		if(pv != null) pv.updateCards(cards, ID);
-	}
-	
-	public void discardFaceUp() {
-		faceUp.empty();
 	}
 
 	public String hand() {
@@ -119,23 +115,11 @@ public class Player {
 		return this.faceDown;
 	}
 
-	public void setFaceUp(String[] cards){
-		List<AdventureCard> list = new ArrayList<AdventureCard>();
-		for(String card : cards) {
-			list.add(hand.getCardByName(card));
-			if(card.equals("Sir Tristan")) tristan = true;
-			if(card.equals("Queen Iseult")) iseult = true;
-		}
-		faceUp.addCards(list);
-		if(pv != null) pv.updateFaceDown(list, ID);
-	}
 
 	public void setFaceDown(String[] cards) {
 		List<AdventureCard> list = new ArrayList<AdventureCard>();
 		for(String card: cards) {
 			list.add(hand.getCardByName(card));
-			if(card.equals("Sir Tristan")) tristan = true;
-			if(card.equals("Queen Iseult")) iseult = true;
 		}
 		faceDown.addCards(list);
 		if(pv != null) pv.updateFaceDown(list, ID);
@@ -157,6 +141,13 @@ public class Player {
 
 	public void flipCards() {
 		faceUp.addCards(faceDown.drawTopCards(faceDown.size()));
+		faceUp.getDeck().forEach(i -> {
+			if(i.getName().equals("Sir Tristan")) {
+				tristan = true;
+			} else if(i.getName().equals("Queen Iseult")) {
+				iseult = true;
+			}
+		});
 	}
 
 	public final AdventureDeck getFaceUp() {
@@ -165,6 +156,13 @@ public class Player {
 
 	public void discardType(TYPE type) {
 		List<Card> removedCards = faceUp.discardType(type);
+		removedCards.forEach(i -> {
+			if(i.getName().equals("Sir Tristan")) {
+				tristan = false;
+			} else if(i.getName().equals("Queen Iseult")) {
+				iseult = false;
+			}
+		});
 		if(pv != null) pv.discard(ID, removedCards);
 	}
 	
@@ -188,23 +186,6 @@ public class Player {
 
 	public int getCardCount() {
 		return hand.size();
-	}
-
-	public boolean hasTristanIseultBoost() {
-		return tristan && iseult;
-	}
-	
-	public List<AdventureCard> listOfTypeDecreasingBp(TYPE type){
-		// p1 and p2 being flipped is not a typo :) 
-		return hand.getDeck().stream().
-		sorted((p2,p1) -> Integer.compare(p1.getBattlePoints(), p2.getBattlePoints())).
-		filter(i -> i.getType() == type).
-		collect(Collectors.toList());
-	}
-	
-	public List<AdventureCard> uniqueListOfTypeDecreasingBp(TYPE type){
-		return listOfTypeDecreasingBp(type).stream().map(i -> i.getName()).distinct().map(i -> hand.findCardByName(i))
-				.collect(Collectors.toList());
 	}
 
 	public void setBidAmount(STATE bidding, int maxBidValue, int i) {
