@@ -508,7 +508,9 @@ class UpdateBattlePointTask extends Task {
 	@Override
 	public void run() {
 		if(gbc.playerManager.getCurrentPlayer() == player) {
-			// TODO
+			System.out.println("pointsssssssss");
+			System.out.println("-------");
+			System.out.println("Points: " + points);
 		}
 	}
 }
