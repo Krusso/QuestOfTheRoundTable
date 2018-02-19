@@ -72,6 +72,7 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane background;
 	@FXML private Pane questBoard;
 	@FXML public Slider bidSlider;
+	@FXML public Button startTurn;
 	//The pane that holds the other players' hand
 
 	@FXML public Text p1Shields;
@@ -494,6 +495,14 @@ public class GameBoardController implements Initializable{
 				}
 			}
 		}
+		
+		if(CURRENT_STATE == STATE.JOIN_QUEST) {
+			if(	card.isMerlin() && isInPane(faceUpPanes[cPlayer], point)
+					&& !card.childOf.equals(faceUpPanes[cPlayer])) {
+				doPutCardIntoPane(point, card);
+			}
+		}
+		
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
 			if((isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
@@ -827,6 +836,7 @@ public class GameBoardController implements Initializable{
 		this.decline.setVisible(false);
 		this.nextTurn.setVisible(false);
 		this.discard.setVisible(false);
+		this.startTurn.setVisible(false);
 		System.out.println("Called");
 	}
 
@@ -836,6 +846,10 @@ public class GameBoardController implements Initializable{
 	}
 	public void showDecline() {
 		this.decline.setVisible(true);
+	}
+	
+	public void showStartTurn() {
+		this.startTurn.setVisible(true);
 	}
 
 
@@ -985,17 +999,26 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void setUp() {
+		this.startTurn.setOnAction(e->{
+			if(CURRENT_STATE == STATE.CHILLING) {
+				synchronized (c) {
+					c.notify();
+					//if 
+					int viewAbleStage =  playerManager.viewableStage(playerManager.getCurrentPlayer());
+					if(viewAbleStage != -1) {
+						setStageCardVisibility(true, viewAbleStage);
+						repositionStageCards(viewAbleStage);;
+					}
+				}
+			}
+		});
 		/*
 		 * END TURN BUTTON LISTENER
 		 */
 		this.endTurn.setOnAction(e -> {
 
 			int currentPlayer = playerManager.getCurrentPlayer();
-			if(CURRENT_STATE == STATE.CHILLING) {
-				synchronized (c) {
-					c.notify();
-				}
-			} else if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+			if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
 				c.send(new TournamentPickCardsClient(currentPlayer, 
 						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
@@ -1041,7 +1064,16 @@ public class GameBoardController implements Initializable{
 				for(int i = 0 ; i < cards.length ; i++) {
 					cards[i] = faceDownCards.get(i).getName();
 				}
+				
+				//if merlin hide the stage again
+				int viewAbleStage = playerManager.viewableStage(currentPlayer);
+				if(viewAbleStage != -1) {
+					setStageCardVisibility(false, viewAbleStage);
+					stackStageCards();
+				}
+				
 				c.send(new QuestPickCardsClient(currentPlayer, cards));
+
 			}
 			//TODO::verify cards are minimum number of cards
 			else if(CURRENT_STATE == STATE.QUEST_BID) {
@@ -1072,6 +1104,18 @@ public class GameBoardController implements Initializable{
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
 			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
+				//make sure we turn over the viewable stage if previous used merlin
+				if(playerManager.viewableStage(playerManager.getCurrentPlayer()) != -1) {
+					flipStageCards(playerManager.viewableStage(playerManager.getCurrentPlayer()), false);
+				}
+				
+				//if merlin hide the stage again
+				int viewAbleStage = playerManager.viewableStage(playerManager.getCurrentPlayer() );
+				if(viewAbleStage != -1) {
+					setStageCardVisibility(false, viewAbleStage);
+					stackStageCards();
+				}
+				
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
 			}
 		});
@@ -1165,6 +1209,7 @@ public class GameBoardController implements Initializable{
 						int s = Integer.parseInt(result.get()) - 1;
 						setStageCardVisibility(true,s);
 						repositionStageCards(s);
+						playerManager.rememberStage(currentPlayer, s);
 					}
 					return;
 				}
@@ -1179,6 +1224,7 @@ public class GameBoardController implements Initializable{
 			for(AdventureCard c : currFUC) {
 				if(c.isMerlin()) {
 					c.resetMerlinCharges();
+					playerManager.resetMerlinViewableStage();
 				}
 			}
 		}
