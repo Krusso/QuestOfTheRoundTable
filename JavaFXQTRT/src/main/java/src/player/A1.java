@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
@@ -17,26 +20,30 @@ import src.game_logic.Rank;
 
 public class A1 extends AbstractAI {
 
+	final static Logger logger = LogManager.getLogger(A1.class);
+	
 	public A1(UIPlayer player, UIPlayerManager pm) {
 		super(player, pm);
 	}
 
 	@Override
 	public boolean doIParticipateInTournament() {
+		logger.info("Asking A1 if want to join in tournament");
 		int length = pm.getNumPlayers();
 		for(int i = 0; i < length; i++) {
-			// TODO check shields as well
+			logger.info("A1 joins tournament");
 			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
 				return true;
 			}
 		}
 
+		logger.info("A1 doesnt join tournament");
 		return false;
 	}
 
 	@Override
-	public List<Card> playCardsForTournament() {
-		List<Card> cards = new ArrayList<Card>();
+	public List<AdventureCard> playCardsForTournament() {
+		List<AdventureCard> cards = new ArrayList<AdventureCard>();
 		for(int i = 0; i < pm.getNumPlayers(); i++) {
 			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
 				List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
@@ -63,25 +70,30 @@ public class A1 extends AbstractAI {
 
 	@Override
 	// TODO
-	public List<List<Card>> doISponserAQuest(List<Player> participants, QuestCard questCard) {
+	public List<List<AdventureCard>> implDoISponserAQuest(QuestCard questCard) {
+		logger.info("Asking A1 if want sponsor tournament tournament");
 		int length = pm.getNumPlayers();
 		for(int i = 0; i < length; i++) {
 			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
+				logger.info("A1 doesnt want to sponsor tournament someone could win");
 				return null;
 			}
 		}
 
-		List<List<Card>> cards = new ArrayList<List<Card>>();
+		List<List<AdventureCard>> cards = new ArrayList<List<AdventureCard>>();
 		List<AdventureCard> sortedfoes = bpc.listOfTypeDecreasingBp(player, TYPE.FOES, questCard, pm.iseultExists());
 		List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists());
 		List<AdventureCard> test = bpc.listOfTypeDecreasingBp(player, TYPE.TESTS, questCard, pm.iseultExists());
 
 		int stages = questCard.getNumStages();
 
-		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<Card>()));
+		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<AdventureCard>()));
 
 		//set up last stage to be atleast 50
-		if(sortedfoes.size() <= 0) return null;
+		if(sortedfoes.size() <= 0) {
+			logger.info("A1 doesnt want to sponsor tournament dont have enough foes/test");
+			return null;
+		}
 
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
@@ -94,7 +106,10 @@ public class A1 extends AbstractAI {
 			}	
 		}
 
-		if(bp < 50) return null;
+		if(bp < 50) {
+			logger.info("A1 doesnt want to sponsor tournament cant make last stage >50bp");
+			return null;
+		}
 
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
@@ -125,8 +140,11 @@ public class A1 extends AbstractAI {
 
 		cards.remove(0);
 
-		for(List<Card> i: cards) {
-			if(i.size() == 0) return null;	
+		for(List<AdventureCard> i: cards) {
+			if(i.size() == 0) {
+				logger.info("A1 doesnt want to sponsor tournament not enough different bp foes/tests");
+				return null;	
+			}
 		}
 
 		// TODO: make sure stage before last is less bp than last stage
@@ -136,23 +154,31 @@ public class A1 extends AbstractAI {
 
 	@Override
 	public boolean doIParticipateInQuest(QuestCard questCard) {
+		logger.info("Asking A1 if wants to join tournament");
 		int stages = questCard.getNumStages();
 		int weaponorallycount = player.getTypeCount(TYPE.WEAPONS) + player.getTypeCount(TYPE.ALLIES);
-		if(stages*2 > weaponorallycount) return false;
+		if(stages*2 > weaponorallycount) {
+			logger.info("A1 doesnt want to join tournament not enough weapons or allies");
+			return false;
+		}
 
 		int toDiscard = (int)player.getPlayerHandAsList().stream().
 				filter(i -> i.getType() == TYPE.FOES && i.getBattlePoints() < 20).
 				count();
 
-		if(toDiscard < 2) return false;
+		if(toDiscard < 2) {
+			logger.info("A1 doesnt want to join tournament not enough cards to discard");
+			return false;
+		}
 
+		logger.info("A1 wants to join the tournament");
 		return true;
-
 	}
 
 	@Override
-	public List<Card> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
-		List<Card> cards = new ArrayList<Card>();
+	public List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
+		logger.info("Selecting cards for A1 to play");
+		List<AdventureCard> cards = new ArrayList<AdventureCard>();
 		if(lastStage) {
 			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists()));
 			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
@@ -169,12 +195,13 @@ public class A1 extends AbstractAI {
 			}
 
 		}
+		logger.info("A1 selected: " + cards);
 		return cards;
 	}
 
 	@Override
-	public int nextBid(int round, int prevBid) {
-		List<Card> cards = discardAfterWinningTest(round);
+	public int implNextBid(int prevBid) {
+		List<AdventureCard> cards = discardAfterWinningTest();
 		if(cards == null || cards.size() <= prevBid) {
 			return -1;
 		} else {
@@ -183,8 +210,8 @@ public class A1 extends AbstractAI {
 	}
 
 	@Override
-	public List<Card> discardAfterWinningTest(int round) {
-		if(round == 1) {
+	public List<AdventureCard> discardAfterWinningTest() {
+		if(rounds == 1) {
 			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 20).collect(Collectors.toList());
 		} else {

@@ -73,7 +73,8 @@
                               <MenuButton fx:id="b1" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" stylesheets="@application.css" text="Select Mode">
                                 <items>
                                   <MenuItem mnemonicParsing="false" onAction="#setHuman1" text="Human" />
-                                  <MenuItem mnemonicParsing="false" onAction="#setAI1" text="AI" />
+                                  <MenuItem mnemonicParsing="false" onAction="#setAI11" text="AI1" />
+                                  <MenuItem mnemonicParsing="false" onAction="#setAI12" text="AI2" />
                                 </items>
                               </MenuButton>
                            </graphic>
@@ -92,7 +93,8 @@
                               <MenuButton fx:id="b2" mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" stylesheets="@application.css" text="Select Mode">
                                  <items>
                                     <MenuItem mnemonicParsing="false" onAction="#setHuman2" text="Human" />
-                                    <MenuItem mnemonicParsing="false" onAction="#setAI2" text="AI" />
+                                    <MenuItem mnemonicParsing="false" onAction="#setAI21" text="AI1" />
+                                    <MenuItem mnemonicParsing="false" onAction="#setAI22" text="AI2" />
                                  </items>
                               </MenuButton>
                            </graphic>
@@ -111,7 +113,8 @@
                               <MenuButton fx:id="b3" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" stylesheets="@application.css" text="Select Mode">
                                  <items>
                                     <MenuItem mnemonicParsing="false" onAction="#setHuman3" text="Human" />
-                                    <MenuItem mnemonicParsing="false" onAction="#setAI3" text="AI" />
+                                    <MenuItem mnemonicParsing="false" onAction="#setAI31" text="AI1" />
+                                    <MenuItem mnemonicParsing="false" onAction="#setAI32" text="AI2" />
                                  </items>
                               </MenuButton>
                            </graphic>
@@ -130,7 +133,8 @@
                               <MenuButton fx:id="b4" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" stylesheets="@application.css" text="Select Mode">
                                  <items>
                                     <MenuItem mnemonicParsing="false" onAction="#setHuman4" text="Human" />
-                                    <MenuItem mnemonicParsing="false" onAction="#setAI4" text="AI" />
+                                    <MenuItem mnemonicParsing="false" onAction="#setAI41" text="AI1" />
+                                    <MenuItem mnemonicParsing="false" onAction="#setAI42" text="AI2" />
                                  </items>
                               </MenuButton>
                            </graphic>

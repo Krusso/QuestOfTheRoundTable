@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -83,10 +84,14 @@ public class TitleScreenController implements Initializable{
 	@FXML private void setHuman2(ActionEvent e) throws IOException { this.players[1] = "Human"; b2.setText("Human"); }
 	@FXML private void setHuman3(ActionEvent e) throws IOException { this.players[2] = "Human"; b3.setText("Human"); }
 	@FXML private void setHuman4(ActionEvent e) throws IOException { this.players[3] = "Human"; b4.setText("Human"); }
-	@FXML private void setAI1(ActionEvent e) throws IOException { this.players[0] = "AI"; b1.setText("AI"); }
-	@FXML private void setAI2(ActionEvent e) throws IOException { this.players[1] = "AI"; b2.setText("AI"); }
-	@FXML private void setAI3(ActionEvent e) throws IOException { this.players[2] = "AI"; b3.setText("AI"); }
-	@FXML private void setAI4(ActionEvent e) throws IOException { this.players[3] = "AI"; b4.setText("AI"); }
+	@FXML private void setAI11(ActionEvent e) throws IOException { this.players[0] = "AI1"; b1.setText("AI1"); }
+	@FXML private void setAI21(ActionEvent e) throws IOException { this.players[1] = "AI1"; b2.setText("AI1"); }
+	@FXML private void setAI31(ActionEvent e) throws IOException { this.players[2] = "AI1"; b3.setText("AI1"); }
+	@FXML private void setAI41(ActionEvent e) throws IOException { this.players[3] = "AI1"; b4.setText("AI1"); }
+	@FXML private void setAI12(ActionEvent e) throws IOException { this.players[0] = "AI2"; b1.setText("AI2"); }
+	@FXML private void setAI22(ActionEvent e) throws IOException { this.players[1] = "AI2"; b2.setText("AI2"); }
+	@FXML private void setAI32(ActionEvent e) throws IOException { this.players[2] = "AI2"; b3.setText("AI2"); }
+	@FXML private void setAI42(ActionEvent e) throws IOException { this.players[3] = "AI2"; b4.setText("AI2"); }
 	
 	// hardcode is better than no code c:
 	@FXML private void nextShield1(ActionEvent e) throws IOException {
@@ -176,9 +181,29 @@ public class TitleScreenController implements Initializable{
 	private int getNumPlayers() {
 		int num = 0;
 		for(int i=0; i<players.length; i++) {
-			if(players[i].equals("Human") || players[i].equals("AI")) num++;
+			if(players[i].equals("Human") || players[i].equals("AI1") || players[i].equals("AI2")) num++;
 		}
 		return num;
+	}
+	
+	private List<Integer> getAI1() {
+		ArrayList<Integer> ais = new ArrayList<Integer>();
+		for(int i = 0; i < players.length; i++) {
+			if(players[i].equals("AI1")) {
+				ais.add(i);
+			}
+		}
+		return ais;
+	}
+	
+	private List<Integer> getAI2() {
+		ArrayList<Integer> ais = new ArrayList<Integer>();
+		for(int i = 0; i < players.length; i++) {
+			if(players[i].equals("AI2")) {
+				ais.add(i);
+			}
+		}
+		return ais;
 	}
 	
 	public void hideMenu() { menuPane.setVisible(false); }
@@ -220,7 +245,7 @@ public class TitleScreenController implements Initializable{
 		stage.show();
 		
 		//Setup player manager
-		gbc.initPlayerManager(getNumPlayers());
+		gbc.initPlayerManager(getNumPlayers(), getAI1(), getAI2());
 		
 		//send gameStart message.
 		client.send(new GameStartClient(getNumPlayers(), rigged));

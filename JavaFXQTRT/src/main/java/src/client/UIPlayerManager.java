@@ -1,13 +1,24 @@
 package src.client;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.Rank;
+import src.player.A1;
+import src.player.A2;
+import src.player.AbstractAI;
 import src.player.UIPlayer;
+import src.socket.Game;
 
 public class UIPlayerManager {
 
+	final static Logger logger = LogManager.getLogger(UIPlayerManager.class);
+	
+	private ArrayList<AbstractAI> ais = new ArrayList<AbstractAI>();
 	public final int MAX_HAND_SIZE = 12;
 	public UIPlayer[] players;
 	private int currentPlayer;
@@ -197,6 +208,24 @@ public class UIPlayerManager {
 		for(UIPlayer p : players) {
 			p.viewableStage = -1;
 		}
+	}
+
+	public void setAI(List<Integer> list, List<Integer> list2) {
+		logger.info("AI player #s: " + list);
+		list.forEach(i -> ais.add(new A1(players[i], this)));
+		list.forEach(i -> ais.add(new A2(players[i], this)));
+	}
+	
+	public AbstractAI getAI(int p) {
+		logger.info("Checking if player is an AI#: " + p);
+		for(AbstractAI a: ais) {
+			if(a.player == players[p]) {
+				logger.info("Player # is an AI: " + p);
+				return a;
+			}
+		}
+		logger.info("Player # is not an AI: " + p);
+		return null;
 	}
 		
 }
