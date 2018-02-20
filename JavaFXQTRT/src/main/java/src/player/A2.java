@@ -8,16 +8,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
-import src.game_logic.Card;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
-import src.game_logic.Rank.RANKS;
 
 public class A2 extends AbstractAI {
-
+	final static Logger logger = LogManager.getLogger(A2.class);
+	
 	public A2(UIPlayer player, UIPlayerManager pm) {
 		super(player, pm);
 	}
@@ -197,6 +199,7 @@ public class A2 extends AbstractAI {
 
 	@Override
 	public List<AdventureCard> discardAfterWinningTest() {
+		logger.info("Discarding cards after round: " + rounds);
 		if(rounds == 1) {
 			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 25).collect(Collectors.toList());

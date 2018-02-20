@@ -252,9 +252,9 @@ public class GameBoardController implements Initializable{
 	}
 
 	////Must call this when you click start game in title screen!
-	public void initPlayerManager(int numPlayers, List<Integer> list) {
+	public void initPlayerManager(int numPlayers, List<Integer> list, List<Integer> list2) {
 		playerManager = new UIPlayerManager(numPlayers);
-		playerManager.setAI(list);
+		playerManager.setAI(list, list2);
 		for(int i = 0 ; i < numPlayers ; i++) {
 			setPlayerRank(i, Rank.RANKS.SQUIRE);
 		}

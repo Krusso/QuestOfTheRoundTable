@@ -54,7 +54,6 @@ import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
-import src.sequence.Quest.TYPE;
 
 class AddCardsTask extends Task{
 	private int player;
@@ -281,21 +280,6 @@ class ShowEndTurn extends Task {
 	}
 }
 
-class ShowTurnFaceDownFieldUp extends Task{
-	private int player;
-	private String[][] cards;
-	public ShowTurnFaceDownFieldUp(GameBoardController gbc, String[][] cards, int player) {
-		super(gbc);
-		this.player = player;
-		this.cards = cards;
-	}
-
-	@Override
-	public void run() {
-		gbc.flipFaceDownPane(player, true);
-	}
-}
-
 class QuestPickStagesTask extends Task {
 
 	private int player;
@@ -490,8 +474,12 @@ class QuestBidTask extends Task {
 			gbc.showToast("Use the slider to enter how many cards you want to bid.");
 			if(gbc.playerManager.getAI(player) != null) {
 				int amount = gbc.playerManager.getAI(player).nextBid(min);
-				gbc.bidSlider.setValue(amount);
-				gbc.endTurn.fire();
+				if(amount == -1) {
+					gbc.decline.fire();
+				} else {
+					gbc.bidSlider.setValue(amount);
+					gbc.endTurn.fire();	
+				}
 			}
 		}
 	}

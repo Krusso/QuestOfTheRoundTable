@@ -32,7 +32,7 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		addCard(new FoeCard("Thieves",5, TYPE.FOES),8);
 		
 		addCard(new TestCard("Test of Valor", TYPE.TESTS),2);
-		addCard(new TestCard("Test of Tempation", TYPE.TESTS),2);
+		addCard(new TestCard("Test of Temptation", TYPE.TESTS),2);
 		addCard(new TestCard("Test of Morgan Le Fey",3, TYPE.TESTS),2);
 		addCard(new TestCard("Test of the Questing Beast",3,4, TYPE.TESTS),2);
 		
