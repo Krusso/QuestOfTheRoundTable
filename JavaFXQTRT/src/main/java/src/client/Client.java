@@ -1,4 +1,3 @@
-
 package src.client;
 import java.io.BufferedReader;
 import java.io.File;
@@ -72,32 +71,32 @@ class AddCardsTask extends Task{
 		for(String card: cards) {
 			//find file associated to name
 			for(File f : list) {
-				if (f.getName().contains(card+".jpg")) {
+				if (f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
 						AllyCard c = new AllyCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						c.faceDown();
 						gbc.addCardToHand(c, player);
 						break;
 					}
 					case 'F' : {
 						FoeCard c = new FoeCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
 						break;
 					}
 					case 'T' : {
 						TestCard c = new TestCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
 						break;
 					}
 					case 'W':{
 						WeaponCard weapon = new WeaponCard(card, f.getPath());
-						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.jpg");
+						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(weapon, player);
 						weapon.faceDown();
 						break;
@@ -420,7 +419,7 @@ class UpQuestTask extends Task {
 	}
 }
 class DiscardFaceUpTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(DiscardFaceUpTask.class);
 	private String[] cardsToDiscard;
 	private int player;
 	public DiscardFaceUpTask(GameBoardController gbc, int player, String[] cardsDiscarded) {
@@ -431,7 +430,7 @@ class DiscardFaceUpTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
-		System.out.println("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
+		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
 	}
 }
