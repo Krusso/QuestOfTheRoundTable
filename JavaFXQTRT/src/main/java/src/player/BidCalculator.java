@@ -21,7 +21,7 @@ public class BidCalculator {
 		int freeBids = 0;
 		// this should probably go into the card?
 		for(Card c : player.getFaceUp().getDeck()) {
-			if(c.getName().equals("Sir Pellinore") && 
+			if(c.getName().equals("King Pellinore") && 
 					quest.getName().equals("Search for the Questing Beast")) {
 				freeBids += 4;
 			} else if(c.getName().equals("Amour")) {
