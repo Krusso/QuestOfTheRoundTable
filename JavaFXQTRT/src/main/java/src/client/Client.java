@@ -41,6 +41,7 @@ import src.messages.game.TurnNextServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
 import src.messages.hand.FaceUpDiscardServer;
+import src.messages.hand.HandFullServer;
 import src.messages.quest.QuestBidServer;
 import src.messages.quest.QuestDiscardCardsServer;
 import src.messages.quest.QuestJoinServer;
@@ -616,6 +617,28 @@ class RevealAllCards extends Task {
 		IntStream.range(0,this.gbc.playerManager.getNumPlayers()).forEach(i -> this.gbc.moveToFaceUpPane(i));
 	}
 }
+class HandFullDiscardTask extends Task {
+
+	private int player;
+	
+	public HandFullDiscardTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
+		gbc.showToast("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards");
+		gbc.showPlayerHand(player);
+		gbc.setButtonsInvisible();
+		gbc.setDiscardVisibility(true);
+		gbc.addDraggable();
+		
+	}
+	
+}
 
 
 abstract class Task implements Runnable{
@@ -841,7 +864,6 @@ public class Client implements Runnable {
 						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
-						//						QuestPickCardsServer request = gson.fromJson(obj, QuestPickCardsServer.class);
 						FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);
 
 						Platform.runLater(new FaceDownCardsTask(gbc, request.player));
@@ -871,6 +893,12 @@ public class Client implements Runnable {
 						//Discard "Face Down" cards because that is where players play their cards.
 						Platform.runLater(new DiscardQuestTask(gbc, request.player));
 					}
+					if(message.equals(MESSAGETYPES.DISCARDHANDFULL.name())){
+						HandFullServer request = gson.fromJson(obj, HandFullServer.class);
+						
+						Platform.runLater(new HandFullDiscardTask(gbc, request.player));
+					}
+						
 				}
 			}
 			if(!client.isConnected()) {
