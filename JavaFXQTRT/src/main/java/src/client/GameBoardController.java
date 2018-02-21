@@ -577,6 +577,7 @@ public class GameBoardController implements Initializable{
 					 (card.getType() == TYPE.ALLIES))) {
 				doPutCardIntoPane(point, card);
 			}else if(isInPane(discardPane, point)) {
+				System.out.println("Discarding this card + " + card.getName());
 				doPutCardIntoPane(point, card);
 			}
 		}
@@ -623,10 +624,10 @@ public class GameBoardController implements Initializable{
 	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
 		Pane from = card.childOf;
 		removeFromPane(from, card);
-
 		//find which pane we want to place the card into right now
 		Pane to = mouseOverPane(point);
 
+		logger.info("Putting card: " + card.getName() + " into: " + to + " from: " + from);
 		putCardIntoPane(to, card);
 	}
 
@@ -1231,13 +1232,8 @@ public class GameBoardController implements Initializable{
 			Logger logger = LogManager.getLogger(DiscardFaceUpTask.class);
 			System.out.println("Clicked Discard");
 			int cPlayer = playerManager.getCurrentPlayer();
-			String[] discardCards = new String[discardPile.size()];
-			//TODO:: find ally cards
-//			c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(String[]::new)));
+			String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
 			String[] allyCards = playerManager.getFaceDownCardsAsList(cPlayer).stream().map(c -> c.getName()).toArray(String[]::new);
-			for(int i = 0 ; i < discardCards.length ; i++) {
-				discardCards[i] = discardPile.get(i).getName();
-			}
 			if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() > playerManager.MAX_HAND_SIZE) {
 				toast.setText("You must discard exactly " + 
 						(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() - playerManager.MAX_HAND_SIZE) + 
@@ -1245,18 +1241,26 @@ public class GameBoardController implements Initializable{
 				System.out.println("Your hand is too full!");
 				LogManager.getLogger().info("Player #"+ playerManager.getCurrentPlayer()+"'s hand is too full!");
 				return;
-			}
-			else if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() < playerManager.MAX_HAND_SIZE && !discardPile.isEmpty()) {
+			}else if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() < playerManager.MAX_HAND_SIZE && !discardPile.isEmpty()) {
 				toast.setText("Can only discard cards if hand has more than 12 cards");
 				return;
 			}
 			setDiscardVisibility(false);
-			System.out.println("discard: " + discardCards.toString());
-			
-			System.out.println();
 			c.send(new HandFullClient(playerManager.getCurrentPlayer(), discardCards, allyCards));
+			
+			//add the facedown cards to faceup pane
+			ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(cPlayer);
+			ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(cPlayer);
+			for(AdventureCard c : fdc) {
+				fuc.add(c);
+				faceUpPanes[cPlayer].getChildren().add(c.getImageView());
+			}
+			fuc.clear();
+			faceDownPanes[cPlayer].getChildren().clear();
+
 			discardPile.clear();
 			discardPane.getChildren().clear();
+			faceDownPanes[cPlayer].getChildren().clear();
 
 		});
 
@@ -1279,7 +1283,6 @@ public class GameBoardController implements Initializable{
 							numStages++;
 						}
 					}
-					//TODO:: USE MERLIN POWER!
 					ChoiceDialog<String> d = new ChoiceDialog<>(null, dialogChoices);
 					d.setTitle("Using Merlin Power");
 					d.setHeaderText("Select a stage to show");
