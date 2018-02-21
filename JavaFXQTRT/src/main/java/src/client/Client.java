@@ -56,7 +56,7 @@ import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
 
 class AddCardsTask extends Task{
-	final static Logger logger = LogManager.getLogger(DiscardFaceUpTask.class);
+	final static Logger logger = LogManager.getLogger(AddCardsTask.class);
 	private int player;
 	private String[] cards;
 	public AddCardsTask(GameBoardController gbc, int player, String[] cards) {
