@@ -12,6 +12,10 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.scene.effect.Glow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javafx.scene.effect.Glow;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -32,6 +36,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.QuestCard;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 import src.messages.game.CalculatePlayerClient;
@@ -48,6 +53,7 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
+	final static Logger logger = LogManager.getLogger(GameBoardController.class);
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
@@ -65,8 +71,8 @@ public class GameBoardController implements Initializable{
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
 	@FXML public Button endTurn;
-	@FXML private Button accept;
-	@FXML private Button decline;
+	@FXML public Button accept;
+	@FXML public Button decline;
 	@FXML private Button nextTurn;
 	@FXML private Button discard;
 	
@@ -99,20 +105,20 @@ public class GameBoardController implements Initializable{
 	@FXML private Pane playerPane3;
 	private Pane playerPanes[] = new Pane[4];
 
-	@FXML private Pane playerhand0;
-	@FXML private Pane playerHand1;
-	@FXML private Pane playerHand2;
-	@FXML private Pane playerHand3;
-	@FXML private Pane[] handPanes = new Pane[4];
+	@FXML public Pane playerhand0;
+	@FXML public Pane playerHand1;
+	@FXML public Pane playerHand2;
+	@FXML public Pane playerHand3;
+	@FXML public Pane[] handPanes = new Pane[4];
 
 	@FXML private Rectangle pRec0, pRec1, pRec2, pRec3;
 
 	//The panes that govern the player's facedown cards
-	@FXML private Pane playerFaceDown0;
-	@FXML private Pane playerFaceDown1;
-	@FXML private Pane playerFaceDown2;
-	@FXML private Pane playerFaceDown3;
-	private Pane[] faceDownPanes = new Pane[4];
+	@FXML public Pane playerFaceDown0;
+	@FXML public Pane playerFaceDown1;
+	@FXML public Pane playerFaceDown2;
+	@FXML public Pane playerFaceDown3;
+	public Pane[] faceDownPanes = new Pane[4];
 
 	//The panes that govern the player's faceup cards
 	@FXML private Pane playerFaceUp0;
@@ -145,20 +151,21 @@ public class GameBoardController implements Initializable{
 	public Pane[] stages = new Pane[5];
 	public ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
-	
+
 	@FXML public Text bpTextStage0;
 	@FXML public Text bpTextStage1;
 	@FXML public Text bpTextStage2;
 	@FXML public Text bpTextStage3;
 	@FXML public Text bpTextStage4;
 	public Text[] bpTexts = new Text[5];
-	
+
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
-	
+
 	@FXML public Text currBP;
 
 	@FXML private Pane discardPane;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
+	public QuestCard questCard;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -168,7 +175,7 @@ public class GameBoardController implements Initializable{
 		bpTexts[2] = bpTextStage2;
 		bpTexts[3] = bpTextStage3;
 		bpTexts[4] = bpTextStage4;
-		
+
 		playerPanes[0] = playerPane0;
 		playerPanes[1] = playerPane1;
 		playerPanes[2] = playerPane2;
@@ -249,8 +256,9 @@ public class GameBoardController implements Initializable{
 	}
 
 	////Must call this when you click start game in title screen!
-	public void initPlayerManager(int numPlayers) {
+	public void initPlayerManager(int numPlayers, List<Integer> list, List<Integer> list2) {
 		playerManager = new UIPlayerManager(numPlayers);
+		playerManager.setAI(list, list2);
 		for(int i = 0 ; i < numPlayers ; i++) {
 			setPlayerRank(i, Rank.RANKS.SQUIRE);
 		}
@@ -510,6 +518,7 @@ public class GameBoardController implements Initializable{
 		System.out.println("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			//putting card from stage pane to hand
 			if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 				for(int i = 0; i < stages.length; i++) {
@@ -525,18 +534,22 @@ public class GameBoardController implements Initializable{
 				//it into the face up pane if they choose to use its power
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card)) {
 					doPutCardIntoPane(point, card);
-					c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));
+					for(int j = 0; j < stages.length; j++) {
+						if(stages[j].isVisible()) {
+							c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(j).stream().map(k -> k.getName()).toArray(String[]::new), j));	
+						}
+					}
 				}
 			}
 		}
-		
+
 		if(CURRENT_STATE == STATE.JOIN_QUEST) {
 			if(	card.isMerlin() && isInPane(faceUpPanes[cPlayer], point)
 					&& !card.childOf.equals(faceUpPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 			}
 		}
-		
+
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
 			if((isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
@@ -572,21 +585,12 @@ public class GameBoardController implements Initializable{
 		card.returnOriginalPosition();
 	}
 
-	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
-		Pane from = card.childOf;
-		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
-		from.getChildren().remove(card.getImageView());
-		toRemove.remove(card);
-		//find which pane we want to place the card into right now
-		Pane to = mouseOverPane(point);
-		System.out.println("to:" + to);
-
+	private void putCardIntoPane(Pane to, AdventureCard card) {
+		// adding card to the to pane
 		ArrayList<AdventureCard> toAdd = paneDeckMap.get(to);
-		System.out.println("toAdd" + toAdd);
 		to.getChildren().add(card.getImageView());
 		toAdd.add(card);
 
-		System.out.println("toAdd" + toAdd);
 		card.childOf = to;
 
 		repositionCardsInHand(playerManager.getCurrentPlayer());
@@ -602,6 +606,29 @@ public class GameBoardController implements Initializable{
 
 		//reset the original position of this card cards
 		card.setOriginalPosition(card.getImageView().getX(), card.getImageView().getY());
+	}
+
+	private void removeFromPane(Pane from, AdventureCard card) {
+		// removing card from the from pane
+		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
+		from.getChildren().remove(card.getImageView());
+		toRemove.remove(card);
+	}
+
+	public void moveCardBetweenPanes(Pane from, Pane to, AdventureCard card) {
+		logger.info("Putting card: " + card.getName() + " into: " + to + " from: " + from);
+		removeFromPane(from, card);
+		putCardIntoPane(to, card);
+	}
+
+	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
+		Pane from = card.childOf;
+		removeFromPane(from, card);
+
+		//find which pane we want to place the card into right now
+		Pane to = mouseOverPane(point);
+
+		putCardIntoPane(to, card);
 	}
 
 
@@ -695,7 +722,7 @@ public class GameBoardController implements Initializable{
 		return false;
 	}
 
-	
+
 	private boolean stagesIncreasing() {
 		int lastBp = Integer.MIN_VALUE;
 		for(int i = 0; i < stages.length; i++) {
@@ -708,10 +735,10 @@ public class GameBoardController implements Initializable{
 				lastBp = Integer.parseInt(bpTexts[i].getText());
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Checks if the stages satisfy the current quest card (should be called before player ends turn)
 	 * We only check if the stages are empty or contains either a test/foe not since when players play cards into the pane, a validation already occurs
@@ -897,7 +924,7 @@ public class GameBoardController implements Initializable{
 	public void showDecline() {
 		this.decline.setVisible(true);
 	}
-	
+
 	public void showStartTurn() {
 		this.startTurn.setVisible(true);
 	}
@@ -965,6 +992,7 @@ public class GameBoardController implements Initializable{
 
 	public void setStageCardVisibility( boolean isShow, int... stageNum) {
 		for(int i: stageNum) {
+			currentStage = i;
 			ArrayList<AdventureCard> cards = stageCards.get(i);
 			for(AdventureCard c : cards) {
 				if(isShow) {
@@ -1118,14 +1146,14 @@ public class GameBoardController implements Initializable{
 				for(int i = 0 ; i < cards.length ; i++) {
 					cards[i] = faceDownCards.get(i).getName();
 				}
-				
+
 				//if merlin hide the stage again
 				int viewAbleStage = playerManager.viewableStage(currentPlayer);
 				if(viewAbleStage != -1) {
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
-				
+
 				c.send(new QuestPickCardsClient(currentPlayer, cards));
 
 			}
@@ -1136,7 +1164,7 @@ public class GameBoardController implements Initializable{
 				String[] cards = discardAllFaceDownCards(currentPlayer);
 				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
 			}
-			
+
 		});
 
 		/*
@@ -1164,15 +1192,20 @@ public class GameBoardController implements Initializable{
 				if(playerManager.viewableStage(playerManager.getCurrentPlayer()) != -1) {
 					flipStageCards(playerManager.viewableStage(playerManager.getCurrentPlayer()), false);
 				}
-				
+
 				//if merlin hide the stage again
 				int viewAbleStage = playerManager.viewableStage(playerManager.getCurrentPlayer() );
 				if(viewAbleStage != -1) {
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
+<<<<<<< HEAD
 				
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
+=======
+
+				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
+>>>>>>> refs/remotes/origin/master
 				setGlow(playerManager.getCurrentPlayer());
 			}
 		});

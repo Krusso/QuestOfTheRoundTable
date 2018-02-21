@@ -9,8 +9,8 @@ import src.game_logic.Card;
 import src.game_logic.QuestCard;
 
 public abstract class AbstractAI {
-	
-	protected UIPlayer player;
+	protected int rounds = 0;
+	public UIPlayer player;
 	protected List<Player> listPlayer;
 	protected UIPlayerManager pm;
 	protected BattlePointCalculator bpc;
@@ -26,15 +26,24 @@ public abstract class AbstractAI {
 	}
 	
 	public abstract boolean doIParticipateInTournament();
-	public abstract List<Card> playCardsForTournament();
-	public abstract List<List<Card>> doISponserAQuest(List<Player> participants, QuestCard card);
+	public abstract List<AdventureCard> playCardsForTournament();
+	protected abstract List<List<AdventureCard>> implDoISponserAQuest(QuestCard card);
 	public abstract boolean doIParticipateInQuest(QuestCard questCard);
-	public abstract int nextBid(int round, int prevBid);
-	public abstract List<Card> discardAfterWinningTest(int round);
+	protected abstract int implNextBid(int prevBid);
+	public abstract List<AdventureCard> discardAfterWinningTest();
+	public abstract List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard);
+	
+	public int nextBid(int prevBid) {
+		rounds++;
+		return implNextBid(prevBid);
+	}
+	
+	public List<List<AdventureCard>> doISponserAQuest(QuestCard card){
+		rounds = 0;
+		return this.implDoISponserAQuest(card);
+	}
 	
 	public List<AdventureCard> discardWhenHandFull(int n){
 		return player.hand.drawTopCards(n);
 	}
-
-	public abstract List<Card> playCardsForFoeQuest(boolean lastStage, QuestCard questCard);
 }
