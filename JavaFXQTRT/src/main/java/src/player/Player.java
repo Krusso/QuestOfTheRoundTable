@@ -63,6 +63,7 @@ public class Player {
 			return;
 		}
 		if(pv != null) pv.update(rank, ID);
+		increaseLevel();
 	}
 	
 	public void addCards(ArrayList<AdventureCard> cards) {

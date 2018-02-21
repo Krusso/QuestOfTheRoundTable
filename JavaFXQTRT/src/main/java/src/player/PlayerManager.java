@@ -72,6 +72,7 @@ public class PlayerManager {
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
+			players[i - 1].changeShields(100);
 		}
 	}
 
