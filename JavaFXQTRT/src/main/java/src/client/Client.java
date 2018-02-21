@@ -133,7 +133,6 @@ class TurnNextTask extends Task{
 		gbc.removeDraggableFaceDown();
 		gbc.setPlayerTurn(player);
 		gbc.showPlayerHand(player);
-
 	}
 }
 
@@ -208,6 +207,7 @@ class QuestSponsorTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
 		gbc.showToast("Sponsor Quest?");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			if(gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard) != null) {
 				gbc.accept.fire();
@@ -312,6 +312,7 @@ class QuestPickStagesTask extends Task {
 		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard);
 			for(int i = 0; i < cards.size(); i++) {
@@ -341,6 +342,7 @@ class QuestJoinTask extends Task {
 		gbc.addDraggable();
 		gbc.clearToast();
 		gbc.showToast("Join Quest?");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			if(gbc.playerManager.getAI(player).doIParticipateInQuest(gbc.questCard)) {
 				gbc.accept.fire();
@@ -372,6 +374,7 @@ class QuestPickCardsTask extends Task {
 		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select Cards for current stage");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard.getNumStages() == gbc.currentStage + 1, 
 					gbc.questCard);
@@ -426,6 +429,7 @@ class DiscardFaceUpTask extends Task {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
+		gbc.setMerlinMordredVisibility();
 	}
 }
 
@@ -482,6 +486,7 @@ class QuestBidTask extends Task {
 			gbc.bidSlider.setSnapToTicks(true);
 			gbc.clearToast();
 			gbc.showToast("Use the slider to enter how many cards you want to bid.");
+			gbc.setMerlinMordredVisibility();
 			if(gbc.playerManager.getAI(player) != null) {
 				int amount = gbc.playerManager.getAI(player).nextBid(min);
 				if(amount == -1) {
@@ -512,6 +517,7 @@ class DiscardQuestTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -537,6 +543,7 @@ class JoinTournamentTask extends Task {
 		gbc.removeStagePaneDragOver();
 		gbc.clearToast();
 		gbc.showToast("Join Tournament?");
+		gbc.setMerlinMordredVisibility();
 		logger.info("Processing join tournament message");
 		if(gbc.playerManager.getAI(player) != null) {
 			if(gbc.playerManager.getAI(player).doIParticipateInTournament()) {
@@ -568,6 +575,7 @@ class PickTournamentTask extends Task {
 		gbc.clearToast();
 		gbc.showToast("Select cards to use for the tournament");
 		logger.info("Processing pick tournament cards message");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).playCardsForTournament();
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -707,6 +715,7 @@ public class Client implements Runnable {
 								cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
 								cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
 								this.send(new CalculatePlayerClient(this.gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
+								this.gbc.setMerlinMordredVisibility();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}

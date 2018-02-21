@@ -42,6 +42,7 @@ import src.game_logic.StoryCard;
 import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculateStageClient;
 import src.messages.game.ContinueGameClient;
+import src.messages.game.MordredClient;
 import src.messages.hand.HandFullClient;
 import src.messages.quest.QuestBidClient;
 import src.messages.quest.QuestDiscardCardsClient;
@@ -914,7 +915,8 @@ public class GameBoardController implements Initializable{
 		this.nextTurn.setVisible(false);
 		this.discard.setVisible(false);
 		this.startTurn.setVisible(false);
-		System.out.println("Called");
+		this.useMerlin.setVisible(false);
+		this.useMordred.setVisible(false);
 	}
 
 	public void showAcceptDecline() {
@@ -940,6 +942,22 @@ public class GameBoardController implements Initializable{
 
 	public void setDiscardVisibility(boolean b) {
 		this.discard.setVisible(b);
+	}
+	
+	public void setMerlinMordredVisibility() {
+		this.playerManager.players[playerManager.getCurrentPlayer()].hand.getDeck().forEach(i -> {
+			if(i.getName().equals("Mordred")) {
+				this.useMordred.setVisible(true);
+			} else if(i.getName().equals("Merlin")) {
+				this.useMerlin.setVisible(true);
+			}
+		});
+		
+		this.playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck().forEach(i -> {
+			if(i.getName().equals("Merlin")) {
+				this.useMerlin.setVisible(true);
+			}
+		});
 	}
 
 	public void removeDraggable() {
@@ -1081,7 +1099,6 @@ public class GameBoardController implements Initializable{
 			if(CURRENT_STATE == STATE.CHILLING) {
 				synchronized (c) {
 					c.notify();
-					//if 
 					int viewAbleStage =  playerManager.viewableStage(playerManager.getCurrentPlayer());
 					if(viewAbleStage != -1) {
 						setStageCardVisibility(true, viewAbleStage);
@@ -1199,13 +1216,7 @@ public class GameBoardController implements Initializable{
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
-<<<<<<< HEAD
-				
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
-=======
-
-				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
->>>>>>> refs/remotes/origin/master
 				setGlow(playerManager.getCurrentPlayer());
 			}
 		});
@@ -1308,8 +1319,7 @@ public class GameBoardController implements Initializable{
 		
 		this.useMordred.setOnAction(e->{
 			//check if current player has mordred
-			String[] mordredCard = new String[1];
-			String[] otherAllyCard = new String[1];
+			String otherAllyCard;
 			int currentPlayer = playerManager.getCurrentPlayer();
 			ArrayList<AdventureCard> hand = playerManager.getPlayerHand(currentPlayer);
 			AdventureCard mordred = null;
@@ -1325,7 +1335,6 @@ public class GameBoardController implements Initializable{
 				System.out.println("You do not have Mordred");
 				return;
 			}
-			mordredCard[0] = mordred.getName();
 			
 			//setup dialog to choose which card to delete
 			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
@@ -1357,15 +1366,12 @@ public class GameBoardController implements Initializable{
 				Pane mordredContainer = mordred.childOf;
 				mordredContainer.getChildren().remove(mIndex);
 				playerManager.removeCardFromHand(mordred, currentPlayer);
-				c.send(new HandFullClient(currentPlayer, mordredCard));
 				
 				int oIndex = pNumAndCard[2];
 				faceUpPanes[pNumAndCard[0]].getChildren().remove(oIndex);
 				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(pNumAndCard[0]);
 				fuc.remove(oIndex);
-				otherAllyCard[0] = result.get().substring(10);
-				c.send(new HandFullClient(currentPlayer, otherAllyCard));
-				
+				c.send(new MordredClient(this.playerManager.getCurrentPlayer(), pNumAndCard[0], result.get().substring(10)));
 			}
 			
 		});
