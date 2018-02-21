@@ -3,6 +3,7 @@ package src.sequence;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
 import src.messages.QOTRTQueue;
@@ -110,6 +111,6 @@ public class QuestSequenceManager extends SequenceManager {
 		}
 
 		// TODO: discard all cards from participants except Allies
-		pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
+		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
 	}
 }

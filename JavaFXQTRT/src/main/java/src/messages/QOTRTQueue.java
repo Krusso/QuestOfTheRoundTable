@@ -41,11 +41,6 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 					// TODO handle mordred
 				} else if ("merlin stage: 1".equals(message)) {
 					// TODO handle merlin
-				} else if (x.get("message").getAsString().equals(MESSAGETYPES.DISCARDHANDFULL.name())) {
-					HandFullClient hfc = gson.fromJson(x, HandFullClient.class);
-					if(pm != null) {
-						this.pm.discardFromHand(hfc.player, hfc.cards);
-					}
 				} else if(x.get("message").getAsString().equals(MESSAGETYPES.CALCULATEPLAYER.name())) {
 					BattlePointCalculator bc = new BattlePointCalculator(pm);
 					CalculatePlayerClient cpc = gson.fromJson(x, CalculatePlayerClient.class);

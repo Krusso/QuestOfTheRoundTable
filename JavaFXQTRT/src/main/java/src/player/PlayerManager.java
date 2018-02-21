@@ -18,6 +18,7 @@ import src.game_logic.Rank;
 import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.player.Player.STATE;
+import src.sequence.DiscardSequenceManager;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.Card;
 import src.views.PlayerView;
@@ -31,6 +32,7 @@ public class PlayerManager {
 	private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
 	private boolean rigged;
+	private DiscardSequenceManager dsm;
 
 	public Player[] players;
 	public PlayerManager(int numPlayers, DeckManager dm, boolean rigged) {
@@ -73,17 +75,17 @@ public class PlayerManager {
 		}
 	}
 
-
+	public void setDiscardSequenceManager(DiscardSequenceManager dsm) {
+		this.dsm = dsm;
+	}
+	
 	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> {
 			player.addCards(dm.getAdventureCard(cards));
 		});
+		if(dsm != null) dsm.start(null, null, null);
 	}
-
-	public void drawCards(Player player, int cards) {
-		player.addCards(dm.getAdventureCard(cards));
-	}
-
+	
 	public void setPlayer(Player playerFind) {
 		for(int i = 0; i < players.length; i++) {
 			if(players[i]== playerFind) {

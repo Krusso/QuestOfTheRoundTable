@@ -3,6 +3,16 @@ package src.messages.hand;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
 
-// Server does not implement HandFull messages
-public class HandFullServer{
+// Server
+public class HandFullServer extends Message{
+	
+	public HandFullServer(int player) {
+		super(player);
+	}
+
+	@Override
+	public void setMessage() {
+		this.message = MESSAGETYPES.DISCARDHANDFULL;
+	}
+
 }

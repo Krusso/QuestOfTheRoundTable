@@ -10,6 +10,7 @@ import src.game_logic.StoryCard;
 import src.messages.QOTRTQueue;
 import src.messages.game.ContinueGameClient;
 import src.player.PlayerManager;
+import src.sequence.DiscardSequenceManager;
 import src.sequence.GameSequenceManager;
 import src.sequence.SequenceManager;
 import src.views.PlayerView;
@@ -43,6 +44,8 @@ public class Game extends Thread{
 		actions.setPlayerManager(pm);
 		actions.setBoardModel(bm);
 		actions.setOutputController(output);
+		DiscardSequenceManager dsm = new DiscardSequenceManager(actions, pm, bm);
+		pm.setDiscardSequenceManager(dsm);
 
 		GameSequenceManager gsm = new GameSequenceManager();
 		while(true) {
