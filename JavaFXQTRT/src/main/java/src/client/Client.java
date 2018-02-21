@@ -57,6 +57,7 @@ import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
 
 class AddCardsTask extends Task{
+	final static Logger logger = LogManager.getLogger(AddCardsTask.class);
 	private int player;
 	private String[] cards;
 	public AddCardsTask(GameBoardController gbc, int player, String[] cards) {
@@ -69,15 +70,18 @@ class AddCardsTask extends Task{
 	public void run() {
 		File[] list = cardDir.listFiles();
 		for(String card: cards) {
+			boolean didAddCard = false;;
 			//find file associated to name
 			for(File f : list) {
-				if (f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) {
+				if ((f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) && 
+						((f.getName().length()-6) == card.length() || (f.getName().length()-4) == card.length())) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
 						AllyCard c = new AllyCard(card, f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						c.faceDown();
 						gbc.addCardToHand(c, player);
+						didAddCard = true;
 						break;
 					}
 					case 'F' : {
@@ -85,6 +89,7 @@ class AddCardsTask extends Task{
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
+						didAddCard = true;
 						break;
 					}
 					case 'T' : {
@@ -92,6 +97,7 @@ class AddCardsTask extends Task{
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
+						didAddCard = true;
 						break;
 					}
 					case 'W':{
@@ -99,6 +105,7 @@ class AddCardsTask extends Task{
 						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(weapon, player);
 						weapon.faceDown();
+						didAddCard = true;
 						break;
 					}
 					default:{
@@ -106,6 +113,9 @@ class AddCardsTask extends Task{
 					}
 					}
 				}
+			}
+			if(!didAddCard) {
+				 logger.warn("Could not add " + card + " to hand");
 			}
 		}
 	}

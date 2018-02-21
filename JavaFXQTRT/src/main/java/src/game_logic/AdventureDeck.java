@@ -40,7 +40,7 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		addCard(new AllyCard("Sir Lancelot",15,25, TYPE.ALLIES),1);
 		addCard(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES),1);
 		addCard(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES),1); // namedBattlePoints here = when Queen Iseult is in play
-		addCard(new AllyCard("Sir Pellinore",10,10,0,4, TYPE.ALLIES),1);
+		addCard(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES),1);
 		addCard(new AllyCard("Sir Gawain",10,20, TYPE.ALLIES),1);
 		addCard(new AllyCard("Sir Percival",5,20, TYPE.ALLIES),1);
 		addCard(new AllyCard("Queen Guinevere",0,0,3, TYPE.ALLIES),1);

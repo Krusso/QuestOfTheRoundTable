@@ -39,9 +39,9 @@ public class TestBidCalculator {
 	public void testKingPellinore() {
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AllyCard("Sir Pellinore",10,10,0,4, TYPE.ALLIES));
+		cards.add(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES));
 		p1.addCards(cards);
-		p1.setFaceDown(cards.stream().filter(i -> i.getName().equals("Sir Pellinore")).map(i -> i.getName()).toArray(String[]::new));
+		p1.setFaceDown(cards.stream().filter(i -> i.getName().equals("King Pellinore")).map(i -> i.getName()).toArray(String[]::new));
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
