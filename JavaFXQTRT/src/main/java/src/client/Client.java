@@ -56,6 +56,7 @@ import src.messages.tournament.TournamentPickCardsServer;
 import src.messages.tournament.TournamentWinServer;
 
 class AddCardsTask extends Task{
+	final static Logger logger = LogManager.getLogger(DiscardFaceUpTask.class);
 	private int player;
 	private String[] cards;
 	public AddCardsTask(GameBoardController gbc, int player, String[] cards) {
@@ -113,7 +114,7 @@ class AddCardsTask extends Task{
 				}
 			}
 			if(!didAddCard) {
-				System.out.println("Could not add card: " + card);
+				 logger.warn("Could not add " + card + " to hand");
 			}
 		}
 	}

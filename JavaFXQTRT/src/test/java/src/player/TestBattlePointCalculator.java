@@ -42,7 +42,7 @@ public class TestBattlePointCalculator {
 	public void testAllies() {
 		cards.add(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
-		cards.add(new AllyCard("Sir Pellinore",10,10,0,4, TYPE.ALLIES));
+		cards.add(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES));
 		p1.addCards(cards);
 		p1.setFaceDown(cards.stream().map(i -> i.getName()).toArray(String[]::new));
 		p1.flipCards();
