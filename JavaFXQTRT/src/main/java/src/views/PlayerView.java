@@ -18,6 +18,7 @@ import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
 import src.messages.hand.FaceUpDiscardServer;
 import src.messages.hand.FaceUpServer;
+import src.messages.hand.HandFullServer;
 import src.messages.quest.QuestBidServer;
 import src.messages.quest.QuestDiscardCardsServer;
 import src.messages.quest.QuestDownServer;
@@ -72,6 +73,8 @@ public class PlayerView {
 			output.sendMessage(new QuestPickCardsServer(ID));
 		} else if(state == Player.STATE.QUESTJOINQUESTIONED) {
 			output.sendMessage(new QuestJoinServer(ID));
+		} else if(state == Player.STATE.DISCARDING) {
+			output.sendMessage(new HandFullServer(ID));
 		}
 	}
 
