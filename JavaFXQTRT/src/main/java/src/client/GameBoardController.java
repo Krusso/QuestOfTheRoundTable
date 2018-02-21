@@ -147,16 +147,16 @@ public class GameBoardController implements Initializable{
 	public Pane[] stages = new Pane[5];
 	public ArrayList<ArrayList<AdventureCard>> stageCards = new ArrayList<>();
 
-	
+
 	@FXML public Text bpTextStage0;
 	@FXML public Text bpTextStage1;
 	@FXML public Text bpTextStage2;
 	@FXML public Text bpTextStage3;
 	@FXML public Text bpTextStage4;
 	public Text[] bpTexts = new Text[5];
-	
+
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
-	
+
 	@FXML public Text currBP;
 
 	@FXML private Pane discardPane;
@@ -171,7 +171,7 @@ public class GameBoardController implements Initializable{
 		bpTexts[2] = bpTextStage2;
 		bpTexts[3] = bpTextStage3;
 		bpTexts[4] = bpTextStage4;
-		
+
 		playerPanes[0] = playerPane0;
 		playerPanes[1] = playerPane1;
 		playerPanes[2] = playerPane2;
@@ -222,7 +222,7 @@ public class GameBoardController implements Initializable{
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
 	}
-	
+
 	public void setGlow(int p) {
 		playerRanks[p].setEffect(new Glow(1.0));
 	}
@@ -514,6 +514,7 @@ public class GameBoardController implements Initializable{
 		System.out.println("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == STATE.PICK_STAGES) {
+			//putting card from stage pane to hand
 			if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 				for(int i = 0; i < stages.length; i++) {
@@ -529,18 +530,22 @@ public class GameBoardController implements Initializable{
 				//it into the face up pane if they choose to use its power
 				if(isInPane(stages[i], point) && isStageValid(stageCards.get(i), card)) {
 					doPutCardIntoPane(point, card);
-					c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));
+					for(int j = 0; j < stages.length; j++) {
+						if(stages[j].isVisible()) {
+							c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(j).stream().map(k -> k.getName()).toArray(String[]::new), j));	
+						}
+					}
 				}
 			}
 		}
-		
+
 		if(CURRENT_STATE == STATE.JOIN_QUEST) {
 			if(	card.isMerlin() && isInPane(faceUpPanes[cPlayer], point)
 					&& !card.childOf.equals(faceUpPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 			}
 		}
-		
+
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
 			if((isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
@@ -583,7 +588,7 @@ public class GameBoardController implements Initializable{
 		toAdd.add(card);
 
 		card.childOf = to;
-		
+
 		repositionCardsInHand(playerManager.getCurrentPlayer());
 		repositionFaceDownCards(playerManager.getCurrentPlayer());
 
@@ -598,27 +603,27 @@ public class GameBoardController implements Initializable{
 		//reset the original position of this card cards
 		card.setOriginalPosition(card.getImageView().getX(), card.getImageView().getY());
 	}
-	
+
 	private void removeFromPane(Pane from, AdventureCard card) {
 		// removing card from the from pane
 		ArrayList<AdventureCard> toRemove = paneDeckMap.get(from);
 		from.getChildren().remove(card.getImageView());
 		toRemove.remove(card);
 	}
-	
+
 	public void moveCardBetweenPanes(Pane from, Pane to, AdventureCard card) {
 		logger.info("Putting card: " + card.getName() + " into: " + to + " from: " + from);
 		removeFromPane(from, card);
 		putCardIntoPane(to, card);
 	}
-	
+
 	private void doPutCardIntoPane(Point2D point, AdventureCard card ) {
 		Pane from = card.childOf;
 		removeFromPane(from, card);
-		
+
 		//find which pane we want to place the card into right now
 		Pane to = mouseOverPane(point);
-		
+
 		putCardIntoPane(to, card);
 	}
 
@@ -713,7 +718,7 @@ public class GameBoardController implements Initializable{
 		return false;
 	}
 
-	
+
 	private boolean stagesIncreasing() {
 		int lastBp = Integer.MIN_VALUE;
 		for(int i = 0; i < stages.length; i++) {
@@ -726,10 +731,10 @@ public class GameBoardController implements Initializable{
 				lastBp = Integer.parseInt(bpTexts[i].getText());
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Checks if the stages satisfy the current quest card (should be called before player ends turn)
 	 * We only check if the stages are empty or contains either a test/foe not since when players play cards into the pane, a validation already occurs
@@ -915,7 +920,7 @@ public class GameBoardController implements Initializable{
 	public void showDecline() {
 		this.decline.setVisible(true);
 	}
-	
+
 	public void showStartTurn() {
 		this.startTurn.setVisible(true);
 	}
@@ -1137,14 +1142,14 @@ public class GameBoardController implements Initializable{
 				for(int i = 0 ; i < cards.length ; i++) {
 					cards[i] = faceDownCards.get(i).getName();
 				}
-				
+
 				//if merlin hide the stage again
 				int viewAbleStage = playerManager.viewableStage(currentPlayer);
 				if(viewAbleStage != -1) {
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
-				
+
 				c.send(new QuestPickCardsClient(currentPlayer, cards));
 
 			}
@@ -1155,7 +1160,7 @@ public class GameBoardController implements Initializable{
 				String[] cards = discardAllFaceDownCards(currentPlayer);
 				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
 			}
-			
+
 		});
 
 		/*
@@ -1183,14 +1188,14 @@ public class GameBoardController implements Initializable{
 				if(playerManager.viewableStage(playerManager.getCurrentPlayer()) != -1) {
 					flipStageCards(playerManager.viewableStage(playerManager.getCurrentPlayer()), false);
 				}
-				
+
 				//if merlin hide the stage again
 				int viewAbleStage = playerManager.viewableStage(playerManager.getCurrentPlayer() );
 				if(viewAbleStage != -1) {
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
-				
+
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}
