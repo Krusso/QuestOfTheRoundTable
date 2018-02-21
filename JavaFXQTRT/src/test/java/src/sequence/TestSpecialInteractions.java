@@ -29,11 +29,17 @@ public class TestSpecialInteractions {
 
 	
 	@Test
+	public void testPlayAllyWhenFullHand() throws InterruptedException {
+		
+	}
+	
+	@Test
 	public void testDiscardWhenFullHand() throws InterruptedException {
-		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
 		QOTRTQueue input = new QOTRTQueue();
+		dsm = new DiscardSequenceManager(input, pm, bm);
+		pm.setDiscardSequenceManager(dsm);
 		input.setPlayerManager(pm);
-		Runnable task2 = () -> { tsm.start(input, pm, bm); };
+		Runnable task2 = () -> { dsm.start(input, pm, bm); };
 		new Thread(task2).start();
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
@@ -45,7 +51,7 @@ public class TestSpecialInteractions {
 		player.addCards(cards);
 		assertEquals(17,player.hand.size());
 		
-		input.put(new HandFullClient(0, new String[] {"Horse", "Amour"}));
+		input.put(new HandFullClient(0, new String[] {"Horse", "Amour"}, new String[] {}));
 		Thread.sleep(500);
 		assertEquals(15, player.hand.size());
 	}
@@ -56,6 +62,7 @@ public class TestSpecialInteractions {
 	PlayerView pv;
 	OutputController oc;
 	LinkedBlockingQueue<String> output;
+	DiscardSequenceManager dsm;
 	@Before
 	public void before() {
 		output = new LinkedBlockingQueue<String>();

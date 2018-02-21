@@ -4,11 +4,13 @@ import src.messages.Message;
 
 // Client
 public class HandFullClient extends Message{
-	public String[] cards;
+	public String[] discard;
+	public String[] toFaceUp;
 	
-	public HandFullClient(int player, String[] cards) {
+	public HandFullClient(int player, String[] discard, String[] toFaceUp) {
 		super(player);
-		this.cards = cards;
+		this.discard = discard;
+		this.toFaceUp = toFaceUp;
 	}
 	
 	@Override

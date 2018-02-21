@@ -112,10 +112,10 @@ public class EventSequenceManager extends SequenceManager {
 			highest.forEach(player -> {
 				if(player.getTypeCount(TYPE.WEAPONS) >= 1) {
 					pm.setPlayer(player);;
-					pm.setState(player, Player.STATE.DISCARDING, 1, AdventureCard.TYPE.WEAPONS);
+					pm.setState(player, Player.STATE.EVENTDISCARDING, 1, AdventureCard.TYPE.WEAPONS);
 				} else if(player.getTypeCount(TYPE.FOES) >= 1) {
 					pm.setPlayer(player);
-					pm.setState(player, Player.STATE.DISCARDING, Math.min(2, player.getTypeCount(TYPE.FOES)), AdventureCard.TYPE.FOES);
+					pm.setState(player, Player.STATE.EVENTDISCARDING, Math.min(2, player.getTypeCount(TYPE.FOES)), AdventureCard.TYPE.FOES);
 				} else {
 					return;
 				}
