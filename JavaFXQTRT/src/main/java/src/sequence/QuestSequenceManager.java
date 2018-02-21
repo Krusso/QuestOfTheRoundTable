@@ -6,6 +6,7 @@ import java.util.List;
 
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
+import src.game_logic.TestCard;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
@@ -88,7 +89,7 @@ public class QuestSequenceManager extends SequenceManager {
 				} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					players = winners.iterator();
-					Pair bidWinner = questionPlayersForBid(players, pm, actions, card);
+					Pair bidWinner = questionPlayersForBid(players, pm, actions, card, (TestCard) quest.getFoeOrTest());
 					// No one decided to bid not sure if legal?
 					if(bidWinner == null) {
 						winners.clear();
