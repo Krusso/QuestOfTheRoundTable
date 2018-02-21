@@ -15,7 +15,8 @@ import javafx.scene.effect.Glow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javafx.scene.effect.Glow;
+import javafx.scene.paint.Color;
+import javafx.scene.effect.DropShadow;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -227,9 +228,14 @@ public class GameBoardController implements Initializable{
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
 	}
-	
+
 	public void setGlow(int p) {
-		playerRanks[p].setEffect(new Glow(1.0));
+		DropShadow noticeableGlow = new DropShadow();
+		noticeableGlow.setColor(Color.web("#42f4f1"));
+		noticeableGlow.setOffsetX(0f);
+		noticeableGlow.setOffsetY(0f);
+		noticeableGlow.setHeight(170);
+		playerRanks[p].setEffect(noticeableGlow);
 	}
 
 	public void clearHighlight() {
