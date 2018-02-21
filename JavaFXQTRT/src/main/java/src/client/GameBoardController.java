@@ -1229,7 +1229,6 @@ public class GameBoardController implements Initializable{
 		 * button dedicated for handling discarding :>
 		 */
 		this.discard.setOnAction(e->{
-			Logger logger = LogManager.getLogger(DiscardFaceUpTask.class);
 			System.out.println("Clicked Discard");
 			int cPlayer = playerManager.getCurrentPlayer();
 			String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
@@ -1238,8 +1237,7 @@ public class GameBoardController implements Initializable{
 				toast.setText("You must discard exactly " + 
 						(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() - playerManager.MAX_HAND_SIZE) + 
 						" card(s)");
-				System.out.println("Your hand is too full!");
-				LogManager.getLogger().info("Player #"+ playerManager.getCurrentPlayer()+"'s hand is too full!");
+				logger.info("Player #"+ playerManager.getCurrentPlayer()+"'s hand is too full!");
 				return;
 			}else if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() < playerManager.MAX_HAND_SIZE && !discardPile.isEmpty()) {
 				toast.setText("Can only discard cards if hand has more than 12 cards");
