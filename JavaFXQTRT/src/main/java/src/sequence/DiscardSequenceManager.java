@@ -35,6 +35,11 @@ public class DiscardSequenceManager extends SequenceManager {
 					p.hand.getCardByName(s);
 				}
 				for(String s: x.toFaceUp) {
+					if(s.equals("Sir Tristan")) {
+						p.tristan = true;
+					} else if(s.equals("Queen Iseult")) {
+						p.iseult = true;
+					}
 					p.getFaceDownDeck().addCard(p.hand.getCardByName(s), 1);
 				}
 			}
