@@ -38,7 +38,7 @@ public abstract class SequenceManager {
 			pm.setPlayer(next);
 			int playerMaxBid = bc.maxBid(next, card);			
 			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, (testCard.getName().equals("Test of the Questing Beast") &&
-					card.getName().equals("Search for the Questing Beast") ? 4 : 0));
+					card.getName().equals("Search for the Questing Beast") ? 4 : 3));
 			QuestBidClient qbc = actions.take(QuestBidClient.class);
 			if(qbc.bid != -1) {
 				notDropped.add(next);
@@ -49,7 +49,9 @@ public abstract class SequenceManager {
 			Player next = notDropped.poll();
 			pm.setPlayer(next);
 			int playerMaxBid = bc.maxBid(next, card);			
-			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue + 1));
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid,Math.max(
+					(testCard.getName().equals("Test of the Questing Beast") && card.getName().equals("Search for the Questing Beast")
+							? 4 : (testCard.getName().equals("Test of Morgan Le Fey") ? 3 : 1)), maxBidValue + 1));
 			QuestBidClient qbc = actions.take(QuestBidClient.class);
 			if(qbc.bid != -1) {
 				maxBidValue = qbc.bid;
