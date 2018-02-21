@@ -48,6 +48,7 @@ public abstract class Message {
 		PASSSTAGE, 
 		PASSALL, 
 		CALCULATEPLAYER, 
-		CALCULATESTAGE
+		CALCULATESTAGE, 
+		MORDRED
 	};
 }
