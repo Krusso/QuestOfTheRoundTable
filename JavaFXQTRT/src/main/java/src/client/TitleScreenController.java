@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +34,7 @@ import javafx.stage.Stage;
 import src.messages.game.GameStartClient;
 
 public class TitleScreenController implements Initializable{
-
+	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
 	private Client client;
 	
 	@FXML private Text	numPlayerslabel;
@@ -60,6 +63,7 @@ public class TitleScreenController implements Initializable{
 	@FXML private ImageView shieldView2;
 	@FXML private ImageView shieldView3;
 	@FXML private ImageView shieldView4;
+	private ImageView[] shieldViewArr = new ImageView[4];
 	private int playerShield1=-1;
 	private int playerShield2=-1;
 	private int playerShield3=-1;
@@ -69,6 +73,7 @@ public class TitleScreenController implements Initializable{
 	@FXML private MenuButton b2;
 	@FXML private MenuButton b3;
 	@FXML private MenuButton b4;
+	private MenuButton[] menuBtns = new MenuButton[4];
 
 	private boolean rigged;
 	
@@ -209,8 +214,59 @@ public class TitleScreenController implements Initializable{
 	public void hideMenu() { menuPane.setVisible(false); }
 	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); }
 	
+	
+	private boolean isStartGameValid() {
+		ArrayList<Integer> humanPlayers = new ArrayList<>();
+		ArrayList<Integer> AIPlayers = new ArrayList<>();
+		int totalPlayers = 0;
+		//Count number of players
+		for(int i = 0 ; i < menuBtns.length ; i++) {
+			if(menuBtns[i].getText().equals("Human")){
+				humanPlayers.add(i);
+				totalPlayers++;
+			}else if(menuBtns[i].getText().contains("AI")) {
+				AIPlayers.add(i);
+				totalPlayers++;
+			}
+		}
+		//check if every player has a unique shield
+		ArrayList<Image> shieldImages = new ArrayList<>();
+		boolean duplicate = false;
+		for(Integer i : humanPlayers) {
+			shieldImages.add(shieldViewArr[i].getImage());
+		}
+		for(Integer i : AIPlayers) {
+			shieldImages.add(shieldViewArr[i].getImage());
+		}
+		for(int i = 0 ; i < shieldImages.size() ; i++) {
+			for(int j = i+1 ; j < shieldImages.size(); j++) {
+				if(shieldImages.get(i).equals(shieldImages.get(j))) {
+					duplicate = true;
+				}
+			}
+		}
+		if(duplicate) {
+			logger.info("Players cannot have the same shield");
+			return false;
+		}
+		if(!(humanPlayers.size() > 0)) {
+			logger.info("Must have at least 1 human player to start the game");
+			return false;
+		}
+		if(totalPlayers < 2 ) {
+			logger.info("Must have at least 2 players to start game");
+			return false;
+		}
+		return true;
+	}
+	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
+		if(!isStartGameValid()) {
+			logger.info("Cannot start game");
+			return;
+		}
+		
 		
 		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
 	
@@ -308,6 +364,15 @@ public class TitleScreenController implements Initializable{
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		
+		menuBtns[0] = b1;
+		menuBtns[1] = b2;
+		menuBtns[2] = b3;
+		menuBtns[3] = b4;
+		shieldViewArr[0] = shieldView1;
+		shieldViewArr[1] = shieldView2;
+		shieldViewArr[2] = shieldView3;
+		shieldViewArr[3] = shieldView4;
 	}
 	public void setRigged(boolean b) {
 		this.rigged = b;
