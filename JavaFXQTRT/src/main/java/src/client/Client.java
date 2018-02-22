@@ -1,6 +1,7 @@
 package src.client;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.imageio.ImageIO;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +22,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
@@ -38,6 +46,8 @@ import src.messages.game.CalculateStageServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
+import src.messages.gameend.FinalTournamentNotifyServer;
+import src.messages.gameend.GameOverServer;
 import src.messages.hand.AddCardsServer;
 import src.messages.hand.FaceDownServer;
 import src.messages.hand.FaceUpDiscardServer;
@@ -650,10 +660,98 @@ class HandFullDiscardTask extends Task {
 	
 }
 
+class GameOverTask extends Task {
+
+	private int player;
+	private static String s;
+	public GameOverTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+		
+	}
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		gbc.CURRENT_STATE = STATE.GAMEOVER;
+		gbc.showToast("Player #" + player + " won the game!");
+		gbc.flipAllFaceDownPane(true);
+		gbc.setButtonsInvisible();
+		gbc.removeDraggable();
+		
+		String winningMessage = "Player #" + player + " won the game!";
+		try {
+			Thread.sleep(1000);
+			
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			fxmlLoader.setLocation(getClass().getResource("GameOver.fxml"));
+			Scene gameOverScene = new Scene(fxmlLoader.load());
+			GameOverController goc = fxmlLoader.getController();
+			goc.text.setText(winningMessage);
+			
+			//attach image to bg pane
+			Image img = new Image(new FileInputStream(new File(cardDir + "/gameover.png")));
+			ImageView imgv = new ImageView(img);
+			//keep aspect ratio and make imgView fit the whole screen
+			double scaleV = 1920 / img.getWidth();
+			double scaleH = 1080 / img.getHeight();
+			double scaleFactor = scaleV > scaleH ? scaleV : scaleH; 
+			System.out.println("V H: " + scaleV + " " + scaleH);
+			System.out.println("Scale factor: " + scaleFactor);
+			imgv.setFitHeight(img.getHeight() * scaleFactor);
+			imgv.setFitWidth(img.getWidth() * scaleFactor);
+			goc.bg.getChildren().add(imgv);
+			Stage stage = (Stage) gbc.accept.getScene().getWindow();	
+			if(stage!= null) {
+				stage.setScene(gameOverScene);
+				stage.show();
+			}
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		
+	}
+	
+}
+
+class JoinedFinalTournamentTask extends Task{
+
+	private int player;
+	public JoinedFinalTournamentTask(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	@Override
+	public void run() {
+		try {
+			String toastMsg = "Player(s) ";
+			for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
+				if(gbc.playerManager.players[i].getRank() == RANKS.KNIGHTOFTHEROUNDTABLE) {
+					toastMsg += i + ", ";
+				}
+				
+			}
+			gbc.showToast(toastMsg.substring(0, toastMsg.length()-2) + " has joined the final tournament!");
+			
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+}
 
 abstract class Task implements Runnable{
 	protected File cardDir;
 	protected GameBoardController gbc;
+	protected GameOverController goc;
 	protected static boolean[] winners = {false,false,false,false};
 	public Task() { };
 	public Task(GameBoardController gbc) {
@@ -675,6 +773,7 @@ public class Client implements Runnable {
 	private String currentMessage;
 
 	GameBoardController gbc;
+	GameOverController goc;
 	public Client(String host, int port) {
 		this.host = host;
 		this.port = port;
@@ -908,7 +1007,16 @@ public class Client implements Runnable {
 						
 						Platform.runLater(new HandFullDiscardTask(gbc, request.player));
 					}
+					if(message.equals(MESSAGETYPES.GAMEOVER.name())){
+						GameOverServer request = gson.fromJson(obj, GameOverServer.class);
 						
+						Platform.runLater(new GameOverTask(gbc, request.player));
+					}
+					if(message.equals(MESSAGETYPES.JOINEDFINALTOURNAMENT.name())){
+						FinalTournamentNotifyServer request = gson.fromJson(obj, FinalTournamentNotifyServer.class);
+						
+						Platform.runLater(new JoinedFinalTournamentTask(gbc, request.player));
+					}
 				}
 			}
 			if(!client.isConnected()) {

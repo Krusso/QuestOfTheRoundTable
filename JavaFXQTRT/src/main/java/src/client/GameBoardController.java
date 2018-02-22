@@ -57,6 +57,7 @@ public class GameBoardController implements Initializable{
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
+		GAMEOVER,
 		NONE}
 
 	public STATE CURRENT_STATE = STATE.NONE;
@@ -996,6 +997,11 @@ public class GameBoardController implements Initializable{
 
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
+	}
+	public void flipAllFaceDownPane(boolean isShow) {
+		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {
+			playerManager.flipFaceDownCards(i, isShow);
+		}
 	}
 
 	public void moveToFaceUpPane(int p) {
