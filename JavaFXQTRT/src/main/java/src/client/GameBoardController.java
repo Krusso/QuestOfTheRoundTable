@@ -165,7 +165,7 @@ public class GameBoardController implements Initializable{
 
 	@FXML public Text currBP;
 
-	@FXML private Pane discardPane;
+	@FXML public Pane discardPane;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
 

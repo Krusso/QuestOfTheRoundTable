@@ -653,7 +653,11 @@ class HandFullDiscardTask extends Task {
 		gbc.setButtonsInvisible();
 		gbc.setDiscardVisibility(true);
 		gbc.addDraggable();
-		
+		if(gbc.playerManager.getAI(player) != null) {
+			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size());
+			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
+			gbc.endTurn.fire();
+		}
 	}
 	
 }
