@@ -151,6 +151,11 @@
                   </Button>
                </children>
             </Pane>
+            <Text fx:id="errorMsg" fill="#ff7b00" layoutX="117.0" layoutY="704.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="522.0000252276659">
+               <font>
+                  <Font name="High Tower Text" size="20.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
    </children>

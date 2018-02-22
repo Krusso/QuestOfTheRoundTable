@@ -36,6 +36,7 @@ import src.messages.game.GameStartClient;
 public class TitleScreenController implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
 	private Client client;
+	@FXML public Text errorMsg;
 	
 	@FXML private Text	numPlayerslabel;
 	@FXML private TextField numPlayers;
@@ -247,14 +248,17 @@ public class TitleScreenController implements Initializable{
 		}
 		if(duplicate) {
 			logger.info("Players cannot have the same shield");
+			errorMsg.setText("Players cannot have the same shield");
 			return false;
 		}
 		if(!(humanPlayers.size() > 0)) {
 			logger.info("Must have at least 1 human player to start the game");
+			errorMsg.setText("Must have at least 1 human player to start the game");
 			return false;
 		}
 		if(totalPlayers < 2 ) {
 			logger.info("Must have at least 2 players to start game");
+			errorMsg.setText("Must have at least 2 players to start game");
 			return false;
 		}
 		return true;
