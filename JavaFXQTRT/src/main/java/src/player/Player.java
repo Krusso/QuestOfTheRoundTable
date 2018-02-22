@@ -17,7 +17,7 @@ public class Player {
 	public static enum STATE {
 		NEUTRAL, QUESTIONED, YES, NO, PICKING, EVENTDISCARDING, WIN, WINNING, GAMEWON,
 		SPONSORING, QUESTQUESTIONED // >:(
-, BIDDING, TESTDISCARD, QUESTPICKING, QUESTJOINQUESTIONED, DISCARDING
+, BIDDING, TESTDISCARD, QUESTPICKING, QUESTJOINQUESTIONED, DISCARDING, QUESTQUESTIONEDCANT
 	};
 	
 	protected RANKS rank;
@@ -63,6 +63,7 @@ public class Player {
 			return;
 		}
 		if(pv != null) pv.update(rank, ID);
+		increaseLevel();
 	}
 	
 	public void addCards(ArrayList<AdventureCard> cards) {

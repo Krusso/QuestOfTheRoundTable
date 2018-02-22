@@ -52,7 +52,7 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 				} else if(x.get("message").getAsString().equals(MESSAGETYPES.CALCULATESTAGE.name())) {
 					BattlePointCalculator bc = new BattlePointCalculator(pm);
 					CalculateStageClient csc = gson.fromJson(x, CalculateStageClient.class);
-					output.sendMessage(new CalculateStageServer(bc.calculateStage(csc.player, csc.cards, bm.getCard()), csc.player, csc.stage));
+					output.sendMessage(new CalculateStageServer(bc.calculateStage(pm.players[csc.player].hand, csc.cards, bm.getCard()), csc.player, csc.stage));
 				}else {
 					break;
 				}

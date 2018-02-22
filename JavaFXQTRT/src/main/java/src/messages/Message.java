@@ -49,6 +49,7 @@ public abstract class Message {
 		PASSALL, 
 		CALCULATEPLAYER, 
 		CALCULATESTAGE, 
-		MORDRED
+		MORDRED, 
+		SPONSERQUESTCANT
 	};
 }

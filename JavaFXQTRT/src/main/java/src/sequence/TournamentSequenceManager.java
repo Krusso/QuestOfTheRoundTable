@@ -36,6 +36,7 @@ public class TournamentSequenceManager extends SequenceManager {
 
 		// determining if anyone joined
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
+		pm.drawCards(participants, 1);
 		if(participants.size() == 0) {
 			return;
 		} else if(participants.size() == 1) {
