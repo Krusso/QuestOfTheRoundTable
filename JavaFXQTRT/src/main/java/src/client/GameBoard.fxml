@@ -85,6 +85,7 @@
                         <Font name="Bodoni MT" size="40.0" />
                      </font>
                   </Text>
+                  <ImageView fx:id="discardView" fitHeight="300.0" fitWidth="125.0" layoutX="764.0" layoutY="9.0" pickOnBounds="true" preserveRatio="true" />
                   <Pane fx:id="discardPane" layoutX="762.0" prefHeight="300.0" prefWidth="125.0" />
                </children>
             </Pane>

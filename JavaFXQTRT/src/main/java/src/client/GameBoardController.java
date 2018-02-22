@@ -160,6 +160,7 @@ public class GameBoardController implements Initializable{
 
 	@FXML public Text currBP;
 
+	@FXML ImageView discardView;
 	@FXML private Pane discardPane;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
@@ -222,6 +223,27 @@ public class GameBoardController implements Initializable{
 		stageViews[2] = stage2View;
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
+
+		setDiscardImage();
+		hideDiscardPane();
+	}
+	
+	public void setDiscardImage() {
+		try {
+			File f = new File(resDir + "/discardTray.png");
+			Image discardImage = new Image(new FileInputStream(f));
+			discardView.setImage(discardImage); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void hideDiscardPane() {
+		discardView.setVisible(false);
+	}
+	
+	public void showDiscardPane() {
+		discardView.setVisible(true);
 	}
 
 	public void setGlow(int p) {

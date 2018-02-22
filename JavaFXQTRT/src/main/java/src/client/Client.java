@@ -427,6 +427,7 @@ class DiscardFaceUpTask extends Task {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
+		gbc.showDiscardPane();
 	}
 }
 
@@ -513,6 +514,7 @@ class DiscardQuestTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.showDiscardPane();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -645,7 +647,7 @@ class HandFullDiscardTask extends Task {
 		gbc.setButtonsInvisible();
 		gbc.setDiscardVisibility(true);
 		gbc.addDraggable();
-		
+		gbc.showDiscardPane();
 	}
 	
 }
