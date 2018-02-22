@@ -20,6 +20,7 @@ public class AdventureCard extends Card{
 	public AdventureCard(String name, int battlePoints, TYPE type) {
 		this(name, type);
 		this.battlePoints = battlePoints;
+		this.namedBattlePoints = this.battlePoints;
 	}
 	
 	public AdventureCard(String name, int battlePoints, int namedBattlePoints, TYPE type) {
