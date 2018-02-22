@@ -90,7 +90,6 @@ public class QuestSequenceManager extends SequenceManager {
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					players = winners.iterator();
 					Pair bidWinner = questionPlayersForBid(players, pm, actions, card, (TestCard) quest.getFoeOrTest());
-					// No one decided to bid not sure if legal?
 					if(bidWinner == null) {
 						winners.clear();
 						break;
@@ -111,7 +110,7 @@ public class QuestSequenceManager extends SequenceManager {
 			pm.changeShields(winners, quest.getNumStages());
 		}
 
-		// TODO: discard all cards from participants except Allies
+		pm.discardCards(participants);
 		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
 	}
 }
