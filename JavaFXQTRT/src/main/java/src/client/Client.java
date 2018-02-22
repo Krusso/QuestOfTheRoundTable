@@ -210,7 +210,7 @@ class QuestSponsorTask extends Task {
 		gbc.showToast("Sponsor Quest?");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
-			if(gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard) != null) {
+			if(gbc.playerManager.getAI(player).doISponsorAQuest(gbc.questCard) != null) {
 				gbc.accept.fire();
 			} else {
 				gbc.decline.fire();
@@ -315,7 +315,7 @@ class QuestPickStagesTask extends Task {
 		gbc.showToast("Select cards for each Stage");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
-			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard);
+			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponsorAQuest(gbc.questCard);
 			for(int i = 0; i < cards.size(); i++) {
 				for(int j = 0; j < cards.get(i).size(); j++) {
 					gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.stages[i], cards.get(i).get(j));	

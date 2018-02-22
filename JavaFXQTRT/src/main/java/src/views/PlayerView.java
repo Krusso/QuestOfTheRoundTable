@@ -30,7 +30,6 @@ import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
 import src.messages.tournament.TournamentPickCardsServer;
-import src.messages.tournament.TournamentWinServer;
 import src.player.Player;
 import src.player.Player.STATE;
 import src.socket.OutputController;

@@ -15,6 +15,7 @@ import src.game_logic.AmourCard;
 import src.game_logic.FoeCard;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
+import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 
 public class TestA1 {
@@ -70,7 +71,59 @@ public class TestA1 {
 	
 	@Test
 	public void doISponserAQuest() {
-		// TODO
+		logger.info("Testing 1");
+		UIPlayerManager pm = new UIPlayerManager(1);
+		
+		UIPlayer p1 = new UIPlayer(0);
+		pm.players[0] = p1;
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
+		AbstractAI player = new A1(p1, pm);
+		assertEquals(null, player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})));
+		
+		logger.info("Testing 2");
+		p1 = new UIPlayer(0);
+		pm.players[0] = p1;
+		p1.addCard(new FoeCard("Mordred",30, TYPE.FOES));
+		p1.addCard(new FoeCard("Green Knight",25,40, TYPE.FOES));
+		player = new A1(p1, pm);
+		assertEquals(null,player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})));
+		
+		logger.info("Testing 3");
+		p1 = new UIPlayer(0);
+		pm.players[0] = p1;
+		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
+		p1.addCard(new FoeCard("Saxon Knight",15,25, TYPE.FOES));
+		p1.addCard(new FoeCard("Saxons",10,20, TYPE.FOES));
+		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
+		player = new A1(p1, pm);
+		assertEquals(true, TestA2.compareList(player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})), 
+				new String[][] {{"Thieves"}, {"Dragon"}}));
+		
+		logger.info("Testing 4");
+		p1 = new UIPlayer(0);
+		pm.players[0] = p1;
+		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
+		p1.addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
+		p1.addCard(new FoeCard("Saxons",10,20, TYPE.FOES));
+		p1.addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
+		player = new A1(p1, pm);
+		assertEquals(true, TestA2.compareList(player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})), 
+				new String[][] {{"Thieves"}, {"Dragon"}}));
+		
+		logger.info("Testing 5");
+		p1 = new UIPlayer(0);
+		pm.players[0] = p1;
+		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
+		p1.addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
+		p1.addCard(new FoeCard("Saxons",10,20, TYPE.FOES));
+		p1.addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+		p1.addCard(new FoeCard("Thieves",5, TYPE.FOES));
+		p1.addCard(new TestCard("Test of Valor", TYPE.TESTS));
+		player = new A1(p1, pm);
+		assertEquals(true, TestA2.compareList(player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})), 
+				new String[][] {{"Test of Valor"}, {"Dragon"}}));
 	}
 	
 	@Test
