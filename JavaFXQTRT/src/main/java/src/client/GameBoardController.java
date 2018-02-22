@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import javafx.scene.effect.Glow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,6 +43,7 @@ import src.game_logic.StoryCard;
 import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculateStageClient;
 import src.messages.game.ContinueGameClient;
+import src.messages.game.MordredClient;
 import src.messages.hand.HandFullClient;
 import src.messages.quest.QuestBidClient;
 import src.messages.quest.QuestDiscardCardsClient;
@@ -75,7 +77,10 @@ public class GameBoardController implements Initializable{
 	@FXML public Button decline;
 	@FXML private Button nextTurn;
 	@FXML private Button discard;
+	
 	@FXML public Button useMerlin;
+	@FXML public Button useMordred;
+	
 	@FXML private Text playerNumber;
 	@FXML private Pane background;
 	@FXML private Pane questBoard;
@@ -957,7 +962,8 @@ public class GameBoardController implements Initializable{
 		this.nextTurn.setVisible(false);
 		this.discard.setVisible(false);
 		this.startTurn.setVisible(false);
-		System.out.println("Called");
+		this.useMerlin.setVisible(false);
+		this.useMordred.setVisible(false);
 	}
 
 	public void showAcceptDecline() {
@@ -983,6 +989,22 @@ public class GameBoardController implements Initializable{
 
 	public void setDiscardVisibility(boolean b) {
 		this.discard.setVisible(b);
+	}
+	
+	public void setMerlinMordredVisibility() {
+		this.playerManager.players[playerManager.getCurrentPlayer()].hand.getDeck().forEach(i -> {
+			if(i.getName().equals("Mordred")) {
+				this.useMordred.setVisible(true);
+			} else if(i.getName().equals("Merlin")) {
+				this.useMerlin.setVisible(true);
+			}
+		});
+		
+		this.playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck().forEach(i -> {
+			if(i.getName().equals("Merlin")) {
+				this.useMerlin.setVisible(true);
+			}
+		});
 	}
 
 	public void removeDraggable() {
@@ -1124,7 +1146,6 @@ public class GameBoardController implements Initializable{
 			if(CURRENT_STATE == STATE.CHILLING) {
 				synchronized (c) {
 					c.notify();
-					//if 
 					int viewAbleStage =  playerManager.viewableStage(playerManager.getCurrentPlayer());
 					if(viewAbleStage != -1) {
 						setStageCardVisibility(true, viewAbleStage);
@@ -1222,7 +1243,6 @@ public class GameBoardController implements Initializable{
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
-
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}
@@ -1324,6 +1344,65 @@ public class GameBoardController implements Initializable{
 				}
 			}
 			System.out.println("You do not have Merlin in play");
+		});
+		
+		this.useMordred.setOnAction(e->{
+			//check if current player has mordred
+			String otherAllyCard;
+			int currentPlayer = playerManager.getCurrentPlayer();
+			ArrayList<AdventureCard> hand = playerManager.getPlayerHand(currentPlayer);
+			AdventureCard mordred = null;
+			int mIndex = -1;
+			for(int i = 0 ; i < hand.size(); i++) {
+				if(hand.get(i).isMordred()) {
+					mordred = hand.get(i);
+					mIndex = i;
+				}
+			}
+			//if it's not in either hand or facedown field then player does not have mordred
+			if(mordred == null) {
+				System.out.println("You do not have Mordred");
+				return;
+			}
+			
+			//setup dialog to choose which card to delete
+			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
+			ArrayList<String> choices = new ArrayList<String>();
+			//get all the face up cards on the board
+			for(int p = 0 ; p < playerManager.getNumPlayers() ; p++) {
+				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(p);
+				for(int i = 0 ; i < fuc.size(); i++) {
+					if(p != playerManager.getCurrentPlayer()) {
+						Integer[] pNumAndCardID = new Integer[3];
+						pNumAndCardID[0] = p;			//idx 0 = playerNum
+						pNumAndCardID[1] = fuc.get(i).id;//idx 1= cardid
+						pNumAndCardID[2] = i;			//idx 2 = idx of the card in list
+						dialogChoices.put("Player #" + p + " " + fuc.get(i).getName(), pNumAndCardID);
+						choices.add("Player #" + p + " " + fuc.get(i).getName());
+					}
+				}
+			}
+		    
+			ChoiceDialog<String> d = new ChoiceDialog<>(null, choices);
+			d.setTitle("Using Mordred's Power");
+			d.setHeaderText("Select an opponent's ally card to destroy");
+			d.setContentText("Ally Card:");
+			Optional<String> result = d.showAndWait();
+			if(result.isPresent()) {
+				Integer[] pNumAndCard = dialogChoices.get(result.get());
+				
+				//dicard the current mordred card
+				Pane mordredContainer = mordred.childOf;
+				mordredContainer.getChildren().remove(mIndex);
+				playerManager.removeCardFromHand(mordred, currentPlayer);
+				
+				int oIndex = pNumAndCard[2];
+				faceUpPanes[pNumAndCard[0]].getChildren().remove(oIndex);
+				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(pNumAndCard[0]);
+				fuc.remove(oIndex);
+				c.send(new MordredClient(this.playerManager.getCurrentPlayer(), pNumAndCard[0], result.get().substring(10)));
+			}
+			
 		});
 	}
 	public void resetMerlinUse() {

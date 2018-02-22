@@ -26,7 +26,7 @@
             </ImageView>
          </children>
       </Pane>
-      <Button fx:id="useMerlin" layoutX="250.0" layoutY="800.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Use Merlin" textFill="WHITE" />
+      <Button fx:id="useMerlin" layoutX="250.0" layoutY="800.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="112.0" styleClass="record-sales" stylesheets="@application.css" text="Use Merlin" textFill="WHITE" />
 
       <StackPane layoutX="526.0" layoutY="300.0" prefHeight="250.0" prefWidth="600.0" stylesheets="@application.css">
          <children>
@@ -48,7 +48,7 @@
                      <children>
                         <Button fx:id="discard" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Discard" textFill="WHITE" />
       
-                        <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Continue" textFill="WHITE">
+                              <Button fx:id="nextTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Continue" textFill="WHITE">
                            <font>
                               <Font name="Mistral" size="12.0" />
                            </font>
@@ -58,7 +58,7 @@
                         <Button fx:id="startTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Start Turn" textFill="WHITE" />
                         <Button fx:id="endTurn" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="End Turn" textFill="WHITE" />
       
-                     </children>
+                           </children>
                   </VBox>
                   <Text fx:id="bpTextStage0" fill="#ff7700" layoutX="227.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="">
                      <font>
@@ -221,5 +221,6 @@
 	            </Text>
 	         </children>
       		</Pane>
+      <Button fx:id="useMordred" layoutX="250.0" layoutY="740.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="112.0" styleClass="record-sales" stylesheets="@application.css" text="Use Mordred" textFill="WHITE" />
    </children>
 </AnchorPane>

@@ -13,6 +13,8 @@ import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculatePlayerServer;
 import src.messages.game.CalculateStageClient;
 import src.messages.game.CalculateStageServer;
+import src.messages.game.MordredClient;
+import src.messages.hand.FaceUpDiscardServer;
 import src.messages.hand.HandFullClient;
 import src.player.BattlePointCalculator;
 import src.player.PlayerManager;
@@ -37,10 +39,12 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 			message = super.take();
 			while(true) {
 				JsonObject x = json.parse(message).getAsJsonObject();
-				if("mordred".equals(message)) {
-					// TODO handle mordred
+				if(x.get("message").getAsString().equals(MESSAGETYPES.MORDRED.name())) {
+					MordredClient mc = gson.fromJson(x, MordredClient.class);
+					handleMordred(mc);
 				} else if ("merlin stage: 1".equals(message)) {
 					// TODO handle merlin
+					// currently handled by UI
 				} else if(x.get("message").getAsString().equals(MESSAGETYPES.CALCULATEPLAYER.name())) {
 					BattlePointCalculator bc = new BattlePointCalculator(pm);
 					CalculatePlayerClient cpc = gson.fromJson(x, CalculatePlayerClient.class);
@@ -59,6 +63,12 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 			e.printStackTrace();
 		}
 		return message;
+	}
+
+	private void handleMordred(MordredClient mc) {
+		this.pm.players[mc.player].hand.getCardByName("Mordred");
+		this.pm.players[mc.otherPlayer].getFaceUp().getCardByName(mc.otherAllyCard);
+		output.sendMessage(new FaceUpDiscardServer(mc.otherPlayer, new String[] {mc.otherAllyCard}));
 	}
 
 	public void put(Message message) {
