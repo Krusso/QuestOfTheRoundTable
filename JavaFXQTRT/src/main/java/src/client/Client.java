@@ -125,7 +125,7 @@ class AddCardsTask extends Task{
 				}
 			}
 			if(!didAddCard) {
-				 logger.warn("Could not add " + card + " to hand");
+				logger.warn("Could not add " + card + " to hand");
 			}
 		}
 	}
@@ -640,11 +640,11 @@ class RevealAllCards extends Task {
 class HandFullDiscardTask extends Task {
 
 	private int player;
-	
+
 	public HandFullDiscardTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		
+
 	}
 	@Override
 	public void run() {
@@ -655,9 +655,9 @@ class HandFullDiscardTask extends Task {
 		gbc.setButtonsInvisible();
 		gbc.setDiscardVisibility(true);
 		gbc.addDraggable();
-		
+
 	}
-	
+
 }
 
 class GameOverTask extends Task {
@@ -667,7 +667,7 @@ class GameOverTask extends Task {
 	public GameOverTask(GameBoardController gbc, int player) {
 		super(gbc);
 		this.player = player;
-		
+
 	}
 	@Override
 	public void run() {
@@ -676,18 +676,15 @@ class GameOverTask extends Task {
 		gbc.showToast("Player #" + player + " won the game!");
 		gbc.flipAllFaceDownPane(true);
 		gbc.setButtonsInvisible();
-		gbc.removeDraggable();
 		
 		String winningMessage = "Player #" + player + " won the game!";
 		try {
-			Thread.sleep(1000);
-			
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setLocation(getClass().getResource("GameOver.fxml"));
 			Scene gameOverScene = new Scene(fxmlLoader.load());
 			GameOverController goc = fxmlLoader.getController();
 			goc.text.setText(winningMessage);
-			
+
 			//attach image to bg pane
 			Image img = new Image(new FileInputStream(new File(cardDir + "/gameover.png")));
 			ImageView imgv = new ImageView(img);
@@ -705,7 +702,7 @@ class GameOverTask extends Task {
 				stage.setScene(gameOverScene);
 				stage.show();
 			}
-			
+
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -713,11 +710,11 @@ class GameOverTask extends Task {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
-		
+
+
 	}
-	
+
 }
 
 class JoinedFinalTournamentTask extends Task{
@@ -729,23 +726,17 @@ class JoinedFinalTournamentTask extends Task{
 	}
 	@Override
 	public void run() {
-		try {
-			String toastMsg = "Player(s) ";
-			for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
-				if(gbc.playerManager.players[i].getRank() == RANKS.KNIGHTOFTHEROUNDTABLE) {
-					toastMsg += i + ", ";
-				}
-				
+		String toastMsg = "Player(s) ";
+		for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
+			if(gbc.playerManager.players[i].getRank() == RANKS.KNIGHTOFTHEROUNDTABLE) {
+				toastMsg += i + ", ";
 			}
-			gbc.showToast(toastMsg.substring(0, toastMsg.length()-2) + " has joined the final tournament!");
-			
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
+		gbc.showToast(toastMsg.substring(0, toastMsg.length()-2) + " has joined the final tournament!");
+		gbc.setButtonsInvisible();
+		gbc.showStartTurn();
 	}
-	
 }
 
 abstract class Task implements Runnable{
@@ -1004,18 +995,26 @@ public class Client implements Runnable {
 					}
 					if(message.equals(MESSAGETYPES.DISCARDHANDFULL.name())){
 						HandFullServer request = gson.fromJson(obj, HandFullServer.class);
-						
+
 						Platform.runLater(new HandFullDiscardTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.GAMEOVER.name())){
 						GameOverServer request = gson.fromJson(obj, GameOverServer.class);
-						
+
 						Platform.runLater(new GameOverTask(gbc, request.player));
 					}
 					if(message.equals(MESSAGETYPES.JOINEDFINALTOURNAMENT.name())){
 						FinalTournamentNotifyServer request = gson.fromJson(obj, FinalTournamentNotifyServer.class);
-						
-						Platform.runLater(new JoinedFinalTournamentTask(gbc, request.player));
+
+						//						Platform.runLater(new JoinedFinalTournamentTask(gbc, request.player));
+						synchronized (this) {
+							try {
+								Platform.runLater(new JoinedFinalTournamentTask(gbc, request.player));
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 			}
