@@ -38,6 +38,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
 		pm.drawCards(participants, 1);
 		if(participants.size() == 0) {
+			pm.sendContinue("No Players join the tournament");
 			return;
 		} else if(participants.size() == 1) {
 			pm.changeShields(participants, card.getShields() + 1);

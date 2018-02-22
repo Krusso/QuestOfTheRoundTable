@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ public class GameBoardController implements Initializable{
 	@FXML public Button accept;
 	@FXML public Button decline;
 	@FXML private Button nextTurn;
-	@FXML private Button discard;
+	@FXML public Button discard;
 	
 	@FXML public Button useMerlin;
 	@FXML public Button useMordred;
@@ -261,13 +262,15 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void clearHighlight() {
-		pRec0.setVisible(false);
-		pRec1.setVisible(false);
-		pRec2.setVisible(false);
-		pRec3.setVisible(false);
+		logger.info("Clearing highlight");
+//		pRec0.setVisible(false);
+//		pRec1.setVisible(false);
+//		pRec2.setVisible(false);
+//		pRec3.setVisible(false);
 	}
 
 	public void highlightFaceUp(int p) {
+		logger.info("Highlight player: " + p);
 		if(p==0) { pRec0.setVisible(true); }
 		if(p==1) { pRec1.setVisible(true); }
 		if(p==2) { pRec2.setVisible(true); }
@@ -581,7 +584,9 @@ public class GameBoardController implements Initializable{
 
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
-			if((isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
+			if((isInPane(faceDownPanes[cPlayer], point) && 
+					isPickQuestValid(faceDownCards, card) && 
+					(card.getType() != TYPE.AMOUR || isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer]) ||
 					card.isMerlin() && isInPane(faceUpPanes[cPlayer], point) )
 					&& !card.childOf.equals(faceUpPanes[cPlayer])) { //once card is in faceuppane, we do not allow player to move it to another pane
@@ -590,7 +595,8 @@ public class GameBoardController implements Initializable{
 		}
 
 		if( CURRENT_STATE == STATE.PICK_TOURNAMENT) {
-			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
+			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) 
+					&& (card.getType() != TYPE.AMOUR || isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
@@ -1043,16 +1049,17 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void moveToFaceUpPane(int p) {
+		logger.info("Moving Cards to Face up pane");
 		playerManager.players[p].getFaceDownDeck().getDeck().forEach(i -> {
 			i.faceDown();
 			i.setDraggableOff();
 		});
 		playerManager.players[p].flipCards();
-		// one element is the rectangle
-		while(faceDownPanes[p].getChildren().size() > 1) { faceUpPanes[p].getChildren().add(faceDownPanes[p].getChildren().remove(1));}
+		while(faceDownPanes[p].getChildren().size() > 0) { faceUpPanes[p].getChildren().add(faceDownPanes[p].getChildren().remove(0));}
 		repositionFaceUpCards(p);
 		repositionFaceDownCards(p);
 		playerManager.flipFaceUpCards(p);
+		logger.info("Face up cards: " + Arrays.toString(playerManager.players[p].getFaceUp().getDeck().stream().map(i -> i.getName()).toArray()));
 	}
 
 	public void setStageCardVisibility( boolean isShow, int... stageNum) {
@@ -1091,8 +1098,10 @@ public class GameBoardController implements Initializable{
 
 
 	public void discardFaceUpCards(int p, String[] cardNames) {
+		logger.info("Discarding: " + Arrays.toString(cardNames));
 		ArrayList<AdventureCard> fdc = playerManager.getFaceUpCardsAsList(p);
 		for(String n : cardNames) {
+			logger.info("Discarding: " + n);
 			for(int i = 0 ; i < fdc.size(); i++) {
 				//find cards to discard in fdc  and the image view from the pane
 				if(fdc.get(i).getName().equalsIgnoreCase(n)) {
@@ -1301,13 +1310,13 @@ public class GameBoardController implements Initializable{
 				fuc.add(c);
 				faceUpPanes[cPlayer].getChildren().add(c.getImageView());
 			}
-			fuc.clear();
-			faceDownPanes[cPlayer].getChildren().clear();
-
+			fdc.clear();
 			discardPile.clear();
 			discardPane.getChildren().clear();
 			faceDownPanes[cPlayer].getChildren().clear();
-
+			this.hideDiscardPane();
+			repositionFaceUpCards(cPlayer);
+			repositionCardsInHand(cPlayer);
 		});
 
 		/*

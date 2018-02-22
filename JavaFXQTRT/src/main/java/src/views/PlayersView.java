@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import src.game_logic.AdventureCard;
+import src.messages.game.ContinueGameServer;
 import src.messages.game.TurnNextServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.hand.ShowHandServer;
@@ -45,6 +46,10 @@ public class PlayersView {
 
 	public void passQuest(List<Player> winners) {
 		output.sendMessage(new QuestPassAllServer(winners));
+	}
+
+	public void sendContinue(String string) {
+		output.sendMessage(new ContinueGameServer(string));
 	}
 
 }

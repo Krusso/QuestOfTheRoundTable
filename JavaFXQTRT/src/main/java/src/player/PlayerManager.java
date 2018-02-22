@@ -12,6 +12,7 @@ import java.util.stream.StreamSupport;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
+import src.game_logic.AmourCard;
 import src.game_logic.DeckManager;
 import src.game_logic.FoeCard;
 import src.game_logic.Rank;
@@ -49,9 +50,9 @@ public class PlayerManager {
 		for(int i = players.length; i > 0; i--) {
 			if(rigged) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				//cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
 				//cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
@@ -71,6 +72,9 @@ public class PlayerManager {
 				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
 //				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 				players[i - 1].addCards(cards);
 			} else {
@@ -260,6 +264,10 @@ public class PlayerManager {
 
 	public void passQuest(List<Player> winners) {
 		pvs.forEach(i -> i.passQuest(winners));
+	}
+
+	public void sendContinue(String string) {
+		pvs.forEach(i -> i.sendContinue(string));
 	}
 
 

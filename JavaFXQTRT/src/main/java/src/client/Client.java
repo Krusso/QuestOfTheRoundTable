@@ -23,6 +23,7 @@ import javafx.scene.layout.Pane;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
+import src.game_logic.AmourCard;
 import src.game_logic.FoeCard;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
@@ -36,6 +37,8 @@ import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculatePlayerServer;
 import src.messages.game.CalculateStageClient;
 import src.messages.game.CalculateStageServer;
+import src.messages.game.ContinueGameClient;
+import src.messages.game.ContinueGameServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
@@ -79,10 +82,17 @@ class AddCardsTask extends Task{
 						((f.getName().length()-6) == card.length() || (f.getName().length()-4) == card.length())) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
-						AllyCard c = new AllyCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-						c.faceDown();
-						gbc.addCardToHand(c, player);
+						if(card.equals("Amour")) {
+							AmourCard c = new AmourCard(card, f.getPath());
+							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
+							c.faceDown();
+							gbc.addCardToHand(c, player);
+						} else {
+							AllyCard c = new AllyCard(card, f.getPath());
+							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
+							c.faceDown();
+							gbc.addCardToHand(c, player);
+						}
 						didAddCard = true;
 						break;
 					}
@@ -453,8 +463,6 @@ class DiscardFaceUpTask extends Task {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
-		gbc.showDiscardPane();
-		gbc.setMerlinMordredVisibility();
 	}
 }
 
@@ -679,10 +687,11 @@ class HandFullDiscardTask extends Task {
 		gbc.setDiscardVisibility(true);
 		gbc.addDraggable();
 		gbc.showDiscardPane();
+		gbc.highlightFaceUp(player);
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size());
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
-			gbc.endTurn.fire();
+			gbc.discard.fire();
 		}
 	}
 	
@@ -821,9 +830,34 @@ public class Client implements Runnable {
 									}
 								});
 								this.wait();
+								this.send(new ContinueGameClient());
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
+						}
+					}
+					if(message.equals(MESSAGETYPES.CONTINUEGAME.name())) {
+						synchronized (this) {
+							ContinueGameServer cgs = gson.fromJson(obj, ContinueGameServer.class);
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									gbc.setButtonsInvisible();
+									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+									gbc.setButtonsInvisible();
+									gbc.startTurn.setVisible(true);
+									gbc.startTurn.setText("Continue");
+									gbc.clearToast();
+									gbc.showToast(cgs.messageText);
+									gbc.CURRENT_STATE = STATE.CHILLING;
+								}
+							});
+							try {
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							this.send(new ContinueGameClient());
 						}
 					}
 					/*
