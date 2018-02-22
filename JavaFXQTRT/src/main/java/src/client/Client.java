@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
+import javafx.scene.layout.Pane;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
@@ -50,6 +51,7 @@ import src.messages.quest.QuestPassStageServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
 import src.messages.quest.QuestSponsorServer;
+import src.messages.quest.QuestSponsorServerCant;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
@@ -70,7 +72,7 @@ class AddCardsTask extends Task{
 	public void run() {
 		File[] list = cardDir.listFiles();
 		for(String card: cards) {
-			boolean didAddCard = false;;
+			boolean didAddCard = false;
 			//find file associated to name
 			for(File f : list) {
 				if ((f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) && 
@@ -190,6 +192,27 @@ class MiddleCardTask extends Task{
 				}
 				return;
 			}
+		}
+	}
+}
+
+class QuestSponsorTaskCant extends Task {
+	private int player;
+	public QuestSponsorTaskCant(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
+		gbc.setButtonsInvisible();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.showDecline();
+		gbc.showToast("Cant Sponsor Tournament");
+		gbc.setMerlinMordredVisibility();
+		if(gbc.playerManager.getAI(player) != null) {
+			gbc.decline.fire();
 		}
 	}
 }
@@ -806,6 +829,10 @@ public class Client implements Runnable {
 					/*
 					 * Dealing with Quest state
 					 */
+					if(message.equals(MESSAGETYPES.SPONSERQUESTCANT.name())) {
+						QuestSponsorServerCant request = gson.fromJson(obj, QuestSponsorServerCant.class);
+						Platform.runLater(new QuestSponsorTaskCant(gbc, request.player));
+					}
 					if(message.equals(MESSAGETYPES.PASSALL.name())) {
 						QuestPassAllServer qpss = gson.fromJson(obj, QuestPassAllServer.class);
 						int[] players = qpss.players;
@@ -831,6 +858,15 @@ public class Client implements Runnable {
 									}
 								});
 								this.wait();
+								Platform.runLater(new Runnable() {
+									@Override
+									public void run() {
+										gbc.stageCards.forEach(i -> i.clear());
+										for(Pane p: gbc.stages) {
+											p.getChildren().clear();
+										}
+									}
+								});
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}

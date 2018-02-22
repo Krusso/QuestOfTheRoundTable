@@ -26,6 +26,7 @@ import src.messages.quest.QuestJoinServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
 import src.messages.quest.QuestSponsorServer;
+import src.messages.quest.QuestSponsorServerCant;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
@@ -74,6 +75,8 @@ public class PlayerView {
 			output.sendMessage(new QuestJoinServer(ID));
 		} else if(state == Player.STATE.DISCARDING) {
 			output.sendMessage(new HandFullServer(ID));
+		} else if(state == Player.STATE.QUESTQUESTIONEDCANT) {
+			output.sendMessage(new QuestSponsorServerCant(ID));
 		}
 	}
 

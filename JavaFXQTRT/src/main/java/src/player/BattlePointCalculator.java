@@ -2,6 +2,7 @@ package src.player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -210,6 +211,25 @@ public class BattlePointCalculator {
 		
 		logger.info("Score is: " + score);
 		return score;
+	}
+
+	public boolean canSponsor(Player next, QuestCard card) {
+		List<AdventureCard> foes = this.uniqueListOfTypeDecreasingBp(next, TYPE.FOES, card, false);
+		List<AdventureCard> tests = this.uniqueListOfTypeDecreasingBp(next, TYPE.TESTS, card, false);
+		int uniqueBpFoes = 0;
+		int minBp = Integer.MIN_VALUE;
+		Collections.reverse(foes);
+		for(AdventureCard c: foes) {
+			if(getPoints(c, false, card) > minBp) {
+				uniqueBpFoes++;
+				minBp = getPoints(c,false,card);
+			}
+		}
+		
+		if(tests.size() != 0) {
+			uniqueBpFoes++;
+		}
+		return uniqueBpFoes + 1 >= card.getNumStages();
 	}
 
 }
