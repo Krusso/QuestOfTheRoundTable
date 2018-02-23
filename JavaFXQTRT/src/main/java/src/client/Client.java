@@ -886,6 +886,7 @@ public class Client implements Runnable {
 									gbc.currBP.setText("");
 									IntStream.range(0, gbc.bpTexts.length).forEach(i -> gbc.bpTexts[i].setText(""));
 									gbc.clearToast();
+									gbc.clearHighlight();
 									gbc.showToast("Player #: " + request.player + " turn");
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
@@ -1034,6 +1035,7 @@ public class Client implements Runnable {
 									}
 								}
 							});
+							this.send(new ContinueGameClient());
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import src.game_logic.AdventureCard;
+import src.game_logic.AllyCard;
 import src.game_logic.DeckManager;
 import src.game_logic.FoeCard;
 import src.game_logic.Rank;
@@ -78,7 +79,7 @@ public class PlayerManager {
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
-			//players[i - 1].changeShields(100);
+			players[i - 1].changeShields(100);
 		}
 	}
 

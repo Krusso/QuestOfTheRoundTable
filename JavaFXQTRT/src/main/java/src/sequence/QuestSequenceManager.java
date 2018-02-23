@@ -1,6 +1,7 @@
 package src.sequence;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -115,6 +116,7 @@ public class QuestSequenceManager extends SequenceManager {
 					winners.clear();
 					winners.add(bidWinner.player);
 				}
+				logger.info("# of Players still in quest: " + winners.size());
 				quest.advanceStage();
 				pm.passStage(winners);
 			}
@@ -133,8 +135,10 @@ public class QuestSequenceManager extends SequenceManager {
 		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
 		
 		if(participants.size() != 0) {
+			logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
 			pm.passQuest(winners);
 		} else {
+			logger.info("No player join the tournament");
 			pm.sendContinue("No Player Joined the Tournament");
 		}
 		
