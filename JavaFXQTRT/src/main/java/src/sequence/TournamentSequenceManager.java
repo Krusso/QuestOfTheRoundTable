@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import src.game_logic.BoardModel;
 import src.game_logic.TournamentCard;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.player.BattlePointCalculator;
@@ -26,7 +27,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.QUESTIONED);
-			TournamentAcceptDeclineClient tadc = actions.take(TournamentAcceptDeclineClient.class);
+			TournamentAcceptDeclineClient tadc = actions.take(TournamentAcceptDeclineClient.class, MESSAGETYPES.JOINTOURNAMENT);
 			if(tadc.joined) {
 				pm.setState(next, Player.STATE.YES);
 			} else {

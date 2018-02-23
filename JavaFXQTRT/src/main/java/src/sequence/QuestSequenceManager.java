@@ -11,6 +11,7 @@ import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
 import src.game_logic.TestCard;
 import src.messages.QOTRTQueue;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
 import src.messages.quest.QuestPickCardsClient;
@@ -43,7 +44,7 @@ public class QuestSequenceManager extends SequenceManager {
 			} else {
 				pm.setState(next, Player.STATE.QUESTQUESTIONEDCANT);
 			}
-			QuestSponsorClient qsc = actions.take(QuestSponsorClient.class);
+			QuestSponsorClient qsc = actions.take(QuestSponsorClient.class, MESSAGETYPES.SPONSERQUEST);
 			if(qsc.sponser) {
 				pm.setState(next, Player.STATE.SPONSORING, card.getNumStages());
 				break;
@@ -72,7 +73,7 @@ public class QuestSequenceManager extends SequenceManager {
 			if(curr == sponsor) continue;
 			pm.setPlayer(curr);
 			pm.setState(curr, Player.STATE.QUESTJOINQUESTIONED);
-			QuestJoinClient qjc = actions.take(QuestJoinClient.class);
+			QuestJoinClient qjc = actions.take(QuestJoinClient.class, MESSAGETYPES.JOINQUEST);
 			if(qjc.joined) {
 				pm.setState(curr, Player.STATE.YES);
 			} else {
@@ -93,7 +94,7 @@ public class QuestSequenceManager extends SequenceManager {
 						Player pick = players.next();
 						pm.setPlayer(pick);
 						pm.setState(pick, Player.STATE.QUESTPICKING);
-						QuestPickCardsClient qpcc = actions.take(QuestPickCardsClient.class);
+						QuestPickCardsClient qpcc = actions.take(QuestPickCardsClient.class, MESSAGETYPES.PICKQUEST);
 						pm.currentFaceDown(qpcc.cards); 
 					}
 					pm.flipStage(sponsor, quest.getCurrentStage());
@@ -109,7 +110,7 @@ public class QuestSequenceManager extends SequenceManager {
 					}
 					pm.setPlayer(bidWinner.player);
 					pm.setDiscarding(bidWinner.player, Player.STATE.TESTDISCARD, Math.max(0, bidWinner.cardsToBid(card)));
-					QuestDiscardCardsClient qdcc = actions.take(QuestDiscardCardsClient.class);
+					QuestDiscardCardsClient qdcc = actions.take(QuestDiscardCardsClient.class, MESSAGETYPES.DISCARDQUEST);
 					pm.discardFromHand(bidWinner.player, qdcc.cards);
 					winners.clear();
 					winners.add(bidWinner.player);

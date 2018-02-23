@@ -4,9 +4,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import src.client.GameBoardController;
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
 import src.game_logic.TestCard;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestBidClient;
 import src.messages.tournament.TournamentPickCardsClient;
@@ -16,6 +21,8 @@ import src.player.PlayerManager;
 
 public abstract class SequenceManager {
 
+	final static Logger logger = LogManager.getLogger(SequenceManager.class);
+	
 	public abstract void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm);
 
 	protected void questionPlayersTournament(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions) {
@@ -23,7 +30,8 @@ public abstract class SequenceManager {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.PICKING);
-			TournamentPickCardsClient cards = actions.take(TournamentPickCardsClient.class);
+			TournamentPickCardsClient cards = actions.take(TournamentPickCardsClient.class, MESSAGETYPES.PICKTOURNAMENT);
+			logger.info("Cards user picked: " + cards.cards);
 			pm.currentFaceDown(cards.cards);
 		}
 	}
@@ -39,7 +47,7 @@ public abstract class SequenceManager {
 			int playerMaxBid = bc.maxBid(next, card);			
 			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, (testCard.getName().equals("Test of the Questing Beast") &&
 					card.getName().equals("Search for the Questing Beast") ? 4 : 3));
-			QuestBidClient qbc = actions.take(QuestBidClient.class);
+			QuestBidClient qbc = actions.take(QuestBidClient.class, MESSAGETYPES.BIDQUEST);
 			if(qbc.bid != -1) {
 				notDropped.add(next);
 			}
@@ -52,7 +60,7 @@ public abstract class SequenceManager {
 			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid,Math.max(
 					(testCard.getName().equals("Test of the Questing Beast") && card.getName().equals("Search for the Questing Beast")
 							? 4 : (testCard.getName().equals("Test of Morgan Le Fey") ? 3 : 1)), maxBidValue + 1));
-			QuestBidClient qbc = actions.take(QuestBidClient.class);
+			QuestBidClient qbc = actions.take(QuestBidClient.class, MESSAGETYPES.BIDQUEST);
 			if(qbc.bid != -1) {
 				maxBidValue = qbc.bid;
 				notDropped.add(next);

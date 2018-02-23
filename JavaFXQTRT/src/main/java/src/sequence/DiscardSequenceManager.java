@@ -3,6 +3,7 @@ package src.sequence;
 import java.util.Iterator;
 
 import src.game_logic.BoardModel;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.hand.HandFullClient;
 import src.player.Player;
@@ -29,7 +30,7 @@ public class DiscardSequenceManager extends SequenceManager {
 				pm.setPlayer(player);
 				pm.setState(player, Player.STATE.DISCARDING);
 				
-				HandFullClient x = actions.take(HandFullClient.class);
+				HandFullClient x = actions.take(HandFullClient.class, MESSAGETYPES.DISCARDHANDFULL);
 				Player p = pm.players[x.player];
 				for(String s: x.discard) {
 					p.hand.getCardByName(s);

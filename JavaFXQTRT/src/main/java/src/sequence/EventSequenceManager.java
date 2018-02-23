@@ -12,6 +12,7 @@ import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.BoardModel;
 import src.game_logic.EventCard;
 import src.game_logic.Rank;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.events.EventDiscardCardsClient;
 import src.player.Player;
@@ -122,7 +123,7 @@ public class EventSequenceManager extends SequenceManager {
 				} else {
 					return;
 				}
-				EventDiscardCardsClient edc = actions.take(EventDiscardCardsClient.class);
+				EventDiscardCardsClient edc = actions.take(EventDiscardCardsClient.class, MESSAGETYPES.EVENTDISCARD);
 				pm.discardFromHand(player, edc.cards);
 			});
 		}

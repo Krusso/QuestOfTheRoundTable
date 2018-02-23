@@ -2,6 +2,9 @@ package src.messages;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,12 +18,13 @@ import src.messages.game.CalculateStageClient;
 import src.messages.game.CalculateStageServer;
 import src.messages.game.MordredClient;
 import src.messages.hand.FaceUpDiscardServer;
-import src.messages.hand.HandFullClient;
 import src.player.BattlePointCalculator;
 import src.player.PlayerManager;
 import src.socket.OutputController;
 
 public class QOTRTQueue extends LinkedBlockingQueue<String> {
+	final static Logger logger = LogManager.getLogger(QOTRTQueue.class);
+	
 	/**
 	 * idk serialization :) got rid of the eclipse warning
 	 */
@@ -80,10 +84,12 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 	}
 
 	// generics woooo 
-	public <T extends Message> T take(Class<T> c) {
+	public <T extends Message> T take(Class<T> c, MESSAGETYPES t) {
 		while(true) {
 			try {
 				T x = gson.fromJson(this.take(), c);
+				logger.info("Comparing: " + x.message + " to: " + t.name());
+				if(!x.message.equals(t)) continue;
 				return x;
 			} catch (JsonSyntaxException e) {
 
