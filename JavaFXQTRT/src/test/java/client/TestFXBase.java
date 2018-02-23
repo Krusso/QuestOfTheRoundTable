@@ -13,19 +13,22 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import src.client.Main;
+import src.client.TitleScreenController;
 import src.socket.Server;
 
 public abstract class TestFXBase extends ApplicationTest{
-	@Before
-	public void setupClass() throws Exception{
-		Runnable task2 = () -> { Server.main(null); };
-		// start the thread
-		new Thread(task2).start();
-		ApplicationTest.launch(Main.class);
-	}
+	TitleScreenController tsc;
+//	@Before
+//	public void setupClass() throws Exception{
+//		Runnable task2 = () -> { Server.main(null); };
+//		// start the thread
+//		new Thread(task2).start();
+//		ApplicationTest.launch(Main.class);
+//	}
 
 	@Override 
 	public void start(Stage stage) throws Exception{
+		
 		stage.show();
 	}
 	
@@ -44,25 +47,14 @@ public abstract class TestFXBase extends ApplicationTest{
 	
 	
 	public <T extends Node> T findFromPane(final Pane p, final String query) {
-		System.out.println("hELLO");
 		ObservableList<Node> children = p.getChildren();
-		System.out.println(children);
-		System.out.println(children.get(0));
-		System.out.println(children.get(1));
-		for(int i = 0 ; i < children.size(); i++) {
-			System.out.println("hello");
-			System.out.println("child :" + i + " " + children.get(i));
-			if(children.get(i) instanceof Button) {
-				Button b = (Button)children.get(i);
-				System.out.println(b);
-			}
-			System.out.println(children.get(i).getId());
-			if(children.get(i).getId().equals(query)) {
-				System.out.println("asdf");
+		for(Node n : children) {
+			if(n.getId() != null) {
+				if(n.getId().equals(query)) {
+					return (T) n;
+				}
 			}
 		}
 		return null;
 	}
-	
-
 }
