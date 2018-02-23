@@ -1,5 +1,19 @@
 package src.messages.game;
 
-// Server never sends ContinueGame updates dont implement
-public class ContinueGameServer {
+import src.messages.Message;
+
+// Server
+public class ContinueGameServer extends Message {
+	
+	public String messageText;
+	
+	public ContinueGameServer(String message) {
+		super();
+		this.messageText = message;
+	}
+	
+	@Override
+	public void setMessage() {
+		this.message = MESSAGETYPES.CONTINUEGAME;
+	}
 }

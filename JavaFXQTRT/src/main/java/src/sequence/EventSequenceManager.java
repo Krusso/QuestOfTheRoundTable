@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.BoardModel;
@@ -22,11 +25,11 @@ public class EventSequenceManager extends SequenceManager {
 		this.card = card2;
 	}
 
+	final static Logger logger = LogManager.getLogger(EventSequenceManager.class);
 
 	@Override
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
-
-		// Holy this is pretty dumb.... not sure of a better way though
+		logger.info("Event Sequence Manager starting: " + card.getName());
 		// The next player to complete a Quest will receive 2 extra shields
 		if(card.getName().equals("King's Recognition")) {
 			bm.setSetKingRecognition(true);
@@ -111,7 +114,7 @@ public class EventSequenceManager extends SequenceManager {
 			
 			highest.forEach(player -> {
 				if(player.getTypeCount(TYPE.WEAPONS) >= 1) {
-					pm.setPlayer(player);;
+					pm.setPlayer(player);
 					pm.setState(player, Player.STATE.EVENTDISCARDING, 1, AdventureCard.TYPE.WEAPONS);
 				} else if(player.getTypeCount(TYPE.FOES) >= 1) {
 					pm.setPlayer(player);
@@ -122,6 +125,8 @@ public class EventSequenceManager extends SequenceManager {
 				EventDiscardCardsClient edc = actions.take(EventDiscardCardsClient.class);
 				pm.discardFromHand(player, edc.cards);
 			});
-		}  
+		}
+		pm.sendContinue("Event Over");
+		logger.info("Event Sequence Manager over");
 	}
 }

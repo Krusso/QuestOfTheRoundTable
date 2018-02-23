@@ -40,7 +40,7 @@ public class DiscardSequenceManager extends SequenceManager {
 					} else if(s.equals("Queen Iseult")) {
 						p.iseult = true;
 					}
-					p.getFaceDownDeck().addCard(p.hand.getCardByName(s), 1);
+					p.getFaceUp().addCard(p.hand.getCardByName(s), 1);
 				}
 			}
 		}

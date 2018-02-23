@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class GameBoardController implements Initializable{
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
-		NONE}
+		NONE, EVENT_DISCARD}
 
 	public STATE CURRENT_STATE = STATE.NONE;
 	public int numStages = 0;
@@ -76,7 +77,7 @@ public class GameBoardController implements Initializable{
 	@FXML public Button accept;
 	@FXML public Button decline;
 	@FXML private Button nextTurn;
-	@FXML private Button discard;
+	@FXML public Button discard;
 	
 	@FXML public Button useMerlin;
 	@FXML public Button useMordred;
@@ -164,11 +165,13 @@ public class GameBoardController implements Initializable{
 	private Map<Pane, ArrayList<AdventureCard>> paneDeckMap;
 
 	@FXML public Text currBP;
+	public int toDiscard = 0;
 
 	@FXML public Pane discardPane;
 	@FXML ImageView discardView;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
+	public TYPE type;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -261,6 +264,7 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void clearHighlight() {
+		logger.info("Clearing highlight");
 		pRec0.setVisible(false);
 		pRec1.setVisible(false);
 		pRec2.setVisible(false);
@@ -268,6 +272,7 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void highlightFaceUp(int p) {
+		logger.info("Highlight player: " + p);
 		if(p==0) { pRec0.setVisible(true); }
 		if(p==1) { pRec1.setVisible(true); }
 		if(p==2) { pRec2.setVisible(true); }
@@ -581,16 +586,23 @@ public class GameBoardController implements Initializable{
 
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
 		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
-			if((isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
+			if((isInPane(faceDownPanes[cPlayer], point) && 
+					isPickQuestValid(faceDownCards, card) && 
+					(card.getType() != TYPE.AMOUR || isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer]) ||
 					card.isMerlin() && isInPane(faceUpPanes[cPlayer], point) )
 					&& !card.childOf.equals(faceUpPanes[cPlayer])) { //once card is in faceuppane, we do not allow player to move it to another pane
 				doPutCardIntoPane(point, card);
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck());
+				cards.addAll(playerManager.players[playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
+				c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(String[]::new)));
 			}
 		}
 
 		if( CURRENT_STATE == STATE.PICK_TOURNAMENT) {
-			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) ||
+			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) 
+					&& (card.getType() != TYPE.AMOUR || isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) ||
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
@@ -602,8 +614,6 @@ public class GameBoardController implements Initializable{
 		
 		if(CURRENT_STATE == STATE.DISCARDING_CARDS) {
 			//if the current player has too many cards, we can allow him to play cards into the discard pile
-
-			System.out.println(isInPane(discardPane, point));
 			//We can also allow players to play amour/ally cards into the face down pane
 			if(isInPane(faceDownPanes[cPlayer], point) && 
 					((card.getType() == TYPE.AMOUR && isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) || 
@@ -614,6 +624,19 @@ public class GameBoardController implements Initializable{
 				doPutCardIntoPane(point, card);
 			}
 		}
+		
+		if(CURRENT_STATE == STATE.BID_DISCARD) {
+			if(isInPane(discardPane, point)) {
+				doPutCardIntoPane(point, card);
+			}
+		}
+		
+		if(CURRENT_STATE == STATE.EVENT_DISCARD) {
+			if(isInPane(discardPane, point) && card.getType() == this.type) {
+				doPutCardIntoPane(point, card);
+			}
+		}
+		
 		//return to original position if we don't put it into the pane
 		card.returnOriginalPosition();
 	}
@@ -1043,16 +1066,17 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void moveToFaceUpPane(int p) {
+		logger.info("Moving Cards to Face up pane");
 		playerManager.players[p].getFaceDownDeck().getDeck().forEach(i -> {
 			i.faceDown();
 			i.setDraggableOff();
 		});
 		playerManager.players[p].flipCards();
-		// one element is the rectangle
-		while(faceDownPanes[p].getChildren().size() > 1) { faceUpPanes[p].getChildren().add(faceDownPanes[p].getChildren().remove(1));}
+		while(faceDownPanes[p].getChildren().size() > 0) { faceUpPanes[p].getChildren().add(faceDownPanes[p].getChildren().remove(0));}
 		repositionFaceUpCards(p);
 		repositionFaceDownCards(p);
 		playerManager.flipFaceUpCards(p);
+		logger.info("Face up cards: " + Arrays.toString(playerManager.players[p].getFaceUp().getDeck().stream().map(i -> i.getName()).toArray()));
 	}
 
 	public void setStageCardVisibility( boolean isShow, int... stageNum) {
@@ -1091,8 +1115,10 @@ public class GameBoardController implements Initializable{
 
 
 	public void discardFaceUpCards(int p, String[] cardNames) {
+		logger.info("Discarding: " + Arrays.toString(cardNames));
 		ArrayList<AdventureCard> fdc = playerManager.getFaceUpCardsAsList(p);
 		for(String n : cardNames) {
+			logger.info("Discarding: " + n);
 			for(int i = 0 ; i < fdc.size(); i++) {
 				//find cards to discard in fdc  and the image view from the pane
 				if(fdc.get(i).getName().equalsIgnoreCase(n)) {
@@ -1165,11 +1191,23 @@ public class GameBoardController implements Initializable{
 				c.send(new TournamentPickCardsClient(currentPlayer, 
 						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
 			}
+			else if(CURRENT_STATE == STATE.EVENT_DISCARD) {
+				String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
+				if(discardCards.length != this.toDiscard) {
+					clearToast();
+					showToast("Select: " + this.toDiscard + " cards to discard");
+					return;
+				}
+				
+				discardPile.clear();
+				discardPane.getChildren().clear();
+				this.hideDiscardPane();
+				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
+			}
 			else if(CURRENT_STATE == STATE.PICK_STAGES) {
-				//TODO::Handle PICK_STAGES make sure player plays a card
 				if(areQuestStagesValid() && stagesIncreasing()) {
 					for(int i = 0 ; i < stageCards.size(); i++) {
-						if(!stageCards.get(i).isEmpty()) {
+						if(!stageCards.get(i).isEmpty() && stageCards.get(i).get(0).getType() != TYPE.TESTS) {
 							String[] currentStageCards = new String[stageCards.get(i).size()];
 							for(int j = 0 ; j < stageCards.get(i).size(); j++) {
 								currentStageCards[j] = stageCards.get(i).get(j).getName();
@@ -1211,9 +1249,19 @@ public class GameBoardController implements Initializable{
 			//TODO::verify cards are minimum number of cards
 			else if(CURRENT_STATE == STATE.QUEST_BID) {
 				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
+				this.bidSlider.setVisible(false);
 			}else if(CURRENT_STATE == STATE.BID_DISCARD) {
-				String[] cards = discardAllFaceDownCards(currentPlayer);
-				c.send(new QuestDiscardCardsClient(currentPlayer,cards));
+				String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
+				if(discardCards.length != this.toDiscard) {
+					clearToast();
+					showToast("Select: " + this.toDiscard + " cards to discard");
+					return;
+				}
+				
+				discardPile.clear();
+				discardPane.getChildren().clear();
+				this.hideDiscardPane();
+				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
 			}
 
 		});
@@ -1301,13 +1349,13 @@ public class GameBoardController implements Initializable{
 				fuc.add(c);
 				faceUpPanes[cPlayer].getChildren().add(c.getImageView());
 			}
-			fuc.clear();
-			faceDownPanes[cPlayer].getChildren().clear();
-
+			fdc.clear();
 			discardPile.clear();
 			discardPane.getChildren().clear();
 			faceDownPanes[cPlayer].getChildren().clear();
-
+			this.hideDiscardPane();
+			repositionFaceUpCards(cPlayer);
+			repositionCardsInHand(cPlayer);
 		});
 
 		/*
@@ -1348,7 +1396,6 @@ public class GameBoardController implements Initializable{
 		
 		this.useMordred.setOnAction(e->{
 			//check if current player has mordred
-			String otherAllyCard;
 			int currentPlayer = playerManager.getCurrentPlayer();
 			ArrayList<AdventureCard> hand = playerManager.getPlayerHand(currentPlayer);
 			AdventureCard mordred = null;

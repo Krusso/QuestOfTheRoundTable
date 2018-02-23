@@ -6,8 +6,8 @@ import src.messages.Message;
 //from server
 public class EventDiscardCardsServer extends Message {
 	
-	int amount;
-	TYPE type;
+	public int amount;
+	public TYPE type;
 	
 	public EventDiscardCardsServer(int player, int amount, TYPE type) {
 		super(player);
