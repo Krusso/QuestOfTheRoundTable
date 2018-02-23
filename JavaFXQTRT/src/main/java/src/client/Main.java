@@ -16,6 +16,8 @@ import src.socket.Server;
 
 
 public class Main extends Application {
+	private TitleScreenController tlc;
+	private GameBoardController gbc;
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -29,7 +31,7 @@ public class Main extends Application {
 			root = fxmlLoader.load();
 
 			//Get the controller instance
-			TitleScreenController tlc = fxmlLoader.getController();
+			tlc = fxmlLoader.getController();
 			//Pass the client to the controller
 			tlc.setClient(client);
 
@@ -74,6 +76,15 @@ public class Main extends Application {
 		// start the thread
 		new Thread(task2).start();
 		launch(args);
+	}
+	public TitleScreenController getTitleScreenController() {
+		return tlc;
+	}
+	public GameBoardController getGameBoardController() {
+		if(tlc!=null) {
+			tlc.getGameBoardController();
+		}
+		return null;
 	}
 }
 

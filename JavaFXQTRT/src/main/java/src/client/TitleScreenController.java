@@ -33,6 +33,8 @@ import src.messages.game.GameStartClient;
 
 public class TitleScreenController implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
+	private GameBoardController gbc;
+	
 	private Client client;
 	@FXML public Text errorMsg;
 	
@@ -301,7 +303,7 @@ public class TitleScreenController implements Initializable{
 		//give the GameBoardController the client if we got it
 		//in this case the GBC should always have the client when we initialize it
 		logger.info("GameBoardController has reference to Client");
-		GameBoardController gbc = fxmlLoader.getController();
+		gbc = fxmlLoader.getController();
 		gbc.setClient(client);
 		gbc.setUp();
 		gbc.setShields(players,
@@ -393,6 +395,10 @@ public class TitleScreenController implements Initializable{
 	public void setRigged(boolean b) {
 		logger.info("Set the game to rigged");
 		this.rigged = b;
+	}
+	
+	public GameBoardController getGameBoardController() {
+		return gbc;
 	}
 
 }

@@ -20,7 +20,7 @@ import com.google.gson.JsonParser;
 
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
-import src.client.GameBoardController.STATE;
+import src.client.GameBoardController.GAME_STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
 import src.game_logic.FoeCard;
@@ -205,7 +205,7 @@ class QuestSponsorTaskCant extends Task {
 	
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
+		gbc.CURRENT_STATE = GAME_STATE.SPONSOR_QUEST;
 		gbc.setButtonsInvisible();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showDecline();
@@ -226,7 +226,7 @@ class QuestSponsorTask extends Task {
 
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
+		gbc.CURRENT_STATE = GAME_STATE.SPONSOR_QUEST;
 		gbc.setButtonsInvisible();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
@@ -327,7 +327,7 @@ class QuestPickStagesTask extends Task {
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
-		gbc.CURRENT_STATE = STATE.PICK_STAGES;
+		gbc.CURRENT_STATE = GAME_STATE.PICK_STAGES;
 		gbc.setPickStageOn(numStages);
 		gbc.addDraggable();
 		gbc.setPlayerPerspectiveTo(player);
@@ -360,7 +360,7 @@ class QuestJoinTask extends Task {
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
-		gbc.CURRENT_STATE = STATE.JOIN_QUEST;
+		gbc.CURRENT_STATE = GAME_STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
@@ -389,7 +389,7 @@ class QuestPickCardsTask extends Task {
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
-		gbc.CURRENT_STATE = STATE.QUEST_PICK_CARDS;
+		gbc.CURRENT_STATE = GAME_STATE.QUEST_PICK_CARDS;
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showEndTurn();
 		gbc.addDraggable();
@@ -417,7 +417,7 @@ class FaceDownCardsTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.FACE_DOWN_CARDS;
+		gbc.CURRENT_STATE = GAME_STATE.FACE_DOWN_CARDS;
 		gbc.flipFaceDownPane(player, false);
 	}
 }
@@ -433,7 +433,7 @@ class UpQuestTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.UP_QUEST;
+		gbc.CURRENT_STATE = GAME_STATE.UP_QUEST;
 		//		gbc.flipStageCards(this.stage, true);
 		gbc.setStageCardVisibility(true, stage);
 		gbc.repositionStageCards(stage);
@@ -450,7 +450,7 @@ class DiscardFaceUpTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
+		gbc.CURRENT_STATE = GAME_STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
 		gbc.showDiscardPane();
@@ -501,7 +501,7 @@ class QuestBidTask extends Task {
 			gbc.showDecline();
 			//			//players can only drag over facedown pane.
 			gbc.removeStagePaneDragOver();
-			gbc.CURRENT_STATE = STATE.QUEST_BID;
+			gbc.CURRENT_STATE = GAME_STATE.QUEST_BID;
 			gbc.bidSlider.setMin(min);
 			gbc.bidSlider.setMax(max);
 			gbc.bidSlider.setVisible(true);
@@ -536,7 +536,7 @@ class DiscardQuestTask extends Task {
 	public void run() {
 		//the task that is run before this is the bidquest so we have to hide the bidslider now
 		gbc.bidSlider.setVisible(false);
-		gbc.CURRENT_STATE = STATE.BID_DISCARD;
+		gbc.CURRENT_STATE = GAME_STATE.BID_DISCARD;
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
 		gbc.setPlayerPerspectiveTo(player);
@@ -562,7 +562,7 @@ class JoinTournamentTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.JOIN_TOURNAMENT;
+		gbc.CURRENT_STATE = GAME_STATE.JOIN_TOURNAMENT;
 		gbc.setButtonsInvisible();
 		gbc.showAcceptDecline();
 		gbc.setPlayerPerspectiveTo(player);
@@ -590,7 +590,7 @@ class PickTournamentTask extends Task {
 	}
 	@Override
 	public void run() {
-		gbc.CURRENT_STATE = STATE.PICK_TOURNAMENT;
+		gbc.CURRENT_STATE = GAME_STATE.PICK_TOURNAMENT;
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
 		gbc.setPlayerPerspectiveTo(player);
@@ -672,7 +672,7 @@ class HandFullDiscardTask extends Task {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
+		gbc.CURRENT_STATE = GAME_STATE.DISCARDING_CARDS;
 		gbc.showToast("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards");
 		gbc.showPlayerHand(player);
 		gbc.setButtonsInvisible();
@@ -760,7 +760,7 @@ public class Client implements Runnable {
 										gbc.setButtonsInvisible();
 										gbc.startTurn.setVisible(true);
 										gbc.startTurn.setText("Start Turn");
-										gbc.CURRENT_STATE = STATE.CHILLING;
+										gbc.CURRENT_STATE = GAME_STATE.CHILLING;
 									}
 								});
 								this.wait();
@@ -817,7 +817,7 @@ public class Client implements Runnable {
 										gbc.setButtonsInvisible();
 										gbc.showStartTurn();
 										gbc.startTurn.setText("Continue");
-										gbc.CURRENT_STATE = STATE.CHILLING;
+										gbc.CURRENT_STATE = GAME_STATE.CHILLING;
 									}
 								});
 								this.wait();
@@ -854,7 +854,7 @@ public class Client implements Runnable {
 
 										gbc.startTurn.setVisible(true);
 										gbc.startTurn.setText("Continue");
-										gbc.CURRENT_STATE = STATE.CHILLING;
+										gbc.CURRENT_STATE = GAME_STATE.CHILLING;
 									}
 								});
 								this.wait();
@@ -893,7 +893,7 @@ public class Client implements Runnable {
 										gbc.setButtonsInvisible();
 										gbc.startTurn.setVisible(true);
 										gbc.startTurn.setText("Continue");
-										gbc.CURRENT_STATE = STATE.CHILLING;
+										gbc.CURRENT_STATE = GAME_STATE.CHILLING;
 									}
 								});
 								this.wait();
