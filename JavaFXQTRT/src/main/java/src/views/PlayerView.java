@@ -65,8 +65,6 @@ public class PlayerView {
 			output.sendMessage(new QuestSponsorServer(ID));
 		} else if(state == Player.STATE.PICKING) {
 			output.sendMessage(new TournamentPickCardsServer(ID));
-		} else if(state == Player.STATE.WINNING) {
-			output.sendMessage(new FinalTournamentNotifyServer(ID));
 		} else if(state == Player.STATE.QUESTPICKING) {
 			output.sendMessage(new QuestPickCardsServer(ID));
 		} else if(state == Player.STATE.QUESTJOINQUESTIONED) {

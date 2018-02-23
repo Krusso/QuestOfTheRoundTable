@@ -699,7 +699,7 @@ class HandFullDiscardTask extends Task {
 class GameOverTask extends Task {
 
 	private int[] players;
-	public GameOverTask(GameBoardController gbc, int[] player) {
+	public GameOverTask(GameBoardController gbc, int[] players) {
 		super(gbc);
 		this.players = players;
 
@@ -751,21 +751,19 @@ class GameOverTask extends Task {
 
 class JoinedFinalTournamentTask extends Task{
 
-	private int player;
-	public JoinedFinalTournamentTask(GameBoardController gbc, int player) {
+	private int[] players;
+	public JoinedFinalTournamentTask(GameBoardController gbc, int[] players) {
 		super(gbc);
-		this.player = player;
+		this.players = players;
 	}
 	@Override
 	public void run() {
-		String toastMsg = "Player(s) ";
-		for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
-			if(gbc.playerManager.players[i].getRank() == RANKS.KNIGHTOFTHEROUNDTABLE) {
-				toastMsg += i + ", ";
-			}
-
+		gbc.clearToast();
+		if(players.length == 1) {
+			gbc.showToast("Player: " + Arrays.toString(players) + " has joined the final tournament!");	
+		} else {
+			gbc.showToast("Players: " + Arrays.toString(players) + " has joined the final tournament!");
 		}
-		gbc.showToast(toastMsg.substring(0, toastMsg.length()-2) + " has joined the final tournament!");
 		gbc.setButtonsInvisible();
 		gbc.showStartTurn();
 	}
@@ -1055,7 +1053,7 @@ public class Client implements Runnable {
 						//						Platform.runLater(new JoinedFinalTournamentTask(gbc, request.player));
 						synchronized (this) {
 							try {
-								Platform.runLater(new JoinedFinalTournamentTask(gbc, request.player));
+								Platform.runLater(new JoinedFinalTournamentTask(gbc, request.players));
 								this.wait();
 							} catch (InterruptedException e) {
 								e.printStackTrace();

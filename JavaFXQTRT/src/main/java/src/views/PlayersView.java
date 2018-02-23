@@ -6,6 +6,7 @@ import java.util.List;
 
 import src.game_logic.AdventureCard;
 import src.messages.game.TurnNextServer;
+import src.messages.gameend.FinalTournamentNotifyServer;
 import src.messages.gameend.GameOverServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.hand.ShowHandServer;
@@ -49,6 +50,12 @@ public class PlayersView {
 
 	public void passQuest(List<Player> winners) {
 		output.sendMessage(new QuestPassAllServer(winners));
+	}
+
+	public void joinFinalTournament(List<Player> allWithState, STATE state) {
+		if(state == Player.STATE.WINNING) {
+			output.sendMessage(new FinalTournamentNotifyServer(allWithState.stream().mapToInt(e -> e.getID()).toArray()));
+		}
 	}
 
 }
