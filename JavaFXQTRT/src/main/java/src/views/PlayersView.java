@@ -7,6 +7,8 @@ import java.util.List;
 import src.game_logic.AdventureCard;
 import src.messages.game.ContinueGameServer;
 import src.messages.game.TurnNextServer;
+import src.messages.gameend.FinalTournamentNotifyServer;
+import src.messages.gameend.GameOverServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.hand.ShowHandServer;
 import src.messages.tournament.TournamentWinServer;
@@ -34,6 +36,9 @@ public class PlayersView {
 		if(win == Player.STATE.WIN) {
 			output.sendMessage(new TournamentWinServer(winners.stream().mapToInt(e -> e.getID()).toArray()));
 		}
+		if(win == Player.STATE.GAMEWON) {
+			output.sendMessage(new GameOverServer(winners.stream().mapToInt(e -> e.getID()).toArray()));
+		}
 	}
 	
 	public void showFaceUp(Iterator<Player> round) {
@@ -48,6 +53,12 @@ public class PlayersView {
 		output.sendMessage(new QuestPassAllServer(winners));
 	}
 
+	public void joinFinalTournament(List<Player> allWithState, STATE state) {
+		if(state == Player.STATE.WINNING) {
+			output.sendMessage(new FinalTournamentNotifyServer(allWithState.stream().mapToInt(e -> e.getID()).toArray()));
+		}
+	}
+	
 	public void sendContinue(String string) {
 		output.sendMessage(new ContinueGameServer(string));
 	}

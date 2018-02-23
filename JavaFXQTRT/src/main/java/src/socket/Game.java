@@ -8,7 +8,9 @@ import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.StoryCard;
 import src.messages.QOTRTQueue;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.game.ContinueGameClient;
+import src.player.Player;
 import src.player.PlayerManager;
 import src.sequence.DiscardSequenceManager;
 import src.sequence.GameSequenceManager;
@@ -60,6 +62,7 @@ public class Game extends Thread{
 			
 			boolean winners = pm.rankUp();
 			if(winners) {
+				pvs.joinFinalTournament(pm.getAllWithState(Player.STATE.WINNING), Player.STATE.WINNING);
 				sm = gsm.createStoryManager(StoryCard.GAMEOVER);
 				sm.start(actions, pm, bm);
 				break;
@@ -67,7 +70,7 @@ public class Game extends Thread{
 
 			logger.info("Waiting for player to continue to next turn");
 			// wait until client is ready for the next turn
-			actions.take(ContinueGameClient.class);
+			actions.take(ContinueGameClient.class, MESSAGETYPES.CONTINUEGAME);
 		}
 
 	}

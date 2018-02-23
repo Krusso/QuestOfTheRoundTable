@@ -8,6 +8,7 @@ import src.game_logic.AdventureCard;
 import src.game_logic.QuestCard;
 import src.game_logic.FoeCard;
 import src.game_logic.TestCard;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestPickStagesClient;
 
@@ -38,7 +39,7 @@ public class Quest {
 	public void setUpQuest(QOTRTQueue actions, PlayerManager pm) {
 		while(quest.size()<stages) {
 			try {
-				QuestPickStagesClient qpsc = actions.take(QuestPickStagesClient.class);
+				QuestPickStagesClient qpsc = actions.take(QuestPickStagesClient.class, MESSAGETYPES.PICKSTAGES);
 				int stage = qpsc.stage;
 				String[] cards = qpsc.cards;
 				List<Card> cardlist = new ArrayList<Card>();
@@ -115,6 +116,6 @@ public class Quest {
 		pm.flipCards(players);	
 
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
-		bpc.getFoeWinners(participants, getFoeBP());
+		bpc.getFoeWinners(participants, this.questCard, getFoeBP());
 	}
 }

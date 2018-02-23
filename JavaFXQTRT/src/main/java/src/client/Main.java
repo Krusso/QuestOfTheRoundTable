@@ -1,6 +1,7 @@
 package src.client;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -16,11 +17,17 @@ import src.socket.Server;
 
 
 public class Main extends Application {
+	
+	
+	public static LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+	public static LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
+	public static Client client;
+	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			//Setup client
-			Client client = new Client("localhost", 2223);
+			Main.client = new Client(input, output);
 			new Thread(client).start();
 
 			Parent root = new AnchorPane();
@@ -69,8 +76,9 @@ public class Main extends Application {
 		}
 	}
 	public static void main(String[] args) {
+		
 		//Starts server
-		Runnable task2 = () -> { Server.main(null); };
+		Runnable task2 = () -> { new Server(input, output);  };
 		// start the thread
 		new Thread(task2).start();
 		launch(args);

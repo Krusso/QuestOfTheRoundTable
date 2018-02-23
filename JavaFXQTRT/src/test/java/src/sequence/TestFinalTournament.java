@@ -61,7 +61,7 @@ public class TestFinalTournament {
 			Message string = actualOutput.take();
 			if(string.message == MESSAGETYPES.GAMEOVER) {
 				GameOverServer x = (GameOverServer) string;
-				assertTrue(x.player == 0);
+				assertTrue(x.players[0] == 0);
 				break;
 			}
 		}
@@ -82,27 +82,23 @@ public class TestFinalTournament {
 		};
 		new Thread(task2).start();
 
-		
 		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
 		while(true) {
 			Message string = actualOutput.take();
 			if(string.message == MESSAGETYPES.RANKUPDATE) break;
 		}
-		
 		assertTrue(pm.players[0].getRank() == RANKS.KNIGHTOFTHEROUNDTABLE);
 		assertTrue(pm.players[1].getRank() == RANKS.KNIGHTOFTHEROUNDTABLE);
 		
 		input.put(new TournamentPickCardsClient(0, new String[] {}));
 		input.put(new TournamentPickCardsClient(1, new String[] {}));
-		
-		int count = 2;
 		while(true) {
 			Message string = actualOutput.take();
 			if(string.message == MESSAGETYPES.GAMEOVER) {
 				GameOverServer x = (GameOverServer) string;
-				assertTrue(x.player == 0 || x.player == 1);
-				count--;
-				if(count == 0) break;
+				assertTrue(x.players[0] == 0 || x.players[0] == 1);
+				assertTrue(x.players[1] == 0 || x.players[1] == 1);
+				break;
 			}
 		}
 	}

@@ -19,7 +19,7 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Journey Through the Enchanted Forest",3,new String[] {"Evil Knight"}),1);
 //		addCard(new QuestCard("Vanquish King Arthur's Enemies",3,new String[] {}),2);
 //		addCard(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}),1);
-//		addCard(new QuestCard("Boar Hunt",2,new String[] {"Boar"}),2);
+		addCard(new QuestCard("Boar Hunt",2,new String[] {"Boar"}),2);
 		addCard(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"}),2);
 
 //		addCard(new TournamentCard("Tournament at Camelot",3),1);
