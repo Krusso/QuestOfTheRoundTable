@@ -1,12 +1,6 @@
 package src.socket;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -14,124 +8,100 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/*
- * A chat server that delivers public and private messages.
- */
+
 public class Server {
 	final static Logger logger = LogManager.getLogger(Server.class);
-	// The server socket.
-	private static ServerSocket serverSocket = null;
-	// The client socket.
-	private static Socket clientSocket = null;
 
-	private static final ArrayList<ClientRead> threads = new ArrayList<ClientRead>(4);
 
-	public static void main(String args[]) {
-		int portNumber = 2223;
-
-		try {
-			serverSocket = new ServerSocket(portNumber);
-		} catch (IOException e) {
-			logger.error(e);
-		}
-
+	public Server(LinkedBlockingQueue<String> clientInput, LinkedBlockingQueue<String> serverOutput) {
 		/*
 		 * Create a client socket for each connection and pass it to a new client
 		 * thread.
 		 */
-		
+
 		LinkedBlockingQueue<String> inputQueue = new LinkedBlockingQueue<String>();
 		LinkedBlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
 
+		try {
+			ClientRead readThread = new ClientRead(clientInput, inputQueue);
+			ClientWrite writeThread = new ClientWrite(serverOutput, outputQueue);
+			readThread.start();
+			writeThread.start();
 
-		while (true) {
-			try {
-				clientSocket = serverSocket.accept();
-				ClientRead readThread = new ClientRead(clientSocket, inputQueue);
-				ClientWrite writeThread = new ClientWrite(clientSocket, outputQueue);
-				threads.add(readThread);
-				readThread.start();
-				writeThread.start();
-				
-				GameModel gm = new GameModel();
+			GameModel gm = new GameModel();
 
-				OutputController output = new OutputController(outputQueue);
-				Game game = new Game(output, gm);
-				InputController input = new InputController(inputQueue, game, gm);
-				input.start();
-				output.start();
-			} catch (IOException e) {
-				logger.error(e);
-			}
+			OutputController output = new OutputController(outputQueue);
+			Game game = new Game(output, gm);
+			InputController input = new InputController(inputQueue, game, gm);
+			input.start();
+			output.start();
+
+			game.join();
+			logger.info("Game over :)");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+
+
 	}
 }
 
 class ClientWrite extends Thread {
-	private Socket clientSocket = null;
+	private LinkedBlockingQueue<String> serverOutput;
 	private LinkedBlockingQueue<String> queue = null;
-	
-	public ClientWrite(Socket clientSocket, LinkedBlockingQueue<String> queue) {
-		this.clientSocket = clientSocket;
+
+	public ClientWrite(LinkedBlockingQueue<String> serverOutput, LinkedBlockingQueue<String> queue) {
+		this.serverOutput = serverOutput;
 		this.queue = queue;
 	}
 
 	public void run() {
-		try {
-			PrintStream out = new PrintStream(clientSocket.getOutputStream());
-			Supplier<String> socketOutput = () -> {
-				try {
-					return queue.take();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-					return null;
-				}
-			};
-			Stream<String> stream = Stream.generate(socketOutput);
-			stream.map(s -> {
-				out.println(s);
-				return s;
-			})
-			.allMatch(s -> s != null);
-			
-			
-			out.close();
-			clientSocket.close();
-		} catch (IOException e) {
-		}
+		Supplier<String> socketOutput = () -> {
+			try {
+				return queue.take();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return null;
+			}
+		};
+		Stream<String> stream = Stream.generate(socketOutput);
+		stream.map(s -> {
+			try {
+				serverOutput.put(s);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return s;
+		})
+		.allMatch(s -> s != null);
 	}
 }
 
 
 class ClientRead extends Thread {
-	private Socket clientSocket = null;
+	private LinkedBlockingQueue<String> clientInput;
 	private LinkedBlockingQueue<String> queue = null;
 
-	public ClientRead(Socket clientSocket, LinkedBlockingQueue<String> queue) {
-		this.clientSocket = clientSocket;
+	public ClientRead(LinkedBlockingQueue<String> clientInput, LinkedBlockingQueue<String> queue) {
+		this.clientInput = clientInput;
 		this.queue = queue;
 	}
 
 	public void run() {
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			Supplier<String> socketInput = () -> {
-				try {
-					return br.readLine();
-				} catch (IOException ex) {
-					return null;
-				}
-			};
+		Supplier<String> socketInput = () -> {
+			try {
+				return clientInput.take();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				return null;
+			}
+		};
 
-			Stream<String> stream = Stream.generate(socketInput);
-			stream.map(s -> {
-				queue.add(s);
-				return s;
-			})
-			.allMatch(s -> s != null);
-			br.close();
-			clientSocket.close();
-		} catch (IOException e) {
-		}
+		Stream<String> stream = Stream.generate(socketInput);
+		stream.map(s -> {
+			queue.add(s);
+			return s;
+		})
+		.allMatch(s -> s != null);
 	}
 }

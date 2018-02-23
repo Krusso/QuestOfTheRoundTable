@@ -57,7 +57,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		pm.flipCards(players);	
 
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
-		List<Player> winners = bpc.calculateHighest(participants);
+		List<Player> winners = bpc.calculateHighest(participants, null);
 		if(winners.size() != 1) {
 			// tie do tournament again
 			pm.discardWeapons(participants);
@@ -67,7 +67,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			players = winners.iterator();
 			pm.flipCards(players);
 
-			winners = bpc.calculateHighest(winners);
+			winners = bpc.calculateHighest(winners, null);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
 			pm.setStates(winners, Player.STATE.WIN);

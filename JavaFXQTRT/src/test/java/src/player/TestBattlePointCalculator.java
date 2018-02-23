@@ -34,7 +34,7 @@ public class TestBattlePointCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants, null);
 		assertEquals(25,scores.get(0).intValue());
 	}
 	
@@ -48,7 +48,7 @@ public class TestBattlePointCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants, null);
 		assertEquals(40,scores.get(0).intValue());
 	}
 	
@@ -98,7 +98,7 @@ public class TestBattlePointCalculator {
 		participants.add(p3);
 		participants.add(p4);
 		participants.add(p5);
-		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants, null);
 		assertEquals(95,scores.get(0).intValue());
 		assertEquals(55,scores.get(1).intValue());
 		assertEquals(70,scores.get(2).intValue());

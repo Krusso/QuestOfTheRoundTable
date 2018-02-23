@@ -1,30 +1,20 @@
 package client;
 
 import static org.junit.Assert.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
 
-import org.junit.Before;
-import org.junit.Rule;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.junit.Test;
-import org.testfx.api.FxToolkit;
-import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import junit.framework.Assert;
 import src.client.Main;
-import src.client.TitleScreenController;
 import src.socket.Server;
-
-import static org.testfx.api.FxAssert.*;
-
-import javax.naming.ldap.ManageReferralControl;
 
 public class TestTitleScreen extends TestFXBase{
 
@@ -37,7 +27,11 @@ public class TestTitleScreen extends TestFXBase{
 		
 	@Override
 	public void start(Stage stage) throws Exception {
-		Runnable task2 = () -> { Server.main(null); };
+		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
+		Runnable task2 = () -> { new Server(input, output); };
+		Main.input = input;
+		Main.output = output;
 		// start the thread
 		new Thread(task2).start();
 		new Main().start(stage);

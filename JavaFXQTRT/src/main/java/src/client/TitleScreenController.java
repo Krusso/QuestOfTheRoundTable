@@ -424,9 +424,6 @@ public class TitleScreenController extends Application implements Initializable{
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			//Setup client
-			Client client = new Client("localhost", 2223);
-			new Thread(client).start();
 			Parent root = new AnchorPane();
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setLocation(getClass().getResource("TitleScreen.fxml"));
@@ -435,7 +432,7 @@ public class TitleScreenController extends Application implements Initializable{
 			//Get the controller instance
 			TitleScreenController tlc = fxmlLoader.getController();
 			//Pass the client to the controller
-			tlc.setClient(client);
+			tlc.setClient(Main.client);
 			Scene scene = new Scene(root);
 			primaryStage.setScene(scene);
 			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -455,13 +452,4 @@ public class TitleScreenController extends Application implements Initializable{
 			e.printStackTrace();
 		}
 	}
-	public static void main(String[] args) {
-		//Starts server
-		Runnable task2 = () -> { Server.main(null); };
-		// start the thread
-		new Thread(task2).start();
-		launch(args);
-	}
-	
-
 }

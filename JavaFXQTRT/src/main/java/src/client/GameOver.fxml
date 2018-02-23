@@ -14,6 +14,5 @@
             <Font name="High Tower Text Italic" size="65.0" />
          </font>
       </Text>
-      <Button fx:id="mainScreen" layoutX="885.0" layoutY="900.0" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="65.0" prefWidth="150.0" styleClass="record-sales" stylesheets="@application.css" text="Main Screen" textFill="WHITE" />
    </children>
 </AnchorPane>

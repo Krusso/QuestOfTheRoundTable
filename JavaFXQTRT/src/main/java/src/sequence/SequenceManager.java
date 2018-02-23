@@ -1,5 +1,6 @@
 package src.sequence;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -31,7 +32,7 @@ public abstract class SequenceManager {
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.PICKING);
 			TournamentPickCardsClient cards = actions.take(TournamentPickCardsClient.class, MESSAGETYPES.PICKTOURNAMENT);
-			logger.info("Cards user picked: " + cards.cards);
+			logger.info("Cards user picked: " + Arrays.toString(cards.cards));
 			pm.currentFaceDown(cards.cards);
 		}
 	}
