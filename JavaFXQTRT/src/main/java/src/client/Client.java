@@ -782,9 +782,7 @@ class GameOverTask extends Task {
 			//keep aspect ratio and make imgView fit the whole screen
 			double scaleV = 1920 / img.getWidth();
 			double scaleH = 1080 / img.getHeight();
-			double scaleFactor = scaleV > scaleH ? scaleV : scaleH; 
-			System.out.println("V H: " + scaleV + " " + scaleH);
-			System.out.println("Scale factor: " + scaleFactor);
+			double scaleFactor = scaleV > scaleH ? scaleV : scaleH;
 			imgv.setFitHeight(img.getHeight() * scaleFactor);
 			imgv.setFitWidth(img.getWidth() * scaleFactor);
 			goc.bg.getChildren().add(imgv);

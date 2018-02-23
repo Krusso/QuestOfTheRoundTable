@@ -280,7 +280,10 @@ public class GameBoardController implements Initializable{
 		if(p==3) { pRec3.setVisible(true); }
 	}
 
-	public void showToast(String text) { toast.setText(text); }
+	public void showToast(String text) {
+		toast.setText(text);
+		logger.info("Setting toast to: " + text);
+	}
 	public void clearToast() { toast.setText(""); }
 
 	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
