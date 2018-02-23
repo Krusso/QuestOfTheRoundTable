@@ -33,7 +33,7 @@
             </Text>
             <Pane fx:id="menuPane" layoutY="227.0" prefHeight="240.0" prefWidth="708.0">
                <children>
-                  <Button layoutX="102.0" layoutY="31.0" mnemonicParsing="false" onAction="#showPlayerSelect" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="NEW GAME">
+                  <Button fx:id="newGame" layoutX="102.0" layoutY="31.0" mnemonicParsing="false" onAction="#showPlayerSelect" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="NEW GAME">
                      <font>
                         <Font name="High Tower Text" size="19.0" />
                      </font>
@@ -151,11 +151,6 @@
                   </Button>
                </children>
             </Pane>
-            <Text fx:id="errorMsg" fill="#ff3d00" layoutX="117.0" layoutY="704.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="522.0000252276659">
-               <font>
-                  <Font name="High Tower Text Italic" size="20.0" />
-               </font>
-            </Text>
          </children>
       </Pane>
    </children>

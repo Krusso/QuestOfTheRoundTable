@@ -40,7 +40,7 @@ public class TitleScreenController implements Initializable{
 	
 	@FXML private Text	numPlayerslabel;
 	@FXML private TextField numPlayers;
-	@FXML private Button start;
+	@FXML public Button start;
 	@FXML private Pane p;
 	@FXML public Pane background;
 	
@@ -213,10 +213,10 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	public void hideMenu() { menuPane.setVisible(false); }
-	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); }
+	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); start.setVisible(true);}
 	
 	
-	private boolean isStartGameValid() {
+	public boolean isStartGameValid() {
 		ArrayList<Integer> humanPlayers = new ArrayList<>();
 		ArrayList<Integer> AIPlayers = new ArrayList<>();
 		int totalPlayers = 0;
