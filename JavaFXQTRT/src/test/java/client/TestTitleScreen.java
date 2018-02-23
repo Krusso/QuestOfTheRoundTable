@@ -3,6 +3,8 @@ package client;
 import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -10,8 +12,30 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import src.client.Main;
+import src.socket.Server;
 
 public class TestTitleScreen extends TestFXBase{
+
+	final String NEW_GAME_BUTTON_ID = "#newGame";
+	final String MENU_BUTTON_1_ID = "#b1";
+	final String MENU_PANE_ID = "#menuPane";
+	final String START_BUTTON_ID = "#start";
+	final String ERROR_MESSAGE_ID = "#errorMsg";
+	final String PLAYER_SELECT_ID = "#playerSelect";
+		
+	@Override
+	public void start(Stage stage) throws Exception {
+		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
+		LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
+		Runnable task2 = () -> { new Server(input, output); };
+		Main.input = input;
+		Main.output = output;
+		// start the thread
+		new Thread(task2).start();
+		new Main().start(stage);
+	}
 	
 	/**
 	 * Tests to ensure menu pane will display after new game button is clicked

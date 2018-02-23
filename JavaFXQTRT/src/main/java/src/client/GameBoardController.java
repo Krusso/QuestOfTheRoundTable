@@ -60,6 +60,7 @@ public class GameBoardController implements Initializable{
 	public enum GAME_STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
+		GAMEOVER,
 		NONE, EVENT_DISCARD}
 
 	public GAME_STATE CURRENT_STATE = GAME_STATE.NONE;
@@ -279,7 +280,10 @@ public class GameBoardController implements Initializable{
 		if(p==3) { pRec3.setVisible(true); }
 	}
 
-	public void showToast(String text) { toast.setText(text); }
+	public void showToast(String text) {
+		toast.setText(text);
+		logger.info("Setting toast to: " + text);
+	}
 	public void clearToast() { toast.setText(""); }
 
 	public void setShields(String[] players, Image shield1, Image shield2, Image shield3, Image shield4) {
@@ -625,17 +629,23 @@ public class GameBoardController implements Initializable{
 			}else if(isInPane(discardPane, point)) {
 				System.out.println("Discarding this card + " + card.getName());
 				doPutCardIntoPane(point, card);
+			} else if(isInPane(handPanes[cPlayer], point) && (card.childOf.equals(discardPane) || card.childOf.equals(faceDownPanes[cPlayer]))) {
+				doPutCardIntoPane(point, card);
 			}
 		}
 		
 		if(CURRENT_STATE == GAME_STATE.BID_DISCARD) {
 			if(isInPane(discardPane, point)) {
 				doPutCardIntoPane(point, card);
+			} else if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
+				doPutCardIntoPane(point, card);
 			}
 		}
 		
 		if(CURRENT_STATE == GAME_STATE.EVENT_DISCARD) {
 			if(isInPane(discardPane, point) && card.getType() == this.type) {
+				doPutCardIntoPane(point, card);
+			} else if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 			}
 		}
@@ -785,7 +795,7 @@ public class GameBoardController implements Initializable{
 	private boolean stagesIncreasing() {
 		int lastBp = Integer.MIN_VALUE;
 		for(int i = 0; i < stages.length; i++) {
-			if(stages[i].isVisible()) {
+			if(stages[i].isVisible() && stageCards.get(i).get(0).getType() != TYPE.TESTS) {
 				if(bpTexts[i].getText().equals("")) {
 					return false;
 				} else if(Integer.parseInt(bpTexts[i].getText()) <= lastBp){
@@ -1067,6 +1077,11 @@ public class GameBoardController implements Initializable{
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
 	}
+	public void flipAllFaceDownPane(boolean isShow) {
+		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {
+			playerManager.flipFaceDownCards(i, isShow);
+		}
+	}
 
 	public void moveToFaceUpPane(int p) {
 		logger.info("Moving Cards to Face up pane");
@@ -1211,7 +1226,7 @@ public class GameBoardController implements Initializable{
 			else if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 				if(areQuestStagesValid() && stagesIncreasing()) {
 					for(int i = 0 ; i < stageCards.size(); i++) {
-						if(!stageCards.get(i).isEmpty() && stageCards.get(i).get(0).getType() != TYPE.TESTS) {
+						if(!stageCards.get(i).isEmpty()) {
 							String[] currentStageCards = new String[stageCards.get(i).size()];
 							for(int j = 0 ; j < stageCards.get(i).size(); j++) {
 								currentStageCards[j] = stageCards.get(i).get(j).getName();

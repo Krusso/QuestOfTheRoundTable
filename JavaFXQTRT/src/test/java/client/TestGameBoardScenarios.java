@@ -54,10 +54,11 @@ public class TestGameBoardScenarios extends TestFXBase {
 	 */
 	@Test
 	public void test2PlayerGameQuest() {
-
+		sleep(5000);
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
 		clickOn(START_TURN);
+		System.out.println(gbc.CURRENT_STATE);
 		//make sure we have set the game state to Sponsoring Quest
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
 		//p0 is going to accept the quest
