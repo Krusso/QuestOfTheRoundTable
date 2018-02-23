@@ -60,7 +60,7 @@ public class GameBoardController implements Initializable{
 	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
-		NONE}
+		NONE, EVENT_DISCARD}
 
 	public STATE CURRENT_STATE = STATE.NONE;
 	public int numStages = 0;
@@ -171,6 +171,7 @@ public class GameBoardController implements Initializable{
 	@FXML ImageView discardView;
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
+	public TYPE type;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -626,6 +627,12 @@ public class GameBoardController implements Initializable{
 		
 		if(CURRENT_STATE == STATE.BID_DISCARD) {
 			if(isInPane(discardPane, point)) {
+				doPutCardIntoPane(point, card);
+			}
+		}
+		
+		if(CURRENT_STATE == STATE.EVENT_DISCARD) {
+			if(isInPane(discardPane, point) && card.getType() == this.type) {
 				doPutCardIntoPane(point, card);
 			}
 		}
@@ -1183,6 +1190,19 @@ public class GameBoardController implements Initializable{
 				playerManager.flipFaceDownCards(currentPlayer, false);
 				c.send(new TournamentPickCardsClient(currentPlayer, 
 						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
+			}
+			else if(CURRENT_STATE == STATE.EVENT_DISCARD) {
+				String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
+				if(discardCards.length != this.toDiscard) {
+					clearToast();
+					showToast("Select: " + this.toDiscard + " cards to discard");
+					return;
+				}
+				
+				discardPile.clear();
+				discardPane.getChildren().clear();
+				this.hideDiscardPane();
+				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
 			}
 			else if(CURRENT_STATE == STATE.PICK_STAGES) {
 				if(areQuestStagesValid() && stagesIncreasing()) {
