@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.imageio.ImageIO;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -700,22 +698,21 @@ class HandFullDiscardTask extends Task {
 
 class GameOverTask extends Task {
 
-	private int player;
-	private static String s;
-	public GameOverTask(GameBoardController gbc, int player) {
+	private int[] players;
+	public GameOverTask(GameBoardController gbc, int[] player) {
 		super(gbc);
-		this.player = player;
+		this.players = players;
 
 	}
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		gbc.CURRENT_STATE = STATE.GAMEOVER;
-		gbc.showToast("Player #" + player + " won the game!");
+		gbc.showToast("Player #" + Arrays.toString(players) + " won the game!");
 		gbc.flipAllFaceDownPane(true);
 		gbc.setButtonsInvisible();
 		
-		String winningMessage = "Player #" + player + " won the game!";
+		String winningMessage = "Player #" + Arrays.toString(players) + " won the game!";
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setLocation(getClass().getResource("GameOver.fxml"));
@@ -1050,7 +1047,7 @@ public class Client implements Runnable {
 					if(message.equals(MESSAGETYPES.GAMEOVER.name())){
 						GameOverServer request = gson.fromJson(obj, GameOverServer.class);
 
-						Platform.runLater(new GameOverTask(gbc, request.player));
+						Platform.runLater(new GameOverTask(gbc, request.players));
 					}
 					if(message.equals(MESSAGETYPES.JOINEDFINALTOURNAMENT.name())){
 						FinalTournamentNotifyServer request = gson.fromJson(obj, FinalTournamentNotifyServer.class);

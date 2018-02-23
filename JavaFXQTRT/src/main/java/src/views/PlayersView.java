@@ -6,6 +6,7 @@ import java.util.List;
 
 import src.game_logic.AdventureCard;
 import src.messages.game.TurnNextServer;
+import src.messages.gameend.GameOverServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.hand.ShowHandServer;
 import src.messages.tournament.TournamentWinServer;
@@ -32,6 +33,9 @@ public class PlayersView {
 	public void win(List<Player> winners, STATE win) {
 		if(win == Player.STATE.WIN) {
 			output.sendMessage(new TournamentWinServer(winners.stream().mapToInt(e -> e.getID()).toArray()));
+		}
+		if(win == Player.STATE.GAMEWON) {
+			output.sendMessage(new GameOverServer(winners.stream().mapToInt(e -> e.getID()).toArray()));
 		}
 	}
 	
