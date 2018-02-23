@@ -10,31 +10,37 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.application.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import src.messages.game.GameStartClient;
+import src.socket.Server;
 
-public class TitleScreenController implements Initializable{
+public class TitleScreenController extends Application implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
-	private GameBoardController gbc;
-	
+	public GameBoardController gbc;
+
 	private Client client;
 	@FXML public Text errorMsg;
 	
@@ -333,6 +339,9 @@ public class TitleScreenController implements Initializable{
 		scene.getRoot().getTransforms().setAll(scale);
 	}
 	
+	
+	
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// TODO Auto-generated method stub
@@ -383,6 +392,22 @@ public class TitleScreenController implements Initializable{
 			ex.printStackTrace();
 		}
 		
+		
+		/***********************Setting up the stage and client*************************/
+
+		try {
+			File titlebg = new File("src/main/resources/titlescreen1.jpg");
+			Image titleImg = new Image (new FileInputStream(titlebg));
+			ImageView titleImgView = new ImageView();
+			titleImgView.setImage(titleImg);
+			titleImgView.setFitHeight(background.getHeight());
+			titleImgView.setFitWidth(background.getWidth());
+			background.getChildren().add(titleImgView);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		menuBtns[0] = b1;
 		menuBtns[1] = b2;
 		menuBtns[2] = b3;
@@ -397,8 +422,39 @@ public class TitleScreenController implements Initializable{
 		this.rigged = b;
 	}
 	
+
+	@Override
+	public void start(Stage primaryStage) {
+		try {
+			Parent root = new AnchorPane();
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			fxmlLoader.setLocation(getClass().getResource("TitleScreen.fxml"));
+			root = fxmlLoader.load();
+
+			//Get the controller instance
+			TitleScreenController tlc = fxmlLoader.getController();
+			//Pass the client to the controller
+			tlc.setClient(Main.client);
+			Scene scene = new Scene(root);
+			primaryStage.setScene(scene);
+			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					switch (event.getCode()) {
+					case UP:    
+						tlc.setRigged(true); break;
+					default:
+						break;
+					}
+				}
+			});
+			primaryStage.show();
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public GameBoardController getGameBoardController() {
 		return gbc;
 	}
-
 }

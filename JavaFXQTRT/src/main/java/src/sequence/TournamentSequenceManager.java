@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import src.game_logic.BoardModel;
 import src.game_logic.TournamentCard;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.QOTRTQueue;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.player.BattlePointCalculator;
@@ -26,7 +27,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			Player next = players.next();
 			pm.setPlayer(next);
 			pm.setState(next, Player.STATE.QUESTIONED);
-			TournamentAcceptDeclineClient tadc = actions.take(TournamentAcceptDeclineClient.class);
+			TournamentAcceptDeclineClient tadc = actions.take(TournamentAcceptDeclineClient.class, MESSAGETYPES.JOINTOURNAMENT);
 			if(tadc.joined) {
 				pm.setState(next, Player.STATE.YES);
 			} else {
@@ -56,7 +57,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		pm.flipCards(players);	
 
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
-		List<Player> winners = bpc.calculateHighest(participants);
+		List<Player> winners = bpc.calculateHighest(participants, null);
 		if(winners.size() != 1) {
 			// tie do tournament again
 			pm.discardWeapons(participants);
@@ -66,7 +67,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			players = winners.iterator();
 			pm.flipCards(players);
 
-			winners = bpc.calculateHighest(winners);
+			winners = bpc.calculateHighest(winners, null);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
 			pm.setStates(winners, Player.STATE.WIN);

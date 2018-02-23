@@ -50,28 +50,29 @@ public class BattlePointCalculator {
 		return score;
 	}
 	
-	public ArrayList<Integer> calculatePoints(List<Player> participants){
+	public ArrayList<Integer> calculatePoints(List<Player> participants, StoryCard card){
 		ArrayList<Integer> scores = new ArrayList<Integer>();
 		participants.forEach(player -> {
-			scores.add(scoreOfPlayer(player));
+			scores.add(calculatePlayer(player.getID(), player.getFaceUp().getDeck().stream().map(i -> i.getName()).toArray(String[]::new), card));
 		});
 
 		return scores;
 	}
 
-	public void getFoeWinners(List<Player> participants, int foePoints){
+	public void getFoeWinners(List<Player> participants, StoryCard card, int foePoints){
 		ListIterator<Player> players = participants.listIterator();
 		while(players.hasNext()) {
-			if (scoreOfPlayer(players.next()) < foePoints) {
+			Player player = players.next();
+			if (calculatePlayer(player.getID(), player.getFaceUp().getDeck().stream().map(i -> i.getName()).toArray(String[]::new), card) < foePoints) {
 				players.remove();
 			}
 		}
 	}
 
-	public List<Player> calculateHighest(List<Player> participants) {
+	public List<Player> calculateHighest(List<Player> participants, StoryCard card) {
 		int max = Integer.MIN_VALUE;
 		List<Player> winning = new ArrayList<Player>();
-		ArrayList<Integer> scores = calculatePoints(participants);
+		ArrayList<Integer> scores = calculatePoints(participants, card);
 		for(int i = 0; i < scores.size(); i++) {
 			if(scores.get(i) == max) {
 				winning.add(participants.get(i));
@@ -84,31 +85,6 @@ public class BattlePointCalculator {
 		return winning;
 	}
 
-	public int scoreOfPlayer(Player player) {
-		int score = 0;
-		RANKS rank = player.getRank();
-		if(rank == RANKS.SQUIRE) {
-			score += 5;
-		} else if(rank == RANKS.KNIGHT) {
-			score += 10;
-		} else {
-			score += 20;
-		}
-
-		boolean foundIseult = false;
-		Iterator<Player> players = pm.round();
-		while(players.hasNext()) {
-			if(players.next().iseult == true) foundIseult = true;
-		}
-
-		if(player.tristan && foundIseult) {
-			score += 10;
-		}
-
-		AdventureDeck cards = player.getFaceUp();
-		score += cards.getBP();
-		return score;
-	}
 
 	public List<AdventureCard> listOfTypeDecreasingBp(Player player, TYPE type, QuestCard card, Boolean othersHaveIseult){
 		
@@ -142,7 +118,10 @@ public class BattlePointCalculator {
 	}
 
 	public int calculatePlayer(int player, String[] cards, StoryCard storyCard) {
-		logger.info("Calculating score for player id: " + player + " with middle card: " + storyCard.getName());
+		logger.info("Calculating score for player id: " + player);
+		if(storyCard != null) {
+			logger.info("Middle card: " + storyCard);
+		}
 		logger.info("Player cards: " + Arrays.toString(cards));
 		Player p = pm.players[player];
 		int score = 0;
@@ -168,7 +147,7 @@ public class BattlePointCalculator {
 				card = p.hand.findCardByName(c);
 			}
 
-			if(storyCard.getType() == src.game_logic.StoryCard.TYPE.QUEST && 
+			if(storyCard != null && storyCard.getType() == src.game_logic.StoryCard.TYPE.QUEST && 
 					card.checkIfNamed(((QuestCard) storyCard).getFoe())) {
 				score += card.getNamedBattlePoints();
 			} else {

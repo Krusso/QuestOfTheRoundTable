@@ -1,5 +1,7 @@
 package client;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.junit.After;
 import org.junit.Before;
 import org.testfx.api.FxToolkit;
@@ -51,7 +53,9 @@ public abstract class TestFXBase extends ApplicationTest{
 
 	@Override 
 	public void start(Stage stage) throws Exception{
-		Runnable task2 = () -> { Server.main(null); };
+		LinkedBlockingQueue<String> clientInput = new LinkedBlockingQueue<>();
+		LinkedBlockingQueue<String> serverOutput = new LinkedBlockingQueue<>();
+		Runnable task2 = () -> { new Server(clientInput, serverOutput); };
 		// start the thread
 		server = new Thread(task2);
 		server.start();
