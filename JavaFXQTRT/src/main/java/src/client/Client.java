@@ -1135,7 +1135,25 @@ public class Client implements Runnable {
 				}
 				if(message.equals(MESSAGETYPES.GAMEOVER.name())){
 					GameOverServer request = gson.fromJson(obj, GameOverServer.class);
-
+					Platform.runLater(new RevealAllCards(gbc));
+					synchronized (this) {
+						try {
+							Platform.runLater(new Runnable(){
+								@Override
+								public void run(){
+									gbc.setButtonsInvisible();
+									gbc.showStartTurn();
+									gbc.clearToast();
+									gbc.showToast("Results for final tournament");
+									gbc.startTurn.setText("Continue");
+									gbc.CURRENT_STATE = STATE.CHILLING;
+								}
+							});
+							this.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 					Platform.runLater(new GameOverTask(gbc, request.players));
 				}
 				if(message.equals(MESSAGETYPES.JOINEDFINALTOURNAMENT.name())){
