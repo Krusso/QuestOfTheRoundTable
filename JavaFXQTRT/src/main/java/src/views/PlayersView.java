@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import src.game_logic.AdventureCard;
+import src.messages.game.ContinueGameServer;
 import src.messages.game.TurnNextServer;
 import src.messages.gameend.FinalTournamentNotifyServer;
 import src.messages.gameend.GameOverServer;
@@ -56,6 +57,10 @@ public class PlayersView {
 		if(state == Player.STATE.WINNING) {
 			output.sendMessage(new FinalTournamentNotifyServer(allWithState.stream().mapToInt(e -> e.getID()).toArray()));
 		}
+	}
+	
+	public void sendContinue(String string) {
+		output.sendMessage(new ContinueGameServer(string));
 	}
 
 }

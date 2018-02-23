@@ -69,7 +69,7 @@ public class Game extends Thread{
 
 			logger.info("Waiting for player to continue to next turn");
 			// wait until client is ready for the next turn
-			//actions.take(ContinueGameClient.class);
+			actions.take(ContinueGameClient.class);
 		}
 
 	}

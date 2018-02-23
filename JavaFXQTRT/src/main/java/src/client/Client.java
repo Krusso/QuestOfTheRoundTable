@@ -28,7 +28,9 @@ import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AllyCard;
+import src.game_logic.AmourCard;
 import src.game_logic.FoeCard;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
@@ -38,10 +40,13 @@ import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.events.EventDiscardCardsServer;
 import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculatePlayerServer;
 import src.messages.game.CalculateStageClient;
 import src.messages.game.CalculateStageServer;
+import src.messages.game.ContinueGameClient;
+import src.messages.game.ContinueGameServer;
 import src.messages.game.MiddleCardServer;
 import src.messages.game.ShieldCountServer;
 import src.messages.game.TurnNextServer;
@@ -87,10 +92,17 @@ class AddCardsTask extends Task{
 						((f.getName().length()-6) == card.length() || (f.getName().length()-4) == card.length())) {
 					switch (f.getName().charAt(0)) {
 					case 'A':{
-						AllyCard c = new AllyCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-						c.faceDown();
-						gbc.addCardToHand(c, player);
+						if(card.equals("Amour")) {
+							AmourCard c = new AmourCard(card, f.getPath());
+							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
+							c.faceDown();
+							gbc.addCardToHand(c, player);
+						} else {
+							AllyCard c = new AllyCard(card, f.getPath());
+							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
+							c.faceDown();
+							gbc.addCardToHand(c, player);
+						}
 						didAddCard = true;
 						break;
 					}
@@ -148,6 +160,8 @@ class TurnNextTask extends Task{
 }
 
 class MiddleCardTask extends Task{
+	final static Logger logger = LogManager.getLogger(MiddleCardTask.class);
+	
 	private String card;
 	public MiddleCardTask(GameBoardController gbc, String card) {
 		super(gbc);
@@ -165,7 +179,7 @@ class MiddleCardTask extends Task{
 			if(c.getName().contains(card)) {
 				StoryCard sc= new StoryCard(card, c.getPath());
 				gbc.setStoryCard(sc);
-				System.out.println("Set story card to:" + sc.getName());
+				logger.info("Set story card to:" + sc.getName());
 				// hell yaaaaaaaaaaaa!!!
 				switch(sc.getName()) {
 				case "Search for the Holy Grail":
@@ -461,8 +475,6 @@ class DiscardFaceUpTask extends Task {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
-		gbc.showDiscardPane();
-		gbc.setMerlinMordredVisibility();
 	}
 }
 
@@ -533,11 +545,50 @@ class QuestBidTask extends Task {
 	}
 }
 
-class DiscardQuestTask extends Task {
+class EventDiscardTask extends Task {
 	private int player;
-	public DiscardQuestTask(GameBoardController gbc, int player) {
+	private TYPE type;
+	private int amount;
+	public EventDiscardTask(GameBoardController gbc, int player, TYPE type, int amount) {
 		super(gbc);
 		this.player = player;
+		this.type = type;
+		this.amount = amount;
+	}
+	
+	@Override
+	public void run() {
+		gbc.type = type;
+		gbc.toDiscard = amount;
+		gbc.CURRENT_STATE = STATE.EVENT_DISCARD;
+		gbc.setButtonsInvisible();
+		gbc.showEndTurn();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.removeStagePaneDragOver();
+		gbc.setMerlinMordredVisibility();
+		gbc.clearToast();
+		gbc.showDiscardPane();
+		gbc.addDraggable();
+		if(amount == 1) {
+			gbc.showToast("Select: " + amount + " " + type.toString() + " card to discard");	
+		} else {
+			gbc.showToast("Select: " + amount + " " + type.toString() + " cards to discard");
+		}
+		if(gbc.playerManager.getAI(player) != null) {
+			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardKingsCalltoArms(amount, type);
+			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			gbc.endTurn.fire();
+		}
+	}
+}
+
+class DiscardQuestTask extends Task {
+	private int player;
+	private int toDiscard;
+	public DiscardQuestTask(GameBoardController gbc, int player, int toDiscard) {
+		super(gbc);
+		this.player = player;
+		this.toDiscard = toDiscard;
 
 	}
 	@Override
@@ -552,6 +603,9 @@ class DiscardQuestTask extends Task {
 		gbc.removeStagePaneDragOver();
 		gbc.showDiscardPane();
 		gbc.setMerlinMordredVisibility();
+		gbc.clearToast();
+		gbc.showToast("Select " +  toDiscard + " cards to discard");
+		gbc.toDiscard = toDiscard;
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -687,10 +741,11 @@ class HandFullDiscardTask extends Task {
 		gbc.setDiscardVisibility(true);
 		gbc.addDraggable();
 		gbc.showDiscardPane();
+		gbc.highlightFaceUp(player);
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size());
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
-			gbc.endTurn.fire();
+			gbc.discard.fire();
 		}
 	}
 
@@ -782,10 +837,11 @@ abstract class Task implements Runnable{
 }
 
 public class Client implements Runnable {
+	
+	final static Logger logger = LogManager.getLogger(Client.class);
 
 	private Gson gson = new Gson();
 	private JsonParser json = new JsonParser();
-	private File cardDir;
 	private String host;
 	private int port;
 	Socket client;
@@ -808,7 +864,6 @@ public class Client implements Runnable {
 	@Override
 	public void run() {
 		try {
-			cardDir = new File("src/main/resources/");
 
 			client = new Socket(host, port);
 			writeStream = new PrintStream(client.getOutputStream());
@@ -817,7 +872,7 @@ public class Client implements Runnable {
 			while(client.isConnected()) {
 				if(readStream.ready()) {
 					currentMessage = readStream.readLine();
-					System.out.println("Messsage received: " + currentMessage);
+					logger.info("Message received: " + currentMessage);
 					JsonObject obj = json.parse(currentMessage).getAsJsonObject();
 					String message = obj.get("message").getAsString();
 					if(message.equals(MESSAGETYPES.ADDCARDS.name())) {
@@ -903,10 +958,46 @@ public class Client implements Runnable {
 									}
 								});
 								this.wait();
+								this.send(new ContinueGameClient());
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
 						}
+					}
+					if(message.equals(MESSAGETYPES.CONTINUEGAME.name())) {
+						synchronized (this) {
+							ContinueGameServer cgs = gson.fromJson(obj, ContinueGameServer.class);
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									gbc.stageCards.forEach(i -> i.clear());
+									for(Pane p: gbc.stages) {
+										p.getChildren().clear();
+									}
+									
+									gbc.setButtonsInvisible();
+									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+									gbc.setButtonsInvisible();
+									gbc.startTurn.setVisible(true);
+									gbc.startTurn.setText("Continue");
+									gbc.clearToast();
+									gbc.showToast(cgs.messageText);
+									gbc.CURRENT_STATE = STATE.CHILLING;
+								}
+							});
+							try {
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							this.send(new ContinueGameClient());
+						}
+					}
+					if(message.equals(MESSAGETYPES.EVENTDISCARD.name())) {
+						EventDiscardCardsServer request = gson.fromJson(obj, EventDiscardCardsServer.class);
+
+						//Discard "Face Down" cards because that is where players play their cards.
+						Platform.runLater(new EventDiscardTask(gbc, request.player, request.type, request.amount));
 					}
 					/*
 					 * Dealing with Quest state
@@ -1006,6 +1097,10 @@ public class Client implements Runnable {
 						toDiscard.forEach(i -> Platform.runLater(i));
 						toDiscard.clear();
 						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
+						ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+						cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
+						cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
+						this.send(new CalculatePlayerClient(this.gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
 					}
 					if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
 						FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);
@@ -1035,7 +1130,7 @@ public class Client implements Runnable {
 						QuestDiscardCardsServer request = gson.fromJson(obj, QuestDiscardCardsServer.class);
 
 						//Discard "Face Down" cards because that is where players play their cards.
-						Platform.runLater(new DiscardQuestTask(gbc, request.player));
+						Platform.runLater(new DiscardQuestTask(gbc, request.player, request.cardsToDiscard));
 					}
 					if(message.equals(MESSAGETYPES.DISCARDHANDFULL.name())){
 						HandFullServer request = gson.fromJson(obj, HandFullServer.class);
@@ -1072,7 +1167,7 @@ public class Client implements Runnable {
 	}
 
 	public void send(Message message) {
-		System.out.println("Sending message: " + message);
+		logger.info("Sending message: " + message);
 		writeStream.println(gson.toJson(message));
 	}
 }

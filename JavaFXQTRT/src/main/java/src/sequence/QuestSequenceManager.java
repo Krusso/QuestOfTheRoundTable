@@ -55,6 +55,7 @@ public class QuestSequenceManager extends SequenceManager {
 		// determining if anyone decided to sponsor
 		List<Player> sponsors = pm.getAllWithState(Player.STATE.SPONSORING);
 		if(sponsors.size() == 0) {
+			pm.sendContinue("No Player Sponsored the Tournament");
 			return;
 		} else if(sponsors.size() == 1) {
 			sponsor = sponsors.get(0);
@@ -116,8 +117,8 @@ public class QuestSequenceManager extends SequenceManager {
 				quest.advanceStage();
 				pm.passStage(winners);
 			}
-			pm.passQuest(winners);
 		}
+		
 		if(winners.size() > 0) {
 			if(bm.isSetKingRecognition()) {
 				bm.setSetKingRecognition(false);
@@ -129,6 +130,13 @@ public class QuestSequenceManager extends SequenceManager {
 		
 		pm.discardCards(participants);
 		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
+		
+		if(participants.size() != 0) {
+			pm.passQuest(winners);
+		} else {
+			pm.sendContinue("No Player Joined the Tournament");
+		}
+		
 		logger.info("finished quest sequence: " + this.card.getName());
 	}
 }

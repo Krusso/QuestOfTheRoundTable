@@ -56,8 +56,8 @@ public class TestSpecialInteractions {
 		
 		Thread.sleep(500);
 		assertTrue(player.iseult);
-		assertTrue(player.getFaceDownDeck().findCardByName("Amour") != null);
-		assertTrue(player.getFaceDownDeck().size() == 2);
+		assertTrue(player.getFaceUp().findCardByName("Amour") != null);
+		assertTrue(player.getFaceUp().size() == 2);
 	}
 	
 	@Test
