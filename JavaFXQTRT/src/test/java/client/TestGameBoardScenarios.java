@@ -29,6 +29,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	final String ACCEPT = "#accept";
 	final String END_TURN = "#endTurn";
 	final String TOAST = "#toast";
+	final String DISCARD = "#discard";
 	@Before
 	public void setup2Players(){
 		//Rig the game
@@ -80,7 +81,6 @@ public class TestGameBoardScenarios extends TestFXBase {
 		Pane stage4 = gbc.stages[3];
 		Pane stage5 = gbc.stages[4];
 		Pane handPane1 = gbc.playerhand0;
-		Pane handPane2 = gbc.playerHand1;
 		ImageView thieves = gbc.findCardInHand("Thieves");
 		
 	
@@ -142,18 +142,48 @@ public class TestGameBoardScenarios extends TestFXBase {
 		ImageView greenKnight = gbc.findCardInHand("Green Knight");
 		drag(greenKnight).moveTo(stage3).release(MouseButton.PRIMARY);
 		
-		//make sure the BPC are correct
 		
+		//TODO:: DO TESTING WHEN BPC CALC IS FIXED
+		//so for now remove the test card and add in a some saxxons and weapons
+		
+		drag(testCard).moveTo(handPane1).release(MouseButton.PRIMARY);
+		drag(saxons2).moveTo(stage4).release(MouseButton.PRIMARY);
+		ImageView excalibur1 = gbc.findCardInHand("Excalibur");
+		ImageView lance1 = gbc.findCardInHand("Lance");
+		drag(excalibur1).moveTo(stage4).release(MouseButton.PRIMARY);
+		drag(lance1).moveTo(stage4).release(MouseButton.PRIMARY);
+		//make sure the BPC are correct
 		assertTrue(gbc.bpTextStage0.getText().equals("5"));
 		assertTrue(gbc.bpTextStage1.getText().equals("10"));
 		assertTrue(gbc.bpTextStage2.getText().equals("40"));
-		assertTrue(gbc.bpTextStage3.getText().equals("0"));
-		
+		assertTrue(gbc.bpTextStage3.getText().equals("60"));
 		clickOn(END_TURN);
 
 		WaitForAsyncUtils.waitForFxEvents();
+		
+		//2nd player's turn, we're going to accept the quest
+		Pane handPane2 = gbc.playerHand1;
+		Pane fdc2 = gbc.playerFaceDown1;
+		clickOn(START_TURN); 
+		clickOn(ACCEPT);
+
+		WaitForAsyncUtils.waitForFxEvents();
+		sleep(1000);
+		System.out.println(gbc.CURRENT_STATE);
+		//Hand should be too full since we start off wtih 12 cards (and we just drew one so 13 now)
+//		assertTrue(gbc.CURRENT_STATE == GAME_STATE.DISCARDING_CARDS);
+//		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+		
+		ImageView battleax = gbc.findCardInHand("Battle-ax");
+		
+		drag(battleax).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Dagger")).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		assertTrue(gbc.toast.getText().equals("Can only discard cards if hand has more than 12 cards"));
+		drag(battleax).moveTo(handPane2).release(MouseButton.PRIMARY);
+		clickOn(DISCARD);
+		
+		
 		sleep(2000);
-//		assertTrue(gbc.CURRENT_STATE == GAME_STATE.CHILLING);
 
 		
 	}
