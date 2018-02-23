@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -16,16 +18,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
@@ -40,7 +38,7 @@ public class TitleScreenController implements Initializable{
 	
 	@FXML private Text	numPlayerslabel;
 	@FXML private TextField numPlayers;
-	@FXML private Button start;
+	@FXML public Button start;
 	@FXML private Pane p;
 	@FXML public Pane background;
 	
@@ -213,23 +211,32 @@ public class TitleScreenController implements Initializable{
 	}
 	
 	public void hideMenu() { menuPane.setVisible(false); }
-	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); }
+	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); start.setVisible(true);}
 	
 	
-	private boolean isStartGameValid() {
+	public boolean isStartGameValid() {
 		ArrayList<Integer> humanPlayers = new ArrayList<>();
 		ArrayList<Integer> AIPlayers = new ArrayList<>();
-		int totalPlayers = 0;
 		//Count number of players
 		for(int i = 0 ; i < menuBtns.length ; i++) {
 			if(menuBtns[i].getText().equals("Human")){
 				humanPlayers.add(i);
-				totalPlayers++;
 			}else if(menuBtns[i].getText().contains("AI")) {
 				AIPlayers.add(i);
-				totalPlayers++;
 			}
 		}
+		//check if we don't skip players (eg if p2=human, we must have p1 and p0 in selection as well)
+		ArrayList<Integer> allPlayers = new ArrayList<>();
+		allPlayers.addAll(humanPlayers);
+		allPlayers.addAll(AIPlayers);
+		Collections.sort(allPlayers);
+		boolean isInOrder = true;
+		for(int i = 0 ; i < allPlayers.size() ; i++) {
+			if(i != allPlayers.get(i)) {
+				isInOrder = false;
+			}
+		}
+		
 		//check if every player has a unique shield
 		ArrayList<Image> shieldImages = new ArrayList<>();
 		boolean duplicate = false;
@@ -256,11 +263,18 @@ public class TitleScreenController implements Initializable{
 			errorMsg.setText("Must have at least 1 human player to start the game");
 			return false;
 		}
-		if(totalPlayers < 2 ) {
+		if(humanPlayers.size() + AIPlayers.size() < 2 ) {
 			logger.info("Must have at least 2 players to start game");
 			errorMsg.setText("Must have at least 2 players to start game");
 			return false;
 		}
+		if(!isInOrder) {
+			logger.info("Must choose players in order, (e.g if you have player 1, player 0 must exists as well)");
+			errorMsg.setText("Must choose players in order, (e.g if you have player 1, player 0 must exists as well)");
+			return false;
+		}
+
+		errorMsg.setText("");
 		return true;
 	}
 	
@@ -272,7 +286,7 @@ public class TitleScreenController implements Initializable{
 		}
 		
 		
-		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
+//		for(int i=0;i<players.length;i++) { logger.info); }
 	
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
@@ -282,13 +296,11 @@ public class TitleScreenController implements Initializable{
 		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 		double scaleX = screenBounds.getMaxX()/1920; //FXML anchor pane width is 1024 and height is 768
 		double scaleY = screenBounds.getMaxY()/1080;
-//			System.out.println("scale X: " + scaleX);
-//			System.out.println("scale y: " + scaleY);
 		scaleScene(gameScene,scaleX,scaleY);
 		
 		//give the GameBoardController the client if we got it
 		//in this case the GBC should always have the client when we initialize it
-		System.out.println("GameBoardController has reference to Client");
+		logger.info("GameBoardController has reference to Client");
 		GameBoardController gbc = fxmlLoader.getController();
 		gbc.setClient(client);
 		gbc.setUp();
@@ -379,6 +391,7 @@ public class TitleScreenController implements Initializable{
 		shieldViewArr[3] = shieldView4;
 	}
 	public void setRigged(boolean b) {
+		logger.info("Set the game to rigged");
 		this.rigged = b;
 	}
 
