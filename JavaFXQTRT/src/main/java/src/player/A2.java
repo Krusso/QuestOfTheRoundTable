@@ -16,6 +16,7 @@ import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
+import src.game_logic.StoryCard;
 
 public class A2 extends AbstractAI {
 	final static Logger logger = LogManager.getLogger(A2.class);
@@ -61,7 +62,8 @@ public class A2 extends AbstractAI {
 	}
 
 	@Override
-	public List<List<AdventureCard>> implDoISponserAQuest(QuestCard questCard) {
+	public List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard) {
+		rounds = 0;
 		int length = pm.getNumPlayers();
 		for(int i = 0; i < length; i++) {
 			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
@@ -79,7 +81,7 @@ public class A2 extends AbstractAI {
 		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<AdventureCard>()));
 
 		//set up last stage to be atleast 40
-		if(sortedfoes.size() <= 0) return new ArrayList<List<AdventureCard>>();
+		if(sortedfoes.size() <= 0) return null;
 
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
@@ -90,7 +92,7 @@ public class A2 extends AbstractAI {
 				cards.get(stages).add(biggestWeapon);
 		}
 
-		if(bp < 40) return new ArrayList<List<AdventureCard>>();
+		if(bp < 40) return null;
 
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
@@ -121,23 +123,35 @@ public class A2 extends AbstractAI {
 
 		cards.remove(0);
 
+		BattlePointCalculator bc = new BattlePointCalculator(null);
+		int min = Integer.MIN_VALUE;
 		for(List<AdventureCard> i: cards) {
-			if(i.size() == 0) return new ArrayList<List<AdventureCard>>();	
+			if(i.size() == 0) {
+				logger.info("A2 doesnt want to sponsor tournament not enough different bp foes/tests");
+				return null;	
+			}
+			int pointsInStage = bc.calculateStage(this.pm.players[pm.getCurrentPlayer()].hand, 
+					i.stream().map(j -> j.getName()).toArray(String[]::new),
+					(StoryCard) questCard);
+			if(pointsInStage < min) {
+				return null;
+			}
+			min = pointsInStage;
 		}
-
-		// TODO: make sure stage before last is less bp than last stage
 
 		return cards;
 	}
 
 	@Override
 	public boolean doIParticipateInQuest(QuestCard questCard) {
+		logger.info("Asking A2 if wants to join tournament");
 		List<AdventureCard> sortedfoes = bpc.listOfTypeDecreasingBp(player, TYPE.FOES, questCard, pm.iseultExists());
 
 		int tenIncrements = 0;
 		for(AdventureCard card: player.hand.getDeck()) {
 			if((card.getType() == TYPE.WEAPONS || card.getType() == TYPE.ALLIES
 					|| card.getType() == TYPE.AMOUR) && card.getBattlePoints() == 10) {
+				logger.info("Asking A2 doesnt want to join the tournament not enough increments of 10");
 				tenIncrements++;
 			}
 		}
@@ -188,7 +202,8 @@ public class A2 extends AbstractAI {
 	}
 
 	@Override
-	public int implNextBid(int prevBid) {
+	public int nextBid(int prevBid) {
+		rounds++;
 		List<AdventureCard> cards = discardAfterWinningTest();
 		if(cards == null || cards.size() <= prevBid) {
 			return -1;
@@ -196,7 +211,7 @@ public class A2 extends AbstractAI {
 			return cards.size();
 		}
 	}
-
+	
 	@Override
 	public List<AdventureCard> discardAfterWinningTest() {
 		logger.info("Discarding cards after round: " + rounds);
@@ -220,5 +235,4 @@ public class A2 extends AbstractAI {
 			return null;
 		}
 	}
-
 }

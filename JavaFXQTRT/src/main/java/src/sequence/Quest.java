@@ -59,6 +59,17 @@ public class Quest {
 		}
 	}
 
+	public AdventureCard getFoeOrTest() {
+		for(Card c: quest.get(currentStage)) {
+			if(c instanceof FoeCard) {
+				return (AdventureCard) c;
+			} else if(c instanceof TestCard) {
+				return (AdventureCard) c;
+			}
+		}
+		return null;
+	}
+	
 	public TYPE currentStageType() {
 		for(Card card : quest.get(currentStage)) {
 			if (card instanceof FoeCard) {

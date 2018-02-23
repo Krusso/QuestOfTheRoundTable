@@ -27,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
 import src.client.GameBoardController.STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AllyCard;
@@ -60,6 +61,7 @@ import src.messages.quest.QuestPassStageServer;
 import src.messages.quest.QuestPickCardsServer;
 import src.messages.quest.QuestPickStagesServer;
 import src.messages.quest.QuestSponsorServer;
+import src.messages.quest.QuestSponsorServerCant;
 import src.messages.quest.QuestUpServer;
 import src.messages.rank.RankServer;
 import src.messages.tournament.TournamentAcceptDeclineServer;
@@ -80,7 +82,7 @@ class AddCardsTask extends Task{
 	public void run() {
 		File[] list = cardDir.listFiles();
 		for(String card: cards) {
-			boolean didAddCard = false;;
+			boolean didAddCard = false;
 			//find file associated to name
 			for(File f : list) {
 				if ((f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) && 
@@ -144,7 +146,6 @@ class TurnNextTask extends Task{
 		gbc.removeDraggableFaceDown();
 		gbc.setPlayerTurn(player);
 		gbc.showPlayerHand(player);
-
 	}
 }
 
@@ -205,6 +206,27 @@ class MiddleCardTask extends Task{
 	}
 }
 
+class QuestSponsorTaskCant extends Task {
+	private int player;
+	public QuestSponsorTaskCant(GameBoardController gbc, int player) {
+		super(gbc);
+		this.player = player;
+	}
+	
+	@Override
+	public void run() {
+		gbc.CURRENT_STATE = STATE.SPONSOR_QUEST;
+		gbc.setButtonsInvisible();
+		gbc.setPlayerPerspectiveTo(player);
+		gbc.showDecline();
+		gbc.showToast("Cant Sponsor Tournament");
+		gbc.setMerlinMordredVisibility();
+		if(gbc.playerManager.getAI(player) != null) {
+			gbc.decline.fire();
+		}
+	}
+}
+
 class QuestSponsorTask extends Task {
 	private int player;
 	public QuestSponsorTask(GameBoardController gbc, int player) {
@@ -219,8 +241,9 @@ class QuestSponsorTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
 		gbc.showToast("Sponsor Quest?");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
-			if(gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard) != null) {
+			if(gbc.playerManager.getAI(player).doISponsorAQuest(gbc.questCard) != null) {
 				gbc.accept.fire();
 			} else {
 				gbc.decline.fire();
@@ -323,8 +346,9 @@ class QuestPickStagesTask extends Task {
 		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
-			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponserAQuest(gbc.questCard);
+			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponsorAQuest(gbc.questCard);
 			for(int i = 0; i < cards.size(); i++) {
 				for(int j = 0; j < cards.get(i).size(); j++) {
 					gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.stages[i], cards.get(i).get(j));	
@@ -352,6 +376,7 @@ class QuestJoinTask extends Task {
 		gbc.addDraggable();
 		gbc.clearToast();
 		gbc.showToast("Join Quest?");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			if(gbc.playerManager.getAI(player).doIParticipateInQuest(gbc.questCard)) {
 				gbc.accept.fire();
@@ -383,6 +408,7 @@ class QuestPickCardsTask extends Task {
 		gbc.highlightFaceUp(player);
 		gbc.clearToast();
 		gbc.showToast("Select Cards for current stage");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard.getNumStages() == gbc.currentStage + 1, 
 					gbc.questCard);
@@ -437,6 +463,8 @@ class DiscardFaceUpTask extends Task {
 		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
+		gbc.showDiscardPane();
+		gbc.setMerlinMordredVisibility();
 	}
 }
 
@@ -493,6 +521,7 @@ class QuestBidTask extends Task {
 			gbc.bidSlider.setSnapToTicks(true);
 			gbc.clearToast();
 			gbc.showToast("Use the slider to enter how many cards you want to bid.");
+			gbc.setMerlinMordredVisibility();
 			if(gbc.playerManager.getAI(player) != null) {
 				int amount = gbc.playerManager.getAI(player).nextBid(min);
 				if(amount == -1) {
@@ -523,6 +552,8 @@ class DiscardQuestTask extends Task {
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.addDraggable();
 		gbc.removeStagePaneDragOver();
+		gbc.showDiscardPane();
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -548,6 +579,7 @@ class JoinTournamentTask extends Task {
 		gbc.removeStagePaneDragOver();
 		gbc.clearToast();
 		gbc.showToast("Join Tournament?");
+		gbc.setMerlinMordredVisibility();
 		logger.info("Processing join tournament message");
 		if(gbc.playerManager.getAI(player) != null) {
 			if(gbc.playerManager.getAI(player).doIParticipateInTournament()) {
@@ -579,6 +611,7 @@ class PickTournamentTask extends Task {
 		gbc.clearToast();
 		gbc.showToast("Select cards to use for the tournament");
 		logger.info("Processing pick tournament cards message");
+		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).playCardsForTournament();
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -655,7 +688,12 @@ class HandFullDiscardTask extends Task {
 		gbc.setButtonsInvisible();
 		gbc.setDiscardVisibility(true);
 		gbc.addDraggable();
-
+		gbc.showDiscardPane();
+		if(gbc.playerManager.getAI(player) != null) {
+			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size());
+			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
+			gbc.endTurn.fire();
+		}
 	}
 
 }
@@ -817,6 +855,7 @@ public class Client implements Runnable {
 								cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
 								cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
 								this.send(new CalculatePlayerClient(this.gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
+								this.gbc.setMerlinMordredVisibility();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
@@ -877,6 +916,10 @@ public class Client implements Runnable {
 					/*
 					 * Dealing with Quest state
 					 */
+					if(message.equals(MESSAGETYPES.SPONSERQUESTCANT.name())) {
+						QuestSponsorServerCant request = gson.fromJson(obj, QuestSponsorServerCant.class);
+						Platform.runLater(new QuestSponsorTaskCant(gbc, request.player));
+					}
 					if(message.equals(MESSAGETYPES.PASSALL.name())) {
 						QuestPassAllServer qpss = gson.fromJson(obj, QuestPassAllServer.class);
 						int[] players = qpss.players;
@@ -902,6 +945,15 @@ public class Client implements Runnable {
 									}
 								});
 								this.wait();
+								Platform.runLater(new Runnable() {
+									@Override
+									public void run() {
+										gbc.stageCards.forEach(i -> i.clear());
+										for(Pane p: gbc.stages) {
+											p.getChildren().clear();
+										}
+									}
+								});
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}

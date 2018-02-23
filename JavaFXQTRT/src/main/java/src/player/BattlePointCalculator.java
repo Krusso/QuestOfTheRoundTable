@@ -1,21 +1,27 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.AdventureDeck;
-import src.game_logic.Card;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank.RANKS;
 import src.game_logic.StoryCard;
 
 public class BattlePointCalculator {
 
+	final static Logger logger = LogManager.getLogger(BattlePointCalculator.class);
+	
 	private PlayerManager pm;
 
 	public BattlePointCalculator(PlayerManager pm) {
@@ -23,6 +29,7 @@ public class BattlePointCalculator {
 	}
 
 	public int calculatePoints(Player player, boolean iseultExists) {
+		logger.info("Calculating player: " + player.getID() + " score");
 		int score = 0;
 		RANKS rank = player.getRank();
 		if(rank == RANKS.SQUIRE) {
@@ -39,6 +46,7 @@ public class BattlePointCalculator {
 
 		AdventureDeck cards = player.getFaceUp();
 		score += cards.getBP();
+		logger.info("Player: " + player.getID() + " score: " + score);
 		return score;
 	}
 	
@@ -134,6 +142,8 @@ public class BattlePointCalculator {
 	}
 
 	public int calculatePlayer(int player, String[] cards, StoryCard storyCard) {
+		logger.info("Calculating score for player id: " + player + " with middle card: " + storyCard.getName());
+		logger.info("Player cards: " + Arrays.toString(cards));
 		Player p = pm.players[player];
 		int score = 0;
 		RANKS rank = p.getRank();
@@ -175,30 +185,51 @@ public class BattlePointCalculator {
 				score += 10;
 			}
 		}
+		
+		logger.info("Player score is: " + score);
 		return score;
 	}
 
-	public int calculateStage(int player, String[] cards, StoryCard storyCard) {
+	public int calculateStage(AdventureDeck hand, String[] cards, StoryCard storyCard) {
+		logger.info("Calculating score for stage with quest: " + storyCard.getName());
 		if(storyCard.getType() != src.game_logic.StoryCard.TYPE.QUEST) {
 			return 0;
 		}
 		
 		int score = 0;
-		Player p = pm.players[player];
+		logger.info("Cards in stage: " + Arrays.toString(cards));
 		for(String c: cards) {
-			AdventureCard card = p.getFaceUp().findCardByName(c);
-			if(card == null) {
-				card = p.hand.findCardByName(c);
-			}
-			
-			if(card.checkIfNamed(((QuestCard) storyCard).getFoe())){
+			AdventureCard card = hand.findCardByName(c);
+			if(card.checkIfNamed(((QuestCard) storyCard).getFoe()) && card.getType() == TYPE.FOES){
 				score += card.getNamedBattlePoints();
+				logger.info("Card: " + card + " score-named: " + card.getNamedBattlePoints());
 			} else {
 				score += card.getBattlePoints();
+				logger.info("Card: " + card + " score: " + card.getBattlePoints());
 			}
 		}
 		
+		logger.info("Score is: " + score);
 		return score;
+	}
+
+	public boolean canSponsor(Player next, QuestCard card) {
+		List<AdventureCard> foes = this.uniqueListOfTypeDecreasingBp(next, TYPE.FOES, card, false);
+		List<AdventureCard> tests = this.uniqueListOfTypeDecreasingBp(next, TYPE.TESTS, card, false);
+		int uniqueBpFoes = 0;
+		int minBp = Integer.MIN_VALUE;
+		Collections.reverse(foes);
+		for(AdventureCard c: foes) {
+			if(getPoints(c, false, card) > minBp) {
+				uniqueBpFoes++;
+				minBp = getPoints(c,false,card);
+			}
+		}
+		
+		if(tests.size() != 0) {
+			uniqueBpFoes++;
+		}
+		return uniqueBpFoes + 1 >= card.getNumStages();
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
+import src.game_logic.TestCard;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestBidClient;
 import src.messages.tournament.TournamentPickCardsClient;
@@ -27,7 +28,7 @@ public abstract class SequenceManager {
 		}
 	}
 
-	protected Pair questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, QuestCard card) {
+	protected Pair questionPlayersForBid(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions, QuestCard card, TestCard testCard) {
 		Queue<Player> notDropped = new LinkedList<Player>();
 		players.forEachRemaining(i -> notDropped.add(i));
 		int maxBidValue = Integer.MIN_VALUE;
@@ -36,7 +37,8 @@ public abstract class SequenceManager {
 			Player next = notDropped.poll();
 			pm.setPlayer(next);
 			int playerMaxBid = bc.maxBid(next, card);			
-			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue + 1));
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, (testCard.getName().equals("Test of the Questing Beast") &&
+					card.getName().equals("Search for the Questing Beast") ? 4 : 3));
 			QuestBidClient qbc = actions.take(QuestBidClient.class);
 			if(qbc.bid != -1) {
 				notDropped.add(next);
@@ -47,7 +49,9 @@ public abstract class SequenceManager {
 			Player next = notDropped.poll();
 			pm.setPlayer(next);
 			int playerMaxBid = bc.maxBid(next, card);			
-			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid, Math.max(3, maxBidValue + 1));
+			pm.setBidAmount(next, Player.STATE.BIDDING, playerMaxBid,Math.max(
+					(testCard.getName().equals("Test of the Questing Beast") && card.getName().equals("Search for the Questing Beast")
+							? 4 : (testCard.getName().equals("Test of Morgan Le Fey") ? 3 : 1)), maxBidValue + 1));
 			QuestBidClient qbc = actions.take(QuestBidClient.class);
 			if(qbc.bid != -1) {
 				maxBidValue = qbc.bid;

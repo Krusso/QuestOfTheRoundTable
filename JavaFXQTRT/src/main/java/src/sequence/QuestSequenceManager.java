@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
+import src.game_logic.TestCard;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestDiscardCardsClient;
 import src.messages.quest.QuestJoinClient;
 import src.messages.quest.QuestPickCardsClient;
 import src.messages.quest.QuestSponsorClient;
+import src.player.BattlePointCalculator;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -20,16 +25,24 @@ public class QuestSequenceManager extends SequenceManager {
 	Quest quest;
 	Player sponsor;
 
+	final static Logger logger = LogManager.getLogger(QuestSequenceManager.class);
+	
 	public QuestSequenceManager(QuestCard card) { this.card = card; }
 
 	@Override
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
+		logger.info("Starting quest sequence: " + this.card.getName());
+		BattlePointCalculator bc = new BattlePointCalculator(pm);
 		// Finding player who wants to sponsor quest
 		Iterator<Player> players = pm.round();
 		while(players.hasNext()) {
 			Player next = players.next();
 			pm.setPlayer(next);
-			pm.setState(next, Player.STATE.QUESTQUESTIONED);
+			if(bc.canSponsor(next, card)) {
+				pm.setState(next, Player.STATE.QUESTQUESTIONED);	
+			} else {
+				pm.setState(next, Player.STATE.QUESTQUESTIONEDCANT);
+			}
 			QuestSponsorClient qsc = actions.take(QuestSponsorClient.class);
 			if(qsc.sponser) {
 				pm.setState(next, Player.STATE.SPONSORING, card.getNumStages());
@@ -88,8 +101,7 @@ public class QuestSequenceManager extends SequenceManager {
 				} else if (quest.currentStageType() == Quest.TYPE.TEST) {
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					players = winners.iterator();
-					Pair bidWinner = questionPlayersForBid(players, pm, actions, card);
-					// No one decided to bid not sure if legal?
+					Pair bidWinner = questionPlayersForBid(players, pm, actions, card, (TestCard) quest.getFoeOrTest());
 					if(bidWinner == null) {
 						winners.clear();
 						break;
@@ -107,10 +119,16 @@ public class QuestSequenceManager extends SequenceManager {
 			pm.passQuest(winners);
 		}
 		if(winners.size() > 0) {
-			pm.changeShields(winners, quest.getNumStages());
+			if(bm.isSetKingRecognition()) {
+				bm.setSetKingRecognition(false);
+				pm.changeShields(winners, quest.getNumStages() + 2);	
+			} else {
+				pm.changeShields(winners, quest.getNumStages());
+			}
 		}
-
-		// TODO: discard all cards from participants except Allies
+		
+		pm.discardCards(participants);
 		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
+		logger.info("finished quest sequence: " + this.card.getName());
 	}
 }

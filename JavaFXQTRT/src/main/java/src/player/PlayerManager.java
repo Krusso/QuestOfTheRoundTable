@@ -55,19 +55,23 @@ public class PlayerManager {
 				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
 				//cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+//				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
 				//cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
 				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
 				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 				cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
-//				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new TestCard("Test of the Questing Beast", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+//				cards.add(new AllyCard("Merlin",10,10,2, TYPE.ALLIES));
+				//cards.add(new FoeCard("Mordred", 30, 30, TYPE.ALLIES));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				//cards.add(new TestCard("Test of the Questing Beast", TYPE.TESTS));
 				//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
 				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
 				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
-				//cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+//				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 				players[i - 1].addCards(cards);
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
@@ -233,7 +237,7 @@ public class PlayerManager {
 			player.increaseLevel();
 			if(player.getRank() == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) {
 				player.setState(Player.STATE.WINNING);
-				winners.set(true);;
+				winners.set(true);
 			}
 		});
 		return winners.get();

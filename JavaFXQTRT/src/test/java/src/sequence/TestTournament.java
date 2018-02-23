@@ -217,7 +217,7 @@ public class TestTournament {
 				assertEquals(Player.STATE.NO, players.get(i).getQuestion());
 			}
 		}
-
+		Thread.sleep(100);
 		// player 0 won
 		assertEquals(4,players.get(0).getShields());
 		assertEquals(0,players.get(1).getShields());

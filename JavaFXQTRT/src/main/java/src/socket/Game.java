@@ -24,6 +24,7 @@ public class Game extends Thread{
 	private GameModel gm;
 	private QOTRTQueue actions;
 	private boolean rigged;
+	private BoardModel bm;
 
 	public Game(OutputController output, GameModel gm) {
 		this.output = output;
@@ -31,8 +32,7 @@ public class Game extends Thread{
 	}
 
 	public void run() {
-		
-		BoardModel bm = new BoardModel();
+		bm = new BoardModel();
 		DeckManager dm = new DeckManager();
 		PlayerManager pm = new PlayerManager(gm.getNumPlayers(), dm, rigged);
 		PlayersView pvs = new PlayersView(output);
@@ -67,11 +67,15 @@ public class Game extends Thread{
 
 			logger.info("Waiting for player to continue to next turn");
 			// wait until client is ready for the next turn
-			actions.take(ContinueGameClient.class);
+			//actions.take(ContinueGameClient.class);
 		}
 
 	}
 
+	public BoardModel getBoardModel() {
+		return this.bm;
+	}
+	
 	public void setActionQueue(QOTRTQueue actionQueue) {
 		this.actions = actionQueue;
 	}

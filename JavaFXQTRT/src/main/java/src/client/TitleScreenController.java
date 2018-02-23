@@ -5,21 +5,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.application.Application;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -35,12 +38,13 @@ import src.messages.game.GameStartClient;
 import src.socket.Server;
 
 public class TitleScreenController extends Application implements Initializable{
-
+	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
 	private Client client;
+	@FXML public Text errorMsg;
 	
 	@FXML private Text	numPlayerslabel;
 	@FXML private TextField numPlayers;
-	@FXML private Button start;
+	@FXML public Button start;
 	@FXML private Pane p;
 	@FXML public Pane background;
 	
@@ -64,6 +68,7 @@ public class TitleScreenController extends Application implements Initializable{
 	@FXML private ImageView shieldView2;
 	@FXML private ImageView shieldView3;
 	@FXML private ImageView shieldView4;
+	private ImageView[] shieldViewArr = new ImageView[4];
 	private int playerShield1=-1;
 	private int playerShield2=-1;
 	private int playerShield3=-1;
@@ -73,6 +78,7 @@ public class TitleScreenController extends Application implements Initializable{
 	@FXML private MenuButton b2;
 	@FXML private MenuButton b3;
 	@FXML private MenuButton b4;
+	private MenuButton[] menuBtns = new MenuButton[4];
 
 	private boolean rigged;
 	
@@ -211,12 +217,82 @@ public class TitleScreenController extends Application implements Initializable{
 	}
 	
 	public void hideMenu() { menuPane.setVisible(false); }
-	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); }
+	@FXML public void showPlayerSelect(ActionEvent e) throws IOException { hideMenu(); playerSelect.setVisible(true); start.setVisible(true);}
+	
+	
+	public boolean isStartGameValid() {
+		ArrayList<Integer> humanPlayers = new ArrayList<>();
+		ArrayList<Integer> AIPlayers = new ArrayList<>();
+		//Count number of players
+		for(int i = 0 ; i < menuBtns.length ; i++) {
+			if(menuBtns[i].getText().equals("Human")){
+				humanPlayers.add(i);
+			}else if(menuBtns[i].getText().contains("AI")) {
+				AIPlayers.add(i);
+			}
+		}
+		//check if we don't skip players (eg if p2=human, we must have p1 and p0 in selection as well)
+		ArrayList<Integer> allPlayers = new ArrayList<>();
+		allPlayers.addAll(humanPlayers);
+		allPlayers.addAll(AIPlayers);
+		Collections.sort(allPlayers);
+		boolean isInOrder = true;
+		for(int i = 0 ; i < allPlayers.size() ; i++) {
+			if(i != allPlayers.get(i)) {
+				isInOrder = false;
+			}
+		}
+		
+		//check if every player has a unique shield
+		ArrayList<Image> shieldImages = new ArrayList<>();
+		boolean duplicate = false;
+		for(Integer i : humanPlayers) {
+			shieldImages.add(shieldViewArr[i].getImage());
+		}
+		for(Integer i : AIPlayers) {
+			shieldImages.add(shieldViewArr[i].getImage());
+		}
+		for(int i = 0 ; i < shieldImages.size() ; i++) {
+			for(int j = i+1 ; j < shieldImages.size(); j++) {
+				if(shieldImages.get(i).equals(shieldImages.get(j))) {
+					duplicate = true;
+				}
+			}
+		}
+		if(duplicate) {
+			logger.info("Players cannot have the same shield");
+			errorMsg.setText("Players cannot have the same shield");
+			return false;
+		}
+		if(!(humanPlayers.size() > 0)) {
+			logger.info("Must have at least 1 human player to start the game");
+			errorMsg.setText("Must have at least 1 human player to start the game");
+			return false;
+		}
+		if(humanPlayers.size() + AIPlayers.size() < 2 ) {
+			logger.info("Must have at least 2 players to start game");
+			errorMsg.setText("Must have at least 2 players to start game");
+			return false;
+		}
+		if(!isInOrder) {
+			logger.info("Must choose players in order, (e.g if you have player 1, player 0 must exists as well)");
+			errorMsg.setText("Must choose players in order, (e.g if you have player 1, player 0 must exists as well)");
+			return false;
+		}
+
+		errorMsg.setText("");
+		return true;
+	}
 	
 	@FXML
 	private void handleButtonAction(ActionEvent e) throws IOException {
+		if(!isStartGameValid()) {
+			logger.info("Cannot start game");
+			return;
+		}
 		
-		for(int i=0;i<players.length;i++) { System.out.println(players[i]); }
+		
+//		for(int i=0;i<players.length;i++) { logger.info); }
 	
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
@@ -226,13 +302,11 @@ public class TitleScreenController extends Application implements Initializable{
 		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 		double scaleX = screenBounds.getMaxX()/1920; //FXML anchor pane width is 1024 and height is 768
 		double scaleY = screenBounds.getMaxY()/1080;
-//			System.out.println("scale X: " + scaleX);
-//			System.out.println("scale y: " + scaleY);
 		scaleScene(gameScene,scaleX,scaleY);
 		
 		//give the GameBoardController the client if we got it
 		//in this case the GBC should always have the client when we initialize it
-		System.out.println("GameBoardController has reference to Client");
+		logger.info("GameBoardController has reference to Client");
 		GameBoardController gbc = fxmlLoader.getController();
 		gbc.setClient(client);
 		gbc.setUp();
@@ -332,8 +406,17 @@ public class TitleScreenController extends Application implements Initializable{
 			e.printStackTrace();
 		}
 		
+		menuBtns[0] = b1;
+		menuBtns[1] = b2;
+		menuBtns[2] = b3;
+		menuBtns[3] = b4;
+		shieldViewArr[0] = shieldView1;
+		shieldViewArr[1] = shieldView2;
+		shieldViewArr[2] = shieldView3;
+		shieldViewArr[3] = shieldView4;
 	}
 	public void setRigged(boolean b) {
+		logger.info("Set the game to rigged");
 		this.rigged = b;
 	}
 	

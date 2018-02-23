@@ -32,13 +32,37 @@ import src.messages.quest.QuestPickStagesClient;
 import src.messages.quest.QuestSponsorClient;
 import src.player.Player;
 import src.player.PlayerManager;
-import src.player.TestA2;
 import src.socket.OutputController;
 import src.views.PlayerView;
 import src.views.PlayersView;
 
 public class TestQuests {
 	final static Logger logger = LogManager.getLogger(TestQuests.class);
+
+	@Test
+	public void testCantSponsorQuest() throws InterruptedException {
+		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",100,new String[] {"Dragon"}));
+		QOTRTQueue input = new QOTRTQueue();
+		Runnable task2 = () -> { qsm.start(input, pm, bm); };
+		new Thread(task2).start();
+		LinkedBlockingQueue<Message> actualOutput = oc.internalQueue;
+		Iterator<Player> iter = pm.round();
+		ArrayList<Player> players = new ArrayList<Player>();
+		iter.forEachRemaining(i -> players.add(i));
+
+		for(int i = 0; i < 4; i++) {
+			while(true) {
+				Message string = actualOutput.take();
+				logger.info(string);
+				if(string.message == MESSAGETYPES.SPONSERQUESTCANT && string.player == i) break;
+			}
+			assertEquals(Player.STATE.QUESTQUESTIONEDCANT, players.get(i).getQuestion());
+			input.put(new QuestSponsorClient(i, false));
+			Thread.sleep(100);
+			assertEquals(Player.STATE.NO, players.get(i).getQuestion());
+		}
+	}
+
 	@Test
 	public void testDiscardForQuests() throws InterruptedException {
 		QuestSequenceManager qsm = new QuestSequenceManager(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
@@ -207,11 +231,11 @@ public class TestQuests {
 			}
 		}
 
-				while(true) {
-					Message string = actualOutput.take();
-					logger.info(string);
-					if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
-				}
+		while(true) {
+			Message string = actualOutput.take();
+			logger.info(string);
+			if(string.message == MESSAGETYPES.PICKSTAGES && string.player == 3) break;
+		}
 
 		// sending cards for each stage
 		input.put(new QuestPickStagesClient(3, new String[] {"Test of Valor"}, 0) );
