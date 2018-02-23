@@ -535,9 +535,11 @@ class QuestBidTask extends Task {
 
 class DiscardQuestTask extends Task {
 	private int player;
-	public DiscardQuestTask(GameBoardController gbc, int player) {
+	private int toDiscard;
+	public DiscardQuestTask(GameBoardController gbc, int player, int toDiscard) {
 		super(gbc);
 		this.player = player;
+		this.toDiscard = toDiscard;
 
 	}
 	@Override
@@ -552,6 +554,9 @@ class DiscardQuestTask extends Task {
 		gbc.removeStagePaneDragOver();
 		gbc.showDiscardPane();
 		gbc.setMerlinMordredVisibility();
+		gbc.clearToast();
+		gbc.showToast("Select " +  toDiscard + " cards to discard");
+		gbc.toDiscard = toDiscard;
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
@@ -842,6 +847,11 @@ public class Client implements Runnable {
 							Platform.runLater(new Runnable() {
 								@Override
 								public void run() {
+									gbc.stageCards.forEach(i -> i.clear());
+									for(Pane p: gbc.stages) {
+										p.getChildren().clear();
+									}
+									
 									gbc.setButtonsInvisible();
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
@@ -958,6 +968,7 @@ public class Client implements Runnable {
 						toDiscard.forEach(i -> Platform.runLater(i));
 						toDiscard.clear();
 						Platform.runLater(new QuestPickCardsTask(gbc, request.player));
+						this.send(new CalculatePlayerClient(0, new String[] {}));
 					}
 					if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
 						FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);
@@ -987,7 +998,7 @@ public class Client implements Runnable {
 						QuestDiscardCardsServer request = gson.fromJson(obj, QuestDiscardCardsServer.class);
 
 						//Discard "Face Down" cards because that is where players play their cards.
-						Platform.runLater(new DiscardQuestTask(gbc, request.player));
+						Platform.runLater(new DiscardQuestTask(gbc, request.player, request.cardsToDiscard));
 					}
 					if(message.equals(MESSAGETYPES.DISCARDHANDFULL.name())){
 						HandFullServer request = gson.fromJson(obj, HandFullServer.class);
