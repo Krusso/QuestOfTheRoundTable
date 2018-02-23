@@ -90,7 +90,7 @@ public class UIPlayerManager {
 	}
 
 	public void flipFaceUpCards(int playerNum) {
-		System.out.println("Flipping cards");
+		logger.info("Flipping cards");
 		ArrayList<AdventureCard> p = getFaceUpCardsAsList(playerNum);
 		p.forEach(card-> {
 			card.flipUp().play();

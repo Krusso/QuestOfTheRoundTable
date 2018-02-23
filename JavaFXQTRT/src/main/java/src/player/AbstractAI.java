@@ -1,6 +1,7 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
-import src.game_logic.Card;
+import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
 
@@ -39,6 +40,19 @@ public abstract class AbstractAI {
 	public abstract List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard);
 	public abstract int nextBid(int prevBid);
 
+	
+	public List<AdventureCard> discardKingsCalltoArms(int n, TYPE type){
+		List<AdventureCard> cards = new ArrayList<AdventureCard>();
+		Iterator<AdventureCard> x = player.getPlayerHandAsList().iterator();
+		while(cards.size() != n && x.hasNext()) {
+			AdventureCard y = x.next();
+			if(y.getType() == type) {
+				cards.add(y);
+			}
+		}
+		
+		return cards;
+	}
 	
 	public List<AdventureCard> discardWhenHandFull(int n){
 		return player.hand.drawTopCards(n);

@@ -20,7 +20,7 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Vanquish King Arthur's Enemies",3,new String[] {}),2);
 //		addCard(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}),1);
 //		addCard(new QuestCard("Boar Hunt",2,new String[] {"Boar"}),2);
-//		addCard(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"}),2);
+		addCard(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"}),2);
 
 //		addCard(new TournamentCard("Tournament at Camelot",3),1);
 //		addCard(new TournamentCard("Tournament at Orkney",2),1);
@@ -34,7 +34,7 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new EventCard("Plague"),1);
 //		addCard(new EventCard("Chivalrous Deed"),1);
 //		addCard(new EventCard("Prosperity Throughout the Realm"),1);
-//		addCard(new EventCard("King's Call to Arms"),1);
+//		addCard(new EventCard("King's Call to Arms"),2);
 	}
 
 
