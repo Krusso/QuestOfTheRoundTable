@@ -455,6 +455,7 @@ public class TitleScreenController extends Application implements Initializable{
 		}
 	}
 	public GameBoardController getGameBoardController() {
+		
 		return gbc;
 	}
 }

@@ -3,6 +3,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +20,7 @@ import src.socket.Server;
 
 
 public class Main extends Application {
+	final static Logger logger = LogManager.getLogger(Main.class);
 	public static LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
 	public static LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
 	public static Client client;
@@ -36,6 +40,7 @@ public class Main extends Application {
 
 			//Get the controller instance
 			tlc = fxmlLoader.getController();
+			logger.info("Main's TitleScreenController reference:" + tlc);
 			//Pass the client to the controller
 			tlc.setClient(client);
 

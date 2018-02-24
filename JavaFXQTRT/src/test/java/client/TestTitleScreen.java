@@ -13,7 +13,9 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import src.client.GameBoardController;
 import src.client.Main;
+import src.client.TitleScreenController;
 import src.socket.Server;
 
 public class TestTitleScreen extends TestFXBase{
@@ -24,18 +26,7 @@ public class TestTitleScreen extends TestFXBase{
 	final String START_BUTTON_ID = "#start";
 	final String ERROR_MESSAGE_ID = "#errorMsg";
 	final String PLAYER_SELECT_ID = "#playerSelect";
-		
-	@Override
-	public void start(Stage stage) throws Exception {
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
-		LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
-		Runnable task2 = () -> { new Server(input, output); };
-		Main.input = input;
-		Main.output = output;
-		// start the thread
-		new Thread(task2).start();
-		new Main().start(stage);
-	}
+	
 	
 	/**
 	 * Tests to ensure menu pane will display after new game button is clicked
@@ -110,7 +101,12 @@ public class TestTitleScreen extends TestFXBase{
 		clickOn(NEXT_SHIELD_BUTTON_1_ID);
 		clickOn(START_BUTTON_ID);
 		
-		assertTrue(lookup(START_BUTTON_ID).query() == null);
+
+		WaitForAsyncUtils.waitForFxEvents();
+		TitleScreenController tsc = m.getTitleScreenController();
+		GameBoardController gbc = tsc.getGameBoardController();
+//		System.out.println(gbc);
+		assertTrue(gbc != null);
 	}
 
 }

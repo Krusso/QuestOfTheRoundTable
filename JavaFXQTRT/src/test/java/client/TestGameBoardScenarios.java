@@ -5,7 +5,9 @@ import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -14,12 +16,15 @@ import javafx.scene.text.Text;
 import src.client.GameBoardController;
 import src.client.GameBoardController.GAME_STATE;
 import src.client.TitleScreenController;
+import src.game_logic.AdventureCard;
 import src.game_logic.QuestCard;
 import static org.junit.Assert.*;
 
 import static org.junit.Assert.assertTrue;
 
 import static org.testfx.api.FxAssert.verifyThat;
+
+import java.util.ArrayList;
 public class TestGameBoardScenarios extends TestFXBase {
 	GameBoardController gbc;
 	TitleScreenController tsc;
@@ -30,6 +35,8 @@ public class TestGameBoardScenarios extends TestFXBase {
 	final String END_TURN = "#endTurn";
 	final String TOAST = "#toast";
 	final String DISCARD = "#discard";
+	final String USE_MERLIN = "#useMerlin";
+	final String CONTINUE = "#nextTurn";
 	@Before
 	public void setup2Players(){
 		//Rig the game
@@ -46,6 +53,9 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_BUTTON_ID); 
 		
 		WaitForAsyncUtils.waitForFxEvents();
+
+		System.out.println("hello");
+		System.out.println(m);
 		//get tsc
 		tsc = m.getTitleScreenController();
 	}
@@ -55,7 +65,6 @@ public class TestGameBoardScenarios extends TestFXBase {
 	 */
 	@Test
 	public void test2PlayerGameQuest() {
-		sleep(5000);
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
 		clickOn(START_TURN);
@@ -169,24 +178,75 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(ACCEPT);
 
 		WaitForAsyncUtils.waitForFxEvents();
-		sleep(1000);
-		System.out.println(gbc.CURRENT_STATE);
-		//Hand should be too full since we start off wtih 12 cards (and we just drew one so 13 now)
-//		assertTrue(gbc.CURRENT_STATE == GAME_STATE.DISCARDING_CARDS);
-//		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
 		
+		//since we got 13 cards, got to discard one
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.DISCARDING_CARDS);
+		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+		
+		//trying to discard 2 cards
 		ImageView battleax = gbc.findCardInHand("Battle-ax");
-		
 		drag(battleax).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
-		drag(gbc.findCardInHand("Dagger")).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		ImageView dagger = gbc.findCardInHand("Dagger");
+		drag(dagger).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		clickOn(DISCARD);
+		//won't work since you can only discard 1
 		assertTrue(gbc.toast.getText().equals("Can only discard cards if hand has more than 12 cards"));
+		
+		//going to play merlin instead and put back the other 2 cards
+		ImageView merlin = gbc.findCardInHand("Merlin");
+		drag(merlin).moveTo(fdc2).release(MouseButton.PRIMARY);
 		drag(battleax).moveTo(handPane2).release(MouseButton.PRIMARY);
+		drag(dagger).moveTo(handPane2).release(MouseButton.PRIMARY);
+		
+		//try playing these cards into face up / stage (shouldn't work)
+		drag(battleax).moveTo(stage1).release(MouseButton.PRIMARY);
+		assertTrue(!stage1.getChildren().contains(battleax));
+		drag(battleax).moveTo(gbc.playerFaceUp1).release(MouseButton.PRIMARY);
+		assertTrue(!gbc.playerFaceUp1.getChildren().contains(battleax));
+		
+		//finsh discarding so we'll click it now
 		clickOn(DISCARD);
 		
+		//now p2 should be choosing cards to play for the quest stage 1.
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS);
+		
+		//try using Merlin power
+		//find the merline card
+		ArrayList<AdventureCard> fuc = gbc.playerManager.getFaceUpCardsAsList(1);
+		AdventureCard merlinCard;
+		for(AdventureCard c : fuc) {
+			if(c.getName().equals("Merlin")) {
+				merlinCard = c;
+				gbc.useMerlinPower(1, merlinCard);
+				break;
+			}
+		}
+		//make sure all stage cards are visible
+		for(Node n : gbc.stages[1].getChildren()) {
+			assertTrue(n.isVisible());
+		}
+		
+		//now play a card for the quest
+		drag(battleax).moveTo(fdc2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		clickOn(CONTINUE);
+
+		//continue next stage
+		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		clickOn(CONTINUE);
+		
+		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		clickOn(CONTINUE);
+		
+		drag(gbc.findCardInHand("Dagger")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Excalibur")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		clickOn(CONTINUE);
 		
 		sleep(2000);
-
-		
 	}
 	
 

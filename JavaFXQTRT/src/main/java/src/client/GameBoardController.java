@@ -71,6 +71,11 @@ public class GameBoardController implements Initializable{
 	public UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
+	
+
+	public ChoiceDialog<String> merlinDialog; 
+	public ChoiceDialog<String> mordredDialog; 
+	
 	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
@@ -125,11 +130,11 @@ public class GameBoardController implements Initializable{
 	public Pane[] faceDownPanes = new Pane[4];
 
 	//The panes that govern the player's faceup cards
-	@FXML private Pane playerFaceUp0;
-	@FXML private Pane playerFaceUp1;
-	@FXML private Pane playerFaceUp2;
-	@FXML private Pane playerFaceUp3;
-	private Pane[] faceUpPanes = new Pane[4];
+	@FXML public Pane playerFaceUp0;
+	@FXML public Pane playerFaceUp1;
+	@FXML public Pane playerFaceUp2;
+	@FXML public Pane playerFaceUp3;
+	public Pane[] faceUpPanes = new Pane[4];
 
 	@FXML private ImageView playerRank0;
 	@FXML private ImageView playerRank1;
@@ -1396,16 +1401,14 @@ public class GameBoardController implements Initializable{
 							numStages++;
 						}
 					}
-					ChoiceDialog<String> d = new ChoiceDialog<>(null, dialogChoices);
-					d.setTitle("Using Merlin Power");
-					d.setHeaderText("Select a stage to show");
-					d.setContentText("Stage #:");
-					Optional<String> result = d.showAndWait();
+					merlinDialog = new ChoiceDialog<>(null, dialogChoices);
+					merlinDialog.setTitle("Using Merlin Power");
+					merlinDialog.setHeaderText("Select a stage to show");
+					merlinDialog.setContentText("Stage #:");
+					Optional<String> result = merlinDialog.showAndWait();
 					if(result.isPresent() && c.tryUseMerlin()) {
 						int s = Integer.parseInt(result.get()) - 1;
-						setStageCardVisibility(true,s);
-						repositionStageCards(s);
-						playerManager.rememberStage(currentPlayer, s);
+						useMerlinPower(s, c);
 					}
 					return;
 				}
@@ -1449,11 +1452,11 @@ public class GameBoardController implements Initializable{
 				}
 			}
 		    
-			ChoiceDialog<String> d = new ChoiceDialog<>(null, choices);
-			d.setTitle("Using Mordred's Power");
-			d.setHeaderText("Select an opponent's ally card to destroy");
-			d.setContentText("Ally Card:");
-			Optional<String> result = d.showAndWait();
+			mordredDialog = new ChoiceDialog<>(null, choices);
+			mordredDialog.setTitle("Using Mordred's Power");
+			mordredDialog.setHeaderText("Select an opponent's ally card to destroy");
+			mordredDialog.setContentText("Ally Card:");
+			Optional<String> result = merlinDialog.showAndWait();
 			if(result.isPresent()) {
 				Integer[] pNumAndCard = dialogChoices.get(result.get());
 				
@@ -1492,6 +1495,14 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		return null;
+	}
+	public void useMerlinPower(int s, AdventureCard c) {
+		if(c.tryUseMerlin()) {
+			setStageCardVisibility(true,s);
+			repositionStageCards(s);
+			playerManager.rememberStage(playerManager.getCurrentPlayer(), s);
+			logger.info("Player " + playerManager.getCurrentPlayer() + " has used the merlin card to reveal stage " + (s+1));
+		}
 	}
 }
 
