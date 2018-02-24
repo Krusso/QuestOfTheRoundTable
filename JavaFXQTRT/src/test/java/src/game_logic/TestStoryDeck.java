@@ -86,5 +86,4 @@ public class TestStoryDeck {
 				s.equals("Prosperity Throughout the Realm") ||
 				s.equals("King's Call to Arms");
 	}
-	
 }

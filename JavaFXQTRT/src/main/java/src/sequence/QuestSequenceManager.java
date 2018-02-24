@@ -87,6 +87,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 		if(participants.size() != 0) {
 			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
+				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
 				pm.drawCards(winners, 1);
 				if (quest.currentStageType() == Quest.TYPE.FOE) {
 					players = winners.iterator();
@@ -105,7 +106,8 @@ public class QuestSequenceManager extends SequenceManager {
 					pm.flipStage(sponsor, quest.getCurrentStage());
 					players = winners.iterator();
 					Pair bidWinner = questionPlayersForBid(players, pm, actions, card, (TestCard) quest.getFoeOrTest());
-					if(bidWinner == null) {
+					logger.info("Bid winner: " + bidWinner.player);
+					if(bidWinner.player == null) {
 						winners.clear();
 						break;
 					}

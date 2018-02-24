@@ -190,13 +190,6 @@ public class PlayerManager {
 	}
 
 	public void flipCards(Iterator<Player> players) {
-		// TODO: should be its own method imo
-		//		for(int i = 0; i < players.length; i++) {
-		//			if(players[i]== next) {
-		//				players[i].flipCards();
-		//				return;
-		//			}
-		//		}
 		players.forEachRemaining(i -> i.flipCards());
 		pvs.forEach(i -> i.showFaceUp(this.round()));
 	}
@@ -226,12 +219,7 @@ public class PlayerManager {
 	}
 
 	public void discardFromHand(Player player, String[] cards) {
-		player.removeCards(cards);
-	}
-
-
-	public void discardFromHand(int player, String[] cards) {
-		discardFromHand(players[player], cards);
+		dm.addAdventureCard(player.removeCards(cards));
 	}
 
 	public boolean rankUp() {

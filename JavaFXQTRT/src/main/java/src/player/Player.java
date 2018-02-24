@@ -1,8 +1,12 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
@@ -10,13 +14,16 @@ import src.game_logic.AdventureDeck;
 import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
+import src.sequence.EventSequenceManager;
 import src.views.PlayerView;
 
 public class Player {
 
+	final static Logger logger = LogManager.getLogger(Player.class);
+	
 	public static enum STATE {
 		NEUTRAL, QUESTIONED, YES, NO, PICKING, EVENTDISCARDING, WIN, WINNING, GAMEWON,
-		SPONSORING, QUESTQUESTIONED // >:(
+		SPONSORING, QUESTQUESTIONED
 , BIDDING, TESTDISCARD, QUESTPICKING, QUESTJOINQUESTIONED, DISCARDING, QUESTQUESTIONEDCANT
 	};
 	
@@ -47,10 +54,8 @@ public class Player {
 		return ID;
 	}
 	
-	protected void increaseLevel() {
-		if(rank == null) {
-			rank = Rank.RANKS.SQUIRE;
-		} else if(rank == Rank.RANKS.SQUIRE && shields >= 5) {
+	public void increaseLevel() {
+		if(rank == Rank.RANKS.SQUIRE && shields >= 5) {
 			rank = Rank.RANKS.KNIGHT;
 			changeShields(-5);
 		} else if (rank == Rank.RANKS.KNIGHT && shields >= 7) {
@@ -62,14 +67,18 @@ public class Player {
 		} else {
 			return;
 		}
+		
+		logger.info("Player id: " + ID + " current rank: " + rank);
 		if(pv != null) pv.update(rank, ID);
 		increaseLevel();
 	}
 	
 	public void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
+			logger.info("Player id: " + ID + " adding card " + card.getName());
 			hand.addCard(card, 1);
 		}
+		
 		if(pv != null) pv.updateCards(cards, ID);
 	}
 
@@ -87,24 +96,29 @@ public class Player {
 	
 	protected void setState(STATE question) {
 		this.question = question;
+		logger.info("Player id: " + ID + " setting state " + question);
 		if(pv != null) pv.updateState(question, ID);
 	}
 	
 	protected void setState(STATE question, int numStages) {
 		this.question = question;
+		logger.info("Player id: " + ID + " setting state " + question + " stages: " + numStages);
 		if(pv != null) pv.updateState(question, ID, numStages);
 	}
 	
 	protected void setState(STATE question, int i, TYPE type) {
 		this.question = question;
+		logger.info("Player id: " + ID + " setting state " + question + " discard: " + i + " type: " + type);
 		if(pv != null) pv.updateState(question, ID,i, type);
 	}
 
-	protected void changeShields(int shields) {
+	public void changeShields(int shields) {
 		this.shields += shields;
 		if(shields < 0) {
 			shields = 0;
 		}
+		
+		logger.info("Changing shields for player: " + ID + " to: " + shields);
 		if(pv != null ) pv.updateShieldCount(ID, shields);
 	}
 	
@@ -122,6 +136,7 @@ public class Player {
 		for(String card: cards) {
 			list.add(hand.getCardByName(card));
 		}
+		logger.info("Player id: " + ID + " setting face down: " + cards.toString());
 		faceDown.addCards(list);
 		if(pv != null) pv.updateFaceDown(list, ID);
 	}
@@ -164,6 +179,8 @@ public class Player {
 				iseult = false;
 			}
 		});
+		logger.info("Player id: " + ID + " discarded type: " + type);
+		logger.info("Player id: " + ID + " discarded cards: " + Arrays.toString(removedCards.stream().map(i -> i.getName()).toArray(String[]::new)));
 		if(pv != null) pv.discard(ID, removedCards);
 	}
 	
@@ -175,10 +192,13 @@ public class Player {
 		return hand.typeCount(type);
 	}
 	
-	protected void removeCards(String[] split) {
+	protected ArrayList<AdventureCard> removeCards(String[] split) {
+		ArrayList<AdventureCard> removed = new ArrayList<AdventureCard>();
 		for(String cardName: split) {
-			hand.getCardByName(cardName);
+			removed.add(hand.getCardByName(cardName));
 		}
+		logger.info("Player id: " + ID + " removing cards " + Arrays.toString(split));
+		return removed;
 	}
 	
 	public Card getCard(String cardName) {

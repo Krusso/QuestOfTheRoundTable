@@ -1,6 +1,7 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,8 +23,6 @@ public abstract class AbstractAI {
 	protected UIPlayerManager pm;
 	protected BattlePointCalculator bpc;
 	
-	protected AbstractAI() {}
-	
 	public AbstractAI(UIPlayer player, UIPlayerManager pm) {
 		this.player = player;
 		listPlayer = new ArrayList<Player>();
@@ -42,6 +41,7 @@ public abstract class AbstractAI {
 
 	
 	public List<AdventureCard> discardKingsCalltoArms(int n, TYPE type){
+		logger.info("Discarding: " + n + " cards with type: " + type);
 		List<AdventureCard> cards = new ArrayList<AdventureCard>();
 		Iterator<AdventureCard> x = player.getPlayerHandAsList().iterator();
 		while(cards.size() != n && x.hasNext()) {
@@ -50,7 +50,7 @@ public abstract class AbstractAI {
 				cards.add(y);
 			}
 		}
-		
+		logger.info("Discarded: " + Arrays.toString(cards.stream().map(i -> i.getName()).toArray(String[]::new)));
 		return cards;
 	}
 	
