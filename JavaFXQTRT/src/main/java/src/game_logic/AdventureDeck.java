@@ -11,6 +11,8 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		super();
 	}
 	
+	public ArrayList<AdventureCard> discards = new ArrayList<AdventureCard>();
+	
 	void populate() {
 		addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS),2);
 		addCard(new WeaponCard("Lance",20, TYPE.WEAPONS),6);
@@ -48,6 +50,10 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		addCard(new AllyCard("Merlin", TYPE.ALLIES),1); // special power to preview any stage
 		
 		addCard(new AmourCard("Amour",10,1, TYPE.AMOUR),8);
+	}
+	
+	public void reshuffle() {
+		this.deck.addAll(discards);
 	}
 
 	public int getBP() {

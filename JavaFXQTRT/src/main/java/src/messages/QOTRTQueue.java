@@ -42,6 +42,7 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 			// we aint never getting an error right c:
 			message = super.take();
 			while(true) {
+				logger.info("message in qotrtqueue: " + message);
 				JsonObject x = json.parse(message).getAsJsonObject();
 				if(x.get("message").getAsString().equals(MESSAGETYPES.MORDRED.name())) {
 					MordredClient mc = gson.fromJson(x, MordredClient.class);

@@ -6,8 +6,4 @@ public class EventCard extends StoryCard {
 		super(name, TYPE.EVENT);
 	}
 	
-	public EventCard(String name, String path) {
-		super(name, path);
-	}
-	
 }

@@ -1,6 +1,7 @@
 package src.sequence;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,11 +35,12 @@ public class EventSequenceManager extends SequenceManager {
 		// The next player to complete a Quest will receive 2 extra shields
 		if(card.getName().equals("King's Recognition")) {
 			bm.setSetKingRecognition(true);
+			logger.info("Set Kings Recognition");
 		} 
 		// The lowest ranked player(s) immediately receives 2 Adventure Cards
 		else if(card.getName().equals("Queen's Favor")) {
 			Iterator<Player> players = pm.round();
-			Rank.RANKS rank = Rank.RANKS.SQUIRE;
+			Rank.RANKS rank = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 			ArrayList<Player> lowest = new ArrayList<Player>();
 			while(players.hasNext()) {
 				Player player = players.next();
@@ -50,6 +52,7 @@ public class EventSequenceManager extends SequenceManager {
 					lowest.add(player);
 				}
 			}
+			logger.info("Giving cards to: " + Arrays.toString(lowest.stream().map(i -> i.getID()).toArray(Integer[]::new)));
 			pm.drawCards(lowest, 2);
 		} 
 		// All Allies in play must be discarded
@@ -90,6 +93,7 @@ public class EventSequenceManager extends SequenceManager {
 				}
 			}
 			pm.changeShields(lowest, 3);
+			logger.info("Players receiving shields: " + Arrays.toString(lowest.stream().map(i -> i.getID()).toArray(Integer[]::new)));
 		} 
 		// All players may immediately draw 2 adventure cards
 		else if(card.getName().equals("Prosperity Throughout the Realm")) {
