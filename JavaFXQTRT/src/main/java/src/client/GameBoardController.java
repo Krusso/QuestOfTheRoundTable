@@ -67,7 +67,7 @@ public class GameBoardController implements Initializable{
 	public int numStages = 0;
 	public int currentStage = 0;
 
-	private Client c;
+	public Client c;
 	public UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
@@ -82,7 +82,7 @@ public class GameBoardController implements Initializable{
 	@FXML public Button endTurn;
 	@FXML public Button accept;
 	@FXML public Button decline;
-	@FXML private Button nextTurn;
+	@FXML public Button nextTurn;
 	@FXML public Button discard;
 	
 	@FXML public Button useMerlin;

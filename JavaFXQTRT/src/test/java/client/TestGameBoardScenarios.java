@@ -148,25 +148,21 @@ public class TestGameBoardScenarios extends TestFXBase {
 		drag(saxons2).moveTo(handPane1).release(MouseButton.PRIMARY);
 		assertTrue(handPane1.getChildren().contains(saxons2));
 		
-		//drag the green knight into stage 3 isntead (should be using 2nd bp
-		ImageView greenKnight = gbc.findCardInHand("Green Knight");
-		drag(greenKnight).moveTo(stage3).release(MouseButton.PRIMARY);
-		
-		
-		//TODO:: DO TESTING WHEN BPC CALC IS FIXED
-		//so for now remove the test card and add in a some saxxons and weapons
+
 		
 		drag(testCard).moveTo(handPane1).release(MouseButton.PRIMARY);
-		drag(saxons2).moveTo(stage4).release(MouseButton.PRIMARY);
-		ImageView excalibur1 = gbc.findCardInHand("Excalibur");
+		//drag the green knight into stage 3 isntead (should be using 2nd bp
+		ImageView greenKnight = gbc.findCardInHand("Green Knight");
+		drag(greenKnight).moveTo(stage4).release(MouseButton.PRIMARY);	
+		
+		drag(saxons2).moveTo(stage3).release(MouseButton.PRIMARY);
 		ImageView lance1 = gbc.findCardInHand("Lance");
-		drag(excalibur1).moveTo(stage4).release(MouseButton.PRIMARY);
-		drag(lance1).moveTo(stage4).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Battle-ax")).moveTo(stage3).release(MouseButton.PRIMARY);
 		//make sure the BPC are correct
 		assertTrue(gbc.bpTextStage0.getText().equals("5"));
 		assertTrue(gbc.bpTextStage1.getText().equals("10"));
-		assertTrue(gbc.bpTextStage2.getText().equals("40"));
-		assertTrue(gbc.bpTextStage3.getText().equals("60"));
+		assertTrue(gbc.bpTextStage2.getText().equals("25"));
+		assertTrue(gbc.bpTextStage3.getText().equals("40"));
 		clickOn(END_TURN);
 
 		WaitForAsyncUtils.waitForFxEvents();
@@ -226,27 +222,39 @@ public class TestGameBoardScenarios extends TestFXBase {
 			assertTrue(n.isVisible());
 		}
 		
-		//now play a card for the quest
-		drag(battleax).moveTo(fdc2).release(MouseButton.PRIMARY);
+		//now play a card for the quest (dagger
+		drag(dagger).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
-		clickOn(CONTINUE);
+		
+		WaitForAsyncUtils.waitForFxEvents();
+		System.out.println(gbc.nextTurn.isVisible());
+		clickOn(START_TURN);
 
 		//continue next stage
-		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
-		clickOn(END_TURN);
-		clickOn(CONTINUE);
-		
-		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
-		clickOn(CONTINUE);
-		
-		drag(gbc.findCardInHand("Dagger")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		clickOn(START_TURN);
+//		
+		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		clickOn(START_TURN);
+//		
+		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		drag(gbc.findCardInHand("Excalibur")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
-		clickOn(CONTINUE);
-		
-		sleep(2000);
+		clickOn(START_TURN);
+
+		//now we gotta discard cards for p0 since quest is finished (discard 4 cards)
+		clickOn(START_TURN);
+		ArrayList<AdventureCard> hand = gbc.playerManager.getPlayerHand(0);
+		for(int i = 0 ; i < 4; i++) {
+			drag(hand.get(0).getImageView()).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		}
+		clickOn(DISCARD);
+		clickOn(START_TURN);
+		//make sure it is now player1's turn
+		WaitForAsyncUtils.waitForFxEvents();
+		assertTrue(gbc.playerManager.getCurrentPlayer() == 1);
 	}
 	
 
