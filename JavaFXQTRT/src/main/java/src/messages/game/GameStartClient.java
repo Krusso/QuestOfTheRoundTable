@@ -5,9 +5,13 @@ import src.messages.Message;
 //Client
 public class GameStartClient extends Message {
 	
-	public boolean rigged;
+	public static enum RIGGED {
+		ONE, TWO, NORMAL;
+	}
 	
-	public GameStartClient(int players, boolean rigged) {
+	public RIGGED rigged;
+	
+	public GameStartClient(int players, RIGGED rigged) {
 		super(players);
 		this.rigged = rigged;
 	}

@@ -57,13 +57,13 @@ import src.messages.tournament.TournamentPickCardsClient;
 
 public class GameBoardController implements Initializable{
 	final static Logger logger = LogManager.getLogger(GameBoardController.class);
-	enum STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
+	public enum GAME_STATE {SPONSOR_QUEST,JOIN_QUEST,PICK_STAGES, QUEST_PICK_CARDS, QUEST_BID,
 		JOIN_TOURNAMENT, PICK_TOURNAMENT,
 		FACE_DOWN_CARDS, UP_QUEST, DISCARDING_CARDS, BID_DISCARD, CHILLING,
 		GAMEOVER,
 		NONE, EVENT_DISCARD}
 
-	public STATE CURRENT_STATE = STATE.NONE;
+	public GAME_STATE CURRENT_STATE = GAME_STATE.NONE;
 	public int numStages = 0;
 	public int currentStage = 0;
 
@@ -71,13 +71,18 @@ public class GameBoardController implements Initializable{
 	public UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
+	
+
+	public ChoiceDialog<String> merlinDialog; 
+	public ChoiceDialog<String> mordredDialog; 
+	
 	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
 	@FXML public Button endTurn;
 	@FXML public Button accept;
 	@FXML public Button decline;
-	@FXML private Button nextTurn;
+	@FXML public Button nextTurn;
 	@FXML public Button discard;
 	
 	@FXML public Button useMerlin;
@@ -125,11 +130,11 @@ public class GameBoardController implements Initializable{
 	public Pane[] faceDownPanes = new Pane[4];
 
 	//The panes that govern the player's faceup cards
-	@FXML private Pane playerFaceUp0;
-	@FXML private Pane playerFaceUp1;
-	@FXML private Pane playerFaceUp2;
-	@FXML private Pane playerFaceUp3;
-	private Pane[] faceUpPanes = new Pane[4];
+	@FXML public Pane playerFaceUp0;
+	@FXML public Pane playerFaceUp1;
+	@FXML public Pane playerFaceUp2;
+	@FXML public Pane playerFaceUp3;
+	public Pane[] faceUpPanes = new Pane[4];
 
 	@FXML private ImageView playerRank0;
 	@FXML private ImageView playerRank1;
@@ -555,7 +560,7 @@ public class GameBoardController implements Initializable{
 		}
 		System.out.println("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
-		if(CURRENT_STATE == STATE.PICK_STAGES) {
+		if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 			//putting card from stage pane to hand
 			if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
@@ -581,7 +586,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 
-		if(CURRENT_STATE == STATE.JOIN_QUEST) {
+		if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
 			if(	card.isMerlin() && isInPane(faceUpPanes[cPlayer], point)
 					&& !card.childOf.equals(faceUpPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
@@ -589,7 +594,8 @@ public class GameBoardController implements Initializable{
 		}
 
 		//rules for puttings cards into facedown pane are same for picking quest/tournament cards
-		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+
+		if(CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS) {
 			if((isInPane(faceDownPanes[cPlayer], point) && 
 					isPickQuestValid(faceDownCards, card) && 
 					(card.getType() != TYPE.AMOUR || isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) ||
@@ -604,9 +610,11 @@ public class GameBoardController implements Initializable{
 			}
 		}
 
-		if( CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+
+		if( CURRENT_STATE == GAME_STATE.PICK_TOURNAMENT) {
 			if(isInPane(faceDownPanes[cPlayer], point) && isPickQuestValid(faceDownCards, card) 
 					&& (card.getType() != TYPE.AMOUR || isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) ||
+
 					isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
 				doPutCardIntoPane(point, card);
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
@@ -616,7 +624,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		
-		if(CURRENT_STATE == STATE.DISCARDING_CARDS) {
+		if(CURRENT_STATE == GAME_STATE.DISCARDING_CARDS) {
 			//if the current player has too many cards, we can allow him to play cards into the discard pile
 			//We can also allow players to play amour/ally cards into the face down pane
 			if(isInPane(faceDownPanes[cPlayer], point) && 
@@ -631,7 +639,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		
-		if(CURRENT_STATE == STATE.BID_DISCARD) {
+		if(CURRENT_STATE == GAME_STATE.BID_DISCARD) {
 			if(isInPane(discardPane, point)) {
 				doPutCardIntoPane(point, card);
 			} else if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
@@ -639,7 +647,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		
-		if(CURRENT_STATE == STATE.EVENT_DISCARD) {
+		if(CURRENT_STATE == GAME_STATE.EVENT_DISCARD) {
 			if(isInPane(discardPane, point) && card.getType() == this.type) {
 				doPutCardIntoPane(point, card);
 			} else if(isInPane(handPanes[cPlayer], point) && !card.childOf.equals(handPanes[cPlayer])) {
@@ -662,7 +670,7 @@ public class GameBoardController implements Initializable{
 		repositionCardsInHand(playerManager.getCurrentPlayer());
 		repositionFaceDownCards(playerManager.getCurrentPlayer());
 
-		if(CURRENT_STATE == STATE.PICK_STAGES) {
+		if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 			repositionStageCards();
 		}
 
@@ -707,9 +715,9 @@ public class GameBoardController implements Initializable{
 	 * @param toAdd
 	 * @return
 	 */
-	private boolean isStageValid(ArrayList<AdventureCard> stageCards, AdventureCard toAdd) {
+	public boolean isStageValid(ArrayList<AdventureCard> stageCards, AdventureCard toAdd) {
 		//Make sure the current stage has either 1 foe or 1 test card	
-		if(CURRENT_STATE == STATE.PICK_STAGES) {
+		if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 			TYPE cardType = toAdd.getType();
 			//If we want to add a Test card, make sure the stageCards are empty
 			if(cardType == TYPE.TESTS) {
@@ -763,7 +771,7 @@ public class GameBoardController implements Initializable{
 	 * @return
 	 */
 	private boolean isPickQuestValid(ArrayList<AdventureCard> faceDownCards, AdventureCard toAdd) {
-		if(CURRENT_STATE == STATE.QUEST_PICK_CARDS || CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+		if(CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS || CURRENT_STATE == GAME_STATE.PICK_TOURNAMENT) {
 			TYPE cardType = toAdd.getType();
 			//A player cannot play 2 of the same weapon
 			if(cardType == TYPE.WEAPONS) {
@@ -1184,7 +1192,7 @@ public class GameBoardController implements Initializable{
 
 	public void setUp() {
 		this.startTurn.setOnAction(e->{
-			if(CURRENT_STATE == STATE.CHILLING) {
+			if(CURRENT_STATE == GAME_STATE.CHILLING) {
 				synchronized (c) {
 					c.notify();
 					int viewAbleStage =  playerManager.viewableStage(playerManager.getCurrentPlayer());
@@ -1201,12 +1209,13 @@ public class GameBoardController implements Initializable{
 		this.endTurn.setOnAction(e -> {
 
 			int currentPlayer = playerManager.getCurrentPlayer();
-			if(CURRENT_STATE == STATE.PICK_TOURNAMENT) {
+			if(CURRENT_STATE == GAME_STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
 				c.send(new TournamentPickCardsClient(currentPlayer, 
 						playerManager.getFaceDownCardsAsList(currentPlayer).stream().map(i -> i.getName()).toArray(size -> new String[size])));
 			}
-			else if(CURRENT_STATE == STATE.EVENT_DISCARD) {
+
+			else if(CURRENT_STATE == GAME_STATE.EVENT_DISCARD) {
 				String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
 				if(discardCards.length != this.toDiscard) {
 					clearToast();
@@ -1219,7 +1228,7 @@ public class GameBoardController implements Initializable{
 				this.hideDiscardPane();
 				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
 			}
-			else if(CURRENT_STATE == STATE.PICK_STAGES) {
+			else if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 				if(areQuestStagesValid() && stagesIncreasing()) {
 					for(int i = 0 ; i < stageCards.size(); i++) {
 						if(!stageCards.get(i).isEmpty()) {
@@ -1243,7 +1252,7 @@ public class GameBoardController implements Initializable{
 					}
 				}
 
-			}else if(CURRENT_STATE == STATE.QUEST_PICK_CARDS) {
+			}else if(CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS) {
 				//send cards 
 				ArrayList<AdventureCard> faceDownCards = playerManager.getFaceDownCardsAsList(currentPlayer);
 				String[] cards = new String[faceDownCards.size()];
@@ -1262,10 +1271,10 @@ public class GameBoardController implements Initializable{
 
 			}
 			//TODO::verify cards are minimum number of cards
-			else if(CURRENT_STATE == STATE.QUEST_BID) {
+			else if(CURRENT_STATE == GAME_STATE.QUEST_BID) {
 				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
 				this.bidSlider.setVisible(false);
-			}else if(CURRENT_STATE == STATE.BID_DISCARD) {
+			}else if(CURRENT_STATE == GAME_STATE.BID_DISCARD) {
 				String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
 				if(discardCards.length != this.toDiscard) {
 					clearToast();
@@ -1286,14 +1295,14 @@ public class GameBoardController implements Initializable{
 		 */
 		this.accept.setOnAction(e -> {
 			System.out.println("accepted story");
-			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
-			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
-			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
+			}else if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
 				//make sure we turn over the viewable stage if previous used merlin
 				if(playerManager.viewableStage(playerManager.getCurrentPlayer()) != -1) {
@@ -1315,16 +1324,16 @@ public class GameBoardController implements Initializable{
 		 */
 		this.decline.setOnAction(e -> {
 			System.out.println("declined story");
-			if(CURRENT_STATE == STATE.JOIN_TOURNAMENT) {
+			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
-			}else if(CURRENT_STATE == STATE.SPONSOR_QUEST) {
+			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
-			}else if(CURRENT_STATE == STATE.JOIN_QUEST) {
+			}else if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
-			}else if(CURRENT_STATE == STATE.QUEST_BID) {
+			}else if(CURRENT_STATE == GAME_STATE.QUEST_BID) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
 				c.send(new QuestBidClient(playerManager.getCurrentPlayer(), -1));
 			}
@@ -1392,16 +1401,14 @@ public class GameBoardController implements Initializable{
 							numStages++;
 						}
 					}
-					ChoiceDialog<String> d = new ChoiceDialog<>(null, dialogChoices);
-					d.setTitle("Using Merlin Power");
-					d.setHeaderText("Select a stage to show");
-					d.setContentText("Stage #:");
-					Optional<String> result = d.showAndWait();
+					merlinDialog = new ChoiceDialog<>(null, dialogChoices);
+					merlinDialog.setTitle("Using Merlin Power");
+					merlinDialog.setHeaderText("Select a stage to show");
+					merlinDialog.setContentText("Stage #:");
+					Optional<String> result = merlinDialog.showAndWait();
 					if(result.isPresent() && c.tryUseMerlin()) {
 						int s = Integer.parseInt(result.get()) - 1;
-						setStageCardVisibility(true,s);
-						repositionStageCards(s);
-						playerManager.rememberStage(currentPlayer, s);
+						useMerlinPower(s, c);
 					}
 					return;
 				}
@@ -1445,11 +1452,11 @@ public class GameBoardController implements Initializable{
 				}
 			}
 		    
-			ChoiceDialog<String> d = new ChoiceDialog<>(null, choices);
-			d.setTitle("Using Mordred's Power");
-			d.setHeaderText("Select an opponent's ally card to destroy");
-			d.setContentText("Ally Card:");
-			Optional<String> result = d.showAndWait();
+			mordredDialog = new ChoiceDialog<>(null, choices);
+			mordredDialog.setTitle("Using Mordred's Power");
+			mordredDialog.setHeaderText("Select an opponent's ally card to destroy");
+			mordredDialog.setContentText("Ally Card:");
+			Optional<String> result = merlinDialog.showAndWait();
 			if(result.isPresent()) {
 				Integer[] pNumAndCard = dialogChoices.get(result.get());
 				
@@ -1477,6 +1484,24 @@ public class GameBoardController implements Initializable{
 					playerManager.resetMerlinViewableStage();
 				}
 			}
+		}
+	}
+	
+	public ImageView findCardInHand(String cardName) {
+		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
+		for(AdventureCard c: phand) {
+			if(c.getName().equals(cardName)) {
+				return c.getImageView();
+			}
+		}
+		return null;
+	}
+	public void useMerlinPower(int s, AdventureCard c) {
+		if(c.tryUseMerlin()) {
+			setStageCardVisibility(true,s);
+			repositionStageCards(s);
+			playerManager.rememberStage(playerManager.getCurrentPlayer(), s);
+			logger.info("Player " + playerManager.getCurrentPlayer() + " has used the merlin card to reveal stage " + (s+1));
 		}
 	}
 }

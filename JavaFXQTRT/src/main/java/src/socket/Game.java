@@ -10,6 +10,7 @@ import src.game_logic.StoryCard;
 import src.messages.QOTRTQueue;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.ContinueGameClient;
+import src.messages.game.GameStartClient.RIGGED;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.sequence.DiscardSequenceManager;
@@ -25,7 +26,7 @@ public class Game extends Thread{
 	private OutputController output;
 	private GameModel gm;
 	private QOTRTQueue actions;
-	private boolean rigged;
+	private RIGGED rigged;
 	private BoardModel bm;
 
 	public Game(OutputController output, GameModel gm) {
@@ -55,7 +56,7 @@ public class Game extends Thread{
 			pm.nextTurn();
 			StoryCard s = dm.getStoryCard(1).get(0);
 			logger.info("Next card being played: " + s.getName());
-			bm.setCard(dm.getStoryCard(1).get(0));
+			bm.setCard(s);
 
 			SequenceManager sm = gsm.createStoryManager(bm.getCard());
 			sm.start(actions, pm, bm);
@@ -83,8 +84,8 @@ public class Game extends Thread{
 		this.actions = actionQueue;
 	}
 
-	public void setRigged(boolean rigged) {
-		this.rigged = rigged;
+	public void setRigged(RIGGED rigged2) {
+		this.rigged = rigged2;
 	}
 
 }

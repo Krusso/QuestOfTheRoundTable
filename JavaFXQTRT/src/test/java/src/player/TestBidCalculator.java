@@ -17,6 +17,7 @@ import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.QuestCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.messages.game.GameStartClient.RIGGED;
 import src.socket.OutputController;
 import src.views.PlayerView;
 import src.views.PlayersView;
@@ -29,7 +30,7 @@ public class TestBidCalculator {
 	ArrayList<AdventureCard> cards;
 	@Before
 	public void before() {
-		pm = new PlayerManager(1, null, false);
+		pm = new PlayerManager(1, null, RIGGED.ONE);
 		p1 = new Player(0);
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();

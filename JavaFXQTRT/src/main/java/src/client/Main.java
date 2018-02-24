@@ -3,6 +3,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -13,16 +16,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Server;
 
 
 public class Main extends Application {
-	
-	
+	final static Logger logger = LogManager.getLogger(Main.class);
 	public static LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
 	public static LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
 	public static Client client;
-	
+	public TitleScreenController tlc;
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -36,7 +40,8 @@ public class Main extends Application {
 			root = fxmlLoader.load();
 
 			//Get the controller instance
-			TitleScreenController tlc = fxmlLoader.getController();
+			tlc = fxmlLoader.getController();
+			logger.info("Main's TitleScreenController reference:" + tlc);
 			//Pass the client to the controller
 			tlc.setClient(client);
 
@@ -61,7 +66,9 @@ public class Main extends Application {
 				public void handle(KeyEvent event) {
 					switch (event.getCode()) {
 					case UP:    
-						tlc.setRigged(true); break;
+						tlc.setRigged(RIGGED.ONE); break;
+					case LEFT:
+						tlc.setRigged(RIGGED.TWO); break;
 					default:
 						break;
 					}
@@ -82,6 +89,15 @@ public class Main extends Application {
 		// start the thread
 		new Thread(task2).start();
 		launch(args);
+	}
+	public TitleScreenController getTitleScreenController() {
+		return tlc;
+	}
+	public GameBoardController getGameBoardController() {
+		if(tlc!=null) {
+			tlc.getGameBoardController();
+		}
+		return null;
 	}
 }
 

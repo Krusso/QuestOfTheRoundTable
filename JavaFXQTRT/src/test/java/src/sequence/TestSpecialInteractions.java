@@ -23,6 +23,7 @@ import src.game_logic.TournamentCard;
 import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.GameStartClient.RIGGED;
 import src.messages.QOTRTQueue;
 import src.messages.hand.HandFullClient;
 import src.player.Player;
@@ -113,7 +114,7 @@ public class TestSpecialInteractions {
 		output = new LinkedBlockingQueue<String>();
 		oc = new OutputController(output);
 		dm = new DeckManager();
-		pm = new PlayerManager(4, dm, true);
+		pm = new PlayerManager(4, dm, RIGGED.ONE);
 		bm = new BoardModel();
 		pv = new PlayerView(oc);
 		pm.subscribe(pv);

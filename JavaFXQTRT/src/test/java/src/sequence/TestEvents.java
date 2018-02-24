@@ -17,6 +17,7 @@ import src.game_logic.EventCard;
 import src.messages.QOTRTQueue;
 import src.messages.events.EventDiscardCardsClient;
 import src.messages.events.EventDiscardCardsServer;
+import src.messages.game.GameStartClient.RIGGED;
 import src.player.Player;
 import src.player.PlayerManager;
 import src.socket.OutputController;
@@ -293,7 +294,7 @@ public class TestEvents {
 	@Test
 	public void testKingsRecognition() {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Recognition"));
-		PlayerManager pm = new PlayerManager(0, null, true);
+		PlayerManager pm = new PlayerManager(0, null, RIGGED.ONE);
 		BoardModel bm = new BoardModel();
 		assertEquals(false, bm.isSetKingRecognition());
 		esm.start(new QOTRTQueue(), pm, bm);
@@ -309,7 +310,7 @@ public class TestEvents {
 	public void before() {
 		output = new LinkedBlockingQueue<String>();
 		dm = new DeckManager();
-		pm = new PlayerManager(2, dm, true);
+		pm = new PlayerManager(2, dm, RIGGED.ONE);
 		bm = new BoardModel();
 		pv = new PlayerView(new OutputController(output));
 		pm.subscribe(pv);

@@ -35,10 +35,13 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import src.messages.game.GameStartClient;
+import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Server;
 
 public class TitleScreenController extends Application implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
+	public GameBoardController gbc;
+
 	private Client client;
 	@FXML public Text errorMsg;
 	
@@ -80,7 +83,7 @@ public class TitleScreenController extends Application implements Initializable{
 	@FXML private MenuButton b4;
 	private MenuButton[] menuBtns = new MenuButton[4];
 
-	private boolean rigged;
+	private RIGGED rigged = RIGGED.NORMAL;
 	
 	public void setClient(Client c) {
 		client = c;
@@ -307,7 +310,7 @@ public class TitleScreenController extends Application implements Initializable{
 		//give the GameBoardController the client if we got it
 		//in this case the GBC should always have the client when we initialize it
 		logger.info("GameBoardController has reference to Client");
-		GameBoardController gbc = fxmlLoader.getController();
+		gbc = fxmlLoader.getController();
 		gbc.setClient(client);
 		gbc.setUp();
 		gbc.setShields(players,
@@ -415,12 +418,12 @@ public class TitleScreenController extends Application implements Initializable{
 		shieldViewArr[2] = shieldView3;
 		shieldViewArr[3] = shieldView4;
 	}
-	public void setRigged(boolean b) {
+	public void setRigged(RIGGED b) {
 		logger.info("Set the game to rigged");
 		this.rigged = b;
 	}
 	
-	
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -440,7 +443,9 @@ public class TitleScreenController extends Application implements Initializable{
 				public void handle(KeyEvent event) {
 					switch (event.getCode()) {
 					case UP:    
-						tlc.setRigged(true); break;
+						tlc.setRigged(RIGGED.ONE); break;
+					case LEFT:
+						tlc.setRigged(RIGGED.TWO); break;
 					default:
 						break;
 					}
@@ -451,5 +456,9 @@ public class TitleScreenController extends Application implements Initializable{
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public GameBoardController getGameBoardController() {
+		
+		return gbc;
 	}
 }

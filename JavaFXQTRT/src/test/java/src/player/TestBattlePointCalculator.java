@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.messages.game.GameStartClient.RIGGED;
 import src.game_logic.AllyCard;
 import src.game_logic.WeaponCard;
 
@@ -18,7 +19,7 @@ public class TestBattlePointCalculator {
 	ArrayList<AdventureCard> cards;
 	@Before
 	public void before() {
-		pm = new PlayerManager(1, null, true);
+		pm = new PlayerManager(1, null, RIGGED.ONE);
 		p1 = new Player(0);
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();
@@ -54,7 +55,7 @@ public class TestBattlePointCalculator {
 	
 	@Test
 	public void testWeaponCalculations() {
-		pm = new PlayerManager(5, null, true);
+		pm = new PlayerManager(5, null, RIGGED.ONE);
 		Player p1 = new Player(0);
 		Player p2 = new Player(1);
 		Player p3 = new Player(2);

@@ -1,10 +1,12 @@
-package client;
+package src.client;
 
 import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -13,29 +15,23 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import src.client.GameBoardController;
 import src.client.Main;
+import src.client.TitleScreenController;
 import src.socket.Server;
+import src.views.TestPlayerView;
 
 public class TestTitleScreen extends TestFXBase{
 
+	final static Logger logger = LogManager.getLogger(TestTitleScreen.class);
+	
 	final String NEW_GAME_BUTTON_ID = "#newGame";
 	final String MENU_BUTTON_1_ID = "#b1";
 	final String MENU_PANE_ID = "#menuPane";
 	final String START_BUTTON_ID = "#start";
 	final String ERROR_MESSAGE_ID = "#errorMsg";
 	final String PLAYER_SELECT_ID = "#playerSelect";
-		
-	@Override
-	public void start(Stage stage) throws Exception {
-		LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
-		LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
-		Runnable task2 = () -> { new Server(input, output); };
-		Main.input = input;
-		Main.output = output;
-		// start the thread
-		new Thread(task2).start();
-		new Main().start(stage);
-	}
+	
 	
 	/**
 	 * Tests to ensure menu pane will display after new game button is clicked
@@ -46,13 +42,12 @@ public class TestTitleScreen extends TestFXBase{
 		clickOn(NEW_GAME_BUTTON_ID);
 		verifyThat(MENU_PANE_ID, (Pane mp)->{
 			boolean isPaneVisible = mp.isVisible();
-			System.out.println(isPaneVisible);
+			logger.info(isPaneVisible);
 			return !isPaneVisible;
 		});
 		verifyThat(PLAYER_SELECT_ID, (Pane ps) -> {
 			boolean isPaneVisible = ps.isVisible();
-			System.out.println(isPaneVisible);
-			ObservableList<Node> children = ps.getChildren();
+			logger.info(isPaneVisible);
 			return isPaneVisible;
 		});
 		WaitForAsyncUtils.waitForFxEvents();
@@ -65,8 +60,8 @@ public class TestTitleScreen extends TestFXBase{
 			return false;
 		});
 		//p0 = ai
-		clickOn("#b2");
-		clickOn("#b2a");
+		clickOn(MENU_BUTTON_2_ID);
+		clickOn(MENU_OPTION_2_AI_ID);
 		clickOn(START_BUTTON_ID);
 		verifyThat(ERROR_MESSAGE_ID, (Text t)->{
 			if(t.getText().equals("Must have at least 1 human player to start the game")) {
@@ -75,8 +70,8 @@ public class TestTitleScreen extends TestFXBase{
 			return false;
 		});
 		//p0 = human
-		clickOn("#b2");
-		clickOn("#b2h");
+		clickOn(MENU_BUTTON_2_ID);
+		clickOn(MENU_OPTION_2_HUMAN_ID);
 		clickOn(START_BUTTON_ID);
 		verifyThat(ERROR_MESSAGE_ID, (Text t)->{
 			if(t.getText().equals("Must have at least 2 players to start game")) {
@@ -85,8 +80,8 @@ public class TestTitleScreen extends TestFXBase{
 			return false;
 		});
 		//p0 0 = human p1 = ai (shields are same tho)
-		clickOn("#b3");
-		clickOn("#b3a");
+		clickOn(MENU_BUTTON_3_ID);
+		clickOn(MENU_OPTION_3_AI_ID);
 		clickOn(START_BUTTON_ID);
 		verifyThat(ERROR_MESSAGE_ID, (Text t)->{
 			if(t.getText().equals("Players cannot have the same shield")) {
@@ -94,8 +89,8 @@ public class TestTitleScreen extends TestFXBase{
 			}
 			return false;
 		});
-		clickOn("#tp2");
-		clickOn("#s2next");
+		clickOn(TITLE_PANE_2_ID);
+		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		clickOn(START_BUTTON_ID);
 		verifyThat(ERROR_MESSAGE_ID, (Text t)->{
 			if(t.getText().equals("Must choose players in order, (e.g if you have player 1, player 0 must exists as well)")) {
@@ -103,14 +98,18 @@ public class TestTitleScreen extends TestFXBase{
 			}
 			return false;
 		});
-		clickOn("#b1");
-		clickOn("#b1h");
-		clickOn("#tp1");
-		clickOn("#s1next");
-		clickOn("#s1next");
+		clickOn(MENU_BUTTON_1_ID);
+		clickOn(MENU_OPTION_1_HUMAN_ID);
+		clickOn(TITLE_PANE_1_ID);
+		clickOn(NEXT_SHIELD_BUTTON_1_ID);
+		clickOn(NEXT_SHIELD_BUTTON_1_ID);
 		clickOn(START_BUTTON_ID);
 		
-		assertTrue(lookup(START_BUTTON_ID).query() == null);
+
+		WaitForAsyncUtils.waitForFxEvents();
+		TitleScreenController tsc = m.getTitleScreenController();
+		GameBoardController gbc = tsc.getGameBoardController();
+		assertTrue(gbc != null);
 	}
 
 }
