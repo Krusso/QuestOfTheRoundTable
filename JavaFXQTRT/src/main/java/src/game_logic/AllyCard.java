@@ -1,7 +1,5 @@
 package src.game_logic;
 
-import src.game_logic.AdventureCard.TYPE;
-
 public class AllyCard extends AdventureCard {
 	
 	private int bids;

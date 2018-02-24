@@ -67,7 +67,7 @@ public class GameBoardController implements Initializable{
 	public int numStages = 0;
 	public int currentStage = 0;
 
-	private Client c;
+	public Client c;
 	public UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
