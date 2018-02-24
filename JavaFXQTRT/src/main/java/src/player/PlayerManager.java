@@ -17,6 +17,7 @@ import src.game_logic.FoeCard;
 import src.game_logic.Rank;
 import src.game_logic.TestCard;
 import src.game_logic.WeaponCard;
+import src.messages.game.GameStartClient.RIGGED;
 import src.player.Player.STATE;
 import src.sequence.DiscardSequenceManager;
 import src.game_logic.AdventureCard.TYPE;
@@ -31,14 +32,14 @@ public class PlayerManager {
 	// Note: using arraylists but for now only have one instance of a view. Might change
 	private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
-	private boolean rigged;
+	private RIGGED rigged;
 	private DiscardSequenceManager dsm;
 
 	public Player[] players;
-	public PlayerManager(int numPlayers, DeckManager dm, boolean rigged) {
+	public PlayerManager(int numPlayers, DeckManager dm, RIGGED rigged2) {
 		this.players = new Player[numPlayers];
 		this.dm = dm;
-		this.rigged = rigged;
+		this.rigged = rigged2;
 		for(int i = numPlayers; i > 0; i--) {
 			players[i - 1] = new Player(i - 1);
 		}
@@ -46,40 +47,41 @@ public class PlayerManager {
 
 	// Used just so there is an animation at the start of all players getting cards
 	public void start() {
+		dm.setRigged(rigged);
 		for(int i = players.length; i > 0; i--) {
-			if(rigged) {
+			if(rigged.equals(RIGGED.ONE)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				//cards.add(new WeaponCard("Battle-ax", 15, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-//				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				//cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
 				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
 				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
 				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-//				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
-				cards.add(new AllyCard("Merlin",10,10,2, TYPE.ALLIES));
-				//cards.add(new FoeCard("Mordred", 30, 30, TYPE.ALLIES));
+				cards.add(new FoeCard("Boar",5,15, TYPE.FOES));
 				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				//cards.add(new TestCard("Test of the Questing Beast", TYPE.TESTS));
-				//cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
-				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
-				//cards.add(new WeaponCard("Horse",10, TYPE.WEAPONS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
 				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
-//				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-//				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-//				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-//				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+			} else if(rigged.equals(RIGGED.TWO)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				cards.add(new AllyCard("Merlin",10,10,2, TYPE.ALLIES));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 				players[i - 1].addCards(cards);
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
-			//players[i - 1].changeShields(100);
 		}
 	}
 

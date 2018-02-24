@@ -1,5 +1,7 @@
-package client;
+package src.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
@@ -18,6 +20,8 @@ import src.client.GameBoardController.GAME_STATE;
 import src.client.TitleScreenController;
 import src.game_logic.AdventureCard;
 import src.game_logic.QuestCard;
+import src.views.TestPlayerView;
+
 import static org.junit.Assert.*;
 
 import static org.junit.Assert.assertTrue;
@@ -26,6 +30,8 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 import java.util.ArrayList;
 public class TestGameBoardScenarios extends TestFXBase {
+	final static Logger logger = LogManager.getLogger(TestGameBoardScenarios.class);
+	
 	GameBoardController gbc;
 	TitleScreenController tsc;
 	
@@ -40,7 +46,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	@Before
 	public void setup2Players(){
 		//Rig the game
-		press(KeyCode.UP);
+		press(KeyCode.LEFT);
 		clickOn(NEW_GAME_BUTTON_ID);
 		clickOn(MENU_BUTTON_1_ID);
 		clickOn(MENU_OPTION_1_HUMAN_ID);
@@ -54,8 +60,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		
 		WaitForAsyncUtils.waitForFxEvents();
 
-		System.out.println("hello");
-		System.out.println(m);
+		logger.info("m: " + m);
 		//get tsc
 		tsc = m.getTitleScreenController();
 	}
@@ -68,7 +73,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
 		clickOn(START_TURN);
-		System.out.println(gbc.CURRENT_STATE);
+		logger.info(gbc.CURRENT_STATE);
 		//make sure we have set the game state to Sponsoring Quest
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
 		//p0 is going to accept the quest
@@ -156,7 +161,6 @@ public class TestGameBoardScenarios extends TestFXBase {
 		drag(greenKnight).moveTo(stage4).release(MouseButton.PRIMARY);	
 		
 		drag(saxons2).moveTo(stage3).release(MouseButton.PRIMARY);
-		ImageView lance1 = gbc.findCardInHand("Lance");
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(stage3).release(MouseButton.PRIMARY);
 		//make sure the BPC are correct
 		assertTrue(gbc.bpTextStage0.getText().equals("5"));
@@ -227,7 +231,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(END_TURN);
 		
 		WaitForAsyncUtils.waitForFxEvents();
-		System.out.println(gbc.nextTurn.isVisible());
+		logger.info(gbc.nextTurn.isVisible());
 		clickOn(START_TURN);
 
 		//continue next stage
@@ -236,6 +240,13 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 //		
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		// fixed it not sure why??
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		clickOn(END_TURN);
 		clickOn(START_TURN);
 //		

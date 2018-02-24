@@ -7,11 +7,14 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import src.messages.game.GameStartClient.RIGGED;
+
 public class TestStoryDeck {
 
 	@Test
 	public void test56Cards() {
 		DeckManager dm = new DeckManager();
+		dm.setRigged(RIGGED.NORMAL);
 		ArrayList<StoryCard> cards = dm.getStoryCard(28);
 		assertEquals(0,dm.storySize()); 
 		for(StoryCard c: cards) {
@@ -28,6 +31,7 @@ public class TestStoryDeck {
 	@Test
 	public void testCardFrequency() {
 		DeckManager dm = new DeckManager();
+		dm.setRigged(RIGGED.NORMAL);
 		ArrayList<StoryCard> cards = dm.getStoryCard(28);
 		assertTrue(contains(cards, "Search for the Holy Grail", 1));
 		assertTrue(contains(cards, "Test of the Green Knight", 1));

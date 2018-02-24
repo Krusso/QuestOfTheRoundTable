@@ -16,6 +16,7 @@ import src.game_logic.DeckManager;
 import src.game_logic.TournamentCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.GameStartClient.RIGGED;
 import src.messages.QOTRTQueue;
 import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
@@ -293,7 +294,7 @@ public class TestTournament {
 		output = new LinkedBlockingQueue<String>();
 		oc = new OutputController(output);
 		dm = new DeckManager();
-		pm = new PlayerManager(4, dm, true);
+		pm = new PlayerManager(4, dm, RIGGED.ONE);
 		bm = new BoardModel();
 		pv = new PlayerView(oc);
 		pm.subscribe(pv);

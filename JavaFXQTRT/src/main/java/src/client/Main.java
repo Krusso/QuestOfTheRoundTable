@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Server;
 
 
@@ -65,7 +66,9 @@ public class Main extends Application {
 				public void handle(KeyEvent event) {
 					switch (event.getCode()) {
 					case UP:    
-						tlc.setRigged(true); break;
+						tlc.setRigged(RIGGED.ONE); break;
+					case LEFT:
+						tlc.setRigged(RIGGED.TWO); break;
 					default:
 						break;
 					}

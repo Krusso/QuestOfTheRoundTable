@@ -23,6 +23,7 @@ import src.game_logic.QuestCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
+import src.messages.game.GameStartClient.RIGGED;
 import src.messages.QOTRTQueue;
 import src.messages.quest.QuestBidClient;
 import src.messages.quest.QuestDiscardCardsClient;
@@ -708,7 +709,7 @@ public class TestQuests {
 		output = new LinkedBlockingQueue<String>();
 		oc = new OutputController(output);
 		dm = new DeckManager();
-		pm = new PlayerManager(4, dm, true);
+		pm = new PlayerManager(4, dm, RIGGED.ONE);
 		bm = new BoardModel();
 		pv = new PlayerView(oc);
 		pm.subscribe(pv);

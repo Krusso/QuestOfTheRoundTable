@@ -10,6 +10,7 @@ import src.messages.Message;
 import src.messages.QOTRTQueue;
 import src.messages.Message.MESSAGETYPES;
 import src.messages.game.MiddleCardServer;
+import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Game;
 import src.socket.GameModel;
 import src.socket.OutputController;
@@ -25,7 +26,7 @@ public class TestPlayerView {
 		gm.setNumPlayers(2);
 		Game game = new Game(output, gm);
 		game.setActionQueue(new QOTRTQueue());
-		game.setRigged(true);
+		game.setRigged(RIGGED.ONE);
 		Runnable task2 = () -> { game.start(); };
 		new Thread(task2).start();
 		

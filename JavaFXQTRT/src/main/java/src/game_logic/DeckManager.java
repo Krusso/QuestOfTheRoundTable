@@ -3,10 +3,19 @@ package src.game_logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import src.client.TestGameBoardScenarios;
+import src.messages.game.GameStartClient.RIGGED;
+
 public class DeckManager {
+	
+	final static Logger logger = LogManager.getLogger(DeckManager.class);
 	
 	private StoryDeck storyDeck;
 	private AdventureDeck adventureDeck;
+	private RIGGED rigged;
 	
 	public DeckManager() {
 		this.storyDeck = new StoryDeck();
@@ -19,9 +28,23 @@ public class DeckManager {
 		if(storyDeck.size() - n <= 0) {
 			storyDeck.reshuffle();
 		}
-		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
-		storyDeck.discards.addAll(toReturn);
-		return toReturn;
+		if(rigged.equals(RIGGED.TWO)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = storyDeck.getCardByName("Test of the Green Knight");
+			if(s == null) {
+				s = storyDeck.drawRandomCards(1).get(0);
+			}
+			toReturn.add(s);
+			logger.info("Drawing Test of the Green Knight rigged or next card: " + toReturn.get(0).getName());
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		} else {
+			ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
+			storyDeck.discards.addAll(toReturn);
+			
+			return toReturn;	
+		}
 	}
 	public void addAdventureCard(List<AdventureCard> cards) {
 		adventureDeck.discards.addAll(cards);
@@ -40,6 +63,10 @@ public class DeckManager {
 	
 	public int adventureSize() {
 		return adventureDeck.size();
+	}
+
+	public void setRigged(RIGGED rigged) {
+		this.rigged = rigged;
 	}
 	
 }

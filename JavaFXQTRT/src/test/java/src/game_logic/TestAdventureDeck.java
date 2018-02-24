@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
+import src.messages.game.GameStartClient.RIGGED;
 import src.player.Player;
 import src.player.PlayerManager;
 
@@ -21,7 +22,7 @@ public class TestAdventureDeck {
 	@Test
 	public void test250Cards() {
 		DeckManager dm = new DeckManager();
-		PlayerManager pm = new PlayerManager(1, dm, false);
+		PlayerManager pm = new PlayerManager(1, dm, RIGGED.ONE);
 		List<Player> players = Arrays.asList(pm.players);
 		pm.drawCards(players, 125);
 

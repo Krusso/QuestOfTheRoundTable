@@ -1,10 +1,12 @@
-package client;
+package src.client;
 
 import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -17,9 +19,12 @@ import src.client.GameBoardController;
 import src.client.Main;
 import src.client.TitleScreenController;
 import src.socket.Server;
+import src.views.TestPlayerView;
 
 public class TestTitleScreen extends TestFXBase{
 
+	final static Logger logger = LogManager.getLogger(TestTitleScreen.class);
+	
 	final String NEW_GAME_BUTTON_ID = "#newGame";
 	final String MENU_BUTTON_1_ID = "#b1";
 	final String MENU_PANE_ID = "#menuPane";
@@ -37,13 +42,12 @@ public class TestTitleScreen extends TestFXBase{
 		clickOn(NEW_GAME_BUTTON_ID);
 		verifyThat(MENU_PANE_ID, (Pane mp)->{
 			boolean isPaneVisible = mp.isVisible();
-			System.out.println(isPaneVisible);
+			logger.info(isPaneVisible);
 			return !isPaneVisible;
 		});
 		verifyThat(PLAYER_SELECT_ID, (Pane ps) -> {
 			boolean isPaneVisible = ps.isVisible();
-			System.out.println(isPaneVisible);
-			ObservableList<Node> children = ps.getChildren();
+			logger.info(isPaneVisible);
 			return isPaneVisible;
 		});
 		WaitForAsyncUtils.waitForFxEvents();
@@ -105,7 +109,6 @@ public class TestTitleScreen extends TestFXBase{
 		WaitForAsyncUtils.waitForFxEvents();
 		TitleScreenController tsc = m.getTitleScreenController();
 		GameBoardController gbc = tsc.getGameBoardController();
-//		System.out.println(gbc);
 		assertTrue(gbc != null);
 	}
 
