@@ -1094,6 +1094,7 @@ public class Client implements Runnable {
 					Platform.runLater(new QuestPickCardsTask(gbc, request.player));
 					Platform.runLater(new Runnable() {
 
+
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
@@ -1101,14 +1102,8 @@ public class Client implements Runnable {
 							cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
 							cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
 							gbc.c.send(new CalculatePlayerClient(gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
-							
 						}
-						
 					});
-//					ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-//					cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
-//					cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
-//					this.send(new CalculatePlayerClient(this.gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
 				}
 				if(message.equals(MESSAGETYPES.FACEDOWNCARDS.name())) {
 					FaceDownServer request = gson.fromJson(obj, FaceDownServer.class);

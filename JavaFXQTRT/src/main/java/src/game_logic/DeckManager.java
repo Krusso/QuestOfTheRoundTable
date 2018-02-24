@@ -1,6 +1,7 @@
 package src.game_logic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DeckManager {
 	
@@ -15,15 +16,21 @@ public class DeckManager {
 	}
 	
 	public ArrayList<StoryCard> getStoryCard(int n) {
-		if(storyDeck.size() == 0) {
+		if(storyDeck.size() - n <= 0) {
 			storyDeck.reshuffle();
 		}
 		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
 		storyDeck.discards.addAll(toReturn);
 		return toReturn;
 	}
+	public void addAdventureCard(List<AdventureCard> cards) {
+		adventureDeck.discards.addAll(cards);
+	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {
+		if(adventureDeck.size() - n <= 0) {
+			adventureDeck.reshuffle();
+		}
 		return adventureDeck.drawRandomCards(n);
 	}
 	

@@ -1,6 +1,7 @@
 package src.sequence;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -56,8 +57,8 @@ public class TestSpecialInteractions {
 		
 		Thread.sleep(500);
 		assertTrue(player.iseult);
-		assertTrue(player.getFaceUp().findCardByName("Amour") != null);
-		assertTrue(player.getFaceUp().size() == 2);
+		assertNotEquals(null, player.getFaceUp().findCardByName("Amour"));
+		assertEquals(2, player.getFaceUp().size());
 	}
 	
 	@Test
