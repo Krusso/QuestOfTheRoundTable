@@ -95,18 +95,24 @@ public class BattlePointCalculator {
 		// p1 and p2 being flipped is not a typo :)
 		final boolean foundIseult1 = othersHaveIseult;
 		return player.hand.getDeck().stream().
-				sorted((p2,p1) -> Integer.compare(getPoints(p1, foundIseult1, card), getPoints(p2, foundIseult1, card))).
 				filter(i -> i.getType() == type).
+				sorted((p1,p2) -> Integer.compare(getPoints(p2, foundIseult1, card), getPoints(p1, foundIseult1, card))).
 				collect(Collectors.toList());
 	}
 	
 	public int getPoints(AdventureCard c, Boolean foundIseult, QuestCard card) {
+		if(card != null) {
+			logger.info("Card name: " + card.getName());
+		}
 		if(card != null && c.checkIfNamed(card.getFoe())) {
+			logger.info(c.getName() + " named " + c.getNamedBattlePoints());
 			return c.getNamedBattlePoints();
 		} else if(c.getName().equals("Sir Tristan") && foundIseult) {
+			logger.info(c.getName() + " named " + c.getNamedBattlePoints());
 			return c.getNamedBattlePoints();
 		}
 		
+		logger.info(c.getName() + " not named " + c.getBattlePoints());
 		return c.getBattlePoints();
 	}
 

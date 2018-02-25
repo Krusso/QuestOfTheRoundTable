@@ -61,6 +61,8 @@ public class TournamentSequenceManager extends SequenceManager {
 		if(winners.size() != 1) {
 			// tie do tournament again
 			pm.discardWeapons(participants);
+			pm.showTournamentTie(winners);
+			
 			players = winners.iterator();
 			questionPlayersTournament(players, pm, actions);
 

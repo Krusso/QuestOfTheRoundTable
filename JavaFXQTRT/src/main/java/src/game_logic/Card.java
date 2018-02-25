@@ -64,7 +64,19 @@ public abstract class Card {
 		}
 	}
 	
-	
+	public void setImgView(String path) {
+		try {
+			File file = new File(path);
+			img = new Image (new FileInputStream(file));
+			imgView = new ImageView();
+			imgView.setImage(img);
+			imgView.setFitWidth(100);
+			imgView.setFitHeight(150);
+			//setDraggableOn();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public void setOriginalPosition(double x, double y) {
 		orgStartX = x;

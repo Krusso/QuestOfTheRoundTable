@@ -1,6 +1,7 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,9 @@ public class A2 extends AbstractAI {
 		
 		List<AdventureCard> allies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, null, pm.iseultExists());
 		List<AdventureCard> weapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
+		logger.info("AI players allies: " + Arrays.toString(allies.stream().map(i -> i.getName()).toArray(String[]::new)));
+		logger.info("AI players weapons: " + Arrays.toString(weapons.stream().map(i -> i.getName()).toArray(String[]::new)));
+		logger.info("AI players weapons: " + Arrays.toString(bpc.listOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists()).stream().map(i -> i.getName()).toArray(String[]::new)));
 		List<AdventureCard> cardsToUse = new ArrayList<AdventureCard>();
 		for(AdventureCard card: allies) {
 			if(currentBp >= 50) {
@@ -57,6 +61,7 @@ public class A2 extends AbstractAI {
 			currentBp += card.getBattlePoints();
 		}
 
+		logger.info("Played cards: " + Arrays.toString(cardsToUse.stream().map(i -> i.getName()).toArray(String[]::new)));
 		return cardsToUse;
 
 	}

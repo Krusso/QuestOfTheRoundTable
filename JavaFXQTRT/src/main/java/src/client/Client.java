@@ -1,11 +1,7 @@
 package src.client;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,17 +16,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import src.client.GameBoardController.GAME_STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.AdventureDeck;
 import src.game_logic.AllyCard;
 import src.game_logic.AmourCard;
 import src.game_logic.FoeCard;
@@ -92,15 +88,19 @@ class AddCardsTask extends Task{
 			for(File f : list) {
 				if ((f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) && 
 						((f.getName().length()-6) == card.length() || (f.getName().length()-4) == card.length())) {
+					AdventureDeck ad = new AdventureDeck();
+					ad.populate();
 					switch (f.getName().charAt(0)) {
 					case 'A':{
 						if(card.equals("Amour")) {
-							AmourCard c = new AmourCard(card, f.getPath());
+							AdventureCard c = ad.getCardByName(card);
+							c.setImgView(f.getPath());
 							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 							c.faceDown();
 							gbc.addCardToHand(c, player);
 						} else {
-							AllyCard c = new AllyCard(card, f.getPath());
+							AdventureCard c = ad.getCardByName(card);
+							c.setImgView(f.getPath());
 							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 							c.faceDown();
 							gbc.addCardToHand(c, player);
@@ -109,7 +109,8 @@ class AddCardsTask extends Task{
 						break;
 					}
 					case 'F' : {
-						FoeCard c = new FoeCard(card, f.getPath());
+						AdventureCard c = ad.getCardByName(card);
+						c.setImgView(f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
@@ -117,7 +118,8 @@ class AddCardsTask extends Task{
 						break;
 					}
 					case 'T' : {
-						TestCard c = new TestCard(card, f.getPath());
+						AdventureCard c = ad.getCardByName(card);
+						c.setImgView(f.getPath());
 						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
 						gbc.addCardToHand(c, player);
 						c.faceDown();
@@ -125,10 +127,11 @@ class AddCardsTask extends Task{
 						break;
 					}
 					case 'W':{
-						WeaponCard weapon = new WeaponCard(card, f.getPath());
-						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-						gbc.addCardToHand(weapon, player);
-						weapon.faceDown();
+						AdventureCard c = ad.getCardByName(card);
+						c.setImgView(f.getPath());
+						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
+						gbc.addCardToHand(c, player);
+						c.faceDown();
 						didAddCard = true;
 						break;
 					}
@@ -745,7 +748,7 @@ class HandFullDiscardTask extends Task {
 		gbc.showDiscardPane();
 		gbc.highlightFaceUp(player);
 		if(gbc.playerManager.getAI(player) != null) {
-			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size());
+			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size() - 12);
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
 			gbc.discard.fire();
 		}
@@ -958,6 +961,30 @@ public class Client implements Runnable {
 							});
 							this.wait();
 							this.send(new ContinueGameClient());
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				if(message.equals(MESSAGETYPES.TIETOURNAMENT.name())) {
+					QuestPassStageServer qpss = gson.fromJson(obj, QuestPassStageServer.class);
+					int[] players = qpss.players;
+					Platform.runLater(new RevealAllCards(gbc));
+					synchronized (this) {
+						try {
+							Platform.runLater(new Runnable(){
+								@Override
+								public void run(){
+									gbc.clearToast();
+									gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> i + "").collect(Collectors.joining(",")) + " tied the tournament");
+									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+									gbc.setButtonsInvisible();
+									gbc.startTurn.setVisible(true);
+									gbc.startTurn.setText("Continue");
+									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+								}
+							});
+							this.wait();
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

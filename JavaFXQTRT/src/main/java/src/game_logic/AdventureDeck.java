@@ -13,7 +13,7 @@ public class AdventureDeck extends Deck<AdventureCard> {
 	
 	public ArrayList<AdventureCard> discards = new ArrayList<AdventureCard>();
 	
-	void populate() {
+	public void populate() {
 		addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS),2);
 		addCard(new WeaponCard("Lance",20, TYPE.WEAPONS),6);
 		addCard(new WeaponCard("Battle-ax",15, TYPE.WEAPONS),8);

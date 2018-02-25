@@ -211,9 +211,9 @@ public class UIPlayerManager {
 	}
 
 	public void setAI(List<Integer> list, List<Integer> list2) {
-		logger.info("AI player #s: " + list);
+		logger.info("AI player #s: " + list + " " + list2);
 		list.forEach(i -> ais.add(new A1(players[i], this)));
-		list.forEach(i -> ais.add(new A2(players[i], this)));
+		list2.forEach(i -> ais.add(new A2(players[i], this)));
 	}
 	
 	public AbstractAI getAI(int p) {

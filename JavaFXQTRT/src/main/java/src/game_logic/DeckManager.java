@@ -58,6 +58,19 @@ public class DeckManager {
 			return toReturn;
 		}
 		
+		if(rigged.equals(RIGGED.AITOURNAMENT)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(
+					"Tournament at York",
+					"Tournament at Tintagel",
+					"Tournament at Orkney",
+					"Tournament at Camelot");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
+		
 		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
 		storyDeck.discards.addAll(toReturn);
 			

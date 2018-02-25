@@ -96,6 +96,24 @@ public class PlayerManager {
 				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				players[i - 1].addCards(cards);
+			} else if(rigged.equals(RIGGED.AITOURNAMENT)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(18);
+				players[i - 1].increaseLevel();
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
@@ -275,6 +293,10 @@ public class PlayerManager {
 
 	public void sendContinue(String string) {
 		pvs.forEach(i -> i.sendContinue(string));
+	}
+
+	public void showTournamentTie(List<Player> winners) {
+		pvs.forEach(i -> i.showTournamentTie(winners));
 	}
 
 

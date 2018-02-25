@@ -71,13 +71,13 @@ public class Main extends Application {
 						tlc.setRigged(RIGGED.TWO); break;
 					case RIGHT:
 						tlc.setRigged(RIGGED.LONG); break;
+					case A:
+						tlc.setRigged(RIGGED.AITOURNAMENT); break;
 					default:
 						break;
 					}
 				}
 			});
-			//			primaryStage.setMaxHeight(900);
-			//			primaryStage.setMaxWidth(1400);
 			primaryStage.show();
 
 		} catch(Exception e) {

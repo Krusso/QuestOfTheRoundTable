@@ -32,13 +32,21 @@ public abstract class TestFXBase extends ApplicationTest{
 	final String MENU_OPTION_1_AI_ID = "#b1a";
 	final String MENU_OPTION_2_AI_ID = "#b2a";
 	final String MENU_OPTION_3_AI_ID = "#b3a";
+	
+	final String MENU_OPTION_1_AI2_ID = "#b1a2";
+	final String MENU_OPTION_2_AI2_ID = "#b2a2";
+	final String MENU_OPTION_3_AI2_ID = "#b3a2";
 
 	final String TITLE_PANE_1_ID = "#tp1";
 	final String TITLE_PANE_2_ID = "#tp2";
+	final String TITLE_PANE_3_ID = "#tp3";
 
 
 	final String NEXT_SHIELD_BUTTON_1_ID = "#s1next";
 	final String NEXT_SHIELD_BUTTON_2_ID = "#s2next";
+	final String NEXT_SHIELD_BUTTON_3_ID = "#s3next";
+	
+	final String PREV_SHIELD_BUTTON_3_ID = "#s3prev";
 
 	final String MENU_PANE_ID = "#menuPane";
 	final String START_BUTTON_ID = "#start";
