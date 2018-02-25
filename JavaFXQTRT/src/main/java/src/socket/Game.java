@@ -85,6 +85,7 @@ public class Game extends Thread{
 	}
 
 	public void setRigged(RIGGED rigged2) {
+		logger.info("Setting rigged to: " + rigged2);
 		this.rigged = rigged2;
 	}
 
