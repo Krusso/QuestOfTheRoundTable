@@ -37,7 +37,7 @@ public class Server {
 			output.start();
 
 			game.join();
-			logger.info("Game over :)");
+			logger.info("Game staritng :)");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
