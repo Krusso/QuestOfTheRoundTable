@@ -28,7 +28,18 @@ public class DeckManager {
 		if(storyDeck.size() - n <= 0) {
 			storyDeck.reshuffle();
 		}
-		if(rigged.equals(RIGGED.TWO)) {
+		if(rigged.equals(RIGGED.THREE)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = storyDeck.getCardByName("Boar Hunt");
+			if(s == null) {
+				s = storyDeck.drawRandomCards(1).get(0);
+			}
+			toReturn.add(s);
+			logger.info("Drawing Boar Hunt rigged or next card: " + toReturn.get(0).getName());
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		} else if(rigged.equals(RIGGED.TWO)) {
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
 			StoryCard s = storyDeck.getCardByName("Test of the Green Knight");
 			if(s == null) {

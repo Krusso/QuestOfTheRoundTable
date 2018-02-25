@@ -233,7 +233,7 @@ class QuestSponsorTaskCant extends Task {
 		gbc.setButtonsInvisible();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showDecline();
-		gbc.showToast("Cant Sponsor Tournament");
+		gbc.showToast("Cant Sponsor Quest");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
 			gbc.decline.fire();

@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -29,6 +31,8 @@ import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 public class TestGameBoardScenarios extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestGameBoardScenarios.class);
 	
@@ -38,12 +42,13 @@ public class TestGameBoardScenarios extends TestFXBase {
 	
 	final String START_TURN = "#startTurn";
 	final String ACCEPT = "#accept";
+	final String DECLINE = "#decline";
 	final String END_TURN = "#endTurn";
 	final String TOAST = "#toast";
 	final String DISCARD = "#discard";
 	final String USE_MERLIN = "#useMerlin";
 	final String CONTINUE = "#nextTurn";
-	@Before
+
 	public void setup2Players(){
 		//Rig the game
 		press(KeyCode.LEFT);
@@ -65,11 +70,194 @@ public class TestGameBoardScenarios extends TestFXBase {
 		tsc = m.getTitleScreenController();
 	}
 	
+	public void setupBoarHunt(){
+		//Rig the game
+		press(KeyCode.DOWN);
+		clickOn(NEW_GAME_BUTTON_ID);
+		clickOn(MENU_BUTTON_1_ID);
+		clickOn(MENU_OPTION_1_HUMAN_ID);
+	
+		clickOn(MENU_BUTTON_2_ID);
+		clickOn(MENU_OPTION_2_HUMAN_ID);
+		clickOn(TITLE_PANE_2_ID);
+		clickOn(NEXT_SHIELD_BUTTON_2_ID);
+		
+		clickOn(MENU_BUTTON_3_ID);
+		clickOn(MENU_OPTION_3_HUMAN_ID);
+		clickOn(TITLE_PANE_3_ID);
+		clickOn(NEXT_SHIELD_BUTTON_3_ID);
+		clickOn(NEXT_SHIELD_BUTTON_3_ID);
+		
+		clickOn(MENU_BUTTON_4_ID);
+		clickOn(MENU_OPTION_4_HUMAN_ID);
+		clickOn(TITLE_PANE_4_ID);
+		clickOn(PREV_SHIELD_BUTTON_4_ID);
+		
+		clickOn(START_BUTTON_ID); 
+		
+		WaitForAsyncUtils.waitForFxEvents();
+
+		logger.info("m: " + m);
+		//get tsc
+		tsc = m.getTitleScreenController();
+	}
+	
+	@Test
+	public void testBoarHunt() {
+		setupBoarHunt();
+		gbc = tsc.getGameBoardController();
+		clickOn(START_TURN);
+		logger.info(gbc.CURRENT_STATE);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
+		// can p0 (ie player 1) sponsor the quest?
+		// TO-DO c:
+		
+		// are both accept/decline buttons visible?
+		BooleanBinding acceptVisible = Bindings.selectBoolean(gbc.accept.sceneProperty(), "window", "showing");
+		assertTrue(acceptVisible.get() == true);
+		BooleanBinding declineVisible = Bindings.selectBoolean(gbc.decline.sceneProperty(), "window", "showing");
+		assertTrue(declineVisible.get() == true);
+		// p0 is going to accept the quest
+		clickOn(ACCEPT);
+		// Once player accepts, it changes to pick_stages
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.PICK_STAGES);
+		
+		Pane stage1 = gbc.stages[0];
+		Pane stage2 = gbc.stages[1];
+		Pane handPane1 = gbc.playerhand0;
+		ImageView thieves = gbc.findCardInHand("Thieves");
+		ImageView saxons = gbc.findCardInHand("Saxons");
+		
+		// make sure we can select cards for both stages
+		drag(thieves).moveTo(stage1).release(MouseButton.PRIMARY);
+		assertTrue(stage1.getChildren().contains(thieves));
+		drag(saxons).moveTo(stage2).release(MouseButton.PRIMARY);
+		assertTrue(stage2.getChildren().contains(saxons));
+		
+		// check that there is exactly one foe in each stage (should pass)
+		assertTrue(stage1.getChildren().size() == 1);
+		assertTrue(stage2.getChildren().size() == 1);
+		
+		String[] foes = {"Dragon","Giant","Mordred","Green Knight","Black Knight","Evil Knight",
+					   	 "Saxon Knight","Robber Knight","Saxons","Boar","Thieves"};
+		
+		// make sure its a foe
+		// ???
+		
+		clickOn(END_TURN);
+		
+		// make sure all other players are prompted to join
+		// and accept as all players
+		int size2,size3,size4,newSize2,newSize3,newSize4=0;
+		
+		Pane handPane2 = gbc.playerHand1;
+		size2 = handPane2.getChildren().size();
+		Pane fdc2 = gbc.playerFaceDown1;
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
+
+		Pane handPane3 = gbc.playerHand2;
+		size3 = handPane3.getChildren().size();
+		Pane fdc3 = gbc.playerFaceDown2;
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
+		
+		Pane handPane4 = gbc.playerHand3;
+		size4 = handPane4.getChildren().size();
+		Pane fdc4 = gbc.playerFaceDown3;
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
+		
+		newSize2 = handPane2.getChildren().size();
+		newSize3 = handPane3.getChildren().size();
+		newSize4 = handPane4.getChildren().size();
+		
+		// make sure everyone drew a card
+		assertTrue(newSize2-size2==1);
+		assertTrue(newSize3-size3==1);
+		assertTrue(newSize4-size4==1);
+		
+		clickOn(START_TURN);
+		// make sure everyone is forced to discard
+		if(newSize2>12) {
+			assertTrue(gbc.CURRENT_STATE == GAME_STATE.DISCARDING_CARDS);
+			assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+			// discard 1 card
+			ImageView battleax = gbc.findCardInHand("Battle-ax");
+			drag(battleax).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+			clickOn(DISCARD);
+			assertTrue(handPane2.getChildren().size() <= 12);
+		}
+		clickOn(START_TURN);
+		if(newSize3>12) {
+			assertTrue(gbc.CURRENT_STATE == GAME_STATE.DISCARDING_CARDS);
+			assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+			// play an amour instead of discarding
+			ImageView amour = gbc.findCardInHand("Amour");
+			drag(amour).moveTo(gbc.playerFaceDown2).release(MouseButton.PRIMARY);
+			clickOn(DISCARD);
+			assertTrue(handPane3.getChildren().size() <= 12);
+		}
+		clickOn(START_TURN);
+		if(newSize4>12) {
+			assertTrue(gbc.CURRENT_STATE == GAME_STATE.DISCARDING_CARDS);
+			assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+			// discard 1 card
+			ImageView battleax = gbc.findCardInHand("Battle-ax");
+			drag(battleax).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+			clickOn(DISCARD);
+			assertTrue(handPane4.getChildren().size() <= 12);
+		}
+		
+		clickOn(START_TURN);
+		// try to play no cards for this stage
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		clickOn(END_TURN);
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.CHILLING);
+		
+		clickOn(START_TURN);
+		// play random cards
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		ImageView excalibur2 = gbc.findCardInHand("Excalibur");
+		drag(excalibur2).moveTo(gbc.playerFaceDown2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.CHILLING);
+		
+		clickOn(START_TURN);
+		// play random cards
+		assertTrue(gbc.CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		ImageView excalibur3 = gbc.findCardInHand("Excalibur");
+		drag(excalibur3).moveTo(gbc.playerFaceDown3).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		
+		assertTrue(gbc.toast.getText().equals("Players #: 1,2,3 passed"));
+		
+		sleep(5000); // wait for cards to flip over
+		
+		// p1 didn't play any cards
+		ArrayList<AdventureCard> p2Cards = gbc.playerManager.getFaceUpCardsAsList(2);
+		for(int i=0;i<p2Cards.size();i++) {
+			assertTrue(p2Cards.get(i).isCardFaceUp());
+		}
+		ArrayList<AdventureCard> p3Cards = gbc.playerManager.getFaceUpCardsAsList(3);
+		for(int i=0;i<p3Cards.size();i++) {
+			assertTrue(p3Cards.get(i).isCardFaceUp());
+		}
+		
+		sleep(3000);
+	}
 	/*
 	 * Expect the game to have a quest card "Test of the Green Knight"
 	 */
 	@Test
 	public void test2PlayerGameQuest() {
+		setup2Players();
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
 		clickOn(START_TURN);

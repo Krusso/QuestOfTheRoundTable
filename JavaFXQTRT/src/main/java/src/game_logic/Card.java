@@ -64,7 +64,12 @@ public abstract class Card {
 		}
 	}
 	
-	
+	public boolean isCardFaceUp() {
+		if(imgView.getImage().equals(img)) {
+			return true;
+		}
+		return false;
+	}
 	
 	public void setOriginalPosition(double x, double y) {
 		orgStartX = x;
@@ -80,9 +85,7 @@ public abstract class Card {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+
 	public void setImageSize(double width, double height) {
 		imgView.setFitHeight(height);
 		imgView.setFitWidth(width);
