@@ -39,17 +39,17 @@
 								<Font name="High Tower Text" size="19.0" />
 							</font>
 						</Button>
-						<Button layoutX="103.0" layoutY="78.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="CHANGE AUDIO">
+						<Button layoutX="103.0" layoutY="78.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="CHANGE AUDIO" visible="false">
 							<font>
 								<Font name="High Tower Text" size="19.0" />
 							</font>
 						</Button>
-						<Button layoutX="102.0" layoutY="124.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="HELP">
+						<Button layoutX="102.0" layoutY="124.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="HELP" visible="false">
 							<font>
 								<Font name="High Tower Text" size="19.0" />
 							</font>
 						</Button>
-						<Button layoutX="103.0" layoutY="172.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="QUIT">
+						<Button layoutX="103.0" layoutY="172.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="QUIT" visible="false">
 							<font>
 								<Font name="High Tower Text" size="19.0" />
 							</font>
