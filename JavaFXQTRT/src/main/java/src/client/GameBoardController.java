@@ -904,7 +904,7 @@ public class GameBoardController implements Initializable{
 
 	public void setPlayerTurn(int p) {
 		setPlayerPerspectiveTo(p);
-		this.playerNumber.setText("#" + p);
+		this.playerNumber.setText("#" + (p + 1));
 	}
 
 	public void setStoryCard(StoryCard sc) {
