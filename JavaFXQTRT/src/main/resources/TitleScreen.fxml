@@ -105,12 +105,12 @@
 										</MenuButton>
 									</graphic>
 								</TitledPane>
-								<TitledPane animated="false" text="Player 4" textFill="WHITE">
+								<TitledPane fx:id="tp4" animated="false" text="Player 4" textFill="WHITE">
 									<content>
 										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 											<children>
 												<Pane fx:id="shieldPane4" layoutX="215.0" layoutY="20.0" prefHeight="128.0" prefWidth="91.0" />
-												<Button layoutX="230.0" layoutY="157.0" mnemonicParsing="false" onAction="#prevShield4" prefHeight="25.0" prefWidth="28.0" stylesheets="@application.css" text="&lt;" />
+												<Button fx:id="s4prev" layoutX="230.0" layoutY="157.0" mnemonicParsing="false" onAction="#prevShield4" prefHeight="25.0" prefWidth="28.0" stylesheets="@application.css" text="&lt;" />
 												<Button layoutX="265.0" layoutY="157.0" mnemonicParsing="false" onAction="#nextShield4" prefHeight="25.0" prefWidth="27.0" stylesheets="@application.css" text="&gt;" />
 											</children>
 										</AnchorPane>
@@ -118,7 +118,7 @@
 									<graphic>
 										<MenuButton fx:id="b4" mnemonicParsing="false" prefHeight="25.0" prefWidth="98.0" stylesheets="@application.css" text="Select Mode">
 											<items>
-												<MenuItem mnemonicParsing="false" onAction="#setHuman4" text="Human" />
+												<MenuItem fx:id="b4h" mnemonicParsing="false" onAction="#setHuman4" text="Human" />
 												<MenuItem mnemonicParsing="false" onAction="#setAI41" text="AI1" />
 												<MenuItem mnemonicParsing="false" onAction="#setAI42" text="AI2" />
 											</items>

@@ -154,5 +154,6 @@ public class TestAITournament extends TestFXBase {
 			}
 			return false;
 		});
+		
 	}
 }

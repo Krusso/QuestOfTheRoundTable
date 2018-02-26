@@ -11,10 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -65,8 +62,12 @@ public class Main extends Application {
 						tlc.setRigged(RIGGED.ONE); break;
 					case LEFT:
 						tlc.setRigged(RIGGED.TWO); break;
+					case DOWN:
+						tlc.setRigged(RIGGED.THREE); break;
 					case RIGHT:
 						tlc.setRigged(RIGGED.LONG); break;
+					case Z:
+						tlc.setRigged(RIGGED.FOUR); break;
 					case A:
 						tlc.setRigged(RIGGED.AITOURNAMENT); break;
 					case B:

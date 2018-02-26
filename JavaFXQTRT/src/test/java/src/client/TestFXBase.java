@@ -26,10 +26,12 @@ public abstract class TestFXBase extends ApplicationTest{
 	final String MENU_BUTTON_1_ID = "#b1";
 	final String MENU_BUTTON_2_ID = "#b2";
 	final String MENU_BUTTON_3_ID = "#b3";
+	final String MENU_BUTTON_4_ID = "#b4";
 
 	final String MENU_OPTION_1_HUMAN_ID = "#b1h";
 	final String MENU_OPTION_2_HUMAN_ID = "#b2h";
 	final String MENU_OPTION_3_HUMAN_ID = "#b3h";
+	final String MENU_OPTION_4_HUMAN_ID = "#b4h";
 
 	final String MENU_OPTION_1_AI_ID = "#b1a";
 	final String MENU_OPTION_2_AI_ID = "#b2a";
@@ -42,11 +44,12 @@ public abstract class TestFXBase extends ApplicationTest{
 	final String TITLE_PANE_1_ID = "#tp1";
 	final String TITLE_PANE_2_ID = "#tp2";
 	final String TITLE_PANE_3_ID = "#tp3";
-
+	final String TITLE_PANE_4_ID = "#tp4";
 
 	final String NEXT_SHIELD_BUTTON_1_ID = "#s1next";
 	final String NEXT_SHIELD_BUTTON_2_ID = "#s2next";
 	final String NEXT_SHIELD_BUTTON_3_ID = "#s3next";
+	final String PREV_SHIELD_BUTTON_4_ID = "#s4prev";
 
 	final String PREV_SHIELD_BUTTON_3_ID = "#s3prev";
 

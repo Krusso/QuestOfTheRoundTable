@@ -6,9 +6,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import src.client.TestGameBoardScenarios;
-import src.messages.Message;
-import src.messages.Message.MESSAGETYPES;
 import src.messages.game.GameStartClient.RIGGED;
 
 public class DeckManager {
@@ -41,7 +38,32 @@ public class DeckManager {
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
-		} 
+		}
+		
+		if(rigged.equals(RIGGED.THREE)) {
+			storyDeck.getCardByName("Boar Hunt");
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Boar Hunt",
+					"Prosperity Throughout the Realm",
+					"Chivalrous Deed");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
+		
+		if(rigged.equals(RIGGED.FOUR)) {
+			storyDeck.getCardByName("Boar Hunt");
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Boar Hunt",
+					"Repel the Saxon Raiders");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
 		
 		if(rigged.equals(RIGGED.LONG)) {
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
@@ -126,6 +148,10 @@ public class DeckManager {
 	
 	public void addAdventureCard(List<AdventureCard> cards) {
 		adventureDeck.discards.addAll(cards);
+	}
+	
+	public AdventureCard getAdventureCard(String string) {
+		return adventureDeck.getCardByName(string);
 	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {

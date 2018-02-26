@@ -156,8 +156,8 @@ public class GameBoardController implements Initializable{
 	public ImageView[] stageViews = new ImageView[5];
 
 	/*Panes for picking stages (maximum number of stages is 5)*/
-	@FXML private Pane pickStage0;
-	@FXML private Pane pickStage1;
+	@FXML public Pane pickStage0;
+	@FXML public Pane pickStage1;
 	@FXML private Pane pickStage2;
 	@FXML private Pane pickStage3;
 	@FXML private Pane pickStage4;
@@ -279,6 +279,12 @@ public class GameBoardController implements Initializable{
 		noticeableGlow.setOffsetY(0f);
 		noticeableGlow.setHeight(170);
 		playerRanks[p].setEffect(noticeableGlow);
+	}
+	
+	public void clearGlow() {
+		for(ImageView p: playerRanks) {
+			p.setEffect(new DropShadow());
+		}
 	}
 
 	public void clearHighlight() {
@@ -1008,12 +1014,6 @@ public class GameBoardController implements Initializable{
 		logger.info("Show start turn button: [startTurn: " + startTurn.isVisible() + "] " );
 	}
 
-
-	public void showNextTurn() {
-		this.nextTurn.setVisible(true);
-		logger.info("Show start turn button: [nextTurn: " + nextTurn.isVisible() + "] " );
-	}
-
 	public void showEndTurn() {
 		this.endTurn.setVisible(true);
 		logger.info("Show endTurn button: [endTurn: " + endTurn.isVisible() + "] " );
@@ -1500,6 +1500,41 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
+	
+	public ImageView findCardInHandByType(String cardType) {
+		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
+		if(cardType.equals("Weapon")) {
+			for(AdventureCard c: phand) {
+				if(c.getName().equals("Battle-ax") ||
+				   c.getName().equals("Dagger") ||
+				   c.getName().equals("Excalibur") ||
+				   c.getName().equals("Horse") ||
+				   c.getName().equals("Lance") ||
+				   c.getName().equals("Sword")) {
+					return c.getImageView();
+				}
+			}
+		}
+		if(cardType.equals("Foe")) {
+			for(AdventureCard c: phand) {
+				if(c.getName().equals("Dragon") ||
+				   c.getName().equals("Giant") ||
+				   c.getName().equals("Mordred") ||
+				   c.getName().equals("Green Knight") ||
+				   c.getName().equals("Black Knight") ||
+				   c.getName().equals("Evil Knight") ||
+				   c.getName().equals("Saxon Knight") ||
+				   c.getName().equals("Robber Knight") ||
+				   c.getName().equals("Saxons") ||
+				   c.getName().equals("Boar") ||
+				   c.getName().equals("Thieves")) {
+					return c.getImageView();
+				}
+			}
+		}
+		return null;
+	}
+	
 	
 	public ImageView findCardInHand(String cardName) {
 		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());

@@ -1,21 +1,13 @@
 package src.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.testfx.api.FxAssert.verifyThat;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import src.socket.Server;
 
 
 public class TestAIGameEndTournament extends TestFXBase {

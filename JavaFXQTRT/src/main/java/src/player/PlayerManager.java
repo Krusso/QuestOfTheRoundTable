@@ -67,120 +67,211 @@ public class PlayerManager {
 				players[i - 1].addCards(cards);
 			} else if(rigged.equals(RIGGED.TWO)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
-				cards.add(new AllyCard("Merlin", TYPE.ALLIES));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
+				cards.add(dm.getAdventureCard("Excalibur"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Test of Valor"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Green Knight"));
+				if(i == 2) {
+					cards.add(dm.getAdventureCard("Merlin"));
+				} else {
+					cards.add(dm.getAdventureCard("Dragon"));
+				}
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Dagger"));
+				players[i - 1].addCards(cards);
+			} else if(rigged.equals(RIGGED.THREE)){
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(dm.getAdventureCard("Boar"));
+				if(i == 3) {
+					cards.add(dm.getAdventureCard("Excalibur"));
+				} else {
+					cards.add(dm.getAdventureCard("Sword"));
+				}
+				
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Amour"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Horse"));
+				
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("Merlin"));	
+				} else {
+					cards.add(dm.getAdventureCard("Sword"));
+				}
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Dagger"));
+				players[i - 1].addCards(cards);
+			} else if (rigged.equals(RIGGED.FOUR)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				if(i == 2) {
+					cards.add(dm.getAdventureCard("Excalibur"));
+				} else {
+					cards.add(dm.getAdventureCard("Sword"));
+				}
+				
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Horse"));
+				cards.add(dm.getAdventureCard("Dagger"));
+				cards.add(dm.getAdventureCard("Boar"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				
+				if(i == 2) {
+					cards.add(dm.getAdventureCard("Evil Knight"));
+					cards.add(dm.getAdventureCard("Giant"));
+				} else {
+					cards.add(dm.getAdventureCard("Horse"));
+					cards.add(dm.getAdventureCard("Sword"));
+				}
+				
+				cards.add(dm.getAdventureCard("Thieves"));
 				players[i - 1].addCards(cards);
 			} else if (rigged.equals(RIGGED.LONG)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new AllyCard("Sir Percival",5,20, TYPE.ALLIES));
-				cards.add(new AllyCard("Sir Gawain",10,20, TYPE.ALLIES));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
-				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				if(i == 2) {
+					cards.add(dm.getAdventureCard("Sir Percival"));
+				} else {
+					cards.add(dm.getAdventureCard("King Arthur"));
+				}
 				
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("Sir Gawain"));
+				} else {
+					cards.add(dm.getAdventureCard("Queen Guinevere"));
+				}
+				
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Robber Knight"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Mordred"));
+				cards.add(dm.getAdventureCard("Green Knight"));
+				
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Amour"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Excalibur"));
 				players[i - 1].addCards(cards);
 			} else if(rigged.equals(RIGGED.AITOURNAMENT)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
-				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
-				
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Robber Knight"));
+				cards.add(dm.getAdventureCard("Black Knight"));
+				cards.add(dm.getAdventureCard("Mordred"));
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("Dragon"));
+				} else {
+					cards.add(dm.getAdventureCard("Green Knight"));
+				}
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Amour"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				if(i == 1 || i == 2) {
+					cards.add(dm.getAdventureCard("Excalibur"));
+				} else {
+					cards.add(dm.getAdventureCard("Battle-ax"));
+				}
 				players[i - 1].addCards(cards);
 				players[i - 1].changeShields(18);
 				players[i - 1].increaseLevel();
 			} else if(rigged.equals(RIGGED.AIQUEST)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
-				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
-				
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				// can be freed up to be anything
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Boar"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Dagger"));
+				cards.add(dm.getAdventureCard("Evil Knight"));
+				cards.add(dm.getAdventureCard("Mordred"));
+				cards.add(dm.getAdventureCard("Amour"));
 				players[i - 1].addCards(cards);
 				players[i - 1].changeShields(20);
 				players[i - 1].increaseLevel();
 			} else if(rigged.equals(RIGGED.AIQUEST1)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				cards.add(dm.getAdventureCard("Thieves"));
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("Green Knight"));
+				} else {
+					cards.add(dm.getAdventureCard("Thieves"));
+				}
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("Test of Valor"));
+				} else {
+					cards.add(dm.getAdventureCard("Test of Morgan Le Fey"));
+				}
 				
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Robber Knight"));
+				cards.add(dm.getAdventureCard("Robber Knight"));
+				cards.add(dm.getAdventureCard("Mordred"));
+				cards.add(dm.getAdventureCard("Amour"));
+				cards.add(dm.getAdventureCard("Saxon Knight"));
+				cards.add(dm.getAdventureCard("Dagger"));
+				
 				players[i - 1].addCards(cards);
 				players[i - 1].changeShields(20);
 				players[i - 1].increaseLevel();
 			} else if(rigged.equals(RIGGED.AIQUEST2)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(dm.getAdventureCard("Thieves"));
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("King Pellinore"));
+				} else {
+					cards.add(dm.getAdventureCard("Test of Valor"));
+				}
 				
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Boar"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Amour"));
+				cards.add(dm.getAdventureCard("Amour"));
+				if(i == 1) {
+					cards.add(dm.getAdventureCard("Sir Lancelot"));
+				} else {
+					cards.add(dm.getAdventureCard("Excalibur"));
+				}
+				
 				players[i - 1].addCards(cards);
 			} else if(rigged.equals(RIGGED.GAMEEND)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
-				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				
-				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
-				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
-				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
-				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
-				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				// can be freed up to be anything
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Thieves"));
+				cards.add(dm.getAdventureCard("Saxons"));
+				cards.add(dm.getAdventureCard("Boar"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Sword"));
+				cards.add(dm.getAdventureCard("Battle-ax"));
+				cards.add(dm.getAdventureCard("Lance"));
+				cards.add(dm.getAdventureCard("Dagger"));
+				cards.add(dm.getAdventureCard("Evil Knight"));
+				cards.add(dm.getAdventureCard("Mordred"));
+				cards.add(dm.getAdventureCard("Amour"));
 				players[i - 1].addCards(cards);
 				players[i - 1].changeShields(22);
 				players[i - 1].increaseLevel();

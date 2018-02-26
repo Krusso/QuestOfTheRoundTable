@@ -3,8 +3,6 @@ package src.player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +12,6 @@ import src.game_logic.AdventureDeck;
 import src.game_logic.Card;
 import src.game_logic.Rank;
 import src.game_logic.Rank.RANKS;
-import src.sequence.EventSequenceManager;
 import src.views.PlayerView;
 
 public class Player {

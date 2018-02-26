@@ -236,6 +236,7 @@ class QuestSponsorTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = GAME_STATE.SPONSOR_QUEST;
+		gbc.clearGlow();
 		gbc.setButtonsInvisible();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
@@ -1067,11 +1068,11 @@ public class Client implements Runnable {
 								public void run(){
 									gbc.clearToast();
 									if(players.length == 1) {
-										gbc.showToast("Player #: " + players[0] + " passed the quest");
+										gbc.showToast("Player #: " + (players[0] + 1) + " passed the quest");
 									} else if (players.length == 0) {
 										gbc.showToast("No players passed the quest");
 									} else {
-										gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> i + "").collect(Collectors.joining(",")) + " passed the quest");
+										gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> (i + 1) + "").collect(Collectors.joining(",")) + " passed the quest");
 									}
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
@@ -1112,11 +1113,11 @@ public class Client implements Runnable {
 								public void run(){
 									gbc.clearToast();
 									if(players.length == 1) {
-										gbc.showToast("Player #: " + players[0] + " passed the stage");
+										gbc.showToast("Player #: " + (players[0] + 1) + " passed the stage");
 									} else if (players.length == 0) {
 										gbc.showToast("No players passed the stage");
 									} else {
-										gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> i + "").collect(Collectors.joining(",")) + " passed");
+										gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> ( i + 1) + "").collect(Collectors.joining(",")) + " passed");
 									}
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();

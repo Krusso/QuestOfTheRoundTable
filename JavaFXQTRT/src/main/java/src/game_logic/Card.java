@@ -63,6 +63,13 @@ public abstract class Card {
 			logger.error(e.getMessage());
 		}
 	}
+
+	public boolean isCardFaceUp() {
+		if(imgView.getImage().equals(img)) {
+			return true;
+		}
+		return false;
+	}
 	
 	public void setImgView(URL url) {
 		try {
@@ -91,9 +98,7 @@ public abstract class Card {
 			logger.error(e.getMessage());
 		}
 	}
-	
-	
-	
+
 	public void setImageSize(double width, double height) {
 		if(imgView != null) {
 			imgView.setFitHeight(height);
@@ -225,10 +230,12 @@ public abstract class Card {
         rotator.setInterpolator(Interpolator.LINEAR);
         return rotator;
     }
+	
 	public void revertImagePosition() {
 		imgView.setX(orgStartX);
 		imgView.setY(orgStartY);
 	}
+	
 	public boolean isMerlin() {
 		if(name.equalsIgnoreCase("Merlin")) {
 			return true;
@@ -251,6 +258,7 @@ public abstract class Card {
 		}
 		return false;
 	}
+	
 	public void resetMerlinCharges() {
 		merlinUses = 1;
 	}
