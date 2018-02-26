@@ -1491,6 +1491,41 @@ public class GameBoardController implements Initializable{
 		}
 	}
 	
+	public ImageView findCardInHandByType(String cardType) {
+		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
+		if(cardType.equals("Weapon")) {
+			for(AdventureCard c: phand) {
+				if(c.getName().equals("Battle-ax") ||
+				   c.getName().equals("Dagger") ||
+				   c.getName().equals("Excalibur") ||
+				   c.getName().equals("Horse") ||
+				   c.getName().equals("Lance") ||
+				   c.getName().equals("Sword")) {
+					return c.getImageView();
+				}
+			}
+		}
+		if(cardType.equals("Foe")) {
+			for(AdventureCard c: phand) {
+				if(c.getName().equals("Dragon") ||
+				   c.getName().equals("Giant") ||
+				   c.getName().equals("Mordred") ||
+				   c.getName().equals("Green Knight") ||
+				   c.getName().equals("Black Knight") ||
+				   c.getName().equals("Evil Knight") ||
+				   c.getName().equals("Saxon Knight") ||
+				   c.getName().equals("Robber Knight") ||
+				   c.getName().equals("Saxons") ||
+				   c.getName().equals("Boar") ||
+				   c.getName().equals("Thieves")) {
+					return c.getImageView();
+				}
+			}
+		}
+		return null;
+	}
+	
+	
 	public ImageView findCardInHand(String cardName) {
 		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
 		for(AdventureCard c: phand) {

@@ -44,6 +44,7 @@ public class DeckManager {
 		}
 		
 		if(rigged.equals(RIGGED.THREE)) {
+			storyDeck.getCardByName("Boar Hunt");
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
 			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
 					"Boar Hunt",
