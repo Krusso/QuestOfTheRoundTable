@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import src.client.TestGameBoardScenarios;
+import src.messages.Message;
+import src.messages.Message.MESSAGETYPES;
 import src.messages.game.GameStartClient.RIGGED;
 
 public class DeckManager {
@@ -15,7 +17,7 @@ public class DeckManager {
 	
 	private StoryDeck storyDeck;
 	private AdventureDeck adventureDeck;
-	private RIGGED rigged;
+	private RIGGED rigged = RIGGED.NORMAL;
 	
 	public DeckManager() {
 		this.storyDeck = new StoryDeck();
@@ -28,18 +30,7 @@ public class DeckManager {
 		if(storyDeck.size() - n <= 0) {
 			storyDeck.reshuffle();
 		}
-		if(rigged.equals(RIGGED.THREE)) {
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = storyDeck.getCardByName("Boar Hunt");
-			if(s == null) {
-				s = storyDeck.drawRandomCards(1).get(0);
-			}
-			toReturn.add(s);
-			logger.info("Drawing Boar Hunt rigged or next card: " + toReturn.get(0).getName());
-			storyDeck.discards.add(toReturn.get(0));
-			
-			return toReturn;
-		} else if(rigged.equals(RIGGED.TWO)) {
+		if(rigged.equals(RIGGED.TWO)) {
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
 			StoryCard s = storyDeck.getCardByName("Test of the Green Knight");
 			if(s == null) {
@@ -50,11 +41,24 @@ public class DeckManager {
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
-		} 
+		}
+		
+		if(rigged.equals(RIGGED.THREE)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Boar Hunt",
+					"Prosperity Throughout the Realm",
+					"Chivalrous Deed");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
 		
 		if(rigged.equals(RIGGED.LONG)) {
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull("Search for the Holy Grail",
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Search for the Holy Grail",
 					"Test of the Green Knight",
 					"Tournament at York",
 					"Pox",
@@ -69,21 +73,23 @@ public class DeckManager {
 			return toReturn;
 		}
 		
+		
+		
 		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
 		storyDeck.discards.addAll(toReturn);
 			
 		return toReturn;
 	}
 	
-	private StoryCard firstNotNull(String... strings) {
+	private <T extends Card> T firstNotNull(Class<T> a, Deck<T> d, String... strings ) {
 		for(String s: strings) {
-			StoryCard c = storyDeck.getCardByName(s);
+			T c = d.getCardByName(s);
 			if(c != null) {
 				return c;
 			}
 		}
 		
-		return storyDeck.drawRandomCards(1).get(0);
+		return d.drawRandomCards(1).get(0);
 	}
 	
 	public void addAdventureCard(List<AdventureCard> cards) {

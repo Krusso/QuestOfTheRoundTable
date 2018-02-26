@@ -153,8 +153,8 @@ public class GameBoardController implements Initializable{
 	public ImageView[] stageViews = new ImageView[5];
 
 	/*Panes for picking stages (maximum number of stages is 5)*/
-	@FXML private Pane pickStage0;
-	@FXML private Pane pickStage1;
+	@FXML public Pane pickStage0;
+	@FXML public Pane pickStage1;
 	@FXML private Pane pickStage2;
 	@FXML private Pane pickStage3;
 	@FXML private Pane pickStage4;
