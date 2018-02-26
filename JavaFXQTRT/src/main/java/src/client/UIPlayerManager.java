@@ -99,13 +99,6 @@ public class UIPlayerManager {
 
 	public void setCurrentPlayer(int p) {
 		currentPlayer = p;
-		//		for(int i = 0; i < players.length ; i++) {
-		//			if(i == p) {
-		//				showPlayerHand(p);
-		//			}else {
-		////				hidePlayerHand(i);
-		//			}
-		//		}
 	}
 
 	public ArrayList<AdventureCard> getPlayerHand(int pNum){

@@ -48,20 +48,6 @@ public class Main extends Application {
 			logger.info("Main's TitleScreenController reference:" + tlc);
 			//Pass the client to the controller
 			tlc.setClient(client);
-			
-			
-			try {
-//				Image titleImg = new Image(getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
-//				ImageView titleImgView = new ImageView();
-//				titleImgView.setImage(titleImg);
-//				titleImgView.fitWidthProperty().bind(primaryStage.widthProperty());
-//				titleImgView.fitHeightProperty().bind(primaryStage.heightProperty());
-//				//				tlc.addImage(imgView);
-//				tlc.background.getChildren().add(titleImgView);
-
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-			}
 
 			Scene scene = new Scene(root);
 			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();

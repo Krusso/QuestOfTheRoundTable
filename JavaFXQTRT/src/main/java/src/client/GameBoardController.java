@@ -66,12 +66,12 @@ public class GameBoardController implements Initializable{
 
 	/* Them Dank sound effectss*/
 	public AudioPlayer bgMusic = new AudioPlayer("Game_Music_1.mp3");
-	private AudioPlayer cardDropSound = new AudioPlayer("card_drop.wav", false);
-	private AudioPlayer invalid = new AudioPlayer("invalid.wav", false);
-	private AudioPlayer buttonClick = new AudioPlayer("button_click.wav", false);
-	private AudioPlayer dyingSound = new AudioPlayer("man_dying.wav", false);
-	private AudioPlayer merlinPowerSound = new AudioPlayer("merlin_power.wav", false);
-	private AudioPlayer mordredPowerSound = new AudioPlayer("mordred_power.wav", false);
+	private SoundEffect cardDropSound = new SoundEffect("card_drop.wav");
+	private SoundEffect invalid = new SoundEffect("invalid.wav");
+	private SoundEffect buttonClick = new SoundEffect("button_click.wav");
+	private SoundEffect dyingSound = new SoundEffect("man_dying.wav");
+	private SoundEffect merlinPowerSound = new SoundEffect("merlin_power.wav");
+	private SoundEffect mordredPowerSound = new SoundEffect("mordred_power.wav");
 
 	public Client c;
 	public UIPlayerManager playerManager;
