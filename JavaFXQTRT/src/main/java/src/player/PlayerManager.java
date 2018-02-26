@@ -76,7 +76,7 @@ public class PlayerManager {
 				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
 				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
-				cards.add(new AllyCard("Merlin",10,10,2, TYPE.ALLIES));
+				cards.add(new AllyCard("Merlin", TYPE.ALLIES));
 				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
 				cards.add(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 				players[i - 1].addCards(cards);

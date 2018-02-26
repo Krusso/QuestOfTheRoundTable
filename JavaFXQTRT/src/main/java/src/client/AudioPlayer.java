@@ -2,6 +2,7 @@ package src.client;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 public class AudioPlayer {
 
@@ -28,10 +29,14 @@ public class AudioPlayer {
 	}
 	
 	public void play() {
+		stop();
 		mediaPlayer.play();
 	}
 	public void stop() {
 		mediaPlayer.stop();
+	}
+	public void setVolume(double value) {
+		mediaPlayer.setVolume(value);
 	}
 	
 

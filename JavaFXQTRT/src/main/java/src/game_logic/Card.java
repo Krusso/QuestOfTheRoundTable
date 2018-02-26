@@ -230,10 +230,12 @@ public abstract class Card {
         rotator.setInterpolator(Interpolator.LINEAR);
         return rotator;
     }
+	
 	public void revertImagePosition() {
 		imgView.setX(orgStartX);
 		imgView.setY(orgStartY);
 	}
+	
 	public boolean isMerlin() {
 		if(name.equalsIgnoreCase("Merlin")) {
 			return true;
@@ -249,12 +251,14 @@ public abstract class Card {
 	}
 	
 	public boolean tryUseMerlin() {
+		logger.info("Merlin uses: " + merlinUses);
 		if(merlinUses > 0) {
 			merlinUses--;
 			return true;
 		}
 		return false;
 	}
+	
 	public void resetMerlinCharges() {
 		merlinUses = 1;
 	}
