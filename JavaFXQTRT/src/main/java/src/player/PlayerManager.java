@@ -126,6 +126,94 @@ public class PlayerManager {
 				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				players[i - 1].addCards(cards);
+			} else if(rigged.equals(RIGGED.AITOURNAMENT)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(18);
+				players[i - 1].increaseLevel();
+			} else if(rigged.equals(RIGGED.AIQUEST)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(20);
+				players[i - 1].increaseLevel();
+			} else if(rigged.equals(RIGGED.AIQUEST1)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(20);
+				players[i - 1].increaseLevel();
+			} else if(rigged.equals(RIGGED.AIQUEST2)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+			} else if(rigged.equals(RIGGED.GAMEEND)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(22);
+				players[i - 1].increaseLevel();
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
@@ -149,14 +237,6 @@ public class PlayerManager {
 				if(currentPlayer == i) return;
 				currentPlayer = i;
 			}
-		}
-		pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
-	}
-
-	public void nextPlayer() {
-		currentPlayer++;
-		if(currentPlayer >= players.length) {
-			currentPlayer = 0;
 		}
 		pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
 	}
@@ -195,11 +275,6 @@ public class PlayerManager {
 		}
 	}
 
-	// I believe this is only used for the one event where a player must discard 2 weapons or if not possible 2 foes
-	public void setState(List<Player> partipcipants, Player.STATE state, int i, TYPE weapons) {
-		partipcipants.forEach(e -> e.setState(state, i, weapons));
-	}
-
 	public void setState(Player partipcipants, Player.STATE state, int i, TYPE weapons) {
 		partipcipants.setState(state, i, weapons);
 	}
@@ -207,11 +282,6 @@ public class PlayerManager {
 	public void setState(Player participant, Player.STATE state) {
 		participant.setState(state);
 	}
-
-	public void setState(List<Player> participants, Player.STATE state) {
-		participants.forEach(e -> e.setState(state));
-	}
-
 
 	public void setState(Player participant, STATE sponsoring, int numStages) {
 		participant.setState(sponsoring, numStages);
@@ -295,6 +365,7 @@ public class PlayerManager {
 		winners.forEach(i -> i.setState(win));
 		pvs.forEach(i -> i.win(winners, win));
 	}
+	
 	public void passStage(List<Player> winners) {
 		pvs.forEach(i -> i.passStage(winners));
 	}
@@ -305,6 +376,10 @@ public class PlayerManager {
 
 	public void sendContinue(String string) {
 		pvs.forEach(i -> i.sendContinue(string));
+	}
+
+	public void showTournamentTie(List<Player> winners) {
+		pvs.forEach(i -> i.showTournamentTie(winners));
 	}
 
 

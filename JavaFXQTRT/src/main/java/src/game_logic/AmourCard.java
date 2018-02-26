@@ -1,5 +1,7 @@
 package src.game_logic;
 
+import java.net.URL;
+
 public class AmourCard extends AdventureCard {
 	
 	private int bids;
@@ -8,9 +10,6 @@ public class AmourCard extends AdventureCard {
 		super(name, battlePoints, type);
 		this.bids = bids;
 	}
-	public AmourCard(String name, String path) {
-		super(name, path);
-		type = TYPE.AMOUR;
-	}
+
 	public int getBids() { return this.bids; }
 }

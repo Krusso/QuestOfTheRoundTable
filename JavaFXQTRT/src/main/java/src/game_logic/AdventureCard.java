@@ -1,5 +1,7 @@
 package src.game_logic;
 
+import java.net.URL;
+
 public class AdventureCard extends Card{
 	
 	public static enum TYPE {
@@ -28,7 +30,7 @@ public class AdventureCard extends Card{
 		this.namedBattlePoints = namedBattlePoints;
 	}
 	
-	public AdventureCard(String name, String path) {
+	public AdventureCard(String name, URL path) {
 		super(name,path);
 	}
 	

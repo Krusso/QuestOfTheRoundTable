@@ -1,5 +1,7 @@
 package src.game_logic;
 
+import java.net.URL;
+
 public class AllyCard extends AdventureCard {
 	
 	private int bids;
@@ -13,10 +15,6 @@ public class AllyCard extends AdventureCard {
 		this.namedBids = 0;
 	}
 	
-	public AllyCard(String name, String path) {
-		super(name, path);
-		type = TYPE.ALLIES;
-	}
 	public AllyCard(String name, int battlePoints, TYPE type) {
 		super(name, battlePoints, type);
 		this.namedBattlePoints = battlePoints;

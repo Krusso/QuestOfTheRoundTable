@@ -13,9 +13,11 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 
 	@Override
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
+		logger.info("Starting final tournament sequence manager");
 		List<Player> participants = pm.getAllWithState(Player.STATE.WINNING);
 		if(participants.size() == 1) {
 			pm.setStates(participants, Player.STATE.GAMEWON);
+			logger.info("Winners:" + participants);
 		} else {
 			questionPlayersTournament(participants.listIterator(), pm, actions);
 
@@ -25,7 +27,8 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 			BattlePointCalculator bpc = new BattlePointCalculator(pm);
 
 			List<Player> winners = bpc.calculateHighest(participants, null);
-			pm.setStates(winners, Player.STATE.GAMEWON);	
+			pm.setStates(winners, Player.STATE.GAMEWON);
+			logger.info("Winners:" + winners);
 		}
 	}
 

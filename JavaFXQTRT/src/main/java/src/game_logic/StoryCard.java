@@ -1,5 +1,7 @@
 package src.game_logic;
 
+import java.net.URL;
+
 public class StoryCard extends Card {
 	
 	public static enum TYPE {
@@ -14,7 +16,7 @@ public class StoryCard extends Card {
 		super(name);
 		this.type = type;
 	}
-	public StoryCard(String name, String path) {
+	public StoryCard(String name, URL path) {
 		super(name, path);
 	}
 	

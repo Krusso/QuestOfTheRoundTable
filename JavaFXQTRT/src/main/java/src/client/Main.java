@@ -1,12 +1,11 @@
 package src.client;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,9 +18,10 @@ import javafx.stage.Stage;
 import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Server;
 
-
 public class Main extends Application {
 	final static Logger logger = LogManager.getLogger(Main.class);
+	public static Thread thread;
+	public static Thread clientThread;
 	public static LinkedBlockingQueue<String> input = new LinkedBlockingQueue<String>();
 	public static LinkedBlockingQueue<String> output = new LinkedBlockingQueue<String>();
 	public static Client client;
@@ -32,11 +32,12 @@ public class Main extends Application {
 		try {
 			//Setup client
 			Main.client = new Client(input, output);
-			new Thread(client).start();
+			Main.clientThread = new Thread(client);
+			Main.clientThread.start();
 
 			Parent root = new AnchorPane();
 			FXMLLoader fxmlLoader = new FXMLLoader();
-			fxmlLoader.setLocation(getClass().getResource("TitleScreen.fxml"));
+			fxmlLoader.setLocation(getClass().getClassLoader().getResource("TitleScreen.fxml"));
 			root = fxmlLoader.load();
 
 			//Get the controller instance
@@ -45,10 +46,9 @@ public class Main extends Application {
 			//Pass the client to the controller
 			tlc.setClient(client);
 			
-
+			
 			try {
-				File titlebg = new File("src/main/resources/titlescreen1.jpg");
-				Image titleImg = new Image (new FileInputStream(titlebg));
+				Image titleImg = new Image(getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
 				ImageView titleImgView = new ImageView();
 				titleImgView.setImage(titleImg);
 				titleImgView.fitWidthProperty().bind(primaryStage.widthProperty());
@@ -57,7 +57,7 @@ public class Main extends Application {
 				tlc.background.getChildren().add(titleImgView);
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			Scene scene = new Scene(root);
@@ -76,19 +76,33 @@ public class Main extends Application {
 						tlc.setRigged(RIGGED.LONG); break;
 					case Z:
 						tlc.setRigged(RIGGED.FOUR); break;
+					case A:
+						tlc.setRigged(RIGGED.AITOURNAMENT); break;
+					case B:
+						tlc.setRigged(RIGGED.AIQUEST); break;
+					case C:
+						tlc.setRigged(RIGGED.AIQUEST1); break;
+					case D:
+						tlc.setRigged(RIGGED.AIQUEST2); break;
+					case E:
+						tlc.setRigged(RIGGED.GAMEEND); break;
 					default:
 						break;
 					}
 				}
 			});
-			//			primaryStage.setMaxHeight(900);
-			//			primaryStage.setMaxWidth(1400);
 			primaryStage.show();
+			primaryStage.setOnCloseRequest(e -> {
+				Platform.exit(); 
+				Main.thread.interrupt();
+				Main.clientThread.interrupt();
+				System.exit(0);
+			});
 			tlc.bgMusic	= new AudioPlayer("Main_Title.mp3");
 			tlc.bgMusic.play();
 
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	public static void main(String[] args) {
@@ -96,7 +110,8 @@ public class Main extends Application {
 		//Starts server
 		Runnable task2 = () -> { new Server(input, output);  };
 		// start the thread
-		new Thread(task2).start();
+		Main.thread = new Thread(task2);
+		thread.start();
 		launch(args);
 	}
 	public TitleScreenController getTitleScreenController() {

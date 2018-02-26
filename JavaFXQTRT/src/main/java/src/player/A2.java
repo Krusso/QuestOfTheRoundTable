@@ -1,6 +1,7 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,6 @@ import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.QuestCard;
-import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 
 public class A2 extends AbstractAI {
@@ -27,6 +27,7 @@ public class A2 extends AbstractAI {
 	
 	@Override
 	public boolean doIParticipateInTournament() {
+		logger.info("Participate in tournament");
 		return true;
 	}
 
@@ -35,40 +36,29 @@ public class A2 extends AbstractAI {
 	public List<AdventureCard> playCardsForTournament() {
 		int currentBp = bpc.calculatePoints(player, pm.iseultExists());
 		if(currentBp >= 50) {
+			logger.info("BP over 50 not playing any more cards");
 			return null;
 		}
 		
-		List<AdventureCard> allies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, null, pm.iseultExists());
-		List<AdventureCard> weapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
+		List<AdventureCard> alliesOrWeapons = bpc.uniqueListOfTypeDecreasingBp(player, null, pm.iseultExists(), TYPE.ALLIES, TYPE.WEAPONS);
 		List<AdventureCard> cardsToUse = new ArrayList<AdventureCard>();
-		for(AdventureCard card: allies) {
+		for(AdventureCard card: alliesOrWeapons) {
 			if(currentBp >= 50) {
 				break;
 			}
 			cardsToUse.add(card);
 			currentBp += card.getBattlePoints();
 		}
-
-		for(AdventureCard card: weapons) {
-			if(currentBp >= 50) {
-				break;
-			}
-			cardsToUse.add(card);
-			currentBp += card.getBattlePoints();
-		}
-
+		logger.info("Played cards: " + Arrays.toString(cardsToUse.stream().map(i -> i.getName()).toArray(String[]::new)));
 		return cardsToUse;
 
 	}
 
 	@Override
 	public List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard) {
-		rounds = 0;
-		int length = pm.getNumPlayers();
-		for(int i = 0; i < length; i++) {
-			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
-				return null;
-			}
+		if(playerCanWinOrEvolve(pm)) {
+			logger.info("Someone can win dont sponsor tournament");
+			return null;
 		}
 
 		List<List<AdventureCard>> cards = new ArrayList<List<AdventureCard>>();
@@ -81,7 +71,10 @@ public class A2 extends AbstractAI {
 		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<AdventureCard>()));
 
 		//set up last stage to be atleast 40
-		if(sortedfoes.size() <= 0) return null;
+		if(sortedfoes.size() <= 0) {
+			logger.info("Not enough foes to sponsor quest");
+			return null;
+		}
 
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
@@ -92,7 +85,10 @@ public class A2 extends AbstractAI {
 				cards.get(stages).add(biggestWeapon);
 		}
 
-		if(bp < 40) return null;
+		if(bp < 40) {
+			logger.info("Cant make last stage atleast 40 dont sponsor");
+			return null;
+		}
 
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
@@ -134,24 +130,28 @@ public class A2 extends AbstractAI {
 					i.stream().map(j -> j.getName()).toArray(String[]::new),
 					(StoryCard) questCard);
 			if(pointsInStage < min) {
+				logger.info("Cant make stages follow increasing bp order");
 				return null;
 			}
 			min = pointsInStage;
 		}
-
+		
+		logger.info("Cards picked: " + cards);
 		return cards;
 	}
 
 	@Override
 	public boolean doIParticipateInQuest(QuestCard questCard) {
 		logger.info("Asking A2 if wants to join tournament");
+		rounds = 0;
+		stages = 0;
 		List<AdventureCard> sortedfoes = bpc.listOfTypeDecreasingBp(player, TYPE.FOES, questCard, pm.iseultExists());
 
 		int tenIncrements = 0;
 		for(AdventureCard card: player.hand.getDeck()) {
 			if((card.getType() == TYPE.WEAPONS || card.getType() == TYPE.ALLIES
 					|| card.getType() == TYPE.AMOUR) && card.getBattlePoints() == 10) {
-				logger.info("Asking A2 doesnt want to join the tournament not enough increments of 10");
+				logger.info("A2 found increment of 10");
 				tenIncrements++;
 			}
 		}
@@ -163,17 +163,18 @@ public class A2 extends AbstractAI {
 			}
 		}
 
+		logger.info((foes >= 2) && (tenIncrements >= questCard.getNumStages()));
 		return (foes >= 2) && (tenIncrements >= questCard.getNumStages());
 	}
 
 	@Override
-	public List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
+	public List<AdventureCard> playCardsForFoeQuest(QuestCard questCard) {
 		List<AdventureCard> cards = new ArrayList<AdventureCard>();
-
+		stages++;
 		List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists());
 		List<AdventureCard> sortedallies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists());
 		sortedallies.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
-		if(lastStage) {
+		if(stages >= questCard.getNumStages()) {
 			// if last stage add everything you can
 			cards.addAll(sortedweapons);
 			cards.addAll(sortedallies);
@@ -182,30 +183,37 @@ public class A2 extends AbstractAI {
 			for(AdventureCard card: sortedallies) {
 				if(card.getType().equals(TYPE.AMOUR)) {
 					cards.add(card);
+					logger.info("Playing cards for foe: " + cards);
 					return cards;
 				}
 			}
 			for(AdventureCard card: sortedallies) {
 				if(card.getBattlePoints() == 10) {
 					cards.add(card);
+					logger.info("Playing cards for foe: " + cards);
 					return cards;
 				}
 			}
 			for(AdventureCard card: sortedweapons) {
 				if(card.getBattlePoints() == 10) {
 					cards.add(card);
+					logger.info("Playing cards for foe: " + cards);
 					return cards;
 				}
 			}
 		}
+		logger.info("Playing cards for foe: " + cards);
 		return cards;
 	}
 
 	@Override
 	public int nextBid(int prevBid) {
 		rounds++;
+		stages = 0;
 		List<AdventureCard> cards = discardAfterWinningTest();
-		if(cards == null || cards.size() <= prevBid) {
+		logger.info("Willing to bid: " + cards);
+		logger.info("Prev bid: " + prevBid);
+		if(cards == null || cards.size() < prevBid) {
 			return -1;
 		} else {
 			return cards.size();

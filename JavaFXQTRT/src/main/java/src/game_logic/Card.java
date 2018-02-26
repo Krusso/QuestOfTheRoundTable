@@ -1,9 +1,12 @@
 package src.game_logic;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
@@ -12,17 +15,15 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import src.client.GameBoardController;
 
 public abstract class Card {
+	
+	final static Logger logger = LogManager.getLogger(Card.class);
 	
 	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
@@ -49,21 +50,20 @@ public abstract class Card {
 		this.name = name;
 
 	}
-	public Card(String name, String path) {
+	public Card(String name, URL path) {
 		try {
 			this.name = name;
-			File file = new File(path);
-			img = new Image (new FileInputStream(file));
+			img = new Image (path.openStream());
 			imgView = new ImageView();
 			imgView.setImage(img);
 			imgView.setFitWidth(100);
 			imgView.setFitHeight(150);
 			//setDraggableOn();
 		}catch(Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
-	
+
 	public boolean isCardFaceUp() {
 		if(imgView.getImage().equals(img)) {
 			return true;
@@ -71,17 +71,16 @@ public abstract class Card {
 		return false;
 	}
 	
-	public void setImgView(String path) {
+	public void setImgView(URL url) {
 		try {
-			File file = new File(path);
-			img = new Image (new FileInputStream(file));
+			img = new Image (url.openStream());
 			imgView = new ImageView();
 			imgView.setImage(img);
 			imgView.setFitWidth(100);
 			imgView.setFitHeight(150);
 			//setDraggableOn();
-		} catch(Exception e) {
-			e.printStackTrace();
+		}catch(Exception e) {
+			logger.error(e.getMessage());
 		}
 	}
 	
@@ -90,19 +89,21 @@ public abstract class Card {
 		orgStartY = y;
 	}
 	
-	public void setCardBack(String path) {
-		File file = new File(path);
+	public void setCardBack(URL url) {
 		try {
-			cardBack = new Image(new FileInputStream(file));
+			cardBack = new Image(url.openStream());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
 	}
 
 	public void setImageSize(double width, double height) {
-		imgView.setFitHeight(height);
-		imgView.setFitWidth(width);
+		if(imgView != null) {
+			imgView.setFitHeight(height);
+			imgView.setFitWidth(width);
+		}
 	}
 
 	public void returnOriginalPosition() {
@@ -135,10 +136,10 @@ public abstract class Card {
             public void handle(MouseEvent event)
             {
             	imgView.setMouseTransparent(false);
-            	System.out.println(event.getX() + " " + event.getY());
-            	System.out.println(event.getScreenX()+ " " + event.getScreenY());
+            	logger.info(event.getX() + " " + event.getY());
+            	logger.info(event.getScreenX()+ " " + event.getScreenY());
             	Point2D p = new Point2D(event.getSceneX(), event.getSceneY());
-            	System.out.println("Moving Card:" + name +" id:" + id + " childOf: " + childOf);
+            	logger.info("Moving Card:" + name +" id:" + id + " childOf: " + childOf);
             	gbc.putIntoPane(p, id);
             	event.consume();
             }

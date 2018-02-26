@@ -56,6 +56,7 @@ public class BattlePointCalculator {
 			scores.add(calculatePlayer(player.getID(), player.getFaceUp().getDeck().stream().map(i -> i.getName()).toArray(String[]::new), card));
 		});
 
+		logger.info("Scores for: " + participants + " card: " + card + " scores: " + scores);
 		return scores;
 	}
 
@@ -67,6 +68,7 @@ public class BattlePointCalculator {
 				players.remove();
 			}
 		}
+		logger.info("Survivors: " + participants);
 	}
 
 	public List<Player> calculateHighest(List<Player> participants, StoryCard card) {
@@ -82,6 +84,8 @@ public class BattlePointCalculator {
 				max = scores.get(i);
 			}
 		}
+		
+		logger.info("Highest: " + winning);
 		return winning;
 	}
 
@@ -95,18 +99,24 @@ public class BattlePointCalculator {
 		// p1 and p2 being flipped is not a typo :)
 		final boolean foundIseult1 = othersHaveIseult;
 		return player.hand.getDeck().stream().
-				sorted((p2,p1) -> Integer.compare(getPoints(p1, foundIseult1, card), getPoints(p2, foundIseult1, card))).
 				filter(i -> i.getType() == type).
+				sorted((p1,p2) -> Integer.compare(getPoints(p2, foundIseult1, card), getPoints(p1, foundIseult1, card))).
 				collect(Collectors.toList());
 	}
 	
 	public int getPoints(AdventureCard c, Boolean foundIseult, QuestCard card) {
+		if(card != null) {
+			logger.info("Card name: " + card.getName());
+		}
 		if(card != null && c.checkIfNamed(card.getFoe())) {
+			logger.info(c.getName() + " named " + c.getNamedBattlePoints());
 			return c.getNamedBattlePoints();
 		} else if(c.getName().equals("Sir Tristan") && foundIseult) {
+			logger.info(c.getName() + " named " + c.getNamedBattlePoints());
 			return c.getNamedBattlePoints();
 		}
 		
+		logger.info(c.getName() + " not named " + c.getBattlePoints());
 		return c.getBattlePoints();
 	}
 
@@ -117,6 +127,30 @@ public class BattlePointCalculator {
 				collect(Collectors.toList());
 	}
 
+
+	public List<AdventureCard> uniqueListOfTypeDecreasingBp(UIPlayer player, QuestCard card, boolean iseultExists,
+			TYPE... types) {
+		for(AdventureCard c: player.hand.getDeck()) {
+			if(c.getName().equals("Queen Iseult")) iseultExists = true;
+		}
+		
+		// p1 and p2 being flipped is not a typo :)
+		final boolean foundIseult1 = iseultExists;
+		return player.hand.getDeck().stream().
+				filter(i -> {
+					for(TYPE t: types) {
+						if(t == i.getType()) {
+							return true;
+						}
+					}
+					return false;
+				}).
+				map(i -> i.getName()).distinct().
+				map(i -> player.hand.findCardByName(i)).
+				sorted((p1,p2) -> Integer.compare(getPoints(p2, foundIseult1, card), getPoints(p1, foundIseult1, card))).
+				collect(Collectors.toList());
+	}
+	
 	public int calculatePlayer(int player, String[] cards, StoryCard storyCard) {
 		logger.info("Calculating score for player id: " + player);
 		if(storyCard != null) {
@@ -211,7 +245,10 @@ public class BattlePointCalculator {
 		if(tests.size() != 0) {
 			uniqueBpFoes++;
 		}
-		return uniqueBpFoes + 1 >= card.getNumStages();
+		
+		logger.info("Player: " + next.getID() + " can sponsor: " + (uniqueBpFoes + 1 >= card.getNumStages()));
+		return uniqueBpFoes >= card.getNumStages();
 	}
+
 
 }

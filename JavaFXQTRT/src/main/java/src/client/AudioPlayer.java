@@ -1,14 +1,10 @@
 package src.client;
 
-import java.io.File;
-
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 public class AudioPlayer {
-	private static File resourceDirectory = new File("src/main/resources/audio");
-	private String musicFile;
+
 	Media sound;
 	MediaPlayer mediaPlayer;
 	public AudioPlayer(String musicFile) {
@@ -22,8 +18,8 @@ public class AudioPlayer {
 		if(mediaPlayer != null) {
 			mediaPlayer.stop();
 		}
-		this.musicFile = musicFile;
-		sound = new Media(new File(resourceDirectory + "/" + musicFile).toURI().toString());
+		
+		sound = new Media(ClassLoader.getSystemResource(musicFile).toExternalForm());
 		mediaPlayer= new MediaPlayer(sound);
 		if(isLoop) {
 			mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);

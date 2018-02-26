@@ -3,6 +3,10 @@ package src.sequence;
 import src.player.Player;
 import src.player.PlayerManager;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.game_logic.Card;
 import src.game_logic.AdventureCard;
 import src.game_logic.QuestCard;
@@ -18,6 +22,8 @@ import src.player.BattlePointCalculator;
 
 public class Quest {
 
+	final static Logger logger = LogManager.getLogger(Quest.class);
+	
 	public static enum TYPE {
 		FOE, TEST
 	}
@@ -45,13 +51,13 @@ public class Quest {
 				List<Card> cardlist = new ArrayList<Card>();
 				for(int i=0; i<cards.length; i++) {
 					AdventureCard card = (AdventureCard) sponsor.getCard(cards[i]);
-					System.out.println(card + " " + questCard);
+					logger.info(card + " " + questCard);
 					if (card.checkIfNamed(questCard.getFoe())) card.name();
 					cardlist.add(card);
 				}
 				quest.add(stage, cardlist);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		if(quest.size()>0) {
@@ -108,6 +114,7 @@ public class Quest {
 				fbp += advCard.getBattlePoints();
 			}
 		}
+		logger.info("Foe BP: " + fbp);
 		return fbp;
 	}
 

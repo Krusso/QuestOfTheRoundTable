@@ -10,8 +10,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -21,10 +19,7 @@ import src.client.GameBoardController;
 import src.client.GameBoardController.GAME_STATE;
 import src.client.TitleScreenController;
 import src.game_logic.AdventureCard;
-import src.game_logic.QuestCard;
 import src.game_logic.Rank.RANKS;
-import src.views.TestPlayerView;
-
 import static org.junit.Assert.*;
 
 import static org.junit.Assert.assertTrue;
@@ -119,7 +114,6 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(MENU_BUTTON_3_ID);
 		clickOn(MENU_OPTION_3_HUMAN_ID);
 		clickOn(TITLE_PANE_3_ID);
-		sleep(1000);
 		clickOn(NEXT_SHIELD_BUTTON_3_ID);
 		clickOn(NEXT_SHIELD_BUTTON_3_ID);
 		
@@ -255,7 +249,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		ImageView horse = gbc.findCardInHand("Horse");
 		drag(horse).moveTo(gbc.playerFaceDown2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
-		
+		sleep(2000);
 		clickOn(START_TURN);
 		// play battle ax
 		assertTrue(gbc.CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS);
@@ -602,7 +596,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	 * Expect the game to have a quest card "Test of the Green Knight"
 	 */
 	@Test
-	public void test2PlayerGameQuest() {
+	public void test2PlayerGameQuest() throws InterruptedException {
 		setup2Players();
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
@@ -769,21 +763,20 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 
 		//continue next stage
+		Thread.sleep(30);
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
 		clickOn(START_TURN);
-//		
+		
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
-		// fixed it not sure why??
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		clickOn(END_TURN);
 		clickOn(START_TURN);
-//		
+		
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		drag(gbc.findCardInHand("Excalibur")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);

@@ -37,7 +37,7 @@ public class InputController extends Thread {
 			try {
 				return inputQueue.take();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 				return null;
 			}
 		};

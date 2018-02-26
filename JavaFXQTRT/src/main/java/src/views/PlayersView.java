@@ -11,6 +11,7 @@ import src.messages.gameend.FinalTournamentNotifyServer;
 import src.messages.gameend.GameOverServer;
 import src.messages.hand.FaceUpServer;
 import src.messages.hand.ShowHandServer;
+import src.messages.tournament.TournamentTieServer;
 import src.messages.tournament.TournamentWinServer;
 import src.player.Player;
 import src.player.Player.STATE;
@@ -61,6 +62,10 @@ public class PlayersView {
 	
 	public void sendContinue(String string) {
 		output.sendMessage(new ContinueGameServer(string));
+	}
+
+	public void showTournamentTie(List<Player> winners) {
+		output.sendMessage(new TournamentTieServer(winners.stream().mapToInt(i -> i.getID()).toArray()));
 	}
 
 }

@@ -86,7 +86,51 @@ public class DeckManager {
 			return toReturn;
 		}
 		
+		if(rigged.equals(RIGGED.AITOURNAMENT)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Tournament at York",
+					"Tournament at Tintagel",
+					"Tournament at Orkney",
+					"Tournament at Camelot");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
 		
+		if(rigged.equals(RIGGED.AIQUEST) || rigged.equals(RIGGED.AIQUEST1)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Repel the Saxon Raiders",
+					"Boar Hunt");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
+		
+		if(rigged.equals(RIGGED.AIQUEST2)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Repel the Saxon Raiders",
+					"Pox",
+					"Boar Hunt");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
+		
+		if(rigged.equals(RIGGED.GAMEEND)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Pox");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
 		
 		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
 		storyDeck.discards.addAll(toReturn);
@@ -112,6 +156,18 @@ public class DeckManager {
 	public ArrayList<AdventureCard> getAdventureCard(int n) {
 		if(adventureDeck.size() - n <= 0) {
 			adventureDeck.reshuffle();
+		}
+		if(rigged.equals(RIGGED.AITOURNAMENT) || rigged.equals(RIGGED.AIQUEST) || rigged.equals(RIGGED.AIQUEST1) || rigged.equals(RIGGED.AIQUEST2)) {
+			ArrayList<AdventureCard> toReturn = new ArrayList<AdventureCard>();
+			AdventureCard s = firstNotNull(AdventureCard.class, adventureDeck,
+					"Test of Valor",
+					"Test of Temptation",
+					"Test of Morgan Le Fey",
+					"Test of the Questing Beast",
+					"Saxon Knight");
+			toReturn.add(s);
+			
+			return toReturn;
 		}
 		return adventureDeck.drawRandomCards(n);
 	}

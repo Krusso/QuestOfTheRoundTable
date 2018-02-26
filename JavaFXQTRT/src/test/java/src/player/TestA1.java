@@ -58,7 +58,7 @@ public class TestA1 {
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		player = new A1(p1, pm);
-		assertEquals(true, TestA2.compare(player.playCardsForTournament(),  new String[] {"Excalibur", "Excalibur"}));
+		assertEquals(true, TestA2.compare(player.playCardsForTournament(),  new String[] {"Excalibur"}));
 
 		p1 = new UIPlayer(0);
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -186,7 +186,7 @@ public class TestA1 {
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		AbstractAI player = new A1(p1, pm);
-		assertTrue(TestA2.compare(player.playCardsForFoeQuest(false, card), 
+		assertTrue(TestA2.compare(player.playCardsForFoeQuest(card), 
 				new String[] {"Excalibur", "Lance"}));
 		
 		logger.info("Testing 2");
@@ -194,7 +194,7 @@ public class TestA1 {
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
 		player = new A1(p1, pm);
-		assertTrue(TestA2.compare(player.playCardsForFoeQuest(false, card), 
+		assertTrue(TestA2.compare(player.playCardsForFoeQuest(card), 
 				new String[] {"Sword", "Excalibur"}));
 		
 		logger.info("Testing 3");
@@ -204,7 +204,7 @@ public class TestA1 {
 		p1.addCard(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
 		p1.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
 		player = new A1(p1, pm);
-		assertTrue(TestA2.compare(player.playCardsForFoeQuest(false, card), 
+		assertTrue(TestA2.compare(player.playCardsForFoeQuest(card), 
 				new String[] {"King Arthur", "Sword"}));
 		
 		logger.info("Testing 4");
@@ -214,7 +214,7 @@ public class TestA1 {
 		p1.addCard(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
 		p1.addCard(new AmourCard("Amour",10,1, TYPE.AMOUR));
 		player = new A1(p1, pm);
-		assertTrue(TestA2.compare(player.playCardsForFoeQuest(false, card), 
+		assertTrue(TestA2.compare(player.playCardsForFoeQuest(card), 
 				new String[] {"Amour", "King Arthur"}));
 		
 		logger.info("Testing 5");
@@ -224,7 +224,8 @@ public class TestA1 {
 		p1.addCard(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
 		p1.addCard(new AmourCard("Amour",10,1, TYPE.AMOUR));
 		player = new A1(p1, pm);
-		assertTrue(TestA2.compare(player.playCardsForFoeQuest(true, card), 
+		player.playCardsForFoeQuest(card);
+		assertTrue(TestA2.compare(player.playCardsForFoeQuest(card), 
 				new String[] {"Amour", "Excalibur", "Sword", "King Arthur"}));
 	}
 	
@@ -245,14 +246,14 @@ public class TestA1 {
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		player = new A1(p1, pm);
-		assertTrue(-1 == player.nextBid(0));
+		assertEquals(-1,player.nextBid(1));
 		
 		logger.info("Testing 3");
 		p1 = new UIPlayer(0);
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Giant",40, TYPE.FOES));
 		player = new A1(p1, pm);
-		assertTrue(-1 == player.nextBid(0));
+		assertTrue(-1 == player.nextBid(1));
 		
 		logger.info("Testing 4");
 		p1 = new UIPlayer(0);
@@ -266,7 +267,7 @@ public class TestA1 {
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		player = new A1(p1, pm);
-		assertTrue(-1 == player.nextBid(0));
+		assertTrue(-1 == player.nextBid(1));
 		
 		logger.info("Testing 6");
 		p1 = new UIPlayer(0);
@@ -275,7 +276,7 @@ public class TestA1 {
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		player = new A1(p1, pm);
-		assertTrue(-1 == player.nextBid(0));
+		assertTrue(-1 == player.nextBid(1));
 		
 		logger.info("Testing 7");
 		p1 = new UIPlayer(0);
