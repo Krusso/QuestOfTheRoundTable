@@ -104,6 +104,39 @@ public class TestGameBoardScenarios extends TestFXBase {
 		tsc = m.getTitleScreenController();
 	}
 	
+	public void setupScenario2() {
+		//Rig the game
+		press(KeyCode.Z);
+		clickOn(NEW_GAME_BUTTON_ID);
+		clickOn(MENU_BUTTON_1_ID);
+		clickOn(MENU_OPTION_1_HUMAN_ID);
+	
+		clickOn(MENU_BUTTON_2_ID);
+		clickOn(MENU_OPTION_2_HUMAN_ID);
+		clickOn(TITLE_PANE_2_ID);
+		clickOn(NEXT_SHIELD_BUTTON_2_ID);
+		
+		clickOn(MENU_BUTTON_3_ID);
+		clickOn(MENU_OPTION_3_HUMAN_ID);
+		clickOn(TITLE_PANE_3_ID);
+		sleep(1000);
+		clickOn(NEXT_SHIELD_BUTTON_3_ID);
+		clickOn(NEXT_SHIELD_BUTTON_3_ID);
+		
+		clickOn(MENU_BUTTON_4_ID);
+		clickOn(MENU_OPTION_4_HUMAN_ID);
+		clickOn(TITLE_PANE_4_ID);
+		clickOn(PREV_SHIELD_BUTTON_4_ID);
+		
+		clickOn(START_BUTTON_ID); 
+		
+		WaitForAsyncUtils.waitForFxEvents();
+
+		logger.info("m: " + m);
+		//get tsc
+		tsc = m.getTitleScreenController();
+	}
+	
 	@Test
 	public void testScenario1() {
 		setupScenario1();
@@ -363,7 +396,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	
 	@Test
 	public void testScenario2() {
-		setupScenario1();
+		setupScenario2();
 		gbc = tsc.getGameBoardController();
 		// *** p1 ***
 		clickOn(START_TURN);
@@ -379,13 +412,24 @@ public class TestGameBoardScenarios extends TestFXBase {
 		Pane stage2 = gbc.stages[1];
 //		Pane handPane1 = gbc.playerhand0;
 		ImageView thieves = gbc.findCardInHand("Thieves");
+		ImageView sword = gbc.findCardInHand("Sword");
 		ImageView saxons = gbc.findCardInHand("Saxons");
+		ImageView battleax = gbc.findCardInHand("Battle-ax");
 		drag(thieves).moveTo(stage1).release(MouseButton.PRIMARY);
 		assertTrue(stage1.getChildren().contains(thieves));
+		drag(sword).moveTo(stage1).release(MouseButton.PRIMARY);
+		assertTrue(stage1.getChildren().contains(sword));
 		drag(saxons).moveTo(stage2).release(MouseButton.PRIMARY);
 		assertTrue(stage2.getChildren().contains(saxons));
+		drag(battleax).moveTo(stage2).release(MouseButton.PRIMARY);
+		assertTrue(stage2.getChildren().contains(battleax));
 		clickOn(END_TURN);
+		// *** p1 ***
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
 		// *** p3 ***
+		// don't participate
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
 		clickOn(DECLINE);
@@ -393,21 +437,15 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
 		clickOn(ACCEPT);
+		
+		
+		//DISCARDING
 		// *** p1 ***
 		clickOn(START_TURN);
-		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
-		clickOn(ACCEPT);
-
-		// DISCARDING
-		// *** p3 ***
-		clickOn(START_TURN);
 		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
-		ImageView dagger3 = gbc.findCardInHand("Dagger");
-		drag(dagger3).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		ImageView dagger1 = gbc.findCardInHand("Dagger");
+		drag(dagger1).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		clickOn(DISCARD);
-		
-		sleep(3000);
-		
 		// *** p4 ***
 		clickOn(START_TURN);
 		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
@@ -415,37 +453,116 @@ public class TestGameBoardScenarios extends TestFXBase {
 		drag(dagger4).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		clickOn(DISCARD);
 		
-		sleep(3000);
-
+		// STAGE 1
+		// *** p1 ***
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		ImageView horse1 = gbc.findCardInHand("Horse");
+		drag(horse1).moveTo(gbc.playerFaceDown0).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		// *** p4 ***
+		// play no cards and get eliminated
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		clickOn(END_TURN);
+		// make sure p4 got eliminated
+		sleep(1000);
+		assertTrue(gbc.toast.getText().equals("Player #: 0 passed the stage"));
+		sleep(5000); // wait for cards to flip over
 		
-//		// STAGE 1
-//		// *** p1 ***
-//		clickOn(START_TURN);
-//		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
-//		ImageView horse1 = gbc.findCardInHand("Horse");
-//		drag(horse1).moveTo(gbc.playerFaceDown0).release(MouseButton.PRIMARY);
-//		clickOn(END_TURN);
-//		// *** p3 ***
-//		clickOn(START_TURN);
-//		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
-//		ImageView horse3 = gbc.findCardInHand("Horse");
-//		drag(horse3).moveTo(gbc.playerFaceDown2).release(MouseButton.PRIMARY);
-//		clickOn(END_TURN);
-//		// *** p4 ***
-//		// play no cards and get eliminated
-//		clickOn(START_TURN);
-//		System.out.println("-----------" + gbc.toast.getText());
-////		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
-//		clickOn(END_TURN);
-//		// make sure p4 got eliminated
-//		sleep(1000); // more lags c:
-//		assertTrue(gbc.toast.getText().equals("Players #: 1,3 passed"));
-//		sleep(5000); // wait for cards to flip over
-//		// *** p3 ***
-//		// *** p4 ***
-//		// *** p1 ***
-//		
-//		sleep(3000);
+		// STAGE 2
+		// *** p1 ***
+		// play no cards and get eliminated
+		clickOn(START_TURN);
+		clickOn(START_TURN);
+		clickOn(END_TURN);
+		// make sure p1 got eliminated
+		sleep(1000);
+		assertTrue(gbc.toast.getText().equals("No players passed the stage"));
+		sleep(5000);
+		
+		// next quest
+		clickOn(START_TURN);
+		clickOn(START_TURN);
+		
+		// discard first
+		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+		ImageView lance = gbc.findCardInHand("Lance");
+		drag(lance).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		ImageView exc = gbc.findCardInHand("Excalibur");
+		drag(exc).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		clickOn(DISCARD);
+		
+		clickOn(START_TURN);
+		clickOn(START_TURN);
+		sleep(5000);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
+		clickOn(ACCEPT);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.PICK_STAGES);
+		// setting up quest
+		stage1 = gbc.stages[0];
+		stage2 = gbc.stages[1];
+		ImageView saxons1 = gbc.findCardInHand("Saxons");
+		ImageView giant = gbc.findCardInHand("Giant");
+		drag(saxons1).moveTo(stage1).release(MouseButton.PRIMARY);
+		assertTrue(stage1.getChildren().contains(saxons1));
+		drag(giant).moveTo(stage2).release(MouseButton.PRIMARY);
+		assertTrue(stage2.getChildren().contains(giant));
+		clickOn(END_TURN);
+		// playing quest
+		// *** p1 ***
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
+		// *** p3 ***
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
+		// *** p4 ***
+		clickOn(START_TURN);
+		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		clickOn(ACCEPT);
+		
+		// discard first
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+		ImageView boar = gbc.findCardInHand("Boar");
+		drag(boar).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		clickOn(DISCARD);
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+		ImageView boar2 = gbc.findCardInHand("Boar");
+		drag(boar2).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		clickOn(DISCARD);
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
+		ImageView boar3 = gbc.findCardInHand("Boar");
+		drag(boar3).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		clickOn(DISCARD);
+		clickOn(START_TURN);
+		
+		// select cards
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		ImageView weap = gbc.findCardInHandByType("Weapon");
+		drag(weap).moveTo(gbc.playerFaceDown2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		clickOn(END_TURN);
+		clickOn(START_TURN);
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		clickOn(END_TURN);
+		
+		// play no cards and get eliminated
+		clickOn(START_TURN);
+		clickOn(START_TURN);
+		clickOn(END_TURN);
+		sleep(1000);
+		assertTrue(gbc.toast.getText().equals("No players passed the stage"));
+		sleep(5000);
+		clickOn(START_TURN);
+		sleep(5000);
+		
 	}
 	
 	@Test

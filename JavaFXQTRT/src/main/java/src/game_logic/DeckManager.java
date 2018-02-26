@@ -56,6 +56,18 @@ public class DeckManager {
 			return toReturn;
 		}
 		
+		if(rigged.equals(RIGGED.FOUR)) {
+			storyDeck.getCardByName("Boar Hunt");
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Boar Hunt",
+					"Repel the Saxon Raiders");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
+		
 		if(rigged.equals(RIGGED.LONG)) {
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
 			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
