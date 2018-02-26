@@ -390,16 +390,16 @@ public class TestGameBoardScenarios extends TestFXBase {
 		setupScenario2();
 		gbc = tsc.getGameBoardController();
 		// *** p1 ***
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
 		clickOn(DECLINE);
 		// *** p2 ***
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(ACCEPT);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.PICK_STAGES);
 		// setting up quest
@@ -421,29 +421,29 @@ public class TestGameBoardScenarios extends TestFXBase {
 		Thread.sleep(20);
 		clickOn(END_TURN);
 		// *** p1 ***
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(ACCEPT);
 		// *** p3 ***
 		// don't participate
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(DECLINE);
 		// *** p4 ***
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(ACCEPT);
 		
 		
 		//DISCARDING
 		// *** p1 ***
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
 		ImageView dagger1 = gbc.findCardInHand("Dagger");
@@ -684,8 +684,6 @@ public class TestGameBoardScenarios extends TestFXBase {
 		drag(saxons2).moveTo(handPane1).release(MouseButton.PRIMARY);
 		assertTrue(handPane1.getChildren().contains(saxons2));
 		
-
-		
 		drag(testCard).moveTo(handPane1).release(MouseButton.PRIMARY);
 		//drag the green knight into stage 3 isntead (should be using 2nd bp
 		ImageView greenKnight = gbc.findCardInHand("Green Knight");
@@ -766,23 +764,25 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 
 		//continue next stage
-		Thread.sleep(30);
+		Thread.sleep(100);
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
+		Thread.sleep(100);
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
+		Thread.sleep(100);
 		clickOn(END_TURN);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		Thread.sleep(100);
 		drag(gbc.findCardInHand("Excalibur")).moveTo(fdc2).release(MouseButton.PRIMARY);
+		Thread.sleep(100);
 		clickOn(END_TURN);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 
 		//now we gotta discard cards for p0 since quest is finished (discard 4 cards)
@@ -792,7 +792,9 @@ public class TestGameBoardScenarios extends TestFXBase {
 			drag(hand.get(0).getImageView()).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		}
 		clickOn(DISCARD);
+		Thread.sleep(100);
 		clickOn(START_TURN);
+		Thread.sleep(100);
 		//make sure it is now player1's turn
 		WaitForAsyncUtils.waitForFxEvents();
 		assertTrue(gbc.playerManager.getCurrentPlayer() == 1);

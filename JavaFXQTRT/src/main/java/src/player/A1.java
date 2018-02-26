@@ -86,7 +86,10 @@ public class A1 extends AbstractAI {
 
 	@Override
 	public List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard) {
-		logger.info("Asking A1 if want sponsor tournament tournament");
+		logger.info("Asking A1 if want sponsor quest");
+		if(questCard != null) {
+			logger.info("Quest card: " + questCard.getName());
+		}
 		if(playerCanWinOrEvolve(pm)) {
 			logger.info("A1 doesnt want to sponsor tournament someone could win");
 			return null;

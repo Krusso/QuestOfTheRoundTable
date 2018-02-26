@@ -39,6 +39,11 @@ public class TestAIQuestSponsorA2 extends TestFXBase {
 		clickOn(MENU_OPTION_2_AI2_ID);
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(TITLE_PANE_2_ID);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		
 		clickOn(MENU_BUTTON_3_ID);
@@ -46,7 +51,7 @@ public class TestAIQuestSponsorA2 extends TestFXBase {
 		clickOn(MENU_BUTTON_3_ID);
 		clickOn(TITLE_PANE_3_ID);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}
@@ -66,43 +71,43 @@ public class TestAIQuestSponsorA2 extends TestFXBase {
 		gbc = tsc.getGameBoardController();
 				
 		// start turn first player
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		//p0 is going to accept the quest
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(DECLINE);
 		
 		//p1 AI turn accepts
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		//p2 AI turn accepts
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(ACCEPT);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		// p0
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		while(gbc.playerManager.players[0].hand.size() > 12) {
 			drag(gbc.playerManager.players[0].hand.getDeck().get(12).imgView).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		}
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
 
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		Platform.runLater(new Runnable() {
 			@Override
@@ -115,10 +120,10 @@ public class TestAIQuestSponsorA2 extends TestFXBase {
 		clickOn(END_TURN);
 		
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		Platform.runLater(new Runnable() {
 			@Override

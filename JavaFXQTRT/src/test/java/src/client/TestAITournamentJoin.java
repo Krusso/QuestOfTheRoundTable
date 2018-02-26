@@ -39,6 +39,11 @@ public class TestAITournamentJoin extends TestFXBase {
 		clickOn(MENU_OPTION_2_AI_ID);
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(TITLE_PANE_2_ID);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		
 		clickOn(MENU_BUTTON_3_ID);
@@ -46,7 +51,7 @@ public class TestAITournamentJoin extends TestFXBase {
 		clickOn(MENU_BUTTON_3_ID);
 		clickOn(TITLE_PANE_3_ID);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}
@@ -86,17 +91,25 @@ public class TestAITournamentJoin extends TestFXBase {
 		//p2 AI turn accepts
 		clickOn(START_TURN);
 		
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
-		clickOn(START_TURN);
+		Thread.sleep(100);
+		while(gbc.playerManager.players[0].hand.size() > 12) {
+			drag(gbc.playerManager.players[0].hand.getDeck().get(12).imgView).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
+		}
+		WaitForAsyncUtils.waitForFxEvents();
+		clickOn(DISCARD);
 		
-
-		assertEquals("Player #[3] won the game!", gbc.toast.getText());
-		
+		Thread.sleep(100);
+		assertEquals("Player #: 3 passed the quest", gbc.toast.getText());
+		Thread.sleep(100);
+		clickOn(START_TURN);
+		Thread.sleep(100);
+		assertEquals("Player: [3] has won the game!", gbc.toast.getText());
+		Thread.sleep(50000);
 	}
 }

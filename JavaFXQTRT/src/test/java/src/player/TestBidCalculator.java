@@ -46,9 +46,9 @@ public class TestBidCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}) );
+		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {}) );
 		assertEquals(6,scores);
-		int cardsToBid = new BidCalculator(pm).cardsToBid(6, p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int cardsToBid = new BidCalculator(pm).cardsToBid(6, p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(2, cardsToBid);
 	}
 	
@@ -62,9 +62,9 @@ public class TestBidCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Defend the Queen's Honor",4,new String[] {"All", "Sir Lancelot"}));
 		assertEquals(3,scores);
-		int cardsToBid = new BidCalculator(pm).cardsToBid(3, p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int cardsToBid = new BidCalculator(pm).cardsToBid(3, p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(2, cardsToBid);
 	}
 	
@@ -78,9 +78,9 @@ public class TestBidCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Journey Through the Enchanted Forest",3,new String[] {"Evil Knight"}));
 		assertEquals(4,scores);
-		int cardsToBid = new BidCalculator(pm).cardsToBid(4, p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int cardsToBid = new BidCalculator(pm).cardsToBid(4, p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(2, cardsToBid);
 	}
 	
@@ -94,9 +94,9 @@ public class TestBidCalculator {
 		p1.flipCards();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(5,scores);
-		int cardsToBid = new BidCalculator(pm).cardsToBid(5, p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int cardsToBid = new BidCalculator(pm).cardsToBid(5, p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(2, cardsToBid);
 	}
 	
@@ -110,9 +110,9 @@ public class TestBidCalculator {
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
 		pm.nextTurn();
-		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Vanquish King Arthur's Enemies",3,new String[] {}));
 		assertEquals(3,scores);
-		int cardsToBid = new BidCalculator(pm).cardsToBid(3, p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int cardsToBid = new BidCalculator(pm).cardsToBid(3, p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(1, cardsToBid);
 	}
 	
@@ -127,9 +127,9 @@ public class TestBidCalculator {
 		pm.nextTurn();
 		ArrayList<Player> participants = new ArrayList<Player>();
 		participants.add(p1);
-		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int scores = new BidCalculator(pm).maxBid(p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(5,scores);
-		int cardsToBid = new BidCalculator(pm).cardsToBid(5, p1, new QuestCard("Search for the Questing Beast",4,new String[] {"None"}));
+		int cardsToBid = new BidCalculator(pm).cardsToBid(5, p1, new QuestCard("Search for the Questing Beast",4,new String[] {}));
 		assertEquals(1, cardsToBid);
 	}
 }

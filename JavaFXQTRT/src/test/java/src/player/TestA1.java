@@ -238,6 +238,7 @@ public class TestA1 {
 		pm.players[0] = p1;
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
+		p1.addCard(new FoeCard("Black Knight",25,35, TYPE.FOES));
 		AbstractAI player = new A1(p1, pm);
 		assertTrue(-1 == player.nextBid(Integer.MAX_VALUE));
 		
