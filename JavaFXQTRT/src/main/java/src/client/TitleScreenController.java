@@ -357,7 +357,6 @@ public class TitleScreenController extends Application implements Initializable{
 				Image shieldImg = new Image (new FileInputStream(f));
 				shieldImages[i-1] = shieldImg;
 			} catch (Exception e) { e.printStackTrace(); }
-			System.out.println(shieldImages[i-1]);
 		}
 		playerShield1=0;
 		playerShield2=0;
