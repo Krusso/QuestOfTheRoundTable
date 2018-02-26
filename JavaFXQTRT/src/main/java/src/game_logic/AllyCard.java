@@ -1,7 +1,5 @@
 package src.game_logic;
 
-import java.net.URL;
-
 public class AllyCard extends AdventureCard {
 	
 	private int bids;

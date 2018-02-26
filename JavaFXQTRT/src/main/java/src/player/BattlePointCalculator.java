@@ -176,6 +176,7 @@ public class BattlePointCalculator {
 		}
 		
 		for(String c: cards) {
+			logger.info("Card: " + c);
 			AdventureCard card = p.getFaceUp().findCardByName(c);
 			if(card == null) {
 				card = p.hand.findCardByName(c);
@@ -186,8 +187,10 @@ public class BattlePointCalculator {
 
 			if(storyCard != null && storyCard.getType() == src.game_logic.StoryCard.TYPE.QUEST && 
 					card.checkIfNamed(((QuestCard) storyCard).getFoe())) {
+				logger.info("Plus named: " + card.getNamedBattlePoints());
 				score += card.getNamedBattlePoints();
 			} else {
+				logger.info("Plus: " + card.getBattlePoints());
 				score += card.getBattlePoints();
 			}
 			

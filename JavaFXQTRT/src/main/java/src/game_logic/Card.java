@@ -244,6 +244,7 @@ public abstract class Card {
 	}
 	
 	public boolean tryUseMerlin() {
+		logger.info("Merlin uses: " + merlinUses);
 		if(merlinUses > 0) {
 			merlinUses--;
 			return true;
