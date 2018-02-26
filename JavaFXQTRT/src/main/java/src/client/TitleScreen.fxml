@@ -39,21 +39,6 @@
 								<Font name="High Tower Text" size="19.0" />
 							</font>
 						</Button>
-						<Button layoutX="103.0" layoutY="78.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="CHANGE AUDIO">
-							<font>
-								<Font name="High Tower Text" size="19.0" />
-							</font>
-						</Button>
-						<Button layoutX="102.0" layoutY="124.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="HELP">
-							<font>
-								<Font name="High Tower Text" size="19.0" />
-							</font>
-						</Button>
-						<Button layoutX="103.0" layoutY="172.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="522.0" styleClass="mainbutton" stylesheets="@application.css" text="QUIT">
-							<font>
-								<Font name="High Tower Text" size="19.0" />
-							</font>
-						</Button>
 					</children>
 				</Pane>
 				<Pane fx:id="playerSelect" layoutX="56.0" layoutY="234.0" prefHeight="629.0" prefWidth="615.0" visible="false">
