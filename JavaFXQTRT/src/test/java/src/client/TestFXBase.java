@@ -79,6 +79,13 @@ public abstract class TestFXBase extends ApplicationTest{
 	@After
 	public void afterEachTest() {
 		try {
+			//stop the cancer music
+			if(m.tlc.bgMusic != null) {
+				m.tlc.bgMusic.stop();
+			}
+			if(m.tlc.getGameBoardController() != null && m.tlc.getGameBoardController().bgMusic != null) {
+				m.tlc.getGameBoardController().bgMusic.stop();
+			}
 			WaitForAsyncUtils.waitForFxEvents();
 			FxToolkit.hideStage();
 			release(new KeyCode[] {});
