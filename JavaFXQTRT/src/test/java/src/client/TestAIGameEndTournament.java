@@ -1,5 +1,8 @@
 package src.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.testfx.api.FxAssert.verifyThat;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -7,9 +10,12 @@ import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
-public class TestAIQuest extends TestFXBase {
-	final static Logger logger = LogManager.getLogger(TestAIQuest.class);
+public class TestAIGameEndTournament extends TestFXBase {
+	final static Logger logger = LogManager.getLogger(TestAIGameEndTournament.class);
 
 	GameBoardController gbc;
 	TitleScreenController tsc;
@@ -26,7 +32,7 @@ public class TestAIQuest extends TestFXBase {
 	@Before
 	public void setup3Players(){
 		//Rig the game
-		press(KeyCode.B);
+		press(KeyCode.E);
 		clickOn(NEW_GAME_BUTTON_ID);
 		clickOn(MENU_BUTTON_1_ID);
 		clickOn(MENU_OPTION_1_HUMAN_ID);
@@ -55,24 +61,43 @@ public class TestAIQuest extends TestFXBase {
 		logger.info("m: " + m);
 		//get tsc
 		tsc = m.getTitleScreenController();
+		
+		WaitForAsyncUtils.waitForFxEvents();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
-	public void testAITournamentNoOneJoin() throws InterruptedException {
+	public void testAITournament() throws InterruptedException {
 		gbc = tsc.getGameBoardController();
 		
 		// start turn first player
 		clickOn(START_TURN);
 		
-		//p0 is going to accept the quest
-		clickOn(DECLINE);
-		
-		//p1 AI turn declines
+		//event over
 		clickOn(START_TURN);
 		
-		//p2 AI turn accepts
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		
-		WaitForAsyncUtils.waitForFxEvents();
+		//select cards for final tournament
+		clickOn(END_TURN);
+		
+		Thread.sleep(20);
+		//A1
+		clickOn(START_TURN);
+		
+		Thread.sleep(20);
+		//A2
+		clickOn(START_TURN);
+		
+		Thread.sleep(100);
+		
+		
+		assertEquals("Player #[1] won the game!", gbc.toast.getText());
 	}
 }

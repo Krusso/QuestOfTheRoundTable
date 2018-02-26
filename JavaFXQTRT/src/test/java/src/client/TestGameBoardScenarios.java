@@ -101,7 +101,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	 * Expect the game to have a quest card "Test of the Green Knight"
 	 */
 	@Test
-	public void test2PlayerGameQuest() {
+	public void test2PlayerGameQuest() throws InterruptedException {
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
 		clickOn(START_TURN);
@@ -267,6 +267,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 
 		//continue next stage
+		Thread.sleep(30);
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
 		clickOn(START_TURN);

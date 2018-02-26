@@ -68,7 +68,9 @@ public abstract class AbstractAI {
 	}
 	
 	public boolean winPlayer(int i) {
-		if((pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) ||
+		logger.info("Player i rank: " + pm.getPlayerRank(i) + " shields: " + pm.getShields(i));
+		if((pm.getPlayerRank(i) == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) || 
+				(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) ||
 				(pm.getPlayerRank(i) == Rank.RANKS.KNIGHT && pm.players[i].shields >= (7 - pm.getNumPlayers())) ||
 				(pm.getPlayerRank(i) == Rank.RANKS.SQUIRE && pm.players[i].shields >= (5 - pm.getNumPlayers()))) {
 			return true;

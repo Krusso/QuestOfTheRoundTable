@@ -97,6 +97,16 @@ public class DeckManager {
 			return toReturn;
 		}
 		
+		if(rigged.equals(RIGGED.GAMEEND)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+					"Pox");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
+			
+			return toReturn;
+		}
+		
 		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
 		storyDeck.discards.addAll(toReturn);
 			

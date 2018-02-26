@@ -137,6 +137,7 @@ public class TestScenario4 extends TestFXBase {
 		clickOn(DISCARD);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(50);
 		clickOn(START_TURN);
 
 
@@ -236,6 +237,7 @@ public class TestScenario4 extends TestFXBase {
 		clickOn(DISCARD);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(30);
 		clickOn(START_TURN);
 
 		//continue next stage 4
@@ -285,11 +287,12 @@ public class TestScenario4 extends TestFXBase {
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
 
-		// play lance as player 1
+		// play lance and amour as player 1
 		Thread.sleep(10);
 		clickOn(START_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc1).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Amour")).moveTo(fdc1).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
 
 		// play mordred as player 2 and amour
@@ -309,7 +312,7 @@ public class TestScenario4 extends TestFXBase {
 			}
 			index++;
 		}
-		drag(gbc.findCardInHand("Amour")).moveTo(fdc1).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Amour")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		Thread.sleep(100);
 		clickOn(END_TURN);
 
@@ -320,9 +323,9 @@ public class TestScenario4 extends TestFXBase {
 		clickOn(START_TURN);
 
 		// pox
-		Thread.sleep(20);
+		Thread.sleep(30);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(50);
 		clickOn(START_TURN);
 		Thread.sleep(100);
 		clickOn(START_TURN);
@@ -331,14 +334,9 @@ public class TestScenario4 extends TestFXBase {
 		Thread.sleep(20);
 		clickOn(START_TURN);
 		Thread.sleep(20);
-		while(gbc.playerManager.players[1].hand.size() > 12) {
-			discard = gbc.playerManager.players[1].hand.getDeck().get(12).imgView;
-			drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
-		}
-		WaitForAsyncUtils.waitForFxEvents();
-		clickOn(DISCARD);
-		Thread.sleep(20);
 
+		clickOn(START_TURN);
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		while(gbc.playerManager.players[0].hand.size() > 12) {
@@ -357,25 +355,16 @@ public class TestScenario4 extends TestFXBase {
 
 		//queens favor
 		Thread.sleep(20);
-		clickOn(START_TURN);
-		Thread.sleep(20);
-		while(gbc.playerManager.players[0].hand.size() > 12) {
-			discard = gbc.playerManager.players[0].hand.getDeck().get(12).imgView;
-			drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
-		}
-		WaitForAsyncUtils.waitForFxEvents();
-		clickOn(DISCARD);
-
-
-		clickOn(START_TURN);
-		Thread.sleep(500);
 		while(gbc.playerManager.players[1].hand.size() > 12) {
 			discard = gbc.playerManager.players[1].hand.getDeck().get(12).imgView;
 			drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		}
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
-
+		
+		clickOn(START_TURN);
+		Thread.sleep(20);
+		clickOn(START_TURN);
 		Thread.sleep(500);
 		clickOn(START_TURN);
 
@@ -388,10 +377,6 @@ public class TestScenario4 extends TestFXBase {
 		clickOn(START_TURN);
 
 		//kings call to arms
-		Thread.sleep(20);
-		clickOn(START_TURN);
-		Thread.sleep(20);
-		clickOn(START_TURN);
 		Thread.sleep(20);
 		discard = gbc.findCardInHand("Battle-ax");
 		drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);

@@ -1038,6 +1038,7 @@ public class GameBoardController implements Initializable{
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
 	}
+	
 	public void flipAllFaceDownPane(boolean isShow) {
 		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {
 			playerManager.flipFaceDownCards(i, isShow);
@@ -1109,18 +1110,6 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		repositionFaceUpCards(p);
-	}
-
-	//discards all cards and returns the string[] name of them
-	public String[] discardAllFaceDownCards(int p) {
-		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
-		faceDownPanes[p].getChildren().clear();
-		String[] cardNames = new String[fdc.size()];
-		for(int i = 0 ; i < cardNames.length;i++) {
-			cardNames[i] = fdc.get(i).getName();
-		}
-		fdc.clear();
-		return cardNames;
 	}
 
 	public void flipStageCards(int stageNum, boolean isShow) {

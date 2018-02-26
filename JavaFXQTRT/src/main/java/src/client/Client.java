@@ -632,7 +632,9 @@ class DiscardQuestTask extends Task {
 		gbc.toDiscard = toDiscard;
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
-			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			if(cards != null) {
+				cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			}
 			gbc.endTurn.fire();
 		}
 	}
@@ -691,7 +693,9 @@ class PickTournamentTask extends Task {
 		if(gbc.playerManager.getAI(player) != null) {
 			gbc.playerManager.getAI(player).gbc = gbc;
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).playCardsForTournament();
-			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			if(cardsToPlay != null) {
+				cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			}
 			gbc.endTurn.fire();
 		}
 	}
@@ -837,6 +841,9 @@ class JoinedFinalTournamentTask extends Task{
 	@Override
 	public void run() {
 		gbc.clearToast();
+		for(int i: players) {
+			gbc.joinTournament[i] = true;
+		}
 		if(players.length == 1) {
 			gbc.showToast("Player: " + Arrays.toString(players) + " has won the game!");	
 		} else {
