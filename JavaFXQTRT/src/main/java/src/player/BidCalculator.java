@@ -70,14 +70,5 @@ public class BidCalculator {
 		logger.info("Need to bid: " + toBid);
 		return toBid - freeBids(player, quest);
 	}
-
-	// Feels bad when you have a sick lambda but no use for it :( 
-	// I still love you lambda <3 
-	//		return players
-	//		        .stream()
-	//		        .map(s -> new Pair(s, maxBid(s)))
-	//		        .max((p1,p2) -> Integer.compare(p1.maxBid, p2.maxBid))
-	//		        .get();
-
 }
 

@@ -45,6 +45,7 @@ public class BattlePointCalculator {
 		}
 
 		AdventureDeck cards = player.getFaceUp();
+		logger.info("Cards: " + cards);
 		score += cards.getBP();
 		logger.info("Player: " + player.getID() + " score: " + score);
 		return score;
@@ -66,9 +67,10 @@ public class BattlePointCalculator {
 			Player player = players.next();
 			if (calculatePlayer(player.getID(), player.getFaceUp().getDeck().stream().map(i -> i.getName()).toArray(String[]::new), card) < foePoints) {
 				players.remove();
+				logger.info("Removing: " + player);
 			}
 		}
-		logger.info("Survivors: " + participants);
+		logger.info("Survivors: " + participants + " foe points: " + foePoints);
 	}
 
 	public List<Player> calculateHighest(List<Player> participants, StoryCard card) {
@@ -76,6 +78,7 @@ public class BattlePointCalculator {
 		List<Player> winning = new ArrayList<Player>();
 		ArrayList<Integer> scores = calculatePoints(participants, card);
 		for(int i = 0; i < scores.size(); i++) {
+			logger.info("Score: " + scores.get(i) + " max: " + max);
 			if(scores.get(i) == max) {
 				winning.add(participants.get(i));
 			} else if (scores.get(i) > max) {
@@ -235,6 +238,8 @@ public class BattlePointCalculator {
 	public boolean canSponsor(Player next, QuestCard card) {
 		List<AdventureCard> foes = this.uniqueListOfTypeDecreasingBp(next, TYPE.FOES, card, false);
 		List<AdventureCard> tests = this.uniqueListOfTypeDecreasingBp(next, TYPE.TESTS, card, false);
+		logger.info("Foes: " + foes);
+		logger.info("Tests: " + tests);
 		int uniqueBpFoes = 0;
 		int minBp = Integer.MIN_VALUE;
 		Collections.reverse(foes);

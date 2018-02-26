@@ -238,8 +238,10 @@ public class A1 extends AbstractAI {
 		logger.info("Cards willing to bid: " + cards);
 		logger.info("Prev bid: " + prevBid);
 		if(cards == null || cards.size() < prevBid) {
+			logger.info("Cant bid more or too many rounds");
 			return -1;
 		} else {
+			logger.info("Bidding cards: " + cards);
 			return cards.size();
 		}
 	}
@@ -247,6 +249,7 @@ public class A1 extends AbstractAI {
 	@Override
 	public List<AdventureCard> discardAfterWinningTest() {
 		if(rounds == 1) {
+			logger.info("Round one finding foes under 20 to potentially discard");
 			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 20).collect(Collectors.toList());
 		} else {
