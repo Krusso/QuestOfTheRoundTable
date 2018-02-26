@@ -40,6 +40,7 @@ import src.socket.Server;
 
 public class TitleScreenController extends Application implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
+	public AudioPlayer bgMusic;
 	public GameBoardController gbc;
 
 	private Client client;
@@ -293,8 +294,6 @@ public class TitleScreenController extends Application implements Initializable{
 			logger.info("Cannot start game");
 			return;
 		}
-		
-		
 //		for(int i=0;i<players.length;i++) { logger.info); }
 	
 		FXMLLoader fxmlLoader = new FXMLLoader();
@@ -330,6 +329,11 @@ public class TitleScreenController extends Application implements Initializable{
 		
 		//send gameStart message.
 		client.send(new GameStartClient(getNumPlayers(), rigged));
+		
+		
+		//when we start game, make use another audio.
+		bgMusic.stop();
+		gbc.bgMusic = new AudioPlayer("Game_Music_1.mp3"); 
 	}
 	
 	//Gives the capability to scale the screen based on the scale factor (1.0 = 100%, 0.5 = 50% etc)
@@ -357,7 +361,6 @@ public class TitleScreenController extends Application implements Initializable{
 				Image shieldImg = new Image (new FileInputStream(f));
 				shieldImages[i-1] = shieldImg;
 			} catch (Exception e) { e.printStackTrace(); }
-			System.out.println(shieldImages[i-1]);
 		}
 		playerShield1=0;
 		playerShield2=0;
@@ -417,6 +420,9 @@ public class TitleScreenController extends Application implements Initializable{
 		shieldViewArr[1] = shieldView2;
 		shieldViewArr[2] = shieldView3;
 		shieldViewArr[3] = shieldView4;
+		
+
+
 	}
 	public void setRigged(RIGGED b) {
 		logger.info("Set the game to rigged");

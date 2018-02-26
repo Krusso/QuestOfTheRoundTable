@@ -44,6 +44,7 @@ public class Main extends Application {
 			logger.info("Main's TitleScreenController reference:" + tlc);
 			//Pass the client to the controller
 			tlc.setClient(client);
+			
 
 			try {
 				File titlebg = new File("src/main/resources/titlescreen1.jpg");
@@ -81,6 +82,8 @@ public class Main extends Application {
 			//			primaryStage.setMaxHeight(900);
 			//			primaryStage.setMaxWidth(1400);
 			primaryStage.show();
+			tlc.bgMusic	= new AudioPlayer("Main_Title.mp3");
+			tlc.bgMusic.play();
 
 		} catch(Exception e) {
 			e.printStackTrace();
