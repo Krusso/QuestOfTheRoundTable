@@ -216,7 +216,7 @@ class MiddleCardTask extends Task{
 				return;
 			}
 		}
-		logger.info("Could not set story card to " + card);
+		logger.warn("Could not set story card to " + card);
 		
 	}
 }
