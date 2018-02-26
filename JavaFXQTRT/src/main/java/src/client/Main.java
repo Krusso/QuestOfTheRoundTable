@@ -8,12 +8,15 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.transform.Scale;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Server;
@@ -35,10 +38,10 @@ public class Main extends Application {
 			Main.clientThread = new Thread(client);
 			Main.clientThread.start();
 
-			Parent root = new AnchorPane();
+//			Parent root = new AnchorPane();
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setLocation(getClass().getClassLoader().getResource("TitleScreen.fxml"));
-			root = fxmlLoader.load();
+			Parent root = fxmlLoader.load();
 
 			//Get the controller instance
 			tlc = fxmlLoader.getController();
@@ -48,19 +51,25 @@ public class Main extends Application {
 			
 			
 			try {
-				Image titleImg = new Image(getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
-				ImageView titleImgView = new ImageView();
-				titleImgView.setImage(titleImg);
-				titleImgView.fitWidthProperty().bind(primaryStage.widthProperty());
-				titleImgView.fitHeightProperty().bind(primaryStage.heightProperty());
-				//				tlc.addImage(imgView);
-				tlc.background.getChildren().add(titleImgView);
+//				Image titleImg = new Image(getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
+//				ImageView titleImgView = new ImageView();
+//				titleImgView.setImage(titleImg);
+//				titleImgView.fitWidthProperty().bind(primaryStage.widthProperty());
+//				titleImgView.fitHeightProperty().bind(primaryStage.heightProperty());
+//				//				tlc.addImage(imgView);
+//				tlc.background.getChildren().add(titleImgView);
 
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 
 			Scene scene = new Scene(root);
+			Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+			double scaleX = screenBounds.getMaxX()/1920; 
+			double scaleY = screenBounds.getMaxY()/1080;
+			scaleScene(scene,scaleX,scaleY);
+			
+			
 			primaryStage.setScene(scene);
 			scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 				@Override
@@ -118,6 +127,13 @@ public class Main extends Application {
 			tlc.getGameBoardController();
 		}
 		return null;
+	}
+	
+	private void scaleScene(Scene scene, double scaleX, double scaleY) {
+		Scale scale = new Scale(scaleX,scaleY);
+		scale.setPivotX(0);
+		scale.setPivotY(0);
+		scene.getRoot().getTransforms().setAll(scale);
 	}
 }
 

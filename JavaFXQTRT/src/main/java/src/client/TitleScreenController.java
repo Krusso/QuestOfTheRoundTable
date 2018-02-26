@@ -40,6 +40,11 @@ public class TitleScreenController extends Application implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
 	public AudioPlayer bgMusic;
 	public GameBoardController gbc;
+	
+	/* Them Dank sound effectss*/
+	private AudioPlayer startGameSound = new AudioPlayer("new_game_button.wav", false);
+	private AudioPlayer invalid = new AudioPlayer("invalid.wav", false);
+	
 
 	private Client client;
 	@FXML public Text errorMsg;
@@ -290,9 +295,11 @@ public class TitleScreenController extends Application implements Initializable{
 	private void handleButtonAction(ActionEvent e) throws IOException {
 		if(!isStartGameValid()) {
 			logger.info("Cannot start game");
+			invalid.play();
 			return;
 		}
-//		for(int i=0;i<players.length;i++) { logger.info); }
+		startGameSound.play();
+		
 	
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setLocation(getClass().getClassLoader().getResource("GameBoard.fxml"));
@@ -300,7 +307,7 @@ public class TitleScreenController extends Application implements Initializable{
 		
 		//scale the game application to full screen
 		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-		double scaleX = screenBounds.getMaxX()/1920; //FXML anchor pane width is 1024 and height is 768
+		double scaleX = screenBounds.getMaxX()/1920; 
 		double scaleY = screenBounds.getMaxY()/1080;
 		scaleScene(gameScene,scaleX,scaleY);
 		
@@ -331,7 +338,8 @@ public class TitleScreenController extends Application implements Initializable{
 		
 		//when we start game, make use another audio.
 		bgMusic.stop();
-		gbc.bgMusic = new AudioPlayer("Game_Music_1.mp3"); 
+		gbc.bgMusic.setVolume(0.5);
+		gbc.bgMusic.play();
 	}
 	
 	//Gives the capability to scale the screen based on the scale factor (1.0 = 100%, 0.5 = 50% etc)
@@ -397,12 +405,12 @@ public class TitleScreenController extends Application implements Initializable{
 		/***********************Setting up the stage and client*************************/
 
 		try {
-			Image titleImg = new Image (getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
-			ImageView titleImgView = new ImageView();
-			titleImgView.setImage(titleImg);
-			titleImgView.setFitHeight(background.getHeight());
-			titleImgView.setFitWidth(background.getWidth());
-			background.getChildren().add(titleImgView);
+//			Image titleImg = new Image (getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
+//			ImageView titleImgView = new ImageView();
+//			titleImgView.setImage(titleImg);
+//			titleImgView.setFitHeight(background.getHeight());
+//			titleImgView.setFitWidth(background.getWidth());
+//			background.getChildren().add(titleImgView);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());

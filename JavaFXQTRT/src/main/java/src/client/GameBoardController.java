@@ -63,7 +63,12 @@ public class GameBoardController implements Initializable{
 	public int numStages = 0;
 	public int currentStage = 0;
 	
-	public AudioPlayer bgMusic;
+
+	/* Them Dank sound effectss*/
+	public AudioPlayer bgMusic = new AudioPlayer("Game_Music_1.mp3");
+	private AudioPlayer cardDropSound = new AudioPlayer("card_drop.wav", false);
+	private AudioPlayer invalid = new AudioPlayer("invalid.wav", false);
+	private AudioPlayer buttonClick = new AudioPlayer("button_click.wav", false);
 
 	public Client c;
 	public UIPlayerManager playerManager;
@@ -656,6 +661,7 @@ public class GameBoardController implements Initializable{
 
 		logger.info("Putting card: " + card.getName() + " from pane: " + from + " into pane: " + to);
 		putCardIntoPane(to, card);
+		cardDropSound.play();
 	}
 
 
@@ -1151,6 +1157,7 @@ public class GameBoardController implements Initializable{
 		this.startTurn.setOnAction(e->{
 			logger.info("Start Turn clicked - Current state: " + CURRENT_STATE);
 			if(CURRENT_STATE == GAME_STATE.CHILLING) {
+				buttonClick.play();
 				synchronized (c) {
 					c.notify();
 					int viewAbleStage =  playerManager.viewableStage(playerManager.getCurrentPlayer());
@@ -1167,6 +1174,7 @@ public class GameBoardController implements Initializable{
 		this.endTurn.setOnAction(e -> {
 			logger.info("End turn clicked - Current state: " + CURRENT_STATE);
 			int currentPlayer = playerManager.getCurrentPlayer();
+			boolean isValid = true;
 			if(CURRENT_STATE == GAME_STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
 				c.send(new TournamentPickCardsClient(currentPlayer, 
@@ -1178,14 +1186,14 @@ public class GameBoardController implements Initializable{
 				if(discardCards.length != this.toDiscard) {
 					clearToast();
 					showToast("Select: " + this.toDiscard + " cards to discard");
-					return;
+					isValid = false;
+				}else {
+					discardPile.clear();
+					discardPane.getChildren().clear();
+					this.hideDiscardPane();
+					logger.info("Event discard cards - Player" + currentPlayer + " discarded :" + Arrays.toString(discardCards));
+					c.send(new EventDiscardCardsClient(currentPlayer, discardCards));
 				}
-				
-				discardPile.clear();
-				discardPane.getChildren().clear();
-				this.hideDiscardPane();
-				logger.info("Event discard cards - Player" + currentPlayer + " discarded :" + Arrays.toString(discardCards));
-				c.send(new EventDiscardCardsClient(currentPlayer, discardCards));
 			}
 			else if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 				if(areQuestStagesValid() && stagesIncreasing()) {
@@ -1210,6 +1218,7 @@ public class GameBoardController implements Initializable{
 						toast.setText("Quest stages are not valid. Each stage needs an increasing amount of bp");
 						logger.info("Quest stages are not valid. Each stage needs an increasing amount of bp");
 					}
+					isValid = false;
 				}
 
 			}else if(CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS) {
@@ -1239,14 +1248,19 @@ public class GameBoardController implements Initializable{
 				if(discardCards.length != this.toDiscard) {
 					clearToast();
 					showToast("Select: " + this.toDiscard + " cards to discard");
-					return;
+					isValid = false;
+				}else {
+					discardPile.clear();
+					discardPane.getChildren().clear();
+					this.hideDiscardPane();
+					logger.info("Discarded " + Arrays.toString(discardCards));
+					c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
 				}
-				
-				discardPile.clear();
-				discardPane.getChildren().clear();
-				this.hideDiscardPane();
-				logger.info("Discarded " + Arrays.toString(discardCards));
-				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
+			}
+			if(isValid) {
+				buttonClick.play();
+			}else {
+				invalid.play();
 			}
 
 		});
@@ -1256,6 +1270,7 @@ public class GameBoardController implements Initializable{
 		 */
 		this.accept.setOnAction(e -> {
 			logger.info("Accept button clicked - Current state: " + CURRENT_STATE);
+			buttonClick.play();
 			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
 				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
 				joinTournament[playerManager.getCurrentPlayer()] = true;
@@ -1280,11 +1295,13 @@ public class GameBoardController implements Initializable{
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}
+			
 		});
 		/*
 		 * DECLINE BUTTON LISTENER
 		 */
 		this.decline.setOnAction(e -> {
+			buttonClick.play();
 			logger.info("Decline clicked - Current state: " + CURRENT_STATE);
 			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
 				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
@@ -1304,6 +1321,7 @@ public class GameBoardController implements Initializable{
 		 * NEXT TURN BUTTON LISTENER
 		 */
 		this.nextTurn.setOnAction(e -> {
+			buttonClick.play();
 			logger.info("Clicked next turn");
 			c.send(new ContinueGameClient());
 		});
@@ -1311,6 +1329,7 @@ public class GameBoardController implements Initializable{
 		 * button dedicated for handling discarding :>
 		 */
 		this.discard.setOnAction(e->{
+			boolean isValid = true;
 			logger.info("Discard clicked - Current state: " + CURRENT_STATE);
 			int cPlayer = playerManager.getCurrentPlayer();
 			String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
@@ -1320,29 +1339,36 @@ public class GameBoardController implements Initializable{
 						(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() - playerManager.MAX_HAND_SIZE) + 
 						" card(s)");
 				logger.info("Player #"+ playerManager.getCurrentPlayer()+"'s hand is too full!");
-				return;
+				isValid = false;
 			}else if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() < playerManager.MAX_HAND_SIZE && !discardPile.isEmpty()) {
 				toast.setText("Can only discard cards if hand has more than 12 cards");
 				logger.info("Can only discard cards if hand has more than 12 cards");
-				return;
+				isValid = false;
+			}else {
+				setDiscardVisibility(false);
+				c.send(new HandFullClient(playerManager.getCurrentPlayer(), discardCards, allyCards));
+				
+				//add the facedown cards to faceup pane
+				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(cPlayer);
+				ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(cPlayer);
+				for(AdventureCard c : fdc) {
+					fuc.add(c);
+					faceUpPanes[cPlayer].getChildren().add(c.getImageView());
+				}
+				fdc.clear();
+				discardPile.clear();
+				discardPane.getChildren().clear();
+				faceDownPanes[cPlayer].getChildren().clear();
+				this.hideDiscardPane();
+				repositionFaceUpCards(cPlayer);
+				repositionCardsInHand(cPlayer);
 			}
-			setDiscardVisibility(false);
-			c.send(new HandFullClient(playerManager.getCurrentPlayer(), discardCards, allyCards));
-			
-			//add the facedown cards to faceup pane
-			ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(cPlayer);
-			ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(cPlayer);
-			for(AdventureCard c : fdc) {
-				fuc.add(c);
-				faceUpPanes[cPlayer].getChildren().add(c.getImageView());
+			if(isValid) {
+				buttonClick.play();
+			}else{
+				invalid.play();
 			}
-			fdc.clear();
-			discardPile.clear();
-			discardPane.getChildren().clear();
-			faceDownPanes[cPlayer].getChildren().clear();
-			this.hideDiscardPane();
-			repositionFaceUpCards(cPlayer);
-			repositionCardsInHand(cPlayer);
+
 		});
 
 		/*
@@ -1374,9 +1400,11 @@ public class GameBoardController implements Initializable{
 						int s = Integer.parseInt(result.get()) - 1;
 						useMerlinPower(s, c);
 					}
+					buttonClick.play();
 					return;
 				}
 			}
+			invalid.play();
 			logger.info("You do not have Merlin in play");
 		});
 		
@@ -1394,9 +1422,11 @@ public class GameBoardController implements Initializable{
 			}
 			//if it's not in either hand or facedown field then player does not have mordred
 			if(mordred == null) {
+				invalid.play();
 				logger.info("You do not have Mordred");
 				return;
 			}
+			buttonClick.play();
 			
 			//setup dialog to choose which card to delete
 			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
