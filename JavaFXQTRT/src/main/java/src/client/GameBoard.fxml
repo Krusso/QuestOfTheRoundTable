@@ -18,7 +18,7 @@
    <children>
       <Pane fx:id="background" prefHeight="1080.0" prefWidth="1920.0">
          <children>
-
+      
             <ImageView fitHeight="1086.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../resources/gameboardbg3.jpg" />
@@ -38,12 +38,11 @@
                   <ImageView fx:id="stage2View" fitHeight="382.0" fitWidth="125.0" layoutX="370.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
                   <ImageView fx:id="stage3View" fitHeight="382.0" fitWidth="116.0" layoutX="500.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
                   <ImageView fx:id="stage4View" fitHeight="382.0" fitWidth="144.0" layoutX="620.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
-                  <Pane fx:id="pickStage0" layoutX="118.0" layoutY="44.0" prefHeight="250.0" prefWidth="125.0" />
+                  <Pane fx:id="pickStage0" layoutX="114.0" layoutY="44.0" prefHeight="250.0" prefWidth="125.0" />
                   <Pane fx:id="pickStage1" layoutX="244.0" layoutY="44.0" prefHeight="250.0" prefWidth="125.0" />
                   <Pane fx:id="pickStage2" layoutX="369.0" layoutY="44.0" prefHeight="250.0" prefWidth="125.0" />
                   <Pane fx:id="pickStage3" layoutX="494.0" layoutY="44.0" prefHeight="250.0" prefWidth="125.0" />
                   <Pane fx:id="pickStage4" layoutX="619.0" layoutY="44.0" prefHeight="250.0" prefWidth="125.0" />
-                  <Pane fx:id="storyCardContainer" layoutX="14.0" layoutY="126.0" prefHeight="150.0" prefWidth="100.0" />
                   <VBox layoutX="897.0" layoutY="50.0" prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <Button fx:id="discard" mnemonicParsing="false" prefHeight="49.0" prefWidth="101.0" styleClass="record-sales" stylesheets="@application.css" text="Discard" textFill="WHITE" />
@@ -91,7 +90,7 @@
             </Pane>
          </children>
       </StackPane>
-      <Pane fx:id="playerPane3" layoutX="-224.0" layoutY="-27.0" prefHeight="300.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
+      <Pane fx:id="playerPane3" layoutX="-173.0" layoutY="-1.0" prefHeight="300.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
          <children>
             <Rectangle fx:id="r4" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="150.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
                <fill>
@@ -107,16 +106,16 @@
             <Pane fx:id="playerFaceUp3" prefHeight="150.0" prefWidth="500.0" />
             <Rectangle fx:id="pRec3" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="142.0" layoutX="512.0" layoutY="15.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="522.0" />
             <Pane fx:id="playerFaceDown3" layoutX="501.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank3" fitHeight="168.0" fitWidth="122.0" layoutX="771.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="shield4View" fitHeight="172.0" fitWidth="116.0" layoutX="883.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <Text fx:id="p4Shields" fill="WHITE" layoutX="979.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="16.499996289610863">
+            <ImageView fx:id="playerRank3" fitHeight="150.0" fitWidth="115.0" layoutX="810.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield4View" fitHeight="150.0" fitWidth="115.0" layoutX="914.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <Text fx:id="p4Shields" fill="WHITE" layoutX="947.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="47.25000348687172">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="playerPane2" layoutX="409.0" layoutY="-27.0" prefHeight="300.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
+      <Pane fx:id="playerPane2" layoutX="409.0" layoutY="-1.0" prefHeight="300.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
          <children>
             <Rectangle fx:id="r3" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutY="150.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
                <fill>
@@ -129,20 +128,20 @@
                </fill>
             </Rectangle>
 
-             <Pane fx:id="playerHand2" layoutY="150.0" prefHeight="150.0" prefWidth="754.0" />
+             <Pane fx:id="playerHand2" layoutY="150.0" prefHeight="150.0" prefWidth="750.0" />
             <Pane fx:id="playerFaceUp2" prefHeight="150.0" prefWidth="500.0" />
             <Rectangle fx:id="pRec2" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="157.0" layoutX="488.0" layoutY="13.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="512.0" />
             <Pane fx:id="playerFaceDown2" layoutX="500.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank2" fitHeight="140.0" fitWidth="107.0" layoutX="-3.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" x="800.0" y="150.0" />
-            <ImageView fx:id="shield3View" fitHeight="142.0" fitWidth="116.0" layoutX="894.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <Text fx:id="p3Shields" fill="WHITE" layoutX="982.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="16.499996289610863">
+            <ImageView fx:id="playerRank2" fitHeight="150.0" fitWidth="115.0" layoutX="786.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield3View" fitHeight="150.0" fitWidth="115.0" layoutX="890.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <Text fx:id="p3Shields" fill="WHITE" layoutX="923.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="52.49999908357859">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="playerPane1" layoutX="1057.0" layoutY="-27.0" prefHeight="300.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
+      <Pane fx:id="playerPane1" layoutX="1039.0" layoutY="-1.0" prefHeight="300.0" prefWidth="1080.0" rotate="180.0" scaleX="0.6" scaleY="0.6">
          <children>
             <Rectangle fx:id="r2" arcHeight="5.0" arcWidth="5.0" height="150.0" layoutX="40.0" layoutY="150.0" opacity="0.5" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1000.0">
                <fill>
@@ -158,9 +157,9 @@
             <Pane fx:id="playerFaceUp1" layoutX="40.0" prefHeight="150.0" prefWidth="500.0" />
             <Rectangle fx:id="pRec1" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="163.0" layoutX="498.0" layoutY="-8.0" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="543.0" />
             <Pane fx:id="playerFaceDown1" layoutX="540.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank1" fitHeight="150.0" fitWidth="111.0" layoutX="800.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="shield2View" fitHeight="150.0" fitWidth="120.0" layoutX="916.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <Text fx:id="p2Shields" fill="WHITE" layoutX="1010.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="16.499996289610863">
+            <ImageView fx:id="playerRank1" fitHeight="150.0" fitWidth="115.0" layoutX="822.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield2View" fitHeight="150.0" fitWidth="115.0" layoutX="926.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <Text fx:id="p2Shields" fill="WHITE" layoutX="959.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="52.49999908357859">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
@@ -183,9 +182,9 @@
             <Pane fx:id="playerFaceUp0" layoutX="40.0" prefHeight="150.0" prefWidth="500.0" />
             <Rectangle fx:id="pRec0" arcHeight="15.0" arcWidth="15.0" fill="#1d588f00" height="137.0" layoutX="551.0" layoutY="13.0" nodeOrientation="LEFT_TO_RIGHT" stroke="#ffd40087" strokeLineCap="BUTT" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="10.0" visible="false" width="529.0" />
             <Pane fx:id="playerFaceDown0" layoutX="540.0" prefHeight="150.0" prefWidth="500.0" />
-            <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="125.0" layoutX="823.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="shield1View" fitHeight="150.0" fitWidth="144.0" layoutX="929.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
-            <Text fx:id="p1Shields" fill="WHITE" layoutX="1020.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="16.499996289610863">
+            <ImageView fx:id="playerRank0" fitHeight="150.0" fitWidth="115.0" layoutX="835.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="shield1View" fitHeight="150.0" fitWidth="115.0" layoutX="940.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+            <Text fx:id="p1Shields" fill="WHITE" layoutX="972.0" layoutY="295.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="43.99999938905239">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
@@ -197,15 +196,15 @@
             <Font size="52.0" />
          </font>
       </Text>
-      <Text fx:id="currBP" fill="#ff7700" layoutX="1500.0" layoutY="875.0" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+      <Text fx:id="currBP" fill="#ff7700" layoutX="1500.0" layoutY="838.0" strokeType="OUTSIDE" strokeWidth="0.0" text="">
          <font>
             <Font name="Bodoni MT" size="40.0" />
          </font>
       </Text>
-      <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="372.0" majorTickUnit="1.0" max="13.0" minorTickCount="1" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />
-            <Pane layoutX="427.0" layoutY="240.0" prefHeight="58.0" prefWidth="0.0">
+      <Slider fx:id="bidSlider" blockIncrement="1.0" layoutX="450.0" layoutY="300.0" majorTickUnit="1.0" max="13.0" minorTickCount="1" orientation="VERTICAL" prefHeight="400.0" prefWidth="35.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" stylesheets="@application.css" />
+            <Pane layoutY="240.0" prefHeight="58.0" prefWidth="1920.0">
 	         <children>
-	            <Text fx:id="toast" fill="WHITE" layoutX="70.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="969.8034057617188">
+	            <Text fx:id="toast" fill="WHITE" layoutX="2.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="1915.1367492675781">
 	               <font>
 	                  <Font name="High Tower Text" size="35.0" />
 	               </font>
@@ -213,5 +212,6 @@
 	         </children>
       		</Pane>
       <Button fx:id="useMordred" layoutX="250.0" layoutY="740.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="112.0" styleClass="record-sales" stylesheets="@application.css" text="Use Mordred" textFill="WHITE" />
+      <Pane fx:id="storyCardContainer" layoutX="200.0" layoutY="350.0" prefHeight="300.0" prefWidth="200.0" />
    </children>
 </AnchorPane>
