@@ -1350,6 +1350,7 @@ public class GameBoardController implements Initializable{
 		 */
 		this.useMerlin.setOnAction(e->{
 			//check if current player has merlin in play.
+			logger.info("Handling merlin");
 			int currentPlayer = playerManager.getCurrentPlayer();
 			ArrayList<AdventureCard> currFUC = playerManager.getFaceUpCardsAsList(currentPlayer);
 			for(AdventureCard c:currFUC) {
@@ -1369,7 +1370,7 @@ public class GameBoardController implements Initializable{
 					merlinDialog.setHeaderText("Select a stage to show");
 					merlinDialog.setContentText("Stage #:");
 					Optional<String> result = merlinDialog.showAndWait();
-					if(result.isPresent() && c.tryUseMerlin()) {
+					if(result.isPresent()) {
 						int s = Integer.parseInt(result.get()) - 1;
 						useMerlinPower(s, c);
 					}
