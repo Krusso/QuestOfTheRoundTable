@@ -102,6 +102,7 @@ public class GameBoardController implements Initializable{
 	@FXML public Text p2Shields;
 	@FXML public Text p3Shields;
 	@FXML public Text p4Shields;
+	public Text[] playerShields = new Text[4];
 
 	@FXML public ImageView shield1View;
 	@FXML public ImageView shield2View;
@@ -242,6 +243,11 @@ public class GameBoardController implements Initializable{
 		stageViews[2] = stage2View;
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
+
+		playerShields[0] = p1Shields;
+		playerShields[1] = p2Shields;
+		playerShields[2] = p3Shields;
+		playerShields[3] = p4Shields;
 
 		setDiscardImage();
 		hideDiscardPane();
@@ -879,11 +885,15 @@ public class GameBoardController implements Initializable{
 				playerPanes[i].setScaleY(1);
 				playerRanks[i].setRotate(0);
 				shieldViews[i].setRotate(0);
+				playerShields[i].setRotate(0);
+				
+				
 			}else {
 				playerPanes[i].setScaleX(0.6);
 				playerPanes[i].setScaleY(0.6);
 				playerRanks[i].setRotate(180);
 				shieldViews[i].setRotate(180);
+				playerShields[i].setRotate(180);
 			}
 		}
 		logger.info("Set player perspective to player" + playerNum);
