@@ -42,8 +42,8 @@ public class TitleScreenController extends Application implements Initializable{
 	public GameBoardController gbc;
 	
 	/* Them Dank sound effectss*/
-	private AudioPlayer startGameSound = new AudioPlayer("new_game_button.wav", false);
-	private AudioPlayer invalid = new AudioPlayer("invalid.wav", false);
+	private SoundEffect startGameSound = new SoundEffect("new_game_button.wav");
+	private SoundEffect invalid = new SoundEffect("invalid.wav");
 	
 
 	private Client client;
