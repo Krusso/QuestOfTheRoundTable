@@ -114,6 +114,58 @@ public class PlayerManager {
 				players[i - 1].addCards(cards);
 				players[i - 1].changeShields(18);
 				players[i - 1].increaseLevel();
+			} else if(rigged.equals(RIGGED.AIQUEST)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new FoeCard("Robber Knight",15, TYPE.FOES));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new FoeCard("Mordred",30, TYPE.FOES));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(20);
+				players[i - 1].increaseLevel();
+			} else if(rigged.equals(RIGGED.AIQUEST1)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new FoeCard("Green Knight",25,40, TYPE.FOES));
+				
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
+				players[i - 1].changeShields(20);
+				players[i - 1].increaseLevel();
+			} else if(rigged.equals(RIGGED.AIQUEST2)) {
+				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new TestCard("Test of Valor", TYPE.TESTS));
+				cards.add(new FoeCard("Thieves",5, TYPE.FOES));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Sword",10, TYPE.WEAPONS));
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				
+				cards.add(new FoeCard("Saxons",10,20, TYPE.FOES));
+				cards.add(new WeaponCard("Lance",20, TYPE.WEAPONS));
+				cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+				cards.add(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
+				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+				players[i - 1].addCards(cards);
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
@@ -137,14 +189,6 @@ public class PlayerManager {
 				if(currentPlayer == i) return;
 				currentPlayer = i;
 			}
-		}
-		pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
-	}
-
-	public void nextPlayer() {
-		currentPlayer++;
-		if(currentPlayer >= players.length) {
-			currentPlayer = 0;
 		}
 		pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
 	}

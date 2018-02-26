@@ -278,6 +278,10 @@ class TournamentWonTask extends Task{
 
 	@Override
 	public void run() {
+		for(int i = 0; i < winners.length; i++) {
+			winners[i] = false;
+		}
+		
 		for(int i = 0 ; i < players.length;i++) {
 			winners[players[i]] = true;
 		}
@@ -359,7 +363,6 @@ class QuestPickStagesTask extends Task {
 		gbc.addDraggable();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showEndTurn();
-		gbc.addStagePaneListener();
 		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
@@ -371,7 +374,24 @@ class QuestPickStagesTask extends Task {
 					gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.stages[i], cards.get(i).get(j));	
 				}
 			}
-			gbc.endTurn.fire();
+			
+			for(int i = 0; i < gbc.stages.length; i++) {
+				if(gbc.stages[i].isVisible()) {
+					gbc.c.send(new CalculateStageClient(gbc.playerManager.getCurrentPlayer(),gbc.stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));	
+				}
+			}
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					gbc.endTurn.fire();
+				}
+			});
 		}
 	}
 }
@@ -427,8 +447,7 @@ class QuestPickCardsTask extends Task {
 		gbc.showToast("Select Cards for current stage");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
-			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard.getNumStages() == gbc.currentStage + 1, 
-					gbc.questCard);
+			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard);
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
 			gbc.endTurn.fire();
 		}
@@ -670,6 +689,7 @@ class PickTournamentTask extends Task {
 		logger.info("Processing pick tournament cards message");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
+			gbc.playerManager.getAI(player).gbc = gbc;
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).playCardsForTournament();
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
 			gbc.endTurn.fire();
@@ -818,7 +838,7 @@ class JoinedFinalTournamentTask extends Task{
 	public void run() {
 		gbc.clearToast();
 		if(players.length == 1) {
-			gbc.showToast("Player: " + Arrays.toString(players) + " has joined the final tournament!");	
+			gbc.showToast("Player: " + Arrays.toString(players) + " has won the game!");	
 		} else {
 			gbc.showToast("Players: " + Arrays.toString(players) + " has joined the final tournament!");
 		}
@@ -945,6 +965,10 @@ public class Client implements Runnable {
 					Platform.runLater(new SetRankTask(gbc, request.newrank, request.player));
 				}
 				if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
+					gbc.joinTournament[0] = false;
+					gbc.joinTournament[1] = false;
+					gbc.joinTournament[2] = false;
+					gbc.joinTournament[3] = false;
 					TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
 					Platform.runLater(new TournamentWonTask(gbc, request.players));
 					Platform.runLater(new RevealAllCards(gbc));
@@ -991,6 +1015,10 @@ public class Client implements Runnable {
 					}
 				}
 				if(message.equals(MESSAGETYPES.CONTINUEGAME.name())) {
+					gbc.joinTournament[0] = false;
+					gbc.joinTournament[1] = false;
+					gbc.joinTournament[2] = false;
+					gbc.joinTournament[3] = false;
 					synchronized (this) {
 						ContinueGameServer cgs = gson.fromJson(obj, ContinueGameServer.class);
 						Platform.runLater(new Runnable() {
@@ -1182,22 +1210,24 @@ public class Client implements Runnable {
 				if(message.equals(MESSAGETYPES.GAMEOVER.name())){
 					GameOverServer request = gson.fromJson(obj, GameOverServer.class);
 					Platform.runLater(new RevealAllCards(gbc));
-					synchronized (this) {
-						try {
-							Platform.runLater(new Runnable(){
-								@Override
-								public void run(){
-									gbc.setButtonsInvisible();
-									gbc.showStartTurn();
-									gbc.clearToast();
-									gbc.showToast("Results for final tournament");
-									gbc.startTurn.setText("Continue");
-									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
-								}
+					if(request.players.length != 1) {
+						synchronized (this) {
+							try {
+								Platform.runLater(new Runnable(){
+									@Override
+									public void run(){
+										gbc.setButtonsInvisible();
+										gbc.showStartTurn();
+										gbc.clearToast();
+										gbc.showToast("Results for final tournament");
+										gbc.startTurn.setText("Continue");
+										gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+									}
 							});
-							this.wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+								this.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					Platform.runLater(new GameOverTask(gbc, request.players));

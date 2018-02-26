@@ -6,7 +6,7 @@ import src.messages.Message;
 public class GameStartClient extends Message {
 	
 	public static enum RIGGED {
-		ONE, TWO, NORMAL, LONG, AITOURNAMENT;
+		ONE, TWO, NORMAL, LONG, AITOURNAMENT, AIQUEST, AIQUEST1, AIQUEST2;
 	}
 	
 	public RIGGED rigged;

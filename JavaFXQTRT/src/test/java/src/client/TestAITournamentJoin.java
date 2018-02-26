@@ -1,5 +1,8 @@
 package src.client;
 
+import static org.junit.Assert.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -9,9 +12,10 @@ import org.testfx.util.WaitForAsyncUtils;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
-public class TestAI extends TestFXBase {
-	final static Logger logger = LogManager.getLogger(TestAI.class);
+public class TestAITournamentJoin extends TestFXBase {
+	final static Logger logger = LogManager.getLogger(TestAITournamentJoin.class);
 
 	GameBoardController gbc;
 	TitleScreenController tsc;
@@ -19,6 +23,7 @@ public class TestAI extends TestFXBase {
 
 	final String START_TURN = "#startTurn";
 	final String ACCEPT = "#accept";
+	final String DECLINE = "#decline";
 	final String END_TURN = "#endTurn";
 	final String TOAST = "#toast";
 	final String DISCARD = "#discard";
@@ -27,7 +32,7 @@ public class TestAI extends TestFXBase {
 	@Before
 	public void setup3Players(){
 		//Rig the game
-		press(KeyCode.A);
+		press(KeyCode.C);
 		clickOn(NEW_GAME_BUTTON_ID);
 		clickOn(MENU_BUTTON_1_ID);
 		clickOn(MENU_OPTION_1_HUMAN_ID);
@@ -59,15 +64,23 @@ public class TestAI extends TestFXBase {
 	}
 	
 	@Test
-	public void testAITournament() throws InterruptedException {
+	public void testAITournament() throws InterruptedException {		
 		gbc = tsc.getGameBoardController();
-		Pane fdc0 = gbc.playerFaceDown0;
-		
+				
 		// start turn first player
 		clickOn(START_TURN);
 		
 		//p0 is going to accept the quest
 		clickOn(ACCEPT);
+		
+		Pane stage1 = gbc.stages[0];
+		Pane stage2 = gbc.stages[1];
+		
+		drag(gbc.findCardInHand("Thieves")).moveTo(stage1).release(MouseButton.PRIMARY);
+		drag(gbc.findCardInHand("Green Knight")).moveTo(stage2).release(MouseButton.PRIMARY);
+		clickOn(END_TURN);
+
+		WaitForAsyncUtils.waitForFxEvents();
 		
 		//p1 AI turn declines
 		clickOn(START_TURN);
@@ -75,30 +88,20 @@ public class TestAI extends TestFXBase {
 		//p2 AI turn accepts
 		clickOn(START_TURN);
 		
-		//p0 turn
 		clickOn(START_TURN);
-		//back to player 1 discarding extra cards
-		while(gbc.playerManager.players[0].hand.size() > 12) {
-			drag(gbc.playerManager.players[0].hand.getDeck().get(12).imgView).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
-		}
-		WaitForAsyncUtils.waitForFxEvents();
-		clickOn(DISCARD);
-		
-		//p2 turn
+		Thread.sleep(20);
+		clickOn(START_TURN);
+		Thread.sleep(20);
+		clickOn(START_TURN);
 		Thread.sleep(20);
 		clickOn(START_TURN);
 		
-		//p1 turn
+
 		Thread.sleep(20);
 		clickOn(START_TURN);
-		drag(gbc.findCardInHand("Lance")).moveTo(fdc0).release(MouseButton.PRIMARY);
-		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc0).release(MouseButton.PRIMARY);
-		drag(gbc.findCardInHand("Excalibur")).moveTo(fdc0).release(MouseButton.PRIMARY);
-		clickOn(END_TURN);
-		
-		//p2 AI plays for tournament
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		
-		Thread.sleep(50000);
+		
 	}
 }

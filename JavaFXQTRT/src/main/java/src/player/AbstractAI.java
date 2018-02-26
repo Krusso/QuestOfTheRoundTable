@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import src.client.GameBoardController;
 import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
@@ -18,10 +20,12 @@ public abstract class AbstractAI {
 	final static Logger logger = LogManager.getLogger(AbstractAI.class);
 	
 	protected int rounds = 0;
+	protected int stages = 0;
 	public UIPlayer player;
 	protected List<Player> listPlayer;
 	protected UIPlayerManager pm;
 	protected BattlePointCalculator bpc;
+	public GameBoardController gbc;
 	
 	public AbstractAI(UIPlayer player, UIPlayerManager pm) {
 		this.player = player;
@@ -36,7 +40,7 @@ public abstract class AbstractAI {
 	public abstract List<List<AdventureCard>> doISponsorAQuest(QuestCard card);
 	public abstract boolean doIParticipateInQuest(QuestCard questCard);
 	public abstract List<AdventureCard> discardAfterWinningTest();
-	public abstract List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard);
+	public abstract List<AdventureCard> playCardsForFoeQuest(QuestCard questCard);
 	public abstract int nextBid(int prevBid);
 
 	
@@ -55,17 +59,32 @@ public abstract class AbstractAI {
 	}
 	
 	public List<AdventureCard> discardWhenHandFull(int n){
-		return player.hand.drawTopCards(n);
+		logger.info("Discarding: " + n + " cards");
+		logger.info("Hand: " + player.hand());
+		List<AdventureCard> toReturn = new ArrayList<AdventureCard>(n);
+		IntStream.range(0, n).forEach(i -> toReturn.add(player.hand.getDeck().get(12 + i)));
+		logger.info("Discarded: " + toReturn.size() + " " + toReturn);
+		return toReturn;
 	}
 	
-	public boolean playerCanWin(UIPlayerManager pm) {
+	public boolean winPlayer(int i) {
+		if((pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) ||
+				(pm.getPlayerRank(i) == Rank.RANKS.KNIGHT && pm.players[i].shields >= (7 - pm.getNumPlayers())) ||
+				(pm.getPlayerRank(i) == Rank.RANKS.SQUIRE && pm.players[i].shields >= (5 - pm.getNumPlayers()))) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean playerCanWinOrEvolve(UIPlayerManager pm) {
 		int length = pm.getNumPlayers();
 		for(int i = 0; i < length; i++) {
-			logger.info("Someone can win the game if they join the tournament");
-			if(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) {
+			if(winPlayer(i)) {
+				logger.info("Someone can win/evolve the game if they join the tournament");
 				return true;
 			}
 		}
+		logger.info("No one can win/evolve the game if they join the tournament");
 		return false;
 	}
 }

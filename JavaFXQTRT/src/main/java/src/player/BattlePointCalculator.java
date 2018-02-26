@@ -123,6 +123,30 @@ public class BattlePointCalculator {
 				collect(Collectors.toList());
 	}
 
+
+	public List<AdventureCard> uniqueListOfTypeDecreasingBp(UIPlayer player, QuestCard card, boolean iseultExists,
+			TYPE... types) {
+		for(AdventureCard c: player.hand.getDeck()) {
+			if(c.getName().equals("Queen Iseult")) iseultExists = true;
+		}
+		
+		// p1 and p2 being flipped is not a typo :)
+		final boolean foundIseult1 = iseultExists;
+		return player.hand.getDeck().stream().
+				filter(i -> {
+					for(TYPE t: types) {
+						if(t == i.getType()) {
+							return true;
+						}
+					}
+					return false;
+				}).
+				map(i -> i.getName()).distinct().
+				map(i -> player.hand.findCardByName(i)).
+				sorted((p1,p2) -> Integer.compare(getPoints(p2, foundIseult1, card), getPoints(p1, foundIseult1, card))).
+				collect(Collectors.toList());
+	}
+	
 	public int calculatePlayer(int player, String[] cards, StoryCard storyCard) {
 		logger.info("Calculating score for player id: " + player);
 		if(storyCard != null) {
@@ -219,5 +243,6 @@ public class BattlePointCalculator {
 		}
 		return uniqueBpFoes + 1 >= card.getNumStages();
 	}
+
 
 }

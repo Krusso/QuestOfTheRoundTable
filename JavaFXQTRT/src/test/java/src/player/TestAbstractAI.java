@@ -25,6 +25,18 @@ public class TestAbstractAI {
 		UIPlayer p1 = new UIPlayer(0);
 		pm.players[0] = p1;
 		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
+		p1.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		AbstractAI player = new A1(p1, pm);
 		assertEquals(2, player.discardWhenHandFull(2).size());

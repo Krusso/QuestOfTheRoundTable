@@ -72,8 +72,6 @@ public class GameBoardController implements Initializable{
 	public UIPlayerManager playerManager;
 	private File resDir = new File("src/main/resources/");
 
-	
-
 	public ChoiceDialog<String> merlinDialog; 
 	public ChoiceDialog<String> mordredDialog; 
 	
@@ -179,6 +177,8 @@ public class GameBoardController implements Initializable{
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
 	public TYPE type;
+	
+	public boolean[] joinTournament = {false, false, false, false};
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -299,7 +299,7 @@ public class GameBoardController implements Initializable{
 		if(!players[3].equals("")) { shield4View.setImage(shield4); p4Shields.setText("0"); }
 	}
 
-	////Must call this when you click start game in title screen!
+	//Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers, List<Integer> list, List<Integer> list2) {
 		playerManager = new UIPlayerManager(numPlayers);
 		playerManager.setAI(list, list2);
@@ -316,51 +316,6 @@ public class GameBoardController implements Initializable{
 			paneDeckMap.put(stages[i], stageCards.get(i));
 		}
 		paneDeckMap.put(discardPane, discardPile );
-	}
-
-
-
-	//TODO::
-	public void addStagePaneListener() {
-		//Add listeners for the stage panes
-		System.out.println("Adding listener for stage");
-		for(int i = 0 ; i < stages.length ; i++) {
-			Pane p = stages[i];
-			final int currentIndex = i;
-			// Add mouse event handlers for the target
-			p.setOnMouseDragEntered(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{	
-					//					System.out.println("Event on Target: mouse dragged");
-				}
-			});
-
-			p.setOnMouseDragOver(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{
-					//					System.out.println("Event on Target: mouse drag over");
-				}
-			});
-
-			p.setOnMouseDragReleased(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{
-					//	            	p.setText(sourceFld.getSelectedText());
-					//					System.out.println("Event on Target: mouse drag released");
-				}
-			});
-
-			p.setOnMouseDragExited(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{
-					//					System.out.println("Event on Target: mouse drag exited");
-				}
-			});	
-		}
 	}
 
 	public void removeStagePaneDragOver() {
@@ -1298,6 +1253,7 @@ public class GameBoardController implements Initializable{
 			System.out.println("accepted story");
 			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
 				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
+				joinTournament[playerManager.getCurrentPlayer()] = true;
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {

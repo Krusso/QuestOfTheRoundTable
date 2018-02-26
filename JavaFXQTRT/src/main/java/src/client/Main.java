@@ -73,6 +73,12 @@ public class Main extends Application {
 						tlc.setRigged(RIGGED.LONG); break;
 					case A:
 						tlc.setRigged(RIGGED.AITOURNAMENT); break;
+					case B:
+						tlc.setRigged(RIGGED.AIQUEST); break;
+					case C:
+						tlc.setRigged(RIGGED.AIQUEST1); break;
+					case D:
+						tlc.setRigged(RIGGED.AIQUEST2); break;
 					default:
 						break;
 					}
