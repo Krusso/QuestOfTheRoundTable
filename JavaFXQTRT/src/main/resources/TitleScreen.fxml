@@ -20,7 +20,7 @@
 			<children>
 				<ImageView fitHeight="1090.0" fitWidth="1936.0" layoutX="-8.0" layoutY="-11.0" preserveRatio="true">
 					<image>
-						<Image url="@../../../resources/titlescreen1.jpg" />
+						<Image url="@titlescreen1.jpg" />
 					</image>
 				</ImageView>
 			</children>
@@ -60,7 +60,7 @@
 											<items>
 												<MenuItem fx:id="b1h" mnemonicParsing="false" onAction="#setHuman1" text="Human" />
 												<MenuItem fx:id="b1a" mnemonicParsing="false" onAction="#setAI11" text="AI1" />
-												<MenuItem mnemonicParsing="false" onAction="#setAI12" text="AI2" />
+												<MenuItem fx:id="b1a2" mnemonicParsing="false" onAction="#setAI12" text="AI2" />
 											</items>
 										</MenuButton>
 									</graphic>
@@ -80,17 +80,17 @@
 											<items>
 												<MenuItem fx:id="b2h" mnemonicParsing="false" onAction="#setHuman2" text="Human" />
 												<MenuItem fx:id="b2a" mnemonicParsing="false" onAction="#setAI21" text="AI1" />
-												<MenuItem mnemonicParsing="false" onAction="#setAI22" text="AI2" />
+												<MenuItem fx:id="b2a2" mnemonicParsing="false" onAction="#setAI22" text="AI2" />
 											</items>
 										</MenuButton>
 									</graphic>
 								</TitledPane>
-								<TitledPane animated="false" text="Player 3" textFill="WHITE">
+								<TitledPane fx:id="tp3" animated="false" text="Player 3" textFill="WHITE">
 									<content>
 										<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 											<children>
 												<Pane fx:id="shieldPane3" layoutX="221.0" layoutY="21.0" prefHeight="130.0" prefWidth="91.0" />
-												<Button layoutX="231.0" layoutY="159.0" mnemonicParsing="false" onAction="#prevShield3" prefHeight="25.0" prefWidth="29.0" stylesheets="@application.css" text="&lt;" />
+												<Button fx:id="s3prev" layoutX="231.0" layoutY="159.0" mnemonicParsing="false" onAction="#prevShield3" prefHeight="25.0" prefWidth="29.0" stylesheets="@application.css" text="&lt;" />
 												<Button fx:id="s3next" layoutX="268.0" layoutY="159.0" mnemonicParsing="false" onAction="#nextShield3" prefHeight="25.0" prefWidth="30.0" stylesheets="@application.css" text="&gt;" />
 											</children>
 										</AnchorPane>
@@ -100,7 +100,7 @@
 											<items>
 												<MenuItem fx:id="b3h" mnemonicParsing="false" onAction="#setHuman3" text="Human" />
 												<MenuItem fx:id="b3a" mnemonicParsing="false" onAction="#setAI31" text="AI1" />
-												<MenuItem mnemonicParsing="false" onAction="#setAI32" text="AI2" />
+												<MenuItem fx:id="b3a2" mnemonicParsing="false" onAction="#setAI32" text="AI2" />
 											</items>
 										</MenuButton>
 									</graphic>

@@ -1,11 +1,7 @@
 package src.client;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,17 +16,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import src.client.GameBoardController.GAME_STATE;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
+import src.game_logic.AdventureDeck;
 import src.game_logic.AllyCard;
 import src.game_logic.AmourCard;
 import src.game_logic.FoeCard;
@@ -85,58 +81,47 @@ class AddCardsTask extends Task{
 
 	@Override
 	public void run() {
-		File[] list = cardDir.listFiles();
 		for(String card: cards) {
 			boolean didAddCard = false;
 			//find file associated to name
-			for(File f : list) {
-				if ((f.getName().contains(card+".png") || f.getName().contains(card+".jpg")) && 
-						((f.getName().length()-6) == card.length() || (f.getName().length()-4) == card.length())) {
-					switch (f.getName().charAt(0)) {
-					case 'A':{
-						if(card.equals("Amour")) {
-							AmourCard c = new AmourCard(card, f.getPath());
-							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-							c.faceDown();
-							gbc.addCardToHand(c, player);
-						} else {
-							AllyCard c = new AllyCard(card, f.getPath());
-							c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-							c.faceDown();
-							gbc.addCardToHand(c, player);
-						}
-						didAddCard = true;
-						break;
-					}
-					case 'F' : {
-						FoeCard c = new FoeCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-						gbc.addCardToHand(c, player);
-						c.faceDown();
-						didAddCard = true;
-						break;
-					}
-					case 'T' : {
-						TestCard c = new TestCard(card, f.getPath());
-						c.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-						gbc.addCardToHand(c, player);
-						c.faceDown();
-						didAddCard = true;
-						break;
-					}
-					case 'W':{
-						WeaponCard weapon = new WeaponCard(card, f.getPath());
-						weapon.setCardBack(cardDir.getPath() + "/Adventure Back.png");
-						gbc.addCardToHand(weapon, player);
-						weapon.faceDown();
-						didAddCard = true;
-						break;
-					}
-					default:{
-						break;
-					}
-					}
+			AdventureDeck ad = new AdventureDeck();
+			ad.populate();
+			if(getClass().getClassLoader().getResource("A " + card + ".png") != null || card.equals("Amour")) {
+				if(card.equals("Amour")) {
+					AdventureCard c = ad.getCardByName(card);
+					c.setImgView(getClass().getClassLoader().getResource("Amour.png"));
+					c.setCardBack(getClass().getClassLoader().getResource("Adventure Back.png"));
+					c.faceDown();
+					gbc.addCardToHand(c, player);
+				} else {
+					AdventureCard c = ad.getCardByName(card);
+					c.setImgView(getClass().getClassLoader().getResource("A " + card + ".png"));
+					c.setCardBack(getClass().getClassLoader().getResource("Adventure Back.png"));
+					c.faceDown();
+					gbc.addCardToHand(c, player);
 				}
+				didAddCard = true;
+			} else if(getClass().getClassLoader().getResource("F " + card + ".png") != null) {
+				AdventureCard c = ad.getCardByName(card);
+				c.setImgView(getClass().getClassLoader().getResource("F " + card + ".png"));
+				c.setCardBack(getClass().getClassLoader().getResource("Adventure Back.png"));
+				gbc.addCardToHand(c, player);
+				c.faceDown();
+				didAddCard = true;
+			} else if(getClass().getClassLoader().getResource("T " + card + ".png") != null) {
+				AdventureCard c = ad.getCardByName(card);
+				c.setImgView(getClass().getClassLoader().getResource("T " + card + ".png"));
+				c.setCardBack(getClass().getClassLoader().getResource("Adventure Back.png"));
+				gbc.addCardToHand(c, player);
+				c.faceDown();
+				didAddCard = true;
+			} else if(getClass().getClassLoader().getResource("W " + card + ".png") != null) {
+				AdventureCard c = ad.getCardByName(card);
+				c.setImgView(getClass().getClassLoader().getResource("W " + card + ".png"));
+				c.setCardBack(getClass().getClassLoader().getResource("Adventure Back.png"));
+				gbc.addCardToHand(c, player);
+				c.faceDown();
+				didAddCard = true;
 			}
 			if(!didAddCard) {
 				logger.warn("Could not add " + card + " to hand");
@@ -175,48 +160,47 @@ class MiddleCardTask extends Task{
 	public void run() {
 		logger.info("Processing msg: middle card:" + card);
 		//find story card
-		File[] list = cardDir.listFiles();
-		for(File c : list) {
-			if(c.getName().contains(card)) {
-				StoryCard sc= new StoryCard(card, c.getPath());
-				gbc.setStoryCard(sc);
-				logger.info("Set story card to:" + sc.getName());
-				// hell yaaaaaaaaaaaa!!!
-				switch(sc.getName()) {
-				case "Search for the Holy Grail":
-					gbc.questCard = new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"});
-					break;
-				case "Test of the Green Knight":
-					gbc.questCard = new QuestCard("Test of the Green Knight",4,new String[] {"Green Knight", "Sir Gawain"});
-					break;
-				case "Search for the Questing Beast":
-					gbc.questCard = new QuestCard("Search for the Questing Beast",4,new String[] {});
-					break;
-				case "Defend the Queen's Honor":
-					gbc.questCard = new QuestCard("Defend the Queen's Honor",4,new String[] {"All", "Sir Lancelot"});
-				case "Rescue the Fair Maiden":
-					gbc.questCard = new QuestCard("Rescue the Fair Maiden",3,new String[] {"Black Knight"});
-					break;
-				case "Journey Through the Enchanted Forest":
-					gbc.questCard = new QuestCard("Journey Through the Enchanted Forest",3,new String[] {"Evil Knight"});
-					break;
-				case "Vanquish King Arthur's Enemies":
-					gbc.questCard = new QuestCard("Vanquish King Arthur's Enemies",3,new String[] {});
-					break;
-				case "Slay the Dragon":
-					gbc.questCard = new QuestCard("Slay the Dragon",3,new String[] {"Dragon"});
-					break;
-				case "Boar Hunt":
-					gbc.questCard = new QuestCard("Boar Hunt",2,new String[] {"Boar"});
-					break;
-				case "Repel the Saxon Raiders":
-					gbc.questCard = new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"});
-					break;
-				}
-				return;
-			}
+
+		StoryCard sc = null;
+		if(getClass().getClassLoader().getResource(card + ".png") == null) {
+			sc = new StoryCard(card, getClass().getClassLoader().getResource("E " + card + ".png"));
+		} else {
+			sc = new StoryCard(card, getClass().getClassLoader().getResource(card + ".png"));
 		}
-		logger.warn("Could not set story card to " + card);
+		gbc.setStoryCard(sc);
+		logger.info("Set story card to:" + sc.getName());
+		// hell yaaaaaaaaaaaa!!!
+		switch(sc.getName()) {
+		case "Search for the Holy Grail":
+			gbc.questCard = new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"});
+			break;
+		case "Test of the Green Knight":
+			gbc.questCard = new QuestCard("Test of the Green Knight",4,new String[] {"Green Knight", "Sir Gawain"});
+			break;
+		case "Search for the Questing Beast":
+			gbc.questCard = new QuestCard("Search for the Questing Beast",4,new String[] {});
+			break;
+		case "Defend the Queen's Honor":
+			gbc.questCard = new QuestCard("Defend the Queen's Honor",4,new String[] {"All", "Sir Lancelot"});
+		case "Rescue the Fair Maiden":
+			gbc.questCard = new QuestCard("Rescue the Fair Maiden",3,new String[] {"Black Knight"});
+			break;
+		case "Journey Through the Enchanted Forest":
+			gbc.questCard = new QuestCard("Journey Through the Enchanted Forest",3,new String[] {"Evil Knight"});
+			break;
+		case "Vanquish King Arthur's Enemies":
+			gbc.questCard = new QuestCard("Vanquish King Arthur's Enemies",3,new String[] {});
+			break;
+		case "Slay the Dragon":
+			gbc.questCard = new QuestCard("Slay the Dragon",3,new String[] {"Dragon"});
+			break;
+		case "Boar Hunt":
+			gbc.questCard = new QuestCard("Boar Hunt",2,new String[] {"Boar"});
+			break;
+		case "Repel the Saxon Raiders":
+			gbc.questCard = new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"});
+			break;
+		}
 		
 	}
 }
@@ -278,13 +262,17 @@ class TournamentWonTask extends Task{
 
 	@Override
 	public void run() {
+		for(int i = 0; i < winners.length; i++) {
+			winners[i] = false;
+		}
+		
 		for(int i = 0 ; i < players.length;i++) {
 			winners[players[i]] = true;
 		}
 		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
 			if(winners[i] == true) {
-				display = display + i + ", ";
+				display = display + (i + 1) + ", ";
 			}
 		}
 		display = display.substring(0, display.length()-2);
@@ -297,8 +285,6 @@ class TournamentWonTask extends Task{
 		logger.info(display);
 		gbc.clearToast();
 		gbc.showToast(display);
-		//		gbc.toast.setText(display);
-		//		gbc.toast.setVisible(true);
 		//reset merlin power
 		gbc.resetMerlinUse();
 
@@ -342,6 +328,8 @@ class ShowEndTurn extends Task {
 
 class QuestPickStagesTask extends Task {
 
+	final static Logger logger = LogManager.getLogger(QuestPickStagesTask.class);
+	
 	private int player;
 	private int numStages;
 	public QuestPickStagesTask(GameBoardController gbc, int player, int numStages) {
@@ -358,7 +346,6 @@ class QuestPickStagesTask extends Task {
 		gbc.addDraggable();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showEndTurn();
-		gbc.addStagePaneListener();
 		gbc.setQuestStageBanners(numStages);
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
@@ -370,7 +357,24 @@ class QuestPickStagesTask extends Task {
 					gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.stages[i], cards.get(i).get(j));	
 				}
 			}
-			gbc.endTurn.fire();
+			
+			for(int i = 0; i < gbc.stages.length; i++) {
+				if(gbc.stages[i].isVisible()) {
+					gbc.c.send(new CalculateStageClient(gbc.playerManager.getCurrentPlayer(),gbc.stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));	
+				}
+			}
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						logger.error(e.getMessage());
+					}
+					gbc.endTurn.fire();
+				}
+			});
 		}
 	}
 }
@@ -426,8 +430,7 @@ class QuestPickCardsTask extends Task {
 		gbc.showToast("Select Cards for current stage");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
-			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard.getNumStages() == gbc.currentStage + 1, 
-					gbc.questCard);
+			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard);
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
 			gbc.endTurn.fire();
 		}
@@ -612,7 +615,9 @@ class DiscardQuestTask extends Task {
 		gbc.toDiscard = toDiscard;
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
-			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			if(cards != null) {
+				cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			}
 			gbc.endTurn.fire();
 		}
 	}
@@ -669,8 +674,11 @@ class PickTournamentTask extends Task {
 		logger.info("Processing pick tournament cards message");
 		gbc.setMerlinMordredVisibility();
 		if(gbc.playerManager.getAI(player) != null) {
+			gbc.playerManager.getAI(player).gbc = gbc;
 			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).playCardsForTournament();
-			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			if(cardsToPlay != null) {
+				cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			}
 			gbc.endTurn.fire();
 		}
 	}
@@ -747,7 +755,7 @@ class HandFullDiscardTask extends Task {
 		gbc.showDiscardPane();
 		gbc.highlightFaceUp(player);
 		if(gbc.playerManager.getAI(player) != null) {
-			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size());
+			List<AdventureCard> cardsToPlay = gbc.playerManager.getAI(player).discardWhenHandFull(gbc.playerManager.players[player].hand.size() - 12);
 			cardsToPlay.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
 			gbc.discard.fire();
 		}
@@ -756,7 +764,8 @@ class HandFullDiscardTask extends Task {
 }
 
 class GameOverTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(GameOverTask.class);
+	
 	private int[] players;
 	public GameOverTask(GameBoardController gbc, int[] players) {
 		super(gbc);
@@ -765,7 +774,9 @@ class GameOverTask extends Task {
 	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		for(int i = 0; i < players.length; i++) {
+			players[i] = players[i] + 1;
+		}
 		gbc.CURRENT_STATE = GAME_STATE.GAMEOVER;
 		gbc.showToast("Player #" + Arrays.toString(players) + " won the game!");
 		gbc.flipAllFaceDownPane(true);
@@ -774,13 +785,13 @@ class GameOverTask extends Task {
 		String winningMessage = "Player #" + Arrays.toString(players) + " won the game!";
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader();
-			fxmlLoader.setLocation(getClass().getResource("GameOver.fxml"));
+			fxmlLoader.setLocation(getClass().getClassLoader().getResource("GameOver.fxml"));
 			Scene gameOverScene = new Scene(fxmlLoader.load());
 			GameOverController goc = fxmlLoader.getController();
 			goc.text.setText(winningMessage);
 
 			//attach image to bg pane
-			Image img = new Image(new FileInputStream(new File(cardDir + "/gameover.png")));
+			Image img = new Image(getClass().getClassLoader().getResource("gameover.png").openStream());
 			ImageView imgv = new ImageView(img);
 			//keep aspect ratio and make imgView fit the whole screen
 			double scaleV = 1920 / img.getWidth();
@@ -796,8 +807,7 @@ class GameOverTask extends Task {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 
@@ -816,8 +826,14 @@ class JoinedFinalTournamentTask extends Task{
 	@Override
 	public void run() {
 		gbc.clearToast();
+		for(int i: players) {
+			gbc.joinTournament[i] = true;
+		}
+		for(int i = 0; i < players.length; i++) {
+			players[i] = players[i] + 1;
+		}
 		if(players.length == 1) {
-			gbc.showToast("Player: " + Arrays.toString(players) + " has joined the final tournament!");	
+			gbc.showToast("Player: " + Arrays.toString(players) + " has won the game!");	
 		} else {
 			gbc.showToast("Players: " + Arrays.toString(players) + " has joined the final tournament!");
 		}
@@ -827,14 +843,12 @@ class JoinedFinalTournamentTask extends Task{
 }
 
 abstract class Task implements Runnable{
-	protected File cardDir;
 	protected GameBoardController gbc;
 	protected GameOverController goc;
 	protected static boolean[] winners = {false,false,false,false};
 	public Task() { };
 	public Task(GameBoardController gbc) {
 		this.gbc = gbc;
-		cardDir = new File("src/main/resources/"); 
 	}
 }
 
@@ -888,7 +902,7 @@ public class Client implements Runnable {
 									IntStream.range(0, gbc.bpTexts.length).forEach(i -> gbc.bpTexts[i].setText(""));
 									gbc.clearToast();
 									gbc.clearHighlight();
-									gbc.showToast("Player #: " + request.player + " turn");
+									gbc.showToast("Player #: " + (request.player + 1) + " turn");
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
 									gbc.startTurn.setVisible(true);
@@ -908,7 +922,7 @@ public class Client implements Runnable {
 							});
 							this.gbc.setMerlinMordredVisibility();
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 					}
 				}
@@ -944,6 +958,10 @@ public class Client implements Runnable {
 					Platform.runLater(new SetRankTask(gbc, request.newrank, request.player));
 				}
 				if(message.equals(MESSAGETYPES.WINTOURNAMENT.name())) {
+					gbc.joinTournament[0] = false;
+					gbc.joinTournament[1] = false;
+					gbc.joinTournament[2] = false;
+					gbc.joinTournament[3] = false;
 					TournamentWinServer request = gson.fromJson(obj, TournamentWinServer.class);
 					Platform.runLater(new TournamentWonTask(gbc, request.players));
 					Platform.runLater(new RevealAllCards(gbc));
@@ -961,11 +979,39 @@ public class Client implements Runnable {
 							this.wait();
 							this.send(new ContinueGameClient());
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
+						}
+					}
+				}
+				if(message.equals(MESSAGETYPES.TIETOURNAMENT.name())) {
+					QuestPassStageServer qpss = gson.fromJson(obj, QuestPassStageServer.class);
+					int[] players = qpss.players;
+					Platform.runLater(new RevealAllCards(gbc));
+					synchronized (this) {
+						try {
+							Platform.runLater(new Runnable(){
+								@Override
+								public void run(){
+									gbc.clearToast();
+									gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> (i + 1) + "").collect(Collectors.joining(",")) + " tied the tournament");
+									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
+									gbc.setButtonsInvisible();
+									gbc.startTurn.setVisible(true);
+									gbc.startTurn.setText("Continue");
+									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+								}
+							});
+							this.wait();
+						} catch (InterruptedException e) {
+							logger.error(e.getMessage());
 						}
 					}
 				}
 				if(message.equals(MESSAGETYPES.CONTINUEGAME.name())) {
+					gbc.joinTournament[0] = false;
+					gbc.joinTournament[1] = false;
+					gbc.joinTournament[2] = false;
+					gbc.joinTournament[3] = false;
 					synchronized (this) {
 						ContinueGameServer cgs = gson.fromJson(obj, ContinueGameServer.class);
 						Platform.runLater(new Runnable() {
@@ -993,7 +1039,7 @@ public class Client implements Runnable {
 						try {
 							this.wait();
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 						this.send(new ContinueGameClient());
 					}
@@ -1051,7 +1097,7 @@ public class Client implements Runnable {
 							});
 							this.send(new ContinueGameClient());
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 					}
 				}
@@ -1081,7 +1127,7 @@ public class Client implements Runnable {
 							});
 							this.wait();
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 					}
 				}
@@ -1157,22 +1203,24 @@ public class Client implements Runnable {
 				if(message.equals(MESSAGETYPES.GAMEOVER.name())){
 					GameOverServer request = gson.fromJson(obj, GameOverServer.class);
 					Platform.runLater(new RevealAllCards(gbc));
-					synchronized (this) {
-						try {
-							Platform.runLater(new Runnable(){
-								@Override
-								public void run(){
-									gbc.setButtonsInvisible();
-									gbc.showStartTurn();
-									gbc.clearToast();
-									gbc.showToast("Results for final tournament");
-									gbc.startTurn.setText("Continue");
-									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
-								}
+					if(request.players.length != 1) {
+						synchronized (this) {
+							try {
+								Platform.runLater(new Runnable(){
+									@Override
+									public void run(){
+										gbc.setButtonsInvisible();
+										gbc.showStartTurn();
+										gbc.clearToast();
+										gbc.showToast("Results for final tournament");
+										gbc.startTurn.setText("Continue");
+										gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+									}
 							});
-							this.wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+								this.wait();
+							} catch (InterruptedException e) {
+								logger.error(e.getMessage());
+							}
 						}
 					}
 					Platform.runLater(new GameOverTask(gbc, request.players));
@@ -1186,7 +1234,7 @@ public class Client implements Runnable {
 							Platform.runLater(new JoinedFinalTournamentTask(gbc, request.players));
 							this.wait();
 						} catch (InterruptedException e) {
-							e.printStackTrace();
+							logger.error(e.getMessage());
 						}
 					}
 				}
@@ -1201,7 +1249,7 @@ public class Client implements Runnable {
 		try {
 			clientOutput.put(gson.toJson(message));
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 }

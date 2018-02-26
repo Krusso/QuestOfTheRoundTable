@@ -2,12 +2,17 @@ package src.player;
 
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import src.game_logic.Card;
 import src.game_logic.QuestCard;
 
 public class BidCalculator {
 
 	private PlayerManager pm;
+	
+	final static Logger logger = LogManager.getLogger(BidCalculator.class);
 	
 	public BidCalculator(PlayerManager pm) {
 		this.pm = pm;
@@ -19,7 +24,6 @@ public class BidCalculator {
 
 	private int freeBids(Player player, QuestCard quest) {
 		int freeBids = 0;
-		// this should probably go into the card?
 		for(Card c : player.getFaceUp().getDeck()) {
 			if(c.getName().equals("King Pellinore") && 
 					quest.getName().equals("Search for the Questing Beast")) {
@@ -43,6 +47,8 @@ public class BidCalculator {
 				}
 			}
 		}
+		
+		logger.info("Free bids: " + freeBids);
 		return freeBids;
 	}
 

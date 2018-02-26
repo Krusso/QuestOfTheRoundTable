@@ -4,11 +4,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
 
 import src.messages.Message;
 
 public class OutputController extends Thread {
+	final static Logger logger = LogManager.getLogger(OutputController.class);
 	private LinkedBlockingQueue<String> queue;
 	public LinkedBlockingQueue<Message> internalQueue;
 
@@ -24,7 +28,7 @@ public class OutputController extends Thread {
 				Message received = internalQueue.take();
 				return received;
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 				return null;
 			}
 		};

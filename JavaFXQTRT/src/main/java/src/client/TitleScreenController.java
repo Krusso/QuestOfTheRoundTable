@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,7 +35,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import src.messages.game.GameStartClient;
 import src.messages.game.GameStartClient.RIGGED;
-import src.socket.Server;
 
 public class TitleScreenController extends Application implements Initializable{
 	final static Logger logger = LogManager.getLogger(TitleScreenController.class);
@@ -116,7 +114,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView1.setImage(shieldImages[playerShield1]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -128,7 +126,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView2.setImage(shieldImages[playerShield2]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -140,7 +138,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView3.setImage(shieldImages[playerShield3]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -152,7 +150,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView4.setImage(shieldImages[playerShield4]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -161,7 +159,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView1.setImage(shieldImages[playerShield1]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -170,7 +168,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView2.setImage(shieldImages[playerShield2]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -179,7 +177,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView3.setImage(shieldImages[playerShield3]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -188,7 +186,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			shieldView4.setImage(shieldImages[playerShield4]);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 	
@@ -297,7 +295,7 @@ public class TitleScreenController extends Application implements Initializable{
 //		for(int i=0;i<players.length;i++) { logger.info); }
 	
 		FXMLLoader fxmlLoader = new FXMLLoader();
-		fxmlLoader.setLocation(getClass().getResource("GameBoard.fxml"));
+		fxmlLoader.setLocation(getClass().getClassLoader().getResource("GameBoard.fxml"));
 		Scene gameScene = new Scene(fxmlLoader.load());
 		
 		//scale the game application to full screen
@@ -357,10 +355,9 @@ public class TitleScreenController extends Application implements Initializable{
 		shieldImages = new Image[4];
 		for(int i=1; i<=shieldImages.length; i++) {
 			try {
-				File f = new File("src/main/resources/S"+i+".png");
-				Image shieldImg = new Image (new FileInputStream(f));
+				Image shieldImg = new Image (getClass().getClassLoader().getResource("S" + i + ".png").openStream());
 				shieldImages[i-1] = shieldImg;
-			} catch (Exception e) { e.printStackTrace(); }
+			} catch (Exception e) { logger.error(e.getMessage()); }
 		}
 		playerShield1=0;
 		playerShield2=0;
@@ -393,15 +390,14 @@ public class TitleScreenController extends Application implements Initializable{
 			
 			playerSelect.setVisible(false);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 		
 		
 		/***********************Setting up the stage and client*************************/
 
 		try {
-			File titlebg = new File("src/main/resources/titlescreen1.jpg");
-			Image titleImg = new Image (new FileInputStream(titlebg));
+			Image titleImg = new Image (getClass().getClassLoader().getResource("titlescreen1.jpg").openStream());
 			ImageView titleImgView = new ImageView();
 			titleImgView.setImage(titleImg);
 			titleImgView.setFitHeight(background.getHeight());
@@ -409,7 +405,7 @@ public class TitleScreenController extends Application implements Initializable{
 			background.getChildren().add(titleImgView);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		menuBtns[0] = b1;
@@ -435,7 +431,7 @@ public class TitleScreenController extends Application implements Initializable{
 		try {
 			Parent root = new AnchorPane();
 			FXMLLoader fxmlLoader = new FXMLLoader();
-			fxmlLoader.setLocation(getClass().getResource("TitleScreen.fxml"));
+			fxmlLoader.setLocation(getClass().getClassLoader().getResource("GameBoard.fxml"));
 			root = fxmlLoader.load();
 
 			//Get the controller instance
@@ -460,7 +456,7 @@ public class TitleScreenController extends Application implements Initializable{
 			primaryStage.show();
 
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	public GameBoardController getGameBoardController() {

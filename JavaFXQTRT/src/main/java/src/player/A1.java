@@ -1,6 +1,7 @@
 package src.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -14,9 +15,7 @@ import org.apache.logging.log4j.Logger;
 import src.client.UIPlayerManager;
 import src.game_logic.AdventureCard;
 import src.game_logic.AdventureCard.TYPE;
-import src.game_logic.Card;
 import src.game_logic.QuestCard;
-import src.game_logic.Rank;
 import src.game_logic.StoryCard;
 
 public class A1 extends AbstractAI {
@@ -30,7 +29,7 @@ public class A1 extends AbstractAI {
 	@Override
 	public boolean doIParticipateInTournament() {
 		logger.info("Asking A1 if want to join in tournament");
-		if(playerCanWin(pm)) {
+		if(playerCanWinOrEvolve(pm)) {
 			logger.info("A1 joins tournament");
 			return true;
 		}
@@ -41,35 +40,54 @@ public class A1 extends AbstractAI {
 
 	@Override
 	public List<AdventureCard> playCardsForTournament() {
+		logger.info("AI choosing cards for tournament");
 		List<AdventureCard> cards = new ArrayList<AdventureCard>();
-		if(playerCanWin(pm)) {
+		if(playerCanWinOrEvolveJoined(pm)) {
 			List<AdventureCard> sortedweapons = bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
 			List<AdventureCard> sortedallies = bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, null, pm.iseultExists());
-			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, null, pm.iseultExists()));
+			cards.addAll(bpc.uniqueListOfTypeDecreasingBp(player, TYPE.AMOUR, null, pm.iseultExists()));
 			cards.addAll(sortedweapons);
 			cards.addAll(sortedallies);
+			logger.info("Someone can win playing cards: " + cards);
 			return cards;
 		}
 
 		List<AdventureCard> weapons = bpc.listOfTypeDecreasingBp(player, TYPE.WEAPONS, null, pm.iseultExists());
 		Set<String> uniqueCards = new HashSet<String>();
+		Set<String> added = new HashSet<String>();
 		for(AdventureCard card: weapons) {
-			if(uniqueCards.contains(card.getName())) {
+			if(uniqueCards.contains(card.getName()) && !added.contains(card.getName())) {
 				cards.add(card);
+				added.add(card.getName());
 			} else {
 				uniqueCards.add(card.getName());
 			}
 		}
 
+		logger.info("Playing cards: " + cards);
 		return cards;
 	}
 
+	private boolean playerCanWinOrEvolveJoined(UIPlayerManager pm) {
+		if(this.gbc != null) {
+			for(int i = 0; i < 4; i++) {
+				logger.info("join tournament: " + Arrays.toString(gbc.joinTournament));
+				if(gbc.joinTournament[i]) {
+					if(winPlayer(i)) {
+						logger.info("Player: " +i + " can evolve/win");
+						return true;
+					}
+				}
+			}
+		}
+		logger.info("GBC: " + gbc);
+		return false;
+	}
+
 	@Override
-	// TODO
 	public List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard) {
 		logger.info("Asking A1 if want sponsor tournament tournament");
-		rounds = 0;
-		if(playerCanWin(pm)) {
+		if(playerCanWinOrEvolve(pm)) {
 			logger.info("A1 doesnt want to sponsor tournament someone could win");
 			return null;
 		}
@@ -111,7 +129,6 @@ public class A1 extends AbstractAI {
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
 
-		System.out.println("as");
 		Collections.reverse(sortedfoes);
 		int currentBp = Integer.MIN_VALUE;
 		int stage = 1;
@@ -148,16 +165,20 @@ public class A1 extends AbstractAI {
 					i.stream().map(j -> j.getName()).toArray(String[]::new),
 					(StoryCard) questCard);
 			if(pointsInStage < min) {
+				logger.info("Not sponsoring quest");
 				return null;
 			}
 			min = pointsInStage;
 		}
 		
+		logger.info("Sponsoring quest cards: " + cards);
 		return cards;
 	}
 
 	@Override
 	public boolean doIParticipateInQuest(QuestCard questCard) {
+		rounds = 0;
+		stages = 0;
 		logger.info("Asking A1 if wants to join tournament");
 		int stages = questCard.getNumStages();
 		int weaponOrAllyCount = player.getTypeCount(TYPE.WEAPONS) + player.getTypeCount(TYPE.ALLIES);
@@ -180,16 +201,19 @@ public class A1 extends AbstractAI {
 	}
 
 	@Override
-	public List<AdventureCard> playCardsForFoeQuest(boolean lastStage, QuestCard questCard) {
+	public List<AdventureCard> playCardsForFoeQuest(QuestCard questCard) {
 		logger.info("Selecting cards for A1 to play");
+		stages++;
 		List<AdventureCard> cards = new ArrayList<AdventureCard>();
-		if(lastStage) {
+		if(stages >= questCard.getNumStages()) {
+			logger.info("Last stage");
 			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists()));
-			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
+			cards.addAll(bpc.uniqueListOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
 			cards.addAll(bpc.uniqueListOfTypeDecreasingBp(player, TYPE.WEAPONS, questCard, pm.iseultExists()));
 		} else {
+			logger.info("not last stage");
 			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.ALLIES, questCard, pm.iseultExists()));
-			cards.addAll(bpc.listOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
+			cards.addAll(bpc.uniqueListOfTypeDecreasingBp(player, TYPE.AMOUR, questCard, pm.iseultExists()));
 			while(cards.size() > 2) cards.remove(0);
 
 			if(cards.size() != 2) {
@@ -206,8 +230,11 @@ public class A1 extends AbstractAI {
 	@Override
 	public int nextBid(int prevBid) {
 		rounds++;
+		stages++;
 		List<AdventureCard> cards = discardAfterWinningTest();
-		if(cards == null || cards.size() <= prevBid) {
+		logger.info("Cards willing to bid: " + cards);
+		logger.info("Prev bid: " + prevBid);
+		if(cards == null || cards.size() < prevBid) {
 			return -1;
 		} else {
 			return cards.size();

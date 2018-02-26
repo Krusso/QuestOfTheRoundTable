@@ -1,8 +1,7 @@
 package src.client;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +11,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javafx.scene.effect.Glow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.scene.paint.Color;
 import javafx.scene.effect.DropShadow;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
@@ -30,8 +27,6 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -72,9 +67,6 @@ public class GameBoardController implements Initializable{
 
 	public Client c;
 	public UIPlayerManager playerManager;
-	private File resDir = new File("src/main/resources/");
-
-	
 
 	public ChoiceDialog<String> merlinDialog; 
 	public ChoiceDialog<String> mordredDialog; 
@@ -181,6 +173,8 @@ public class GameBoardController implements Initializable{
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
 	public TYPE type;
+	
+	public boolean[] joinTournament = {false, false, false, false};
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -249,11 +243,10 @@ public class GameBoardController implements Initializable{
 	
 	public void setDiscardImage() {
 		try {
-			File f = new File(resDir + "/discardTray.png");
-			Image discardImage = new Image(new FileInputStream(f));
+			Image discardImage = new Image(getClass().getClassLoader().getResource("discardTray.png").openStream());
 			discardView.setImage(discardImage); 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
@@ -303,7 +296,7 @@ public class GameBoardController implements Initializable{
 		if(!players[3].equals("")) { shield4View.setImage(shield4); p4Shields.setText("0"); }
 	}
 
-	////Must call this when you click start game in title screen!
+	//Must call this when you click start game in title screen!
 	public void initPlayerManager(int numPlayers, List<Integer> list, List<Integer> list2) {
 		playerManager = new UIPlayerManager(numPlayers);
 		playerManager.setAI(list, list2);
@@ -320,51 +313,6 @@ public class GameBoardController implements Initializable{
 			paneDeckMap.put(stages[i], stageCards.get(i));
 		}
 		paneDeckMap.put(discardPane, discardPile );
-	}
-
-
-
-	//TODO::Kinda useless now but neha should have used this for adding glow
-	public void addStagePaneListener() {
-		//Add listeners for the stage panes
-		logger.info("Adding listeners for stage panes");
-		for(int i = 0 ; i < stages.length ; i++) {
-			Pane p = stages[i];
-			final int currentIndex = i;
-			// Add mouse event handlers for the target
-			p.setOnMouseDragEntered(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{	
-					//					System.out.println("Event on Target: mouse dragged");
-				}
-			});
-
-			p.setOnMouseDragOver(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{
-					//					System.out.println("Event on Target: mouse drag over");
-				}
-			});
-
-			p.setOnMouseDragReleased(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{
-					//	            	p.setText(sourceFld.getSelectedText());
-					//					System.out.println("Event on Target: mouse drag released");
-				}
-			});
-
-			p.setOnMouseDragExited(new EventHandler <MouseDragEvent>()
-			{
-				public void handle(MouseDragEvent event)
-				{
-					//					System.out.println("Event on Target: mouse drag exited");
-				}
-			});	
-		}
 	}
 
 	public void removeStagePaneDragOver() {
@@ -954,12 +902,14 @@ public class GameBoardController implements Initializable{
 
 	public void setPlayerTurn(int p) {
 		setPlayerPerspectiveTo(p);
-		this.playerNumber.setText("#" + p);
+		this.playerNumber.setText("#" + (p + 1));
 	}
 
 	public void setStoryCard(StoryCard sc) {
 		sc.setImageSize(storyCardContainer.getWidth(), storyCardContainer.getHeight());
-		storyCardContainer.getChildren().add(sc.getImageView());
+		if(storyCardContainer.getChildren() != null && sc.getImageView() != null) {
+			storyCardContainer.getChildren().add(sc.getImageView());
+		}
 	}
 
 
@@ -974,28 +924,28 @@ public class GameBoardController implements Initializable{
 
 	public void setQuestStageBanners(int num) {
 		try {
-			File f = new File(resDir + "/Red_Banner_Clipart_Picture.png");
-			Image banner = new Image(new FileInputStream(f));
+			Image banner = new Image(getClass().getClassLoader().getResource("Red_Banner_Clipart_Picture.png").openStream());
 			for(int i=0; i<num; i++) { stageViews[i].setImage(banner); stageViews[i].setVisible(true); }
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
 	}
 
 	public void setBackground() {
 		try {
-			File f = new File(resDir + "/gameboardbg3.jpg");
 			Image bg;
-			bg = new Image(new FileInputStream(f));
+			bg = new Image(getClass().getClassLoader().getResource("gameboardbg3.jpg").openStream());
 			ImageView bgView = new ImageView(bg);
 			bgView.setFitWidth(1920);
 			bgView.setFitHeight(1080);
 			background.getChildren().add(bgView);
 			logger.info("Set background image");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -1097,6 +1047,7 @@ public class GameBoardController implements Initializable{
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
 	}
+	
 	public void flipAllFaceDownPane(boolean isShow) {
 		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {
 			playerManager.flipFaceDownCards(i, isShow);
@@ -1136,19 +1087,19 @@ public class GameBoardController implements Initializable{
 	public void setPlayerRank(int p, Rank.RANKS r) {
 		playerManager.setPlayerRank(p, r);
 		String rank = "";
-		if( r == Rank.RANKS.SQUIRE) rank = "/R Squire.png";
-		if( r == Rank.RANKS.KNIGHT) rank = "/R Knight.png";
-		if( r == Rank.RANKS.CHAMPION) rank = "/R Champion Knight.png";
+		if( r == Rank.RANKS.SQUIRE) rank = "R Squire.png";
+		if( r == Rank.RANKS.KNIGHT) rank = "R Knight.png";
+		if( r == Rank.RANKS.CHAMPION) rank = "R Champion Knight.png";
 		//		if(rank.equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 		if(!rank.isEmpty()) {
 			try {
-				File file = new File(resDir.getPath() + rank);
-				Image img = new Image (new FileInputStream(file));
+				Image img = new Image (getClass().getClassLoader().getResource(rank).openStream());
 				playerRanks[p].setImage(img);
 				logger.info("Setting player #" + p + " rank to " + r);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
+			} catch (IOException e) {
+				logger.error(e.getMessage());
 			}
 		}
 	}
@@ -1169,19 +1120,6 @@ public class GameBoardController implements Initializable{
 			}
 		}
 		repositionFaceUpCards(p);
-	}
-
-	//discards all cards and returns the string[] name of them
-	public String[] discardAllFaceDownCards(int p) {
-		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
-		faceDownPanes[p].getChildren().clear();
-		String[] cardNames = new String[fdc.size()];
-		for(int i = 0 ; i < cardNames.length;i++) {
-			cardNames[i] = fdc.get(i).getName();
-		}
-		logger.info("Discard all face down cards of player"+ p + "  [cards discarded]: " + fdc);
-		fdc.clear();
-		return cardNames;
 	}
 
 	public void flipStageCards(int stageNum, boolean isShow) {
@@ -1320,6 +1258,7 @@ public class GameBoardController implements Initializable{
 			logger.info("Accept button clicked - Current state: " + CURRENT_STATE);
 			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
 				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
+				joinTournament[playerManager.getCurrentPlayer()] = true;
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {

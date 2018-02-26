@@ -8,7 +8,6 @@ import java.util.Queue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import src.client.GameBoardController;
 import src.game_logic.BoardModel;
 import src.game_logic.QuestCard;
 import src.game_logic.TestCard;

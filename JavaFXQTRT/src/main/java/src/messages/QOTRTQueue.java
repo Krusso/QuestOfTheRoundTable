@@ -64,8 +64,7 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 				message = super.take();
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return message;
 	}
@@ -80,7 +79,7 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 		try {
 			super.put(gson.toJson(message));
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -93,7 +92,7 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 				if(!x.message.equals(t)) continue;
 				return x;
 			} catch (JsonSyntaxException e) {
-
+				logger.error(e.getMessage());
 			}
 		}
 	}

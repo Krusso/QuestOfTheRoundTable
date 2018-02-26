@@ -6,10 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -19,10 +16,7 @@ import src.client.GameBoardController;
 import src.client.GameBoardController.GAME_STATE;
 import src.client.TitleScreenController;
 import src.game_logic.AdventureCard;
-import src.game_logic.QuestCard;
 import src.game_logic.Rank.RANKS;
-import src.views.TestPlayerView;
-
 import static org.junit.Assert.*;
 
 import static org.junit.Assert.assertTrue;
@@ -101,7 +95,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	 * Expect the game to have a quest card "Test of the Green Knight"
 	 */
 	@Test
-	public void test2PlayerGameQuest() {
+	public void test2PlayerGameQuest() throws InterruptedException {
 		gbc = tsc.getGameBoardController();
 		//start turn for first player
 		clickOn(START_TURN);
@@ -267,21 +261,20 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 
 		//continue next stage
+		Thread.sleep(30);
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
 		clickOn(START_TURN);
-//		
+		
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
-		// fixed it not sure why??
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		clickOn(END_TURN);
 		clickOn(START_TURN);
-//		
+		
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		drag(gbc.findCardInHand("Excalibur")).moveTo(fdc2).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);

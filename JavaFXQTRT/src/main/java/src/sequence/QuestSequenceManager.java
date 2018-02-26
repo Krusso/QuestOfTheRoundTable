@@ -127,6 +127,7 @@ public class QuestSequenceManager extends SequenceManager {
 		if(winners.size() > 0) {
 			if(bm.isSetKingRecognition()) {
 				bm.setSetKingRecognition(false);
+				logger.info("King Recognition");
 				pm.changeShields(winners, quest.getNumStages() + 2);	
 			} else {
 				pm.changeShields(winners, quest.getNumStages());

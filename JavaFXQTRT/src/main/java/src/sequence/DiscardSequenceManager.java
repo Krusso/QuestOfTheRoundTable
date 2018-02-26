@@ -18,12 +18,10 @@ public class DiscardSequenceManager extends SequenceManager {
 	
 	private QOTRTQueue actions;
 	private PlayerManager pm;
-	private BoardModel bm;
 	
 	public DiscardSequenceManager(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
 		this.actions = actions;
 		this.pm = pm;
-		this.bm = bm;
 	};
 	
 	@Override
