@@ -69,6 +69,9 @@ public class GameBoardController implements Initializable{
 	private AudioPlayer cardDropSound = new AudioPlayer("card_drop.wav", false);
 	private AudioPlayer invalid = new AudioPlayer("invalid.wav", false);
 	private AudioPlayer buttonClick = new AudioPlayer("button_click.wav", false);
+	private AudioPlayer dyingSound = new AudioPlayer("man_dying.wav", false);
+	private AudioPlayer merlinPowerSound = new AudioPlayer("merlin_power.wav", false);
+	private AudioPlayer mordredPowerSound = new AudioPlayer("mordred_power.wav", false);
 
 	public Client c;
 	public UIPlayerManager playerManager;
@@ -1427,6 +1430,7 @@ public class GameBoardController implements Initializable{
 				return;
 			}
 			buttonClick.play();
+			mordredPowerSound.play();
 			
 			//setup dialog to choose which card to delete
 			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
@@ -1450,10 +1454,11 @@ public class GameBoardController implements Initializable{
 			mordredDialog.setTitle("Using Mordred's Power");
 			mordredDialog.setHeaderText("Select an opponent's ally card to destroy");
 			mordredDialog.setContentText("Ally Card:");
-			Optional<String> result = merlinDialog.showAndWait();
+			Optional<String> result = mordredDialog.showAndWait();
 			if(result.isPresent()) {
 				Integer[] pNumAndCard = dialogChoices.get(result.get());
 				useMordred(mordred, mIndex, currentPlayer, pNumAndCard[2],pNumAndCard[0], result.get().substring(10));
+				dyingSound.play();
 			}
 			
 		});
@@ -1502,6 +1507,7 @@ public class GameBoardController implements Initializable{
 			repositionStageCards(s);
 			playerManager.rememberStage(playerManager.getCurrentPlayer(), s);
 			logger.info("Player" + playerManager.getCurrentPlayer() + " has used the merlin card to reveal stage " + (s+1));
+			merlinPowerSound.play();
 		}
 	}
 }
