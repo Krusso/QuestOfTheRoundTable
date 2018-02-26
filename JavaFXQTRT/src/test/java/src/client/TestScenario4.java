@@ -142,13 +142,16 @@ public class TestScenario4 extends TestFXBase {
 
 
 		//continue next stage 4
+		Thread.sleep(20);
 		discard = gbc.playerManager.players[1].hand.getDeck().get(12).imgView;
 		drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		//finsh discarding so we'll click it now
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(DISCARD);
 		ImageView Lance2 = gbc.findCardInHand("Lance");
 		drag(Lance2).moveTo(fdc2).release(MouseButton.PRIMARY);
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
 		Thread.sleep(50);
@@ -156,12 +159,16 @@ public class TestScenario4 extends TestFXBase {
 
 		//continue next stage 5
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		Lance2 = gbc.findCardInHand("Lance");
 		drag(Lance2).moveTo(fdc2).release(MouseButton.PRIMARY);
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		//back to player 1 discarding extra cards
 		while(gbc.playerManager.players[0].hand.size() > 12) {
@@ -169,10 +176,13 @@ public class TestScenario4 extends TestFXBase {
 			drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		}
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(DISCARD);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
 
@@ -196,11 +206,14 @@ public class TestScenario4 extends TestFXBase {
 		assertEquals("15", gbc.bpTextStage2.getText());
 		assertEquals("40", gbc.bpTextStage3.getText());
 
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
 
 		//1nd player's turn, we're going to accept the quest
+		Thread.sleep(20);
 		clickOn(START_TURN); 
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 
 		WaitForAsyncUtils.waitForFxEvents();
@@ -211,19 +224,23 @@ public class TestScenario4 extends TestFXBase {
 		}
 		ImageView sirgawain = gbc.findCardInHand("Sir Gawain");
 		//finsh discarding so we'll click it now
+		Thread.sleep(20);
 		clickOn(DISCARD);
 
 		//now p1 should be choosing cards to play for the quest stage 1.
 		//now play a card for the quest dagger
 		drag(sirgawain).moveTo(fdc1).release(MouseButton.PRIMARY);
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 
 		Thread.sleep(100);
 		//continue next stage 2
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 
 		Thread.sleep(100);
@@ -234,7 +251,9 @@ public class TestScenario4 extends TestFXBase {
 		}
 		//finsh discarding so we'll click it now
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(DISCARD);
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
 		Thread.sleep(30);
@@ -247,6 +266,7 @@ public class TestScenario4 extends TestFXBase {
 		}
 		//finsh discarding so we'll click it now
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(DISCARD);
 		WaitForAsyncUtils.waitForFxEvents();
 		Lance2 = gbc.findCardInHand("Lance");
@@ -254,8 +274,10 @@ public class TestScenario4 extends TestFXBase {
 		Thread.sleep(50);
 		clickOn(END_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		//back to player 2 discarding extra cards
 		while(gbc.playerManager.players[1].hand.size() > 12) {
@@ -263,16 +285,20 @@ public class TestScenario4 extends TestFXBase {
 			drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		}
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(DISCARD);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		WaitForAsyncUtils.waitForFxEvents();
 
 
 		//Quest over back to player 1 both will join the tournament
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 
 		// join tournament as player 2
@@ -285,6 +311,7 @@ public class TestScenario4 extends TestFXBase {
 			drag(discard).moveTo(gbc.discardPane).release(MouseButton.PRIMARY);
 		}
 		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(20);
 		clickOn(DISCARD);
 
 		// play lance and amour as player 1
@@ -293,6 +320,7 @@ public class TestScenario4 extends TestFXBase {
 		WaitForAsyncUtils.waitForFxEvents();
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc1).release(MouseButton.PRIMARY);
 		drag(gbc.findCardInHand("Amour")).moveTo(fdc1).release(MouseButton.PRIMARY);
+		Thread.sleep(20);
 		clickOn(END_TURN);
 
 		// play mordred as player 2 and amour
@@ -333,7 +361,7 @@ public class TestScenario4 extends TestFXBase {
 		//plague 
 		Thread.sleep(20);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(50);
 
 		clickOn(START_TURN);
 		Thread.sleep(20);
@@ -346,6 +374,7 @@ public class TestScenario4 extends TestFXBase {
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
 
+		Thread.sleep(20);
 		clickOn(START_TURN);
 
 		/*queens favor
@@ -361,7 +390,8 @@ public class TestScenario4 extends TestFXBase {
 		}
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
-		
+
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		clickOn(START_TURN);

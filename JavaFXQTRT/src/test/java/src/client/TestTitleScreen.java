@@ -3,23 +3,15 @@ package src.client;
 import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import src.client.GameBoardController;
-import src.client.Main;
 import src.client.TitleScreenController;
-import src.socket.Server;
-import src.views.TestPlayerView;
 
 public class TestTitleScreen extends TestFXBase{
 

@@ -148,6 +148,7 @@ public class Player {
 	
 	public void flipStage(int stage) {
 		questUp.add(questDown.get(stage));
+		logger.info("Flipping stage: " + stage);
 		if(pv != null) pv.updateQuestUp(questDown.get(stage), ID, stage);
 	}
 
@@ -156,6 +157,7 @@ public class Player {
 	}
 
 	public void flipCards() {
+		logger.info("Face down cards: " + faceDown.getDeck());
 		faceUp.addCards(faceDown.drawTopCards(faceDown.size()));
 		faceUp.getDeck().forEach(i -> {
 			if(i.getName().equals("Sir Tristan")) {
@@ -164,6 +166,7 @@ public class Player {
 				iseult = true;
 			}
 		});
+		logger.info("Face up deck: " + faceUp.getDeck());
 	}
 
 	public final AdventureDeck getFaceUp() {

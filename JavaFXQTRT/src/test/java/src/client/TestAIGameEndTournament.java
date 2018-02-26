@@ -6,20 +6,23 @@ import static org.testfx.api.FxAssert.verifyThat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import src.socket.Server;
+
 
 public class TestAIGameEndTournament extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestAIGameEndTournament.class);
 
 	GameBoardController gbc;
 	TitleScreenController tsc;
-
 
 	final String START_TURN = "#startTurn";
 	final String ACCEPT = "#accept";
@@ -29,6 +32,7 @@ public class TestAIGameEndTournament extends TestFXBase {
 	final String DISCARD = "#discard";
 	final String USE_MERLIN = "#useMerlin";
 	final String CONTINUE = "#nextTurn";
+	
 	@Before
 	public void setup3Players(){
 		//Rig the game
@@ -66,8 +70,7 @@ public class TestAIGameEndTournament extends TestFXBase {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	

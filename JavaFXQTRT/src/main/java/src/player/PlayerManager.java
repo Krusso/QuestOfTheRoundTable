@@ -245,11 +245,6 @@ public class PlayerManager {
 		}
 	}
 
-	// I believe this is only used for the one event where a player must discard 2 weapons or if not possible 2 foes
-	public void setState(List<Player> partipcipants, Player.STATE state, int i, TYPE weapons) {
-		partipcipants.forEach(e -> e.setState(state, i, weapons));
-	}
-
 	public void setState(Player partipcipants, Player.STATE state, int i, TYPE weapons) {
 		partipcipants.setState(state, i, weapons);
 	}
@@ -257,11 +252,6 @@ public class PlayerManager {
 	public void setState(Player participant, Player.STATE state) {
 		participant.setState(state);
 	}
-
-	public void setState(List<Player> participants, Player.STATE state) {
-		participants.forEach(e -> e.setState(state));
-	}
-
 
 	public void setState(Player participant, STATE sponsoring, int numStages) {
 		participant.setState(sponsoring, numStages);
@@ -345,6 +335,7 @@ public class PlayerManager {
 		winners.forEach(i -> i.setState(win));
 		pvs.forEach(i -> i.win(winners, win));
 	}
+	
 	public void passStage(List<Player> winners) {
 		pvs.forEach(i -> i.passStage(winners));
 	}

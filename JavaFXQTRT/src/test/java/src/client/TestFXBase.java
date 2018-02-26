@@ -6,7 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -32,7 +34,7 @@ public abstract class TestFXBase extends ApplicationTest{
 	final String MENU_OPTION_1_AI_ID = "#b1a";
 	final String MENU_OPTION_2_AI_ID = "#b2a";
 	final String MENU_OPTION_3_AI_ID = "#b3a";
-	
+
 	final String MENU_OPTION_1_AI2_ID = "#b1a2";
 	final String MENU_OPTION_2_AI2_ID = "#b2a2";
 	final String MENU_OPTION_3_AI2_ID = "#b3a2";
@@ -45,7 +47,7 @@ public abstract class TestFXBase extends ApplicationTest{
 	final String NEXT_SHIELD_BUTTON_1_ID = "#s1next";
 	final String NEXT_SHIELD_BUTTON_2_ID = "#s2next";
 	final String NEXT_SHIELD_BUTTON_3_ID = "#s3next";
-	
+
 	final String PREV_SHIELD_BUTTON_3_ID = "#s3prev";
 
 	final String MENU_PANE_ID = "#menuPane";
@@ -72,12 +74,25 @@ public abstract class TestFXBase extends ApplicationTest{
 	}
 
 	@After
-	public void afterEachTest() throws Exception{
-		FxToolkit.hideStage();
-		release(new KeyCode[] {});
-		release(new MouseButton[] {});
-		FxToolkit.cleanupApplication(m);
-		server.interrupt();
+	public void afterEachTest() {
+		try {
+			WaitForAsyncUtils.waitForFxEvents();
+			FxToolkit.hideStage();
+			release(new KeyCode[] {});
+			release(new MouseButton[] {});
+			FxToolkit.cleanupApplication(m);
+			FxToolkit.cleanupStages();
+			server.interrupt();
+			m.thread.interrupt();
+			m.clientThread.interrupt();
+		} catch (Exception e) {
+			try {
+				m.thread.interrupt();
+				m.clientThread.interrupt();
+			} catch (Exception e1) {
+
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")

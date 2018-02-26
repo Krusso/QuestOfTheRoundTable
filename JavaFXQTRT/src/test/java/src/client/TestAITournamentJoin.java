@@ -50,7 +50,7 @@ public class TestAITournamentJoin extends TestFXBase {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		clickOn(PREV_SHIELD_BUTTON_3_ID);
 		

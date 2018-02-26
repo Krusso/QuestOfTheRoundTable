@@ -1,6 +1,5 @@
 package src.socket;
 
-import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -14,10 +13,6 @@ public class Server {
 
 
 	public Server(LinkedBlockingQueue<String> clientInput, LinkedBlockingQueue<String> serverOutput) {
-		/*
-		 * Create a client socket for each connection and pass it to a new client
-		 * thread.
-		 */
 
 		LinkedBlockingQueue<String> inputQueue = new LinkedBlockingQueue<String>();
 		LinkedBlockingQueue<String> outputQueue = new LinkedBlockingQueue<String>();
@@ -37,9 +32,9 @@ public class Server {
 			output.start();
 
 			game.join();
-			logger.info("Game staritng :)");
+			logger.info("Game starting :)");
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 
@@ -47,6 +42,7 @@ public class Server {
 }
 
 class ClientWrite extends Thread {
+	final static Logger logger = LogManager.getLogger(ClientWrite.class);
 	private LinkedBlockingQueue<String> serverOutput;
 	private LinkedBlockingQueue<String> queue = null;
 
@@ -60,7 +56,7 @@ class ClientWrite extends Thread {
 			try {
 				return queue.take();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 				return null;
 			}
 		};
@@ -69,7 +65,7 @@ class ClientWrite extends Thread {
 			try {
 				serverOutput.put(s);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			return s;
 		})
@@ -79,6 +75,7 @@ class ClientWrite extends Thread {
 
 
 class ClientRead extends Thread {
+	final static Logger logger = LogManager.getLogger(ClientRead.class);
 	private LinkedBlockingQueue<String> clientInput;
 	private LinkedBlockingQueue<String> queue = null;
 
@@ -92,7 +89,7 @@ class ClientRead extends Thread {
 			try {
 				return clientInput.take();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 				return null;
 			}
 		};

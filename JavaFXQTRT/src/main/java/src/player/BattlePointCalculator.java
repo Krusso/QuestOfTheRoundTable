@@ -56,6 +56,7 @@ public class BattlePointCalculator {
 			scores.add(calculatePlayer(player.getID(), player.getFaceUp().getDeck().stream().map(i -> i.getName()).toArray(String[]::new), card));
 		});
 
+		logger.info("Scores for: " + participants + " card: " + card + " scores: " + scores);
 		return scores;
 	}
 
@@ -67,6 +68,7 @@ public class BattlePointCalculator {
 				players.remove();
 			}
 		}
+		logger.info("Survivors: " + participants);
 	}
 
 	public List<Player> calculateHighest(List<Player> participants, StoryCard card) {
@@ -82,6 +84,8 @@ public class BattlePointCalculator {
 				max = scores.get(i);
 			}
 		}
+		
+		logger.info("Highest: " + winning);
 		return winning;
 	}
 
@@ -241,7 +245,9 @@ public class BattlePointCalculator {
 		if(tests.size() != 0) {
 			uniqueBpFoes++;
 		}
-		return uniqueBpFoes + 1 >= card.getNumStages();
+		
+		logger.info("Player: " + next.getID() + " can sponsor: " + (uniqueBpFoes + 1 >= card.getNumStages()));
+		return uniqueBpFoes >= card.getNumStages();
 	}
 
 

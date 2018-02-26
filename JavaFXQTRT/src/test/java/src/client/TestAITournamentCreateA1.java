@@ -47,7 +47,7 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		clickOn(PREV_SHIELD_BUTTON_3_ID);
 		
@@ -73,6 +73,7 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		//p1 AI turn accepts
 		clickOn(START_TURN);
 		
+		Thread.sleep(20);
 		//p2 AI turn accepts
 		clickOn(START_TURN);
 		

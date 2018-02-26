@@ -60,6 +60,7 @@ public class EventSequenceManager extends SequenceManager {
 			List<Player> list = new ArrayList<Player>();
 			pm.round().forEachRemaining(i -> list.add(i));
 			pm.discardAllies(list);
+			logger.info("Discarding all allies in play");
 		} 
 		// All players except the player drawing this card lose 1 shield
 		else if(card.getName().equals("Pox")) {
@@ -68,12 +69,14 @@ public class EventSequenceManager extends SequenceManager {
 			iter.next();
 			iter.forEachRemaining(i -> list.add(i));
 			pm.changeShields(list, -1);
+			logger.info("All players expect the player drawing pox loses a card");
 		} 
 		// Drawer loses 2 shields if possible
 		else if(card.getName().equals("Plague")) {
 			List<Player> list = new ArrayList<Player>();
 			list.add(pm.round().next());
 			pm.changeShields(list, -2);
+			logger.info("Draw loses card");
 		} 
 		// Players with both lowest rank and least amount of shields, receives 3 shields
 		else if(card.getName().equals("Chivalrous Deed")) {
@@ -100,6 +103,7 @@ public class EventSequenceManager extends SequenceManager {
 			ArrayList<Player> list = new ArrayList<Player>();
 			pm.round().forEachRemaining(i -> list.add(i));
 			pm.drawCards(list, 2);
+			logger.info("All players draw 2 cards");
 		} 
 		// The highest ranked players must place 1 weapon in the discard pile. If unable to do so, 2 Foe cards must be discarded
 		else if(card.getName().equals("King's Call to Arms")) {
