@@ -12,8 +12,8 @@ import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
-public class TestAITournamentCreateA1 extends TestFXBase {
-	final static Logger logger = LogManager.getLogger(TestAITournamentCreateA1.class);
+public class TestAIQuestSponsorA2 extends TestFXBase {
+	final static Logger logger = LogManager.getLogger(TestAIQuestSponsorA2.class);
 
 	GameBoardController gbc;
 	TitleScreenController tsc;
@@ -36,13 +36,13 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		clickOn(MENU_OPTION_1_HUMAN_ID);
 
 		clickOn(MENU_BUTTON_2_ID);
-		clickOn(MENU_OPTION_2_AI_ID);
+		clickOn(MENU_OPTION_2_AI2_ID);
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(TITLE_PANE_2_ID);
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		
 		clickOn(MENU_BUTTON_3_ID);
-		clickOn(MENU_OPTION_3_AI2_ID);
+		clickOn(MENU_OPTION_3_AI_ID);
 		clickOn(MENU_BUTTON_3_ID);
 		clickOn(TITLE_PANE_3_ID);
 		try {
@@ -62,22 +62,26 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 	}
 	
 	@Test
-	public void testAITournament() throws InterruptedException {		
+	public void testAIQuestSponsorA2() throws InterruptedException {		
 		gbc = tsc.getGameBoardController();
 				
 		// start turn first player
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		
 		//p0 is going to accept the quest
+		Thread.sleep(20);
 		clickOn(DECLINE);
 		
 		//p1 AI turn accepts
-		clickOn(START_TURN);
-		
 		Thread.sleep(20);
-		//p2 AI turn accepts
 		clickOn(START_TURN);
 		
+		//p2 AI turn accepts
+		Thread.sleep(20);
+		clickOn(START_TURN);
+
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 		Thread.sleep(20);
 		
@@ -92,23 +96,8 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		}
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
-		
-		Thread.sleep(100);
-		clickOn(START_TURN);
-		
-		clickOn(START_TURN);
+
 		Thread.sleep(20);
-		
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				gbc.bidSlider.setValue(6);
-			}
-		});
-		
-		Thread.sleep(20);
-		clickOn(END_TURN);
-		
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		
@@ -118,20 +107,29 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				gbc.bidSlider.setValue(10);
+				gbc.bidSlider.setValue(3);
 			}
 		});
 		
 		Thread.sleep(100);
 		clickOn(END_TURN);
 		
-		Thread.sleep(50);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		
-		assertEquals("Select 10 cards to discard", gbc.toast.getText());
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				gbc.bidSlider.setValue(5);
+			}
+		});
+		
+		Thread.sleep(100);
+		clickOn(END_TURN);
+		
+		assertEquals("Select: 5 cards to discard", gbc.toast.getText());
 	}
 }

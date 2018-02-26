@@ -151,7 +151,11 @@ public class DeckManager {
 	}
 	
 	public AdventureCard getAdventureCard(String string) {
-		return adventureDeck.getCardByName(string);
+		AdventureCard card =  adventureDeck.getCardByName(string);
+		if(card == null) {
+			card = adventureDeck.drawRandomCards(1).get(0);
+		}
+		return card;
 	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {
