@@ -67,6 +67,8 @@ public class GameBoardController implements Initializable{
 	public GAME_STATE CURRENT_STATE = GAME_STATE.NONE;
 	public int numStages = 0;
 	public int currentStage = 0;
+	
+	public AudioPlayer bgMusic;
 
 	public Client c;
 	public UIPlayerManager playerManager;
