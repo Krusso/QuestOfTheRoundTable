@@ -176,10 +176,9 @@ class MiddleCardTask extends Task{
 	//Msg should be the name of the card
 	@Override
 	public void run() {
-		System.out.println("Processing msg: middle card:" + card);
+		logger.info("Processing msg: middle card:" + card);
 		//find story card
 		File[] list = cardDir.listFiles();
-		//		System.out.println("Finding " + card + " card");
 		for(File c : list) {
 			if(c.getName().contains(card)) {
 				StoryCard sc= new StoryCard(card, c.getPath());
@@ -220,6 +219,8 @@ class MiddleCardTask extends Task{
 				return;
 			}
 		}
+		logger.warn("Could not set story card to " + card);
+		
 	}
 }
 
@@ -270,6 +271,8 @@ class QuestSponsorTask extends Task {
 }
 
 class TournamentWonTask extends Task{
+
+	final static Logger logger = LogManager.getLogger(TournamentWonTask.class);
 	private int[] players;
 	public TournamentWonTask(GameBoardController gbc, int[] players) {
 		super(gbc);
@@ -285,15 +288,11 @@ class TournamentWonTask extends Task{
 		for(int i = 0 ; i < players.length;i++) {
 			winners[players[i]] = true;
 		}
-
 		String display = "";
 		for(int i = 0 ; i < winners.length; i++) {
-
-			System.out.println("pnum " + i + " winners: " + winners[i]) ;
 			if(winners[i] == true) {
-				display = display + i + ", ";
+				display = display + (i + 1) + ", ";
 			}
-			System.out.println(display);
 		}
 		display = display.substring(0, display.length()-2);
 		// sorry this was triggering me
@@ -302,10 +301,9 @@ class TournamentWonTask extends Task{
 		} else { 
 			display = "Player " + display + " won the tournament!";
 		}
+		logger.info(display);
 		gbc.clearToast();
 		gbc.showToast(display);
-		//		gbc.toast.setText(display);
-		//		gbc.toast.setVisible(true);
 		//reset merlin power
 		gbc.resetMerlinUse();
 
@@ -332,6 +330,8 @@ class SetRankTask extends Task{
 	}
 }
 class ShowEndTurn extends Task {
+
+	final static Logger logger = LogManager.getLogger(ShowEndTurn.class);
 	public ShowEndTurn(GameBoardController gbc, int player) {
 		super(gbc);
 	}
@@ -339,7 +339,7 @@ class ShowEndTurn extends Task {
 	// no msg expected
 	@Override
 	public void run() {
-		System.out.println("Processing msg: pick card tournament");
+		logger.info("Processing msg: ShowEndTurn");
 		gbc.showEndTurn();
 		gbc.addDraggable();
 	}
@@ -790,7 +790,9 @@ class GameOverTask extends Task {
 	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		for(int i = 0; i < players.length; i++) {
+			players[i] = players[i] + 1;
+		}
 		gbc.CURRENT_STATE = GAME_STATE.GAMEOVER;
 		gbc.showToast("Player #" + Arrays.toString(players) + " won the game!");
 		gbc.flipAllFaceDownPane(true);
@@ -844,6 +846,9 @@ class JoinedFinalTournamentTask extends Task{
 		for(int i: players) {
 			gbc.joinTournament[i] = true;
 		}
+		for(int i = 0; i < players.length; i++) {
+			players[i] = players[i] + 1;
+		}
 		if(players.length == 1) {
 			gbc.showToast("Player: " + Arrays.toString(players) + " has won the game!");	
 		} else {
@@ -885,7 +890,7 @@ public class Client implements Runnable {
 	}
 
 	public void setGameBoardController(GameBoardController gbc) {
-		System.out.println("referenced GBC");
+		logger.info("Set reference to GBC: " + gbc);
 		this.gbc = gbc;
 	}
 
@@ -916,7 +921,7 @@ public class Client implements Runnable {
 									IntStream.range(0, gbc.bpTexts.length).forEach(i -> gbc.bpTexts[i].setText(""));
 									gbc.clearToast();
 									gbc.clearHighlight();
-									gbc.showToast("Player #: " + request.player + " turn");
+									gbc.showToast("Player #: " + (request.player + 1) + " turn");
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
 									gbc.startTurn.setVisible(true);
@@ -1007,7 +1012,7 @@ public class Client implements Runnable {
 								@Override
 								public void run(){
 									gbc.clearToast();
-									gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> i + "").collect(Collectors.joining(",")) + " tied the tournament");
+									gbc.showToast("Players #: " + Arrays.stream(players).boxed().map(i -> (i + 1) + "").collect(Collectors.joining(",")) + " tied the tournament");
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
 									gbc.startTurn.setVisible(true);

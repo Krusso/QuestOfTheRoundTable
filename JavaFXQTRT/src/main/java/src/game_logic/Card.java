@@ -166,6 +166,7 @@ public abstract class Card {
 		imgView.setVisible(false);
 	}
 	public void show() {
+		
 		imgView.setImage(img);
 		imgView.setVisible(true);
 	}

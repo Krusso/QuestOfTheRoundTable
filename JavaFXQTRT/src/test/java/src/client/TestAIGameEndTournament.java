@@ -98,6 +98,6 @@ public class TestAIGameEndTournament extends TestFXBase {
 		Thread.sleep(100);
 		
 		
-		assertEquals("Player #[1] won the game!", gbc.toast.getText());
+		assertEquals("Player #[2] won the game!", gbc.toast.getText());
 	}
 }

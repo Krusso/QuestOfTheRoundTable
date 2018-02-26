@@ -28,6 +28,9 @@ COMP3004B 2018 Team 2 Project
 **FAQ**
 - I don't understand this terrible code ???
   - ***To be fair, you have to have a very high IQ to understand Krystian's code. The algorithms are extremely complex, and without a solid grasp of data structures most of it will go over a typcal programmer's head. There's also Krystian's lambda functions, which are deftly woven into his controllers - his coding style draws heavily from the MVC design pattern, for instance. The other contributors understand this stuff; they have the intellectual capacity to truly appreciate the quality of this code, to realize that it's not just extensible - it says something deep about COMPUTER SCIENCE. As a consequence people who dislike Krystian's code truly ARE idiots - of course they wouldn't appreciate, for instance, the meaning of Krystian's half finished PR "if(card.)", which itself is a cryptic reference to the blizzard card game Hearthstone I'm smirking right now just imagining one of those addlepated simpletons scratching their heads in confusion as Krystian's genius unfolds itself in their IDEs. What fools... how I pity them. And yes by the way, I DO have a Krystian tattoo. And no, you cannot see it. It's for the ladies' eyes only- And even they have to demonstrate that they're within 5 IQ points of my own (preferably lower) beforehand.***
+
+- SO what exactly do you do at Mango Waffles (TM)? 
+  - We design deeplearning AIs backed by a RESTful blockchain based microservice with multiple convolutional layers linked together by max pooling filtering which is finally attatched to a full connected 5000x100x10x1 neural network
   
  **For real tho FAQ**
  - If eclipse complains about src.client package error do the following:

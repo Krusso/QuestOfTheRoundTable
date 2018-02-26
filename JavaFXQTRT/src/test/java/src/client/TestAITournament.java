@@ -149,7 +149,7 @@ public class TestAITournament extends TestFXBase {
 		Thread.sleep(20);
 		
 		verifyThat(TOAST, (Text t)->{
-			if(t.getText().equals("Player: [1] has won the game!")) {
+			if(t.getText().equals("Player: [2] has won the game!")) {
 				return true;
 			}
 			return false;

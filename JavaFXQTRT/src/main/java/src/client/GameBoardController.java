@@ -67,6 +67,8 @@ public class GameBoardController implements Initializable{
 	public GAME_STATE CURRENT_STATE = GAME_STATE.NONE;
 	public int numStages = 0;
 	public int currentStage = 0;
+	
+	public AudioPlayer bgMusic;
 
 	public Client c;
 	public UIPlayerManager playerManager;
@@ -242,6 +244,8 @@ public class GameBoardController implements Initializable{
 		setDiscardImage();
 		hideDiscardPane();
 	}
+	
+
 	
 	public void setDiscardImage() {
 		try {
@@ -432,13 +436,13 @@ public class GameBoardController implements Initializable{
 		//check handPanes
 		Bounds b = handPanes[playerManager.getCurrentPlayer()].localToScene(handPanes[playerManager.getCurrentPlayer()].getBoundsInLocal());
 		if(b.contains(point)) {
-			System.out.println("moused over handpanes");
+			logger.info("Moused over handPanes: " + handPanes[playerManager.getCurrentPlayer()]);
 			return handPanes[playerManager.getCurrentPlayer()];
 		}
 		//check stage panes
 		for(Pane p : stages) {
 			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
-				System.out.println("Moused over stage panes");
+				logger.info("Moused over stage panes: " + p);
 				return p;
 			}
 		}
@@ -446,24 +450,25 @@ public class GameBoardController implements Initializable{
 		//check faceDownPanes
 		for(Pane p : faceDownPanes) {
 			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
-				System.out.println("mouse over Face Down Panes");
+				logger.info("Moused over Face Down Panes: " +p);
 				return p;
 			}
 		}
 		//check discard pane
 		if(discardPane.localToScene(discardPane.getBoundsInLocal()).contains(point)) {
-			System.out.println("mouse over discard pane");
+			logger.info("Moused over discard pane: " + discardPane);
 			return discardPane;
 		}
 
 		for(Pane p : faceUpPanes) {
 			if(p.localToScene(p.getBoundsInLocal()).contains(point)) {
-				System.out.println("mouse over Face up Pane");
+				logger.info("Mouse over Face up Pane: " + p);
 				return p;
 			}
 		}
 
-		System.out.println("ERROR WE DIDN'T FIND ANY PANES OVER THE MOUSE!");
+		
+		logger.error("Could not find a pane that the mouse is over. Point2D: " + point);
 		//if we wish to add drag and drop for new panes, make sure we add it below here:
 
 		//otherwise return null
@@ -514,7 +519,7 @@ public class GameBoardController implements Initializable{
 				}
 			}
 		}
-		System.out.println("Current State: " + CURRENT_STATE);
+		logger.info("Current State: " + CURRENT_STATE);
 		//Check if we are suppose to put cards into the stage
 		if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 			//putting card from stage pane to hand
@@ -588,7 +593,6 @@ public class GameBoardController implements Initializable{
 					 (card.getType() == TYPE.ALLIES))) {
 				doPutCardIntoPane(point, card);
 			}else if(isInPane(discardPane, point)) {
-				System.out.println("Discarding this card + " + card.getName());
 				doPutCardIntoPane(point, card);
 			} else if(isInPane(handPanes[cPlayer], point) && (card.childOf.equals(discardPane) || card.childOf.equals(faceDownPanes[cPlayer]))) {
 				doPutCardIntoPane(point, card);
@@ -657,7 +661,7 @@ public class GameBoardController implements Initializable{
 		//find which pane we want to place the card into right now
 		Pane to = mouseOverPane(point);
 
-		logger.info("Putting card: " + card.getName() + " into: " + to + " from: " + from);
+		logger.info("Putting card: " + card.getName() + " from pane: " + from + " into pane: " + to);
 		putCardIntoPane(to, card);
 	}
 
@@ -880,6 +884,7 @@ public class GameBoardController implements Initializable{
 				shieldViews[i].setRotate(180);
 			}
 		}
+		logger.info("Set player perspective to player" + playerNum);
 	}
 
 
@@ -908,6 +913,7 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void setStoryCard(StoryCard sc) {
+		sc.setImageSize(storyCardContainer.getWidth(), storyCardContainer.getHeight());
 		storyCardContainer.getChildren().add(sc.getImageView());
 	}
 
@@ -932,17 +938,16 @@ public class GameBoardController implements Initializable{
 		}
 	}
 
-	//TODO:: BG image isn't completely scaled correctly not sure why
 	public void setBackground() {
 		try {
 			File f = new File(resDir + "/gameboardbg3.jpg");
 			Image bg;
 			bg = new Image(new FileInputStream(f));
-			ImageView bgView = new ImageView();
-			bgView.setImage(bg);
-			bgView.setFitHeight(1920);
+			ImageView bgView = new ImageView(bg);
+			bgView.setFitWidth(1920);
 			bgView.setFitHeight(1080);
 			background.getChildren().add(bgView);
+			logger.info("Set background image");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -961,31 +966,48 @@ public class GameBoardController implements Initializable{
 		this.startTurn.setVisible(false);
 		this.useMerlin.setVisible(false);
 		this.useMordred.setVisible(false);
+		logger.info("Set all buttons to invisible: [endTurn: " + endTurn.isVisible() + "] " + 
+				 "[accept: " + accept.isVisible() + "] " +
+				 "[decline: " + decline.isVisible() + "] "+
+				 "[nextTurn: " + nextTurn.isVisible() + "] "+
+				 "[discard: " + discard.isVisible() + "] " + 
+				 "[startTurn: " + startTurn.isVisible() + "] " +
+				 "[useMerlin: " + useMerlin.isVisible() + "] " +
+				 "[useMordred: " + useMordred.isVisible() + "] " );
 	}
 
 	public void showAcceptDecline() {
 		this.accept.setVisible(true);
 		this.decline.setVisible(true);
+		logger.info("Show accept/decline button: " + 
+				 "[accept: " + accept.isVisible() + "] " +
+				 "[decline: " + decline.isVisible() + "] ");
 	}
 	public void showDecline() {
 		this.decline.setVisible(true);
+		logger.info("Show decline button: " + 
+				 "[decline: " + decline.isVisible() + "] ");
 	}
 
 	public void showStartTurn() {
 		this.startTurn.setVisible(true);
+		logger.info("Show start turn button: [startTurn: " + startTurn.isVisible() + "] " );
 	}
 
 
 	public void showNextTurn() {
 		this.nextTurn.setVisible(true);
+		logger.info("Show start turn button: [nextTurn: " + nextTurn.isVisible() + "] " );
 	}
 
 	public void showEndTurn() {
 		this.endTurn.setVisible(true);
+		logger.info("Show endTurn button: [endTurn: " + endTurn.isVisible() + "] " );
 	}
 
 	public void setDiscardVisibility(boolean b) {
 		this.discard.setVisible(b);
+		logger.info("Set discard button visibility to: " + discard.isVisible() );
 	}
 	
 	public void setMerlinMordredVisibility() {
@@ -1009,13 +1031,15 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < currHand.size(); i++) {
 			currHand.get(i).setDraggableOff();
 		}
+		logger.info("Removed card image draggable for player" + playerManager.getCurrentPlayer() + "'s hand");
 	}
 
 	public void removeDraggableFaceDown() {
-		ArrayList<AdventureCard> currHand = playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer());
-		for(int i = 0 ; i < currHand.size(); i++) {
-			currHand.get(i).setDraggableOff();
+		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(playerManager.getCurrentPlayer());
+		for(int i = 0 ; i < fdc.size(); i++) {
+			fdc.get(i).setDraggableOff();
 		}
+		logger.info("Removed card image draggable for player" + playerManager.getCurrentPlayer() + "'s hand");
 	}
 
 	public void addDraggable() {
@@ -1023,16 +1047,6 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < currHand.size(); i++) {
 			currHand.get(i).setDraggableOn();
 		}
-	}
-
-
-	//Allow pane to take image views
-	public void setOnDragOverOn(Pane p) {
-		p.setOnDragOver(e->{
-			if(e.getGestureSource() != p && e.getDragboard().hasString()) {
-				e.acceptTransferModes(TransferMode.ANY);
-			}
-		});
 	}
 
 	public void flipFaceDownPane(int p, boolean isShow) {
@@ -1070,6 +1084,8 @@ public class GameBoardController implements Initializable{
 					c.faceDown();
 				}
 			}
+
+			logger.info("Set stage"+ i +" visibility to: " + isShow);
 		}
 	}
 
@@ -1084,8 +1100,8 @@ public class GameBoardController implements Initializable{
 			try {
 				File file = new File(resDir.getPath() + rank);
 				Image img = new Image (new FileInputStream(file));
-				System.out.println(p);
 				playerRanks[p].setImage(img);
+				logger.info("Setting player #" + p + " rank to " + r);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1103,9 +1119,8 @@ public class GameBoardController implements Initializable{
 				//find cards to discard in fdc  and the image view from the pane
 				if(fdc.get(i).getName().equalsIgnoreCase(n)) {
 					faceUpPanes[p].getChildren().remove(i);
-
 					fdc.remove(i);
-					System.out.println(fdc + " " + faceDownPanes[p].getChildren().size());
+					logger.info("After discarding, face down cards are: " + fdc + " size:" + faceDownPanes[p].getChildren().size());
 				}
 			}
 		}
@@ -1121,6 +1136,8 @@ public class GameBoardController implements Initializable{
 				cards.get(i).faceDown();
 			}
 		}
+
+		logger.info("Set stage"+ stageNum +" visibility to: " + isShow);
 	}
 
 	public void setShield(int p, int s) {
@@ -1137,6 +1154,7 @@ public class GameBoardController implements Initializable{
 
 	public void setUp() {
 		this.startTurn.setOnAction(e->{
+			logger.info("Start Turn clicked - Current state: " + CURRENT_STATE);
 			if(CURRENT_STATE == GAME_STATE.CHILLING) {
 				synchronized (c) {
 					c.notify();
@@ -1152,7 +1170,7 @@ public class GameBoardController implements Initializable{
 		 * END TURN BUTTON LISTENER
 		 */
 		this.endTurn.setOnAction(e -> {
-
+			logger.info("End turn clicked - Current state: " + CURRENT_STATE);
 			int currentPlayer = playerManager.getCurrentPlayer();
 			if(CURRENT_STATE == GAME_STATE.PICK_TOURNAMENT) {
 				playerManager.flipFaceDownCards(currentPlayer, false);
@@ -1171,7 +1189,8 @@ public class GameBoardController implements Initializable{
 				discardPile.clear();
 				discardPane.getChildren().clear();
 				this.hideDiscardPane();
-				c.send(new EventDiscardCardsClient(currentPlayer,discardCards));
+				logger.info("Event discard cards - Player" + currentPlayer + " discarded :" + Arrays.toString(discardCards));
+				c.send(new EventDiscardCardsClient(currentPlayer, discardCards));
 			}
 			else if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 				if(areQuestStagesValid() && stagesIncreasing()) {
@@ -1182,6 +1201,7 @@ public class GameBoardController implements Initializable{
 								currentStageCards[j] = stageCards.get(i).get(j).getName();
 								stageCards.get(i).get(j).setDraggableOff();
 							}
+							logger.info("Player" + currentPlayer + " picked these cards for stage" + i + ":" + stageCards.get(i));
 							c.send(new QuestPickStagesClient(currentPlayer, currentStageCards, i));
 							setStageCardVisibility(false, i);
 							stackStageCards();
@@ -1190,10 +1210,10 @@ public class GameBoardController implements Initializable{
 				}else {
 					if(!areQuestStagesValid()) {
 						toast.setText("Quest stages are not valid. Each stage needs 1 foe or 1 test");
-						System.out.println("Quest stages are not valid. Each stage needs 1 foe or 1 test");
+						logger.info("Quest stages are not valid. Each stage needs 1 foe or 1 test");
 					} else {
 						toast.setText("Quest stages are not valid. Each stage needs an increasing amount of bp");
-						System.out.println("Quest stages are not valid. Each stage needs an increasing amount of bp");
+						logger.info("Quest stages are not valid. Each stage needs an increasing amount of bp");
 					}
 				}
 
@@ -1211,12 +1231,12 @@ public class GameBoardController implements Initializable{
 					setStageCardVisibility(false, viewAbleStage);
 					stackStageCards();
 				}
-
+				logger.info("Player" + currentPlayer + " picked these cards for quest: " + Arrays.toString(cards));
 				c.send(new QuestPickCardsClient(currentPlayer, cards));
 
 			}
-			//TODO::verify cards are minimum number of cards
 			else if(CURRENT_STATE == GAME_STATE.QUEST_BID) {
+				logger.info("Player" + currentPlayer + " bid " + (int)bidSlider.getValue());
 				c.send(new QuestBidClient(currentPlayer, (int)bidSlider.getValue()));
 				this.bidSlider.setVisible(false);
 			}else if(CURRENT_STATE == GAME_STATE.BID_DISCARD) {
@@ -1230,6 +1250,7 @@ public class GameBoardController implements Initializable{
 				discardPile.clear();
 				discardPane.getChildren().clear();
 				this.hideDiscardPane();
+				logger.info("Discarded " + Arrays.toString(discardCards));
 				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
 			}
 
@@ -1239,17 +1260,17 @@ public class GameBoardController implements Initializable{
 		 * ACCEPT BUTTON LISTENER
 		 */
 		this.accept.setOnAction(e -> {
-			System.out.println("accepted story");
+			logger.info("Accept button clicked - Current state: " + CURRENT_STATE);
 			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " accepted tournament");
 				joinTournament[playerManager.getCurrentPlayer()] = true;
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
 			}else if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
 				//make sure we turn over the viewable stage if previous used merlin
 				if(playerManager.viewableStage(playerManager.getCurrentPlayer()) != -1) {
 					flipStageCards(playerManager.viewableStage(playerManager.getCurrentPlayer()), false);
@@ -1269,18 +1290,18 @@ public class GameBoardController implements Initializable{
 		 * DECLINE BUTTON LISTENER
 		 */
 		this.decline.setOnAction(e -> {
-			System.out.println("declined story");
+			logger.info("Decline clicked - Current state: " + CURRENT_STATE);
 			if(CURRENT_STATE == GAME_STATE.JOIN_TOURNAMENT) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " declined tournament");
 				c.send(new TournamentAcceptDeclineClient(playerManager.getCurrentPlayer(), false));
 			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " declined quest sponsoring");
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), false));
 			}else if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " declined quest");
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), false));
 			}else if(CURRENT_STATE == GAME_STATE.QUEST_BID) {
-				System.out.println("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
+				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " declined bidding");
 				c.send(new QuestBidClient(playerManager.getCurrentPlayer(), -1));
 			}
 		});
@@ -1288,14 +1309,14 @@ public class GameBoardController implements Initializable{
 		 * NEXT TURN BUTTON LISTENER
 		 */
 		this.nextTurn.setOnAction(e -> {
-			System.out.println("Clicked next turn");
+			logger.info("Clicked next turn");
 			c.send(new ContinueGameClient());
 		});
 		/*
 		 * button dedicated for handling discarding :>
 		 */
 		this.discard.setOnAction(e->{
-			System.out.println("Clicked Discard");
+			logger.info("Discard clicked - Current state: " + CURRENT_STATE);
 			int cPlayer = playerManager.getCurrentPlayer();
 			String[] discardCards = discardPile.stream().map(c -> c.getName()).toArray(String[]::new);
 			String[] allyCards = playerManager.getFaceDownCardsAsList(cPlayer).stream().map(c -> c.getName()).toArray(String[]::new);
@@ -1307,6 +1328,7 @@ public class GameBoardController implements Initializable{
 				return;
 			}else if(playerManager.getPlayerHand(playerManager.getCurrentPlayer()).size() < playerManager.MAX_HAND_SIZE && !discardPile.isEmpty()) {
 				toast.setText("Can only discard cards if hand has more than 12 cards");
+				logger.info("Can only discard cards if hand has more than 12 cards");
 				return;
 			}
 			setDiscardVisibility(false);
@@ -1359,7 +1381,7 @@ public class GameBoardController implements Initializable{
 					return;
 				}
 			}
-			System.out.println("You do not have Merlin in play");
+			logger.info("You do not have Merlin in play");
 		});
 		
 		this.useMordred.setOnAction(e->{
@@ -1376,7 +1398,7 @@ public class GameBoardController implements Initializable{
 			}
 			//if it's not in either hand or facedown field then player does not have mordred
 			if(mordred == null) {
-				System.out.println("You do not have Mordred");
+				logger.info("You do not have Mordred");
 				return;
 			}
 			
@@ -1420,6 +1442,8 @@ public class GameBoardController implements Initializable{
 		faceUpPanes[oPlayer].getChildren().remove(oIndex);
 		ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(oPlayer);
 		fuc.remove(oIndex);
+
+		logger.info("Player" + playerManager.getCurrentPlayer() + " used Mordred's power to remove player" + oPlayer + "'s " + otherAlly);
 		c.send(new MordredClient(this.playerManager.getCurrentPlayer(), oPlayer, otherAlly));
 	}
 	
@@ -1443,6 +1467,7 @@ public class GameBoardController implements Initializable{
 				return c.getImageView();
 			}
 		}
+		logger.info("Could not find card [" + cardName + "] in player" + playerManager.getCurrentPlayer() + "'s hand");
 		return null;
 	}
 	public void useMerlinPower(int s, AdventureCard c) {
@@ -1450,7 +1475,7 @@ public class GameBoardController implements Initializable{
 			setStageCardVisibility(true,s);
 			repositionStageCards(s);
 			playerManager.rememberStage(playerManager.getCurrentPlayer(), s);
-			logger.info("Player " + playerManager.getCurrentPlayer() + " has used the merlin card to reveal stage " + (s+1));
+			logger.info("Player" + playerManager.getCurrentPlayer() + " has used the merlin card to reveal stage " + (s+1));
 		}
 	}
 }

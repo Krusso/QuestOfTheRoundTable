@@ -61,7 +61,6 @@ public class UIPlayerManager {
 	public void showPlayerHand(int playerNum) {
 		ArrayList<AdventureCard> p = getPlayerHand(playerNum);
 		p.forEach(card-> {
-			//			System.out.println("Show card: " + card.getName());
 			card.show();
 		});
 	}
@@ -87,6 +86,7 @@ public class UIPlayerManager {
 				card.flipDown().play();
 			}
 		});
+		logger.info("Flipped player"+p+"'s face down cards to: " + isShow);
 	}
 
 	public void flipFaceUpCards(int playerNum) {
