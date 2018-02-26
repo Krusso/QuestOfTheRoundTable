@@ -226,6 +226,32 @@ public class TestEvents {
 		esm.start(new QOTRTQueue(), pm, bm);
 		assertEquals(0, pm.players[0].getFaceUp().size());
 	}
+	
+	@Test	
+	public void testCourtCalledToCamelotMultiple() {
+		EventSequenceManager esm = new EventSequenceManager(new EventCard("Court Called to Camelot"));
+		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+		cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+		cards.add(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES));
+		pm.players[0].addCards(cards);
+		pm.players[0].setFaceDown(new String[] {"King Arthur", "King Arthur"});
+		pm.players[0].flipCards();
+		assertEquals(2, pm.players[0].getFaceUp().size());
+		assertEquals("King Arthur", pm.players[0].getFaceUp().getDeck().get(0).getName());
+		assertEquals("King Arthur", pm.players[0].getFaceUp().getDeck().get(1).getName());
+
+		esm.start(new QOTRTQueue(), pm, bm);
+		assertEquals(0, pm.players[0].getFaceUp().size());
+	}
+	
+	@Test
+	public void testCourCalledToCamelotNoDiscard() {
+		EventSequenceManager esm = new EventSequenceManager(new EventCard("Court Called to Camelot"));
+		assertEquals(0, pm.players[0].getFaceUp().size());
+
+		esm.start(new QOTRTQueue(), pm, bm);
+		assertEquals(0, pm.players[0].getFaceUp().size());
+	}
 
 	@Test
 	public void testQueensFavor() {

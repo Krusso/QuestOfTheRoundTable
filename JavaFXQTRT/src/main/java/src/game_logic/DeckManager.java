@@ -50,13 +50,42 @@ public class DeckManager {
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
-		} else {
-			ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
-			storyDeck.discards.addAll(toReturn);
+		} 
+		
+		if(rigged.equals(RIGGED.LONG)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			StoryCard s = firstNotNull("Search for the Holy Grail",
+					"Test of the Green Knight",
+					"Tournament at York",
+					"Pox",
+					"Plague",
+					"Queen's Favor",
+					"Court Called to Camelot",
+					"King's Call to Arms",
+					"King's Recognition");
+			toReturn.add(s);
+			storyDeck.discards.add(toReturn.get(0));
 			
-			return toReturn;	
+			return toReturn;
 		}
+		
+		ArrayList<StoryCard> toReturn = storyDeck.drawRandomCards(n);
+		storyDeck.discards.addAll(toReturn);
+			
+		return toReturn;
 	}
+	
+	private StoryCard firstNotNull(String... strings) {
+		for(String s: strings) {
+			StoryCard c = storyDeck.getCardByName(s);
+			if(c != null) {
+				return c;
+			}
+		}
+		
+		return storyDeck.drawRandomCards(1).get(0);
+	}
+	
 	public void addAdventureCard(List<AdventureCard> cards) {
 		adventureDeck.discards.addAll(cards);
 	}

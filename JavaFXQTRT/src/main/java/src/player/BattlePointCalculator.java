@@ -146,6 +146,9 @@ public class BattlePointCalculator {
 			if(card == null) {
 				card = p.hand.findCardByName(c);
 			}
+			if(card == null) {
+				continue;
+			}
 
 			if(storyCard != null && storyCard.getType() == src.game_logic.StoryCard.TYPE.QUEST && 
 					card.checkIfNamed(((QuestCard) storyCard).getFoe())) {

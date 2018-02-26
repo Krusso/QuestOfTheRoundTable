@@ -32,7 +32,6 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 public class TestGameBoardScenarios extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestGameBoardScenarios.class);
 	
@@ -100,6 +99,36 @@ public class TestGameBoardScenarios extends TestFXBase {
 		logger.info("m: " + m);
 		//get tsc
 		tsc = m.getTitleScreenController();
+	}
+	
+	@Test
+	public void testPlayerHandRankShieldVisbility() {
+		gbc = tsc.getGameBoardController();
+		clickOn(START_TURN);
+		
+		for(AdventureCard c: gbc.playerManager.players[0].hand.getDeck()) {
+			assertTrue(c.isVisibile());
+			assertEquals(c.img, c.imgView.getImage());
+		}
+		
+		for(AdventureCard c: gbc.playerManager.players[1].hand.getDeck()) {
+			assertTrue(c.isVisibile());
+			assertEquals(c.cardBack, c.imgView.getImage());
+		}
+		
+		assertEquals(12, gbc.playerManager.players[0].hand.size());
+		assertEquals(12, gbc.playerManager.players[1].hand.size());
+		
+		assertTrue(gbc.playerRanks[0].isVisible());
+		assertTrue(gbc.playerRanks[1].isVisible());
+		
+		assertEquals(RANKS.SQUIRE, gbc.playerManager.players[0].getRank());
+		assertEquals(RANKS.SQUIRE, gbc.playerManager.players[1].getRank());
+		
+		assertEquals("0", gbc.p1Shields.getText());
+		assertEquals("0", gbc.p2Shields.getText());
+		assertTrue(gbc.p1Shields.isVisible());
+		assertTrue(gbc.p2Shields.isVisible());
 	}
 	
 	@Test
@@ -302,7 +331,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		//move thieves to stage4 (should not work since quest only has 3 stages)
 		drag(thieves).moveTo(stage5).release(MouseButton.PRIMARY);
 		assertTrue(stage2.getChildren().contains(thieves));
-		assertTrue(!stage5.getChildren().contains(thieves));
+		assertFalse(stage5.getChildren().contains(thieves));
 		
 		drag(thieves).moveTo(stage1).release(MouseButton.PRIMARY);
 
@@ -328,7 +357,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		//move saxon to stage 3 so now we have a foe/test card in each stage
 		drag(saxons2).moveTo(stage3).release(MouseButton.PRIMARY);
 		
-		//still should not work since we have stage 2 and 3 with the same battle poitns (should all be increasing)
+		//still should not work since we have stage 2 and 3 with the same battle points (should all be increasing)
 		clickOn(END_TURN);
 		verifyThat(TOAST, (Text t)->{
 			if(t.getText().equals("Quest stages are not valid. Each stage needs an increasing amount of bp")) {
@@ -454,6 +483,11 @@ public class TestGameBoardScenarios extends TestFXBase {
 		//make sure it is now player1's turn
 		WaitForAsyncUtils.waitForFxEvents();
 		assertTrue(gbc.playerManager.getCurrentPlayer() == 1);
+
+		assertEquals(4, gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getShields());
+		assertEquals("4", gbc.p2Shields.getText());
+		assertEquals(0, gbc.playerManager.players[0].getShields());
+		assertEquals("0", gbc.p1Shields.getText());
 	}
 	
 

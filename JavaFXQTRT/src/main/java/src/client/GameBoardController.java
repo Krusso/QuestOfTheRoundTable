@@ -41,6 +41,7 @@ import src.game_logic.AdventureCard.TYPE;
 import src.game_logic.QuestCard;
 import src.game_logic.Rank;
 import src.game_logic.StoryCard;
+import src.messages.events.EventDiscardCardsClient;
 import src.messages.game.CalculatePlayerClient;
 import src.messages.game.CalculateStageClient;
 import src.messages.game.ContinueGameClient;
@@ -140,7 +141,7 @@ public class GameBoardController implements Initializable{
 	@FXML private ImageView playerRank1;
 	@FXML private ImageView playerRank2;
 	@FXML private ImageView playerRank3;
-	private ImageView[] playerRanks = new ImageView[4];
+	public ImageView[] playerRanks = new ImageView[4];
 
 	@FXML public Text toast;
 
@@ -149,7 +150,7 @@ public class GameBoardController implements Initializable{
 	@FXML private ImageView stage2View;
 	@FXML private ImageView stage3View;
 	@FXML private ImageView stage4View;
-	private ImageView[] stageViews = new ImageView[5];
+	public ImageView[] stageViews = new ImageView[5];
 
 	/*Panes for picking stages (maximum number of stages is 5)*/
 	@FXML private Pane pickStage0;
@@ -969,7 +970,7 @@ public class GameBoardController implements Initializable{
 		try {
 			File f = new File(resDir + "/Red_Banner_Clipart_Picture.png");
 			Image banner = new Image(new FileInputStream(f));
-			for(int i=0; i<num; i++) { stageViews[i].setImage(banner); }
+			for(int i=0; i<num; i++) { stageViews[i].setImage(banner); stageViews[i].setVisible(true); }
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1226,7 +1227,7 @@ public class GameBoardController implements Initializable{
 				discardPile.clear();
 				discardPane.getChildren().clear();
 				this.hideDiscardPane();
-				c.send(new QuestDiscardCardsClient(currentPlayer,discardCards));
+				c.send(new EventDiscardCardsClient(currentPlayer,discardCards));
 			}
 			else if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 				if(areQuestStagesValid() && stagesIncreasing()) {
@@ -1459,21 +1460,24 @@ public class GameBoardController implements Initializable{
 			Optional<String> result = merlinDialog.showAndWait();
 			if(result.isPresent()) {
 				Integer[] pNumAndCard = dialogChoices.get(result.get());
-				
-				//dicard the current mordred card
-				Pane mordredContainer = mordred.childOf;
-				mordredContainer.getChildren().remove(mIndex);
-				playerManager.removeCardFromHand(mordred, currentPlayer);
-				
-				int oIndex = pNumAndCard[2];
-				faceUpPanes[pNumAndCard[0]].getChildren().remove(oIndex);
-				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(pNumAndCard[0]);
-				fuc.remove(oIndex);
-				c.send(new MordredClient(this.playerManager.getCurrentPlayer(), pNumAndCard[0], result.get().substring(10)));
+				useMordred(mordred, mIndex, currentPlayer, pNumAndCard[2],pNumAndCard[0], result.get().substring(10));
 			}
 			
 		});
 	}
+	
+	public void useMordred(AdventureCard mordred, int mIndex, int currentPlayer, int oIndex, int oPlayer, String otherAlly) {
+		//dicard the current mordred card
+		Pane mordredContainer = mordred.childOf;
+		mordredContainer.getChildren().remove(mIndex);
+		playerManager.removeCardFromHand(mordred, currentPlayer);
+		
+		faceUpPanes[oPlayer].getChildren().remove(oIndex);
+		ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(oPlayer);
+		fuc.remove(oIndex);
+		c.send(new MordredClient(this.playerManager.getCurrentPlayer(), oPlayer, otherAlly));
+	}
+	
 	public void resetMerlinUse() {
 		//find the merlins and reset their charge to 1
 		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {

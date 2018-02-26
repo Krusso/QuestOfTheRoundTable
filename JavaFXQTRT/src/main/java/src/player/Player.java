@@ -68,7 +68,7 @@ public class Player {
 			return;
 		}
 		
-		logger.info("Player id: " + ID + " current rank: " + rank);
+		logger.info("Player id: " + ID + " current rank: " + rank + " current shields: " + shields);
 		if(pv != null) pv.update(rank, ID);
 		increaseLevel();
 	}
@@ -114,12 +114,12 @@ public class Player {
 
 	public void changeShields(int shields) {
 		this.shields += shields;
-		if(shields < 0) {
-			shields = 0;
+		if(this.shields < 0) {
+			this.shields = 0;
 		}
 		
-		logger.info("Changing shields for player: " + ID + " to: " + shields);
-		if(pv != null ) pv.updateShieldCount(ID, shields);
+		logger.info("Changing shields for player: " + ID + " to: " + this.shields);
+		if(pv != null ) pv.updateShieldCount(ID, this.shields);
 	}
 	
 	public int faceDownDeckLength() {

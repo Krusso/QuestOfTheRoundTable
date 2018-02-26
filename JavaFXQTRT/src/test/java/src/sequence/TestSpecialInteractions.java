@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,12 +20,14 @@ import src.game_logic.AmourCard;
 import src.game_logic.BoardModel;
 import src.game_logic.DeckManager;
 import src.game_logic.EventCard;
+import src.game_logic.FoeCard;
 import src.game_logic.TournamentCard;
 import src.game_logic.WeaponCard;
 import src.messages.Message;
 import src.messages.Message.MESSAGETYPES;
-import src.messages.game.GameStartClient.RIGGED;
 import src.messages.QOTRTQueue;
+import src.messages.game.GameStartClient.RIGGED;
+import src.messages.game.MordredClient;
 import src.messages.hand.HandFullClient;
 import src.player.Player;
 import src.player.PlayerManager;
@@ -35,6 +38,33 @@ import src.views.PlayersView;
 public class TestSpecialInteractions {
 
 	final static Logger logger = LogManager.getLogger(TestSpecialInteractions.class);
+	
+	@Test
+	public void testMordredDiscard() throws InterruptedException {
+		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
+		QOTRTQueue input = new QOTRTQueue();
+		input.setPlayerManager(pm);
+		Runnable task2 = () -> { tsm.start(input, pm, bm); };
+		new Thread(task2).start();
+		
+		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
+		cards.add(new FoeCard("Mordred",30, TYPE.FOES));
+		Iterator<Player> x = pm.round();
+		x.next().addCards(cards);
+		x.next().addCards(cards);
+		
+		pm.round().next().setFaceDown(new String[] {"Sir Tristan"});
+		pm.round().next().flipCards();
+		assertEquals(1, pm.players[0].getFaceUp().size());
+		assertEquals("Sir Tristan", pm.players[0].getFaceUp().getDeck().get(0).getName());
+		
+		input.put(new MordredClient(1, 0, "Sir Tristan"));
+		
+		Thread.sleep(100);
+		assertEquals(0, pm.players[0].getFaceUp().size());
+		
+	}
 	
 	@Test
 	public void discardAmourAlliesWhenHandFull() throws InterruptedException {

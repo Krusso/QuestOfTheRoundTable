@@ -895,10 +895,15 @@ public class Client implements Runnable {
 								}
 							});
 							this.wait();
-							ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
-							cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
-							cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
-							this.send(new CalculatePlayerClient(this.gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
+							Platform.runLater(new Runnable() {
+								@Override
+								public void run() {
+									ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
+									cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceUp().getDeck());
+									cards.addAll(gbc.playerManager.players[gbc.playerManager.getCurrentPlayer()].getFaceDownDeck().getDeck());
+									gbc.c.send(new CalculatePlayerClient(gbc.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(size -> new String[size])));
+								}
+							});
 							this.gbc.setMerlinMordredVisibility();
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -969,6 +974,10 @@ public class Client implements Runnable {
 									p.getChildren().clear();
 								}
 
+								for(ImageView v: gbc.stageViews) {
+									v.setVisible(false);
+								}
+
 								gbc.setButtonsInvisible();
 								gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 								gbc.setButtonsInvisible();
@@ -1032,6 +1041,10 @@ public class Client implements Runnable {
 									for(Pane p: gbc.stages) {
 										p.getChildren().clear();
 									}
+									
+									for(ImageView v: gbc.stageViews) {
+										v.setVisible(false);
+									}
 								}
 							});
 							this.send(new ContinueGameClient());
@@ -1093,7 +1106,6 @@ public class Client implements Runnable {
 					toDiscard.clear();
 					Platform.runLater(new QuestPickCardsTask(gbc, request.player));
 					Platform.runLater(new Runnable() {
-
 
 						@Override
 						public void run() {

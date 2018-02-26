@@ -31,9 +31,9 @@ public abstract class Card {
 	public static double DEFAULT_WIDTH = 100;
 	public static double DEFAULT_HEIGHT = 150;
 	private String name;
-	private Image cardBack;
-	private Image img;
-	private ImageView imgView;
+	public Image cardBack;
+	public Image img;
+	public ImageView imgView;
 	public GameBoardController gbc;
 	public Pane faceDownPane;
 
@@ -150,7 +150,9 @@ public abstract class Card {
 	public ImageView getImageView() {
 		return imgView;
 	}
-
+	public boolean isVisibile() {
+		return imgView.isVisible();
+	}
 	public void hide() {
 		imgView.setVisible(false);
 	}

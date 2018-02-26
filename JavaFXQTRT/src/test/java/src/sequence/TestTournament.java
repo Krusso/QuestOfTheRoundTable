@@ -22,7 +22,6 @@ import src.messages.tournament.TournamentAcceptDeclineClient;
 import src.messages.tournament.TournamentPickCardsClient;
 import src.player.Player;
 import src.player.PlayerManager;
-import src.player.TestA2;
 import src.socket.OutputController;
 import src.views.PlayerView;
 import src.views.PlayersView;

@@ -71,6 +71,8 @@ public class Main extends Application {
 						tlc.setRigged(RIGGED.TWO); break;
 					case DOWN:
 						tlc.setRigged(RIGGED.THREE); break;
+					case RIGHT:
+						tlc.setRigged(RIGGED.LONG); break;
 					default:
 						break;
 					}
