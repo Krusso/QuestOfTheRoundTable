@@ -271,6 +271,12 @@ public class GameBoardController implements Initializable{
 		noticeableGlow.setHeight(170);
 		playerRanks[p].setEffect(noticeableGlow);
 	}
+	
+	public void clearGlow() {
+		for(ImageView p: playerRanks) {
+			p.setEffect(new DropShadow());
+		}
+	}
 
 	public void clearHighlight() {
 		logger.info("Clearing highlight");
@@ -993,12 +999,6 @@ public class GameBoardController implements Initializable{
 	public void showStartTurn() {
 		this.startTurn.setVisible(true);
 		logger.info("Show start turn button: [startTurn: " + startTurn.isVisible() + "] " );
-	}
-
-
-	public void showNextTurn() {
-		this.nextTurn.setVisible(true);
-		logger.info("Show start turn button: [nextTurn: " + nextTurn.isVisible() + "] " );
 	}
 
 	public void showEndTurn() {

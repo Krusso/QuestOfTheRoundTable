@@ -66,17 +66,22 @@ public class TestAITournamentCreateA2 extends TestFXBase {
 		gbc = tsc.getGameBoardController();
 				
 		// start turn first player
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		
 		//p0 is going to accept the quest
+		Thread.sleep(20);
 		clickOn(DECLINE);
 		
 		//p1 AI turn accepts
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		
 		//p2 AI turn accepts
+		Thread.sleep(20);
 		clickOn(START_TURN);
-		
+
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 		Thread.sleep(20);
 		
@@ -91,7 +96,8 @@ public class TestAITournamentCreateA2 extends TestFXBase {
 		}
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
-		
+
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		

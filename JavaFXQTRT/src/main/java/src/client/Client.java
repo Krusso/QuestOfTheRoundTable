@@ -236,6 +236,7 @@ class QuestSponsorTask extends Task {
 	@Override
 	public void run() {
 		gbc.CURRENT_STATE = GAME_STATE.SPONSOR_QUEST;
+		gbc.clearGlow();
 		gbc.setButtonsInvisible();
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showAcceptDecline();
