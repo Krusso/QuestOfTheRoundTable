@@ -1,5 +1,7 @@
 package src.client;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -58,7 +60,7 @@ public class TestAIQuest extends TestFXBase {
 	}
 	
 	@Test
-	public void testAITournamentNoOneJoin() throws InterruptedException {
+	public void testAIQuestNoOneJoin() throws InterruptedException {
 		gbc = tsc.getGameBoardController();
 		
 		// start turn first player
@@ -74,5 +76,6 @@ public class TestAIQuest extends TestFXBase {
 		clickOn(START_TURN);
 		
 		WaitForAsyncUtils.waitForFxEvents();
+		assertTrue(gbc.toast.getText().equals("No Player Sponsored the Tournament"));
 	}
 }

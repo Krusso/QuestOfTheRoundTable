@@ -83,6 +83,11 @@ public class QuestSequenceManager extends SequenceManager {
 		}
 
 		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
+		if(participants.size() != 0 && participants.get(participants.size() - 1).getID() > sponsor.getID()) {
+			while(participants.get(0).getID() < sponsor.getID()) {
+				participants.add(participants.remove(0));
+			}
+		}
 		List<Player> winners = new ArrayList<Player>(participants);
 
 		if(participants.size() != 0) {

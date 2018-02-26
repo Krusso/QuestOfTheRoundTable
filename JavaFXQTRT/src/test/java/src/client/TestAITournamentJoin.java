@@ -1,7 +1,6 @@
 package src.client;
 
-import static org.junit.Assert.assertTrue;
-import static org.testfx.api.FxAssert.verifyThat;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +11,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 
 public class TestAITournamentJoin extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestAITournamentJoin.class);
@@ -88,6 +86,7 @@ public class TestAITournamentJoin extends TestFXBase {
 		//p2 AI turn accepts
 		clickOn(START_TURN);
 		
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		clickOn(START_TURN);
@@ -97,11 +96,7 @@ public class TestAITournamentJoin extends TestFXBase {
 		clickOn(START_TURN);
 		
 
-		Thread.sleep(20);
-		clickOn(START_TURN);
-		Thread.sleep(20);
-		clickOn(START_TURN);
-		
+		assertEquals("Player #[3] won the game!", gbc.toast.getText());
 		
 	}
 }

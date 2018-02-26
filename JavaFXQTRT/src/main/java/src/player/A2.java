@@ -40,7 +40,8 @@ public class A2 extends AbstractAI {
 			return null;
 		}
 		
-		List<AdventureCard> alliesOrWeapons = bpc.uniqueListOfTypeDecreasingBp(player, null, pm.iseultExists(), TYPE.ALLIES, TYPE.WEAPONS);
+		List<AdventureCard> alliesOrWeapons = bpc.uniqueListOfTypeDecreasingBp(player, null, pm.iseultExists(), TYPE.ALLIES, TYPE.WEAPONS, TYPE.AMOUR);
+		logger.info("Cards can use: " + alliesOrWeapons);
 		List<AdventureCard> cardsToUse = new ArrayList<AdventureCard>();
 		for(AdventureCard card: alliesOrWeapons) {
 			if(currentBp >= 50) {
@@ -240,6 +241,7 @@ public class A2 extends AbstractAI {
 			}
 			return cards;
 		} else {
+			logger.info("Past round 2 not willing to bid");
 			return null;
 		}
 	}

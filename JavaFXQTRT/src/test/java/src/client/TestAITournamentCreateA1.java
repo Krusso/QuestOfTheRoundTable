@@ -1,5 +1,7 @@
 package src.client;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -9,7 +11,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
 
 public class TestAITournamentCreateA1 extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestAITournamentCreateA1.class);
@@ -92,8 +93,8 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		WaitForAsyncUtils.waitForFxEvents();
 		clickOn(DISCARD);
 		
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
 		
 		clickOn(START_TURN);
 		Thread.sleep(20);
@@ -101,11 +102,11 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				gbc.bidSlider.setValue(3);
+				gbc.bidSlider.setValue(6);
 			}
 		});
 		
-		Thread.sleep(100);
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		
 		clickOn(START_TURN);
@@ -117,31 +118,20 @@ public class TestAITournamentCreateA1 extends TestFXBase {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				gbc.bidSlider.setValue(5);
+				gbc.bidSlider.setValue(10);
 			}
 		});
 		
 		Thread.sleep(100);
 		clickOn(END_TURN);
 		
-		clickOn(START_TURN);
-		Thread.sleep(20);
-		
-		clickOn(START_TURN);
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				gbc.bidSlider.setValue(8);
-			}
-		});
-		
-		Thread.sleep(100);
-		clickOn(END_TURN);
-		
+		Thread.sleep(50);
 		clickOn(START_TURN);
 		Thread.sleep(20);
 		
 		clickOn(START_TURN);
 		Thread.sleep(20);
+		
+		assertEquals("Select 10 cards to discard", gbc.toast.getText());
 	}
 }

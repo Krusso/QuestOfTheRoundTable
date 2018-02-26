@@ -247,6 +247,7 @@ public class A1 extends AbstractAI {
 			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 20).collect(Collectors.toList());
 		} else {
+			logger.info("Past round 1 not willing to bid");
 			return null;
 		}
 	}

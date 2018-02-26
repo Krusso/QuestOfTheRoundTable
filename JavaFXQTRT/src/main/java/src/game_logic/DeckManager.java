@@ -6,9 +6,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import src.client.TestGameBoardScenarios;
-import src.messages.Message;
-import src.messages.Message.MESSAGETYPES;
 import src.messages.game.GameStartClient.RIGGED;
 
 public class DeckManager {
@@ -151,6 +148,10 @@ public class DeckManager {
 	
 	public void addAdventureCard(List<AdventureCard> cards) {
 		adventureDeck.discards.addAll(cards);
+	}
+	
+	public AdventureCard getAdventureCard(String string) {
+		return adventureDeck.getCardByName(string);
 	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {

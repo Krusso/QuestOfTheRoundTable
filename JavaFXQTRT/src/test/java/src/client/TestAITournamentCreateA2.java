@@ -1,5 +1,7 @@
 package src.client;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -9,7 +11,6 @@ import org.testfx.util.WaitForAsyncUtils;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
 
 public class TestAITournamentCreateA2 extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestAITournamentCreateA2.class);
@@ -123,10 +124,6 @@ public class TestAITournamentCreateA2 extends TestFXBase {
 		Thread.sleep(100);
 		clickOn(END_TURN);
 		
-		clickOn(START_TURN);
-		Thread.sleep(20);
-		
-		clickOn(START_TURN);
-		Thread.sleep(20);
+		assertEquals("Select: 5 cards to discard", gbc.toast.getText());
 	}
 }

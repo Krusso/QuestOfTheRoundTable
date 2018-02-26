@@ -2,13 +2,11 @@ package src.client;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -27,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TestGameBoardScenarios extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestGameBoardScenarios.class);
@@ -99,7 +96,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		tsc = m.getTitleScreenController();
 	}
 	
-	public void setupScenario2() {
+	public void setupScenario2() throws InterruptedException {
 		//Rig the game
 		press(KeyCode.Z);
 		clickOn(NEW_GAME_BUTTON_ID);
@@ -114,7 +111,9 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(MENU_BUTTON_3_ID);
 		clickOn(MENU_OPTION_3_HUMAN_ID);
 		clickOn(TITLE_PANE_3_ID);
+		Thread.sleep(1000);
 		clickOn(NEXT_SHIELD_BUTTON_3_ID);
+		Thread.sleep(1000);
 		clickOn(NEXT_SHIELD_BUTTON_3_ID);
 		
 		clickOn(MENU_BUTTON_4_ID);
@@ -176,21 +175,18 @@ public class TestGameBoardScenarios extends TestFXBase {
 		
 		Pane handPane2 = gbc.playerHand1;
 		size2 = handPane2.getChildren().size();
-		Pane fdc2 = gbc.playerFaceDown1;
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
 		clickOn(ACCEPT);
 
 		Pane handPane3 = gbc.playerHand2;
 		size3 = handPane3.getChildren().size();
-		Pane fdc3 = gbc.playerFaceDown2;
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
 		clickOn(ACCEPT);
 		
 		Pane handPane4 = gbc.playerHand3;
 		size4 = handPane4.getChildren().size();
-		Pane fdc4 = gbc.playerFaceDown3;
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
 		clickOn(ACCEPT);
@@ -260,7 +256,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(END_TURN);
 		
 		sleep(1000); // more lags c:
-		assertTrue(gbc.toast.getText().equals("Players #: 2,3 passed"));
+		assertTrue(gbc.toast.getText().equals("Players #: 3,4 passed"));
 		
 		sleep(5000); // wait for cards to flip over
 		
@@ -304,7 +300,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		
 		sleep(5000); // wait for cards to flip
 		
-		assertTrue(gbc.toast.getText().equals("Player #: 2 passed the stage"));
+		assertTrue(gbc.toast.getText().equals("Player #: 3 passed the stage"));
 		
 		clickOn(START_TURN);
 		clickOn(START_TURN);
@@ -382,6 +378,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(START_TURN);
 		assertEquals(gbc.p1Shields.getText(), "3");
 		assertEquals(gbc.p2Shields.getText(), "3");
+		assertEquals(gbc.p3Shields.getText(), "2");
 		assertEquals(gbc.p4Shields.getText(), "3");
 		
 		sleep(3000);
@@ -389,16 +386,20 @@ public class TestGameBoardScenarios extends TestFXBase {
 	}
 	
 	@Test
-	public void testScenario2() {
+	public void testScenario2() throws InterruptedException {
 		setupScenario2();
 		gbc = tsc.getGameBoardController();
 		// *** p1 ***
+		Thread.sleep(20);
 		clickOn(START_TURN);
+		Thread.sleep(20);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
 		clickOn(DECLINE);
 		// *** p2 ***
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.SPONSOR_QUEST);
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.PICK_STAGES);
 		// setting up quest
@@ -407,7 +408,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 //		Pane handPane1 = gbc.playerhand0;
 		ImageView thieves = gbc.findCardInHand("Thieves");
 		ImageView sword = gbc.findCardInHand("Sword");
-		ImageView saxons = gbc.findCardInHand("Saxons");
+		ImageView saxons = gbc.findCardInHand("Evil Knight");
 		ImageView battleax = gbc.findCardInHand("Battle-ax");
 		drag(thieves).moveTo(stage1).release(MouseButton.PRIMARY);
 		assertTrue(stage1.getChildren().contains(thieves));
@@ -417,24 +418,32 @@ public class TestGameBoardScenarios extends TestFXBase {
 		assertTrue(stage2.getChildren().contains(saxons));
 		drag(battleax).moveTo(stage2).release(MouseButton.PRIMARY);
 		assertTrue(stage2.getChildren().contains(battleax));
+		Thread.sleep(20);
 		clickOn(END_TURN);
 		// *** p1 ***
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 		// *** p3 ***
 		// don't participate
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		Thread.sleep(20);
 		clickOn(DECLINE);
 		// *** p4 ***
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		assertTrue(gbc.CURRENT_STATE ==  GAME_STATE.JOIN_QUEST);
+		Thread.sleep(20);
 		clickOn(ACCEPT);
 		
 		
 		//DISCARDING
 		// *** p1 ***
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		assertTrue(gbc.toast.getText().equals("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards"));
 		ImageView dagger1 = gbc.findCardInHand("Dagger");
@@ -448,26 +457,26 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(DISCARD);
 		
 		// STAGE 1
+		// *** p4 ***
+		// play no cards and get eliminated
+		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
+		Thread.sleep(20);
+		clickOn(END_TURN);
 		// *** p1 ***
+		Thread.sleep(20);
 		clickOn(START_TURN);
 		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
 		ImageView horse1 = gbc.findCardInHand("Horse");
 		drag(horse1).moveTo(gbc.playerFaceDown0).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
-		// *** p4 ***
-		// play no cards and get eliminated
-		clickOn(START_TURN);
-		assertTrue(gbc.toast.getText().equals("Select Cards for current stage"));
-		clickOn(END_TURN);
 		// make sure p4 got eliminated
 		sleep(1000);
-		assertTrue(gbc.toast.getText().equals("Player #: 0 passed the stage"));
+		assertTrue(gbc.toast.getText().equals("Player #: 1 passed the stage"));
 		sleep(5000); // wait for cards to flip over
 		
 		// STAGE 2
 		// *** p1 ***
 		// play no cards and get eliminated
-		clickOn(START_TURN);
 		clickOn(START_TURN);
 		clickOn(END_TURN);
 		// make sure p1 got eliminated
@@ -548,15 +557,9 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(END_TURN);
 		
 		// play no cards and get eliminated
-		clickOn(START_TURN);
-		clickOn(START_TURN);
-		clickOn(END_TURN);
-		sleep(1000);
 		assertTrue(gbc.toast.getText().equals("No players passed the stage"));
-		sleep(5000);
 		clickOn(START_TURN);
-		sleep(5000);
-		
+		clickOn(START_TURN);
 	}
 	
 	@Test
