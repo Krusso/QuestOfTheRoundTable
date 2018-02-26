@@ -69,6 +69,9 @@ public class GameBoardController implements Initializable{
 	private AudioPlayer cardDropSound = new AudioPlayer("card_drop.wav", false);
 	private AudioPlayer invalid = new AudioPlayer("invalid.wav", false);
 	private AudioPlayer buttonClick = new AudioPlayer("button_click.wav", false);
+	private AudioPlayer dyingSound = new AudioPlayer("man_dying.wav", false);
+	private AudioPlayer merlinPowerSound = new AudioPlayer("merlin_power.wav", false);
+	private AudioPlayer mordredPowerSound = new AudioPlayer("mordred_power.wav", false);
 
 	public Client c;
 	public UIPlayerManager playerManager;
@@ -99,6 +102,7 @@ public class GameBoardController implements Initializable{
 	@FXML public Text p2Shields;
 	@FXML public Text p3Shields;
 	@FXML public Text p4Shields;
+	public Text[] playerShields = new Text[4];
 
 	@FXML public ImageView shield1View;
 	@FXML public ImageView shield2View;
@@ -239,6 +243,11 @@ public class GameBoardController implements Initializable{
 		stageViews[2] = stage2View;
 		stageViews[3] = stage3View;
 		stageViews[4] = stage4View;
+
+		playerShields[0] = p1Shields;
+		playerShields[1] = p2Shields;
+		playerShields[2] = p3Shields;
+		playerShields[3] = p4Shields;
 
 		setDiscardImage();
 		hideDiscardPane();
@@ -882,11 +891,15 @@ public class GameBoardController implements Initializable{
 				playerPanes[i].setScaleY(1);
 				playerRanks[i].setRotate(0);
 				shieldViews[i].setRotate(0);
+				playerShields[i].setRotate(0);
+				
+				
 			}else {
 				playerPanes[i].setScaleX(0.6);
 				playerPanes[i].setScaleY(0.6);
 				playerRanks[i].setRotate(180);
 				shieldViews[i].setRotate(180);
+				playerShields[i].setRotate(180);
 			}
 		}
 		logger.info("Set player perspective to player" + playerNum);
@@ -1427,6 +1440,7 @@ public class GameBoardController implements Initializable{
 				return;
 			}
 			buttonClick.play();
+			mordredPowerSound.play();
 			
 			//setup dialog to choose which card to delete
 			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
@@ -1450,10 +1464,11 @@ public class GameBoardController implements Initializable{
 			mordredDialog.setTitle("Using Mordred's Power");
 			mordredDialog.setHeaderText("Select an opponent's ally card to destroy");
 			mordredDialog.setContentText("Ally Card:");
-			Optional<String> result = merlinDialog.showAndWait();
+			Optional<String> result = mordredDialog.showAndWait();
 			if(result.isPresent()) {
 				Integer[] pNumAndCard = dialogChoices.get(result.get());
 				useMordred(mordred, mIndex, currentPlayer, pNumAndCard[2],pNumAndCard[0], result.get().substring(10));
+				dyingSound.play();
 			}
 			
 		});
@@ -1537,6 +1552,7 @@ public class GameBoardController implements Initializable{
 			repositionStageCards(s);
 			playerManager.rememberStage(playerManager.getCurrentPlayer(), s);
 			logger.info("Player" + playerManager.getCurrentPlayer() + " has used the merlin card to reveal stage " + (s+1));
+			merlinPowerSound.play();
 		}
 	}
 }
