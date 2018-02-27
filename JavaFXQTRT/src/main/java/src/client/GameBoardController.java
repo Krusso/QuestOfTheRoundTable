@@ -1059,7 +1059,6 @@ public class GameBoardController implements Initializable{
 		for(AdventureCard c : fuc) {
 			c.setDraggableOff();
 		}
-		System.out.println(fuc);
 		logger.info("Removed card image draggable for player" + playerManager.getCurrentPlayer() + "'s hand/facedowncards/faceupcards");
 	}
 
