@@ -298,6 +298,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		ImageView lance = gbc.findCardInHand("Lance");
 		drag(lance).moveTo(gbc.playerFaceDown3).release(MouseButton.PRIMARY);
 		clickOn(END_TURN);
+		sleep(100);
 		assertTrue(gbc.CURRENT_STATE == GAME_STATE.CHILLING);
 		
 		sleep(5000); // wait for cards to flip

@@ -41,6 +41,7 @@ public class TestScenario4 extends TestFXBase {
 		clickOn(MENU_OPTION_2_HUMAN_ID);
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(TITLE_PANE_2_ID);
+		sleep(1000);
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		clickOn(START_BUTTON_ID); 
 
@@ -64,6 +65,7 @@ public class TestScenario4 extends TestFXBase {
 	 */
 	@Test
 	public void testLongScenario() throws InterruptedException {
+		sleep(1000);
 		gbc = tsc.getGameBoardController();
 		// start turn first player
 		clickOn(START_TURN);
