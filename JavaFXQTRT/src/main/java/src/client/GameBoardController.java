@@ -184,6 +184,7 @@ public class GameBoardController implements Initializable{
 	public TYPE type;
 
 	public boolean[] joinTournament = {false, false, false, false};
+	public int sponsor;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -280,7 +281,20 @@ public class GameBoardController implements Initializable{
 		noticeableGlow.setHeight(170);
 		playerRanks[p].setEffect(noticeableGlow);
 	}
+	
+	public void setGlowSponsor(int p) {
+		DropShadow noticeableGlow = new DropShadow();
+		noticeableGlow.setColor(Color.web("#85f441"));
+		noticeableGlow.setOffsetX(0f);
+		noticeableGlow.setOffsetY(0f);
+		noticeableGlow.setHeight(170);
+		playerRanks[p].setEffect(noticeableGlow);
+	}
 
+	public void clearGlow(int p) {
+		playerRanks[p].setEffect(new DropShadow());
+	}
+	
 	public void clearGlow() {
 		for(ImageView p: playerRanks) {
 			p.setEffect(new DropShadow());
@@ -543,6 +557,7 @@ public class GameBoardController implements Initializable{
 						c.send(new CalculateStageClient(this.playerManager.getCurrentPlayer(),stageCards.get(i).stream().map(j -> j.getName()).toArray(String[]::new), i));	
 					}
 				}
+				setMerlinMordredVisibility();
 				return;
 			}
 			//Find if the current point is within one of the stage panes.
@@ -558,6 +573,7 @@ public class GameBoardController implements Initializable{
 					}
 				}
 			}
+			setMerlinMordredVisibility();
 		}
 
 		if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
@@ -1030,6 +1046,8 @@ public class GameBoardController implements Initializable{
 	}
 
 	public void setMerlinMordredVisibility() {
+		this.useMerlin.setVisible(false);
+		this.useMordred.setVisible(false);
 		this.playerManager.players[playerManager.getCurrentPlayer()].hand.getDeck().forEach(i -> {
 			if(i.getName().equals("Mordred")) {
 				this.useMordred.setVisible(true);
@@ -1043,6 +1061,8 @@ public class GameBoardController implements Initializable{
 				this.useMerlin.setVisible(true);
 			}
 		});
+		logger.info("Merlin visibility: " + useMerlin.isVisible());
+		logger.info("Mordred visibility: " + useMordred.isVisible());
 	}
 
 	//removes draggable for all panes of this player
@@ -1314,6 +1334,8 @@ public class GameBoardController implements Initializable{
 			}else if(CURRENT_STATE == GAME_STATE.SPONSOR_QUEST) {
 				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " accepted quest sponsoring");
 				c.send(new QuestSponsorClient(playerManager.getCurrentPlayer(), true));
+				this.sponsor = playerManager.getCurrentPlayer();
+				setGlowSponsor(playerManager.getCurrentPlayer());
 			}else if(CURRENT_STATE == GAME_STATE.JOIN_QUEST) {
 				logger.info("Client: player" + playerManager.getCurrentPlayer()  + " joined quest");
 				//make sure we turn over the viewable stage if previous used merlin
