@@ -1090,7 +1090,7 @@ public class Client implements Runnable {
 									}
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
-
+									gbc.bidSlider.setVisible(false);
 									gbc.startTurn.setVisible(true);
 									gbc.startTurn.setText("Continue");
 									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
@@ -1148,6 +1148,7 @@ public class Client implements Runnable {
 									gbc.playerManager.faceDownPlayerHand(gbc.playerManager.getCurrentPlayer());
 									gbc.setButtonsInvisible();
 									gbc.startTurn.setVisible(true);
+									gbc.bidSlider.setVisible(false);
 									gbc.startTurn.setText("Continue");
 									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
 									for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
