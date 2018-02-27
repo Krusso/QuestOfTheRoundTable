@@ -160,7 +160,7 @@ public class TestTournament {
 
 	@Test
 	public void testNoOneEnter() throws InterruptedException {
-		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Camelot", 3));
+		TournamentSequenceManager tsm = new TournamentSequenceManager(new TournamentCard("Tournament at Orkney", 2));
 		QOTRTQueue input = new QOTRTQueue();
 		Runnable task2 = () -> { tsm.start(input, pm, bm); };
 		new Thread(task2).start();

@@ -42,12 +42,10 @@ public class DeckManager {
 		
 		if(rigged.equals(RIGGED.THREE)) {
 			storyDeck.getCardByName("Boar Hunt");
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
 					"Boar Hunt",
 					"Prosperity Throughout the Realm",
 					"Chivalrous Deed");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
@@ -55,19 +53,16 @@ public class DeckManager {
 		
 		if(rigged.equals(RIGGED.FOUR)) {
 			storyDeck.getCardByName("Boar Hunt");
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class,n, storyDeck,
 					"Boar Hunt",
 					"Repel the Saxon Raiders");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
 		}
 		
 		if(rigged.equals(RIGGED.LONG)) {
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class,  n, storyDeck,
 					"Search for the Holy Grail",
 					"Test of the Green Knight",
 					"Tournament at York",
@@ -77,53 +72,44 @@ public class DeckManager {
 					"Court Called to Camelot",
 					"King's Call to Arms",
 					"King's Recognition");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
 		}
 		
 		if(rigged.equals(RIGGED.AITOURNAMENT)) {
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
 					"Tournament at York",
 					"Tournament at Tintagel",
 					"Tournament at Orkney",
 					"Tournament at Camelot");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
 		}
 		
 		if(rigged.equals(RIGGED.AIQUEST) || rigged.equals(RIGGED.AIQUEST1)) {
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
 					"Repel the Saxon Raiders",
 					"Boar Hunt");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
 		}
 		
 		if(rigged.equals(RIGGED.AIQUEST2)) {
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
 					"Repel the Saxon Raiders",
 					"Pox",
 					"Boar Hunt");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
 		}
 		
 		if(rigged.equals(RIGGED.GAMEEND)) {
-			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
-			StoryCard s = firstNotNull(StoryCard.class, storyDeck,
+			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
 					"Pox");
-			toReturn.add(s);
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;
@@ -135,15 +121,19 @@ public class DeckManager {
 		return toReturn;
 	}
 	
-	private <T extends Card> T firstNotNull(Class<T> a, Deck<T> d, String... strings ) {
+	private <T extends Card> ArrayList<T> firstNotNull(Class<T> a, int n, Deck<T> d, String... strings ) {
+		ArrayList<T> list = new ArrayList<T>();
 		for(String s: strings) {
 			T c = d.getCardByName(s);
 			if(c != null) {
-				return c;
+				list.add(c);
+			}
+			if(list.size() == n) {
+				return list;
 			}
 		}
 		
-		return d.drawRandomCards(1).get(0);
+		return d.drawRandomCards(n);
 	}
 	
 	public void addAdventureCard(List<AdventureCard> cards) {
@@ -151,7 +141,11 @@ public class DeckManager {
 	}
 	
 	public AdventureCard getAdventureCard(String string) {
-		return adventureDeck.getCardByName(string);
+		AdventureCard card =  adventureDeck.getCardByName(string);
+		if(card == null) {
+			card = adventureDeck.drawRandomCards(1).get(0);
+		}
+		return card;
 	}
 	
 	public ArrayList<AdventureCard> getAdventureCard(int n) {
@@ -159,17 +153,38 @@ public class DeckManager {
 			adventureDeck.reshuffle();
 		}
 		if(rigged.equals(RIGGED.AITOURNAMENT) || rigged.equals(RIGGED.AIQUEST) || rigged.equals(RIGGED.AIQUEST1) || rigged.equals(RIGGED.AIQUEST2)) {
-			ArrayList<AdventureCard> toReturn = new ArrayList<AdventureCard>();
-			AdventureCard s = firstNotNull(AdventureCard.class, adventureDeck,
+			ArrayList<AdventureCard> toReturn = firstNotNull(AdventureCard.class, n, adventureDeck,
 					"Test of Valor",
 					"Test of Temptation",
 					"Test of Morgan Le Fey",
 					"Test of the Questing Beast",
 					"Saxon Knight");
-			toReturn.add(s);
+			return toReturn;
+		}
+		
+		if(!rigged.equals(RIGGED.NORMAL) && !rigged.equals(RIGGED.ONE)) {
+			ArrayList<AdventureCard> toReturn = firstNotNull(AdventureCard.class, n, adventureDeck,
+					"Test of Valor",
+					"Test of Temptation",
+					"Test of Morgan Le Fey",
+					"Test of the Questing Beast",
+					"Sword",
+					"Horse",
+					"Battle-ax",
+					"Lance",
+					"Dagger",
+					"Excalibur",
+					"Amour",
+					"Thieves",
+					"Boar",
+					"Saxons",
+					"Saxon Knight",
+					"Evil Knight",
+					"Mordred");
 			
 			return toReturn;
 		}
+		
 		return adventureDeck.drawRandomCards(n);
 	}
 	

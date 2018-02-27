@@ -29,7 +29,7 @@ public class TestAITournament extends TestFXBase {
 	final String USE_MERLIN = "#useMerlin";
 	final String CONTINUE = "#nextTurn";
 	@Before
-	public void setup3Players(){
+	public void setup3Players() throws InterruptedException{
 		//Rig the game
 		press(KeyCode.A);
 		clickOn(NEW_GAME_BUTTON_ID);
@@ -60,6 +60,7 @@ public class TestAITournament extends TestFXBase {
 		logger.info("m: " + m);
 		//get tsc
 		tsc = m.getTitleScreenController();
+		Thread.sleep(100);
 	}
 	
 	@Test
@@ -90,11 +91,11 @@ public class TestAITournament extends TestFXBase {
 		clickOn(DISCARD);
 		
 		//p2 turn
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		//p1 turn
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		drag(gbc.findCardInHand("Lance")).moveTo(fdc0).release(MouseButton.PRIMARY);
 		drag(gbc.findCardInHand("Battle-ax")).moveTo(fdc0).release(MouseButton.PRIMARY);
@@ -102,52 +103,52 @@ public class TestAITournament extends TestFXBase {
 		clickOn(END_TURN);
 		
 		//p2 AI plays for tournament
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		// p1
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		// p2
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		// p0
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		clickOn(DECLINE);
 		
 		// p1
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		
 		// p2
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		clickOn(START_TURN);
 		
 		//p0
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 		clickOn(DECLINE);
 		
 		//p1
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
 
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		clickOn(START_TURN);
-		Thread.sleep(20);
+		Thread.sleep(100);
 		
 		verifyThat(TOAST, (Text t)->{
 			if(t.getText().equals("Player: [2] has won the game!")) {

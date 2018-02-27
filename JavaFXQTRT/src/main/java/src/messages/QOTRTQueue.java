@@ -72,7 +72,9 @@ public class QOTRTQueue extends LinkedBlockingQueue<String> {
 	private void handleMordred(MordredClient mc) {
 		this.pm.players[mc.player].hand.getCardByName("Mordred");
 		this.pm.players[mc.otherPlayer].getFaceUp().getCardByName(mc.otherAllyCard);
-		output.sendMessage(new FaceUpDiscardServer(mc.otherPlayer, new String[] {mc.otherAllyCard}));
+		if(output != null && mc != null) {
+			output.sendMessage(new FaceUpDiscardServer(mc.otherPlayer, new String[] {mc.otherAllyCard}));
+		}
 	}
 
 	public void put(Message message) {

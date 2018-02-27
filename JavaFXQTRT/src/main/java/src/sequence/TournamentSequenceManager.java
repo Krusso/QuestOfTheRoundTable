@@ -27,7 +27,7 @@ public class TournamentSequenceManager extends SequenceManager {
 
 	@Override
 	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {
-		logger.info("Starting tournament sequence manager");
+		logger.info("Starting tournament sequence manager: " + this.card.getName());
 		// Finding all players who want to join tournament
 		Iterator<Player> players = pm.round();
 		while(players.hasNext()) {

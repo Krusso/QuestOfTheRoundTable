@@ -57,6 +57,10 @@ public class A2 extends AbstractAI {
 
 	@Override
 	public List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard) {
+		logger.info("Asking if want to sponsor quest");
+		if(questCard != null) {
+			logger.info("Quest card: " + questCard.getName());
+		}
 		if(playerCanWinOrEvolve(pm)) {
 			logger.info("Someone can win dont sponsor tournament");
 			return null;
@@ -225,6 +229,7 @@ public class A2 extends AbstractAI {
 	public List<AdventureCard> discardAfterWinningTest() {
 		logger.info("Discarding cards after round: " + rounds);
 		if(rounds == 1) {
+			logger.info("First round finding all foes under 25");
 			return bpc.listOfTypeDecreasingBp(player, TYPE.FOES, null, pm.iseultExists()).stream().
 					filter(i -> i.getBattlePoints() < 25).collect(Collectors.toList());
 		} else if(rounds == 2) {
@@ -239,6 +244,9 @@ public class A2 extends AbstractAI {
 					uniqueCards.add(card.getName());
 				}
 			}
+			
+			logger.info("Round 2 finding foes under 25 and duplicates");
+			logger.info("Cards: " + cards);
 			return cards;
 		} else {
 			logger.info("Past round 2 not willing to bid");

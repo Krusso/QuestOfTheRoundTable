@@ -37,6 +37,11 @@ public class TestAIQuest extends TestFXBase {
 		clickOn(MENU_OPTION_2_AI_ID);
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(TITLE_PANE_2_ID);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		}
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		
 		clickOn(MENU_BUTTON_3_ID);
@@ -44,7 +49,7 @@ public class TestAIQuest extends TestFXBase {
 		clickOn(MENU_BUTTON_3_ID);
 		clickOn(TITLE_PANE_3_ID);
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}
@@ -61,6 +66,7 @@ public class TestAIQuest extends TestFXBase {
 	
 	@Test
 	public void testAIQuestNoOneJoin() throws InterruptedException {
+		Thread.sleep(100);
 		gbc = tsc.getGameBoardController();
 		
 		// start turn first player
