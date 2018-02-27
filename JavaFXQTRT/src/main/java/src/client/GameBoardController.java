@@ -62,7 +62,7 @@ public class GameBoardController implements Initializable{
 	public GAME_STATE CURRENT_STATE = GAME_STATE.NONE;
 	public int numStages = 0;
 	public int currentStage = 0;
-	
+
 
 	/* Them Dank sound effectss*/
 	public AudioPlayer bgMusic = new AudioPlayer("Game_Music_1.mp3");
@@ -78,7 +78,7 @@ public class GameBoardController implements Initializable{
 
 	public ChoiceDialog<String> merlinDialog; 
 	public ChoiceDialog<String> mordredDialog; 
-	
+
 	@FXML private Pane playField;
 	@FXML private VBox storyContainer;
 	@FXML private Pane storyCardContainer;
@@ -87,10 +87,10 @@ public class GameBoardController implements Initializable{
 	@FXML public Button decline;
 	@FXML public Button nextTurn;
 	@FXML public Button discard;
-	
+
 	@FXML public Button useMerlin;
 	@FXML public Button useMordred;
-	
+
 	@FXML private Text playerNumber;
 	@FXML private Pane background;
 	@FXML private Pane questBoard;
@@ -182,7 +182,7 @@ public class GameBoardController implements Initializable{
 	private ArrayList<AdventureCard> discardPile = new ArrayList<>();
 	public QuestCard questCard;
 	public TYPE type;
-	
+
 	public boolean[] joinTournament = {false, false, false, false};
 
 	@Override
@@ -252,9 +252,9 @@ public class GameBoardController implements Initializable{
 		setDiscardImage();
 		hideDiscardPane();
 	}
-	
 
-	
+
+
 	public void setDiscardImage() {
 		try {
 			Image discardImage = new Image(getClass().getClassLoader().getResource("discardTray.png").openStream());
@@ -263,11 +263,11 @@ public class GameBoardController implements Initializable{
 			logger.error(e.getMessage());
 		}
 	}
-	
+
 	public void hideDiscardPane() {
 		discardView.setVisible(false);
 	}
-	
+
 	public void showDiscardPane() {
 		discardView.setVisible(true);
 	}
@@ -280,7 +280,7 @@ public class GameBoardController implements Initializable{
 		noticeableGlow.setHeight(170);
 		playerRanks[p].setEffect(noticeableGlow);
 	}
-	
+
 	public void clearGlow() {
 		for(ImageView p: playerRanks) {
 			p.setEffect(new DropShadow());
@@ -480,7 +480,7 @@ public class GameBoardController implements Initializable{
 			}
 		}
 
-		
+
 		logger.error("Could not find a pane that the mouse is over. Point2D: " + point);
 		//if we wish to add drag and drop for new panes, make sure we add it below here:
 
@@ -597,13 +597,13 @@ public class GameBoardController implements Initializable{
 				c.send(new CalculatePlayerClient(this.playerManager.getCurrentPlayer(), cards.stream().map(i -> i.getName()).toArray(String[]::new)));
 			}
 		}
-		
+
 		if(CURRENT_STATE == GAME_STATE.DISCARDING_CARDS) {
 			//if the current player has too many cards, we can allow him to play cards into the discard pile
 			//We can also allow players to play amour/ally cards into the face down pane
 			if(isInPane(faceDownPanes[cPlayer], point) && 
 					((card.getType() == TYPE.AMOUR && isPlayingAmourValid(playerManager.getFaceDownCardsAsList(cPlayer), playerManager.getFaceUpCardsAsList(cPlayer), card)) || 
-					 (card.getType() == TYPE.ALLIES))) {
+							(card.getType() == TYPE.ALLIES))) {
 				doPutCardIntoPane(point, card);
 			}else if(isInPane(discardPane, point)) {
 				doPutCardIntoPane(point, card);
@@ -611,7 +611,7 @@ public class GameBoardController implements Initializable{
 				doPutCardIntoPane(point, card);
 			}
 		}
-		
+
 		if(CURRENT_STATE == GAME_STATE.BID_DISCARD) {
 			if(isInPane(discardPane, point)) {
 				doPutCardIntoPane(point, card);
@@ -619,7 +619,7 @@ public class GameBoardController implements Initializable{
 				doPutCardIntoPane(point, card);
 			}
 		}
-		
+
 		if(CURRENT_STATE == GAME_STATE.EVENT_DISCARD) {
 			if(isInPane(discardPane, point) && card.getType() == this.type) {
 				doPutCardIntoPane(point, card);
@@ -627,7 +627,7 @@ public class GameBoardController implements Initializable{
 				doPutCardIntoPane(point, card);
 			}
 		}
-		
+
 		//return to original position if we don't put it into the pane
 		card.returnOriginalPosition();
 	}
@@ -814,7 +814,7 @@ public class GameBoardController implements Initializable{
 		}
 		return true;
 	}
-	
+
 	//Can only have 1 Amour card present at any time of the game for the player
 	private boolean isPlayingAmourValid(ArrayList<AdventureCard> fuc, ArrayList<AdventureCard> fdc, AdventureCard toAdd) {
 		for(AdventureCard c : fuc) {
@@ -885,6 +885,8 @@ public class GameBoardController implements Initializable{
 		}
 
 		//readjust the player pane's scale as well as the orientation of the rank/shield cards
+
+		//Make sure the current player can only drag his own cards.
 		for(int i = 0 ; i < handPanes.length; i++) {
 			if(i == playerNum) {
 				playerPanes[i].setScaleX(1);
@@ -892,8 +894,6 @@ public class GameBoardController implements Initializable{
 				playerRanks[i].setRotate(0);
 				shieldViews[i].setRotate(0);
 				playerShields[i].setRotate(0);
-				
-				
 			}else {
 				playerPanes[i].setScaleX(0.6);
 				playerPanes[i].setScaleY(0.6);
@@ -902,6 +902,11 @@ public class GameBoardController implements Initializable{
 				playerShields[i].setRotate(180);
 			}
 		}
+		for(int i = 0 ; i < playerManager.getNumPlayers(); i++) {
+			if( i == playerNum) {addDraggable();}
+			else {removeDraggable(i);}
+		}
+
 		logger.info("Set player perspective to player" + playerNum);
 	}
 
@@ -987,26 +992,26 @@ public class GameBoardController implements Initializable{
 		this.useMerlin.setVisible(false);
 		this.useMordred.setVisible(false);
 		logger.info("Set all buttons to invisible: [endTurn: " + endTurn.isVisible() + "] " + 
-				 "[accept: " + accept.isVisible() + "] " +
-				 "[decline: " + decline.isVisible() + "] "+
-				 "[nextTurn: " + nextTurn.isVisible() + "] "+
-				 "[discard: " + discard.isVisible() + "] " + 
-				 "[startTurn: " + startTurn.isVisible() + "] " +
-				 "[useMerlin: " + useMerlin.isVisible() + "] " +
-				 "[useMordred: " + useMordred.isVisible() + "] " );
+				"[accept: " + accept.isVisible() + "] " +
+				"[decline: " + decline.isVisible() + "] "+
+				"[nextTurn: " + nextTurn.isVisible() + "] "+
+				"[discard: " + discard.isVisible() + "] " + 
+				"[startTurn: " + startTurn.isVisible() + "] " +
+				"[useMerlin: " + useMerlin.isVisible() + "] " +
+				"[useMordred: " + useMordred.isVisible() + "] " );
 	}
 
 	public void showAcceptDecline() {
 		this.accept.setVisible(true);
 		this.decline.setVisible(true);
 		logger.info("Show accept/decline button: " + 
-				 "[accept: " + accept.isVisible() + "] " +
-				 "[decline: " + decline.isVisible() + "] ");
+				"[accept: " + accept.isVisible() + "] " +
+				"[decline: " + decline.isVisible() + "] ");
 	}
 	public void showDecline() {
 		this.decline.setVisible(true);
 		logger.info("Show decline button: " + 
-				 "[decline: " + decline.isVisible() + "] ");
+				"[decline: " + decline.isVisible() + "] ");
 	}
 
 	public void showStartTurn() {
@@ -1023,7 +1028,7 @@ public class GameBoardController implements Initializable{
 		this.discard.setVisible(b);
 		logger.info("Set discard button visibility to: " + discard.isVisible() );
 	}
-	
+
 	public void setMerlinMordredVisibility() {
 		this.playerManager.players[playerManager.getCurrentPlayer()].hand.getDeck().forEach(i -> {
 			if(i.getName().equals("Mordred")) {
@@ -1032,12 +1037,29 @@ public class GameBoardController implements Initializable{
 				this.useMerlin.setVisible(true);
 			}
 		});
-		
+
 		this.playerManager.players[playerManager.getCurrentPlayer()].getFaceUp().getDeck().forEach(i -> {
 			if(i.getName().equals("Merlin")) {
 				this.useMerlin.setVisible(true);
 			}
 		});
+	}
+
+	//removes draggable for all panes of this player
+	public void removeDraggable(int p) {
+		ArrayList<AdventureCard> currHand = playerManager.getPlayerHand(p);
+		ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(p);
+		ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(p);
+		for(AdventureCard c : currHand) {
+			c.setDraggableOff();
+		}
+		for(AdventureCard c : fdc) {
+			c.setDraggableOff();
+		}
+		for(AdventureCard c : fuc) {
+			c.setDraggableOff();
+		}
+		logger.info("Removed card image draggable for player" + playerManager.getCurrentPlayer() + "'s hand/facedowncards/faceupcards");
 	}
 
 	public void removeDraggable() {
@@ -1053,7 +1075,7 @@ public class GameBoardController implements Initializable{
 		for(int i = 0 ; i < fdc.size(); i++) {
 			fdc.get(i).setDraggableOff();
 		}
-		logger.info("Removed card image draggable for player" + playerManager.getCurrentPlayer() + "'s hand");
+		logger.info("Removed card image draggable for player" + playerManager.getCurrentPlayer() + "'s face down cards");
 	}
 
 	public void addDraggable() {
@@ -1066,7 +1088,7 @@ public class GameBoardController implements Initializable{
 	public void flipFaceDownPane(int p, boolean isShow) {
 		playerManager.flipFaceDownCards(p, isShow);
 	}
-	
+
 	public void flipAllFaceDownPane(boolean isShow) {
 		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {
 			playerManager.flipFaceDownCards(i, isShow);
@@ -1308,7 +1330,7 @@ public class GameBoardController implements Initializable{
 				c.send(new QuestJoinClient(playerManager.getCurrentPlayer(), true));
 				setGlow(playerManager.getCurrentPlayer());
 			}
-			
+
 		});
 		/*
 		 * DECLINE BUTTON LISTENER
@@ -1360,7 +1382,7 @@ public class GameBoardController implements Initializable{
 			}else {
 				setDiscardVisibility(false);
 				c.send(new HandFullClient(playerManager.getCurrentPlayer(), discardCards, allyCards));
-				
+
 				//add the facedown cards to faceup pane
 				ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(cPlayer);
 				ArrayList<AdventureCard> fdc = playerManager.getFaceDownCardsAsList(cPlayer);
@@ -1420,7 +1442,7 @@ public class GameBoardController implements Initializable{
 			invalid.play();
 			logger.info("You do not have Merlin in play");
 		});
-		
+
 		this.useMordred.setOnAction(e->{
 			//check if current player has mordred
 			int currentPlayer = playerManager.getCurrentPlayer();
@@ -1441,7 +1463,7 @@ public class GameBoardController implements Initializable{
 			}
 			buttonClick.play();
 			mordredPowerSound.play();
-			
+
 			//setup dialog to choose which card to delete
 			Map<String, Integer[]> dialogChoices = new HashMap<String, Integer[]>();
 			ArrayList<String> choices = new ArrayList<String>();
@@ -1459,7 +1481,7 @@ public class GameBoardController implements Initializable{
 					}
 				}
 			}
-		    
+
 			mordredDialog = new ChoiceDialog<>(null, choices);
 			mordredDialog.setTitle("Using Mordred's Power");
 			mordredDialog.setHeaderText("Select an opponent's ally card to destroy");
@@ -1470,16 +1492,16 @@ public class GameBoardController implements Initializable{
 				useMordred(mordred, mIndex, currentPlayer, pNumAndCard[2],pNumAndCard[0], result.get().substring(10));
 				dyingSound.play();
 			}
-			
+
 		});
 	}
-	
+
 	public void useMordred(AdventureCard mordred, int mIndex, int currentPlayer, int oIndex, int oPlayer, String otherAlly) {
 		//dicard the current mordred card
 		Pane mordredContainer = mordred.childOf;
 		mordredContainer.getChildren().remove(mIndex);
 		playerManager.removeCardFromHand(mordred, currentPlayer);
-		
+
 		faceUpPanes[oPlayer].getChildren().remove(oIndex);
 		ArrayList<AdventureCard> fuc = playerManager.getFaceUpCardsAsList(oPlayer);
 		fuc.remove(oIndex);
@@ -1487,7 +1509,7 @@ public class GameBoardController implements Initializable{
 		logger.info("Player" + playerManager.getCurrentPlayer() + " used Mordred's power to remove player" + oPlayer + "'s " + otherAlly);
 		c.send(new MordredClient(this.playerManager.getCurrentPlayer(), oPlayer, otherAlly));
 	}
-	
+
 	public void resetMerlinUse() {
 		//find the merlins and reset their charge to 1
 		for(int i = 0 ; i < playerManager.getNumPlayers() ; i++) {
@@ -1500,17 +1522,17 @@ public class GameBoardController implements Initializable{
 			}
 		}
 	}
-	
+
 	public ImageView findCardInHandByType(String cardType) {
 		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
 		if(cardType.equals("Weapon")) {
 			for(AdventureCard c: phand) {
 				if(c.getName().equals("Battle-ax") ||
-				   c.getName().equals("Dagger") ||
-				   c.getName().equals("Excalibur") ||
-				   c.getName().equals("Horse") ||
-				   c.getName().equals("Lance") ||
-				   c.getName().equals("Sword")) {
+						c.getName().equals("Dagger") ||
+						c.getName().equals("Excalibur") ||
+						c.getName().equals("Horse") ||
+						c.getName().equals("Lance") ||
+						c.getName().equals("Sword")) {
 					return c.getImageView();
 				}
 			}
@@ -1518,24 +1540,24 @@ public class GameBoardController implements Initializable{
 		if(cardType.equals("Foe")) {
 			for(AdventureCard c: phand) {
 				if(c.getName().equals("Dragon") ||
-				   c.getName().equals("Giant") ||
-				   c.getName().equals("Mordred") ||
-				   c.getName().equals("Green Knight") ||
-				   c.getName().equals("Black Knight") ||
-				   c.getName().equals("Evil Knight") ||
-				   c.getName().equals("Saxon Knight") ||
-				   c.getName().equals("Robber Knight") ||
-				   c.getName().equals("Saxons") ||
-				   c.getName().equals("Boar") ||
-				   c.getName().equals("Thieves")) {
+						c.getName().equals("Giant") ||
+						c.getName().equals("Mordred") ||
+						c.getName().equals("Green Knight") ||
+						c.getName().equals("Black Knight") ||
+						c.getName().equals("Evil Knight") ||
+						c.getName().equals("Saxon Knight") ||
+						c.getName().equals("Robber Knight") ||
+						c.getName().equals("Saxons") ||
+						c.getName().equals("Boar") ||
+						c.getName().equals("Thieves")) {
 					return c.getImageView();
 				}
 			}
 		}
 		return null;
 	}
-	
-	
+
+
 	public ImageView findCardInHand(String cardName) {
 		ArrayList<AdventureCard> phand = playerManager.getPlayerHand(playerManager.getCurrentPlayer());
 		for(AdventureCard c: phand) {
