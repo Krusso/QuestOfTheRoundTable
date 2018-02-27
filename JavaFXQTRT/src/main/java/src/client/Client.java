@@ -365,6 +365,12 @@ class QuestPickStagesTask extends Task {
 				}
 			}
 			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
@@ -584,7 +590,7 @@ class EventDiscardTask extends Task {
 		}
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardKingsCalltoArms(amount, type);
-			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
 			gbc.endTurn.fire();
 		}
 	}
