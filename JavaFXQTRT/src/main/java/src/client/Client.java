@@ -1000,6 +1000,17 @@ public class Client implements Runnable {
 									gbc.startTurn.setVisible(true);
 									gbc.startTurn.setText("Continue");
 									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+									for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
+										boolean flag = false;
+										for(int j = 0; j < players.length; j++) {
+											if(i == players[j]) {
+												flag = true;
+											}
+										}
+										if(!flag) {
+											gbc.clearGlow(i);
+										}
+									}
 								}
 							});
 							this.wait();
@@ -1080,6 +1091,18 @@ public class Client implements Runnable {
 									gbc.startTurn.setVisible(true);
 									gbc.startTurn.setText("Continue");
 									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+									
+									for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
+										boolean flag = false;
+										for(int j = 0; j < players.length; j++) {
+											if(i == players[j] || i == gbc.sponsor) {
+												flag = true;
+											}
+										}
+										if(!flag) {
+											gbc.clearGlow(i);
+										}
+									}
 								}
 							});
 							this.wait();
@@ -1124,6 +1147,17 @@ public class Client implements Runnable {
 									gbc.startTurn.setVisible(true);
 									gbc.startTurn.setText("Continue");
 									gbc.CURRENT_STATE = GAME_STATE.CHILLING;
+									for(int i = 0; i < gbc.playerManager.getNumPlayers(); i++) {
+										boolean flag = false;
+										for(int j = 0; j < players.length; j++) {
+											if(i == players[j] || i == gbc.sponsor) {
+												flag = true;
+											}
+										}
+										if(!flag) {
+											gbc.clearGlow(i);
+										}
+									}
 								}
 							});
 							this.wait();

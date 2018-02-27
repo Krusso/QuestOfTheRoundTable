@@ -106,6 +106,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(MENU_OPTION_2_HUMAN_ID);
 		clickOn(TITLE_PANE_2_ID);
+		Thread.sleep(1000);
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		
 		clickOn(MENU_BUTTON_3_ID);
@@ -133,6 +134,7 @@ public class TestGameBoardScenarios extends TestFXBase {
 	@Test
 	public void testScenario1() {
 		setupScenario1();
+		sleep(1000);
 		gbc = tsc.getGameBoardController();
 		clickOn(START_TURN);
 		logger.info(gbc.CURRENT_STATE);
