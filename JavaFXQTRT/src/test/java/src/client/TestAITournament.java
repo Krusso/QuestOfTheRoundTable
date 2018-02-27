@@ -65,8 +65,7 @@ public class TestAITournament extends TestFXBase {
 	
 	@Test
 	public void testAITournament() throws InterruptedException {
-		Thread.sleep(100);
-		WaitForAsyncUtils.waitForFxEvents();
+		Thread.sleep(1000);
 		gbc = tsc.getGameBoardController();
 		Pane fdc0 = gbc.playerFaceDown0;
 		
