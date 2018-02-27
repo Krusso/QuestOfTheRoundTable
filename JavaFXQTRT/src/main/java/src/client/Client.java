@@ -365,6 +365,12 @@ class QuestPickStagesTask extends Task {
 				}
 			}
 			
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
