@@ -110,6 +110,6 @@ public class TestAITournamentJoin extends TestFXBase {
 		clickOn(START_TURN);
 		Thread.sleep(100);
 		assertEquals("Player: [3] has won the game!", gbc.toast.getText());
-		Thread.sleep(50000);
+		Thread.sleep(5000);
 	}
 }

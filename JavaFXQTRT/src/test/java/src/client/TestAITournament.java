@@ -40,6 +40,7 @@ public class TestAITournament extends TestFXBase {
 		clickOn(MENU_OPTION_2_AI_ID);
 		clickOn(MENU_BUTTON_2_ID);
 		clickOn(TITLE_PANE_2_ID);
+		sleep(1000);
 		clickOn(NEXT_SHIELD_BUTTON_2_ID);
 		
 		clickOn(MENU_BUTTON_3_ID);
