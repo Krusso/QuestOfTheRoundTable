@@ -584,7 +584,7 @@ class EventDiscardTask extends Task {
 		}
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardKingsCalltoArms(amount, type);
-			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
+			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
 			gbc.endTurn.fire();
 		}
 	}
