@@ -616,6 +616,9 @@ class DiscardQuestTask extends Task {
 		gbc.toDiscard = toDiscard;
 		if(gbc.playerManager.getAI(player) != null) {
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).discardAfterWinningTest();
+			while(toDiscard != cards.size()) {
+				cards.remove(cards.size() - 1);
+			}
 			if(cards != null) {
 				cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.discardPane, i));
 			}
