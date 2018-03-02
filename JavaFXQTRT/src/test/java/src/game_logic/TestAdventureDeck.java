@@ -89,6 +89,7 @@ public class TestAdventureDeck {
 	}
 
 	private boolean contains(ArrayList<AdventureCard> cards, String string, int i) {
+		logger.info("Checking cards: " + cards + " has " + i + " instances of " + string);
 		for(AdventureCard c: cards) {
 			if(c.getName().equals(string)) {
 				i--;

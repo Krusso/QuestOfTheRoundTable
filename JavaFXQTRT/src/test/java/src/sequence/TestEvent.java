@@ -23,7 +23,7 @@ import src.player.PlayerManager;
 import src.socket.OutputController;
 import src.views.PlayerView;
 
-public class TestEvents {
+public class TestEvent {
 
 	@Test
 	public void testKingsCallToArms() {
