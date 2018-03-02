@@ -9,13 +9,12 @@ COMP3004B 2018 Team 2 Project
 **Requirements**
 - Java version 8 (v important otherwise none of our amazing lambdas will work)
 - Eclipse Oxygen
-- JavaFX (version??)
-- ..
+- JavaFX version 9.0.1 (JavaFX version 8 should work as well)
 
 **Setup**
 - Install Eclipse Oxygen from eclipse.org
 - Install JavaFX Using eclipse (help->install new software->work with: choose your eclipse version (Oxygen)->->General Purpose Tools->install e(fx)lipse)
-- For UI, download Scene Builder by Gluon. Set path by going on eclipse -> Windows -> Preferences -> JavaFX -> choose the scene build.exe 
+- To work with UI, download Scene Builder by Gluon. Set path by going on eclipse -> Windows -> Preferences -> JavaFX -> choose the scene build.exe 
 
 **Running**
 - To run the game: Run JavaFXQTRT/src/main/java/src/client/Main.java
@@ -24,15 +23,14 @@ COMP3004B 2018 Team 2 Project
   - Select "Run all tests in the selected project, package or source folder" and set src/test/java as the source folder
   - Set TestRunner as JUnit 4
   - Apply and Run
-
-**FAQ**
-- I don't understand this terrible code ???
-  - ***To be fair, you have to have a very high IQ to understand Krystian's code. The algorithms are extremely complex, and without a solid grasp of data structures most of it will go over a typcal programmer's head. There's also Krystian's lambda functions, which are deftly woven into his controllers - his coding style draws heavily from the MVC design pattern, for instance. The other contributors understand this stuff; they have the intellectual capacity to truly appreciate the quality of this code, to realize that it's not just extensible - it says something deep about COMPUTER SCIENCE. As a consequence people who dislike Krystian's code truly ARE idiots - of course they wouldn't appreciate, for instance, the meaning of Krystian's half finished PR "if(card.)", which itself is a cryptic reference to the blizzard card game Hearthstone I'm smirking right now just imagining one of those addlepated simpletons scratching their heads in confusion as Krystian's genius unfolds itself in their IDEs. What fools... how I pity them. And yes by the way, I DO have a Krystian tattoo. And no, you cannot see it. It's for the ladies' eyes only- And even they have to demonstrate that they're within 5 IQ points of my own (preferably lower) beforehand.***
-
-- SO what exactly do you do at Mango Waffles (TM)? 
-  - We design deeplearning AIs backed by a RESTful blockchain based microservice with multiple convolutional layers linked together by max pooling filtering which is finally attatched to a full connected 5000x100x10x1 neural network
   
- **For real tho FAQ**
+**Important Notes**
+- When running the JUnit tests inside the src.client package, it is recommended to use a largen screen (e.g on a 24" monitor and 15.6" laptop) and a resolution of either 1920x1080 or 1600x900 . 
+- Also, it is recommended to run the JUnit tests inside the src.client package separately (one by one) as log files may get confusing.
+- When reading the logs, the log will show player numbers from 0 to 3 because these are the indexes used in the code. However, for UI/UX purposes, the game application will display player numbers from 1 to 4. This holds true for any logs 
+- When playing the game, in order to keep the it "hot-seat" styled, a player must click on "start turn" button before they may begin their turn. This is true for AI turn as well so the player can see what the AI will do for their turn.
+
+ **FAQ**
  - If eclipse complains about src.client package error do the following:
   - eclipse->right-click project -> Build Path -> Configure Build Path...
     - Then go to Java Build Path and under the Source tab delete src.client folder and then hit apply/close.
