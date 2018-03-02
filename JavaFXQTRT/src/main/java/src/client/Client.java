@@ -85,7 +85,10 @@ class AddCardsTask extends Task{
 			boolean didAddCard = false;
 			//find file associated to name
 			AdventureDeck ad = new AdventureDeck();
+			logger.info("Populating Adventure Deck...");
 			ad.populate();
+			logger.info("Finished populating Adventure Deck");
+			logger.info("Adding card images...");
 			if(getClass().getClassLoader().getResource("A " + card + ".png") != null || card.equals("Amour")) {
 				if(card.equals("Amour")) {
 					AdventureCard c = ad.getCardByName(card);
@@ -130,6 +133,7 @@ class AddCardsTask extends Task{
 	}
 }
 class TurnNextTask extends Task{
+	final static Logger logger = LogManager.getLogger(TurnNextTask.class);
 	private int player;
 	public TurnNextTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -139,10 +143,12 @@ class TurnNextTask extends Task{
 	//Msg should be a string with a number which indicates which players has the turn
 	@Override
 	public void run() {
+		logger.info("Setting up player " + player + "'s turn...");
 		gbc.removeDraggable();
 		gbc.removeDraggableFaceDown();
 		gbc.setPlayerTurn(player);
 		gbc.showPlayerHand(player);
+		logger.info("Set up player " + player + "'s turn");
 	}
 }
 
@@ -158,6 +164,7 @@ class MiddleCardTask extends Task{
 	//Msg should be the name of the card
 	@Override
 	public void run() {
+		logger.info("Flipping over next story card...");
 		logger.info("Processing msg: middle card:" + card);
 		//find story card
 
@@ -206,6 +213,7 @@ class MiddleCardTask extends Task{
 }
 
 class QuestSponsorTaskCant extends Task {
+	final static Logger logger = LogManager.getLogger(QuestSponsorTaskCant.class);
 	private int player;
 	public QuestSponsorTaskCant(GameBoardController gbc, int player) {
 		super(gbc);
@@ -214,6 +222,7 @@ class QuestSponsorTaskCant extends Task {
 
 	@Override
 	public void run() {
+		logger.info("Setting current state to : GAME_STATE.SPONSOR_QUEST");
 		gbc.CURRENT_STATE = GAME_STATE.SPONSOR_QUEST;
 		gbc.setButtonsInvisible();
 		gbc.setPlayerPerspectiveTo(player);
@@ -227,6 +236,7 @@ class QuestSponsorTaskCant extends Task {
 }
 
 class QuestSponsorTask extends Task {
+	final static Logger logger = LogManager.getLogger(QuestSponsorTask.class);
 	private int player;
 	public QuestSponsorTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -235,6 +245,7 @@ class QuestSponsorTask extends Task {
 
 	@Override
 	public void run() {
+		logger.info("Setting current state to : GAME_STATE.SPONSOR_QUEST");
 		gbc.CURRENT_STATE = GAME_STATE.SPONSOR_QUEST;
 		gbc.clearGlow();
 		gbc.setButtonsInvisible();
@@ -253,7 +264,6 @@ class QuestSponsorTask extends Task {
 }
 
 class TournamentWonTask extends Task{
-
 	final static Logger logger = LogManager.getLogger(TournamentWonTask.class);
 	private int[] players;
 	public TournamentWonTask(GameBoardController gbc, int[] players) {
@@ -263,6 +273,7 @@ class TournamentWonTask extends Task{
 
 	@Override
 	public void run() {
+		logger.info("Getting Tournament Winners");
 		for(int i = 0; i < winners.length; i++) {
 			winners[i] = false;
 		}
@@ -288,11 +299,12 @@ class TournamentWonTask extends Task{
 		gbc.showToast(display);
 		//reset merlin power
 		gbc.resetMerlinUse();
-
+		logger.info("Reset Merlin Power");
 	}
 }
 
 class SetRankTask extends Task{
+	final static Logger logger = LogManager.getLogger(SetRankTask.class);
 	private RANKS rank;
 	private int player;
 	public SetRankTask(GameBoardController gbc, RANKS newrank, int player) {
@@ -308,7 +320,7 @@ class SetRankTask extends Task{
 		if(rank.name().equals("CHAMPION")) r = Rank.RANKS.CHAMPION;
 		if(rank.name().equals("KNIGHTOFTHEROUNDTABLE")) r = Rank.RANKS.KNIGHTOFTHEROUNDTABLE;
 		gbc.setPlayerRank(player, r);
-
+		logger.info("Set player " + player + " rank to " + r);
 	}
 }
 class ShowEndTurn extends Task {
@@ -342,6 +354,7 @@ class QuestPickStagesTask extends Task {
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
+		logger.info("Setting current state to : GAME_STATE.PICK_STAGES");
 		gbc.CURRENT_STATE = GAME_STATE.PICK_STAGES;
 		gbc.setPickStageOn(numStages);
 		gbc.addDraggable();
@@ -351,7 +364,10 @@ class QuestPickStagesTask extends Task {
 		gbc.clearToast();
 		gbc.showToast("Select cards for each Stage");
 		gbc.setMerlinMordredVisibility();
+		logger.info("Checking if Player " + player + " is an AI...");
 		if(gbc.playerManager.getAI(player) != null) {
+			logger.info("Player " + player + " is an AI");
+			logger.info("Picking stages as AI");
 			List<List<AdventureCard>> cards = gbc.playerManager.getAI(player).doISponsorAQuest(gbc.questCard);
 			for(int i = 0; i < cards.size(); i++) {
 				for(int j = 0; j < cards.get(i).size(); j++) {
@@ -383,11 +399,13 @@ class QuestPickStagesTask extends Task {
 				}
 			});
 		}
+		logger.info("Player " + player + " is not an AI");
+		logger.info("Letting player " + player + " choose quest stages");
 	}
 }
 
 class QuestJoinTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(QuestJoinTask.class);
 	private int player;
 	public QuestJoinTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -397,6 +415,7 @@ class QuestJoinTask extends Task {
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
+		logger.info("Setting current state to : GAME_STATE.JOIN_QUEST");
 		gbc.CURRENT_STATE = GAME_STATE.JOIN_QUEST;
 		gbc.showAcceptDecline();
 		gbc.setPlayerPerspectiveTo(player);
@@ -404,19 +423,25 @@ class QuestJoinTask extends Task {
 		gbc.clearToast();
 		gbc.showToast("Join Quest?");
 		gbc.setMerlinMordredVisibility();
+		logger.info("Checking if Player " + player + " is an AI");
 		if(gbc.playerManager.getAI(player) != null) {
+			logger.info("Player " + player + " is an AI");
 			if(gbc.playerManager.getAI(player).doIParticipateInQuest(gbc.questCard)) {
+				logger.info("Accepting as Player " + player + " AI");
 				gbc.accept.fire();
 			} else {
+				logger.info("Declining as Player " + player + " AI");
 				gbc.decline.fire();
 			}
 		}
+		logger.info("Player " + player + " is not an AI");
 	}
 
 }
 
 class QuestPickCardsTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(QuestPickCardsTask.class);
+	
 	private int player;
 	public QuestPickCardsTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -426,6 +451,7 @@ class QuestPickCardsTask extends Task {
 	@Override
 	public void run() {
 		gbc.setButtonsInvisible();
+		logger.info("Setting current state to GAME_STATE.QUEST_PICK_CARDS");
 		gbc.CURRENT_STATE = GAME_STATE.QUEST_PICK_CARDS;
 		gbc.setPlayerPerspectiveTo(player);
 		gbc.showEndTurn();
@@ -436,15 +462,18 @@ class QuestPickCardsTask extends Task {
 		gbc.clearToast();
 		gbc.showToast("Select Cards for current stage");
 		gbc.setMerlinMordredVisibility();
+		logger.info("Checking if Player " + player + " is an AI");
 		if(gbc.playerManager.getAI(player) != null) {
+			logger.info("Player " + player + " is an AI");
 			List<AdventureCard> cards = gbc.playerManager.getAI(player).playCardsForFoeQuest(gbc.questCard);
 			cards.forEach(i -> gbc.moveCardBetweenPanes(gbc.handPanes[player], gbc.faceDownPanes[player], i));
 			gbc.endTurn.fire();
 		}
+		logger.info("Player " + player + " is not an AI");
 	}
 }
 class FaceDownCardsTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(FaceDownCardsTask.class);
 	private int player;
 	public FaceDownCardsTask(GameBoardController gbc, int player) {
 		super(gbc);
@@ -453,12 +482,14 @@ class FaceDownCardsTask extends Task {
 	}
 	@Override
 	public void run() {
+		logger.info("Setting current state to GAME_STATE.FACE_DOWN_CARDS");
 		gbc.CURRENT_STATE = GAME_STATE.FACE_DOWN_CARDS;
+		logger.info("Flipping Player " + player + " cards to face down");
 		gbc.flipFaceDownPane(player, false);
 	}
 }
 class UpQuestTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(UpQuestTask.class);
 	private int player;
 	private int stage;
 	public UpQuestTask(GameBoardController gbc, String[]cards, int player, int stage) {
@@ -469,6 +500,7 @@ class UpQuestTask extends Task {
 	}
 	@Override
 	public void run() {
+		logger.info("Setting current state to GAME_STATE.UP_QUEST");
 		gbc.CURRENT_STATE = GAME_STATE.UP_QUEST;
 		//		gbc.flipStageCards(this.stage, true);
 		gbc.setStageCardVisibility(true, stage);
@@ -486,6 +518,7 @@ class DiscardFaceUpTask extends Task {
 	}
 	@Override
 	public void run() {
+		logger.info("Setting current state to GAME_STATE.DISCARDING_CARDS");
 		gbc.CURRENT_STATE = GAME_STATE.DISCARDING_CARDS;
 		logger.info("removing: " + Arrays.asList(cardsToDiscard) + " : " + player);
 		gbc.discardFaceUpCards(player,cardsToDiscard);
@@ -493,7 +526,7 @@ class DiscardFaceUpTask extends Task {
 }
 
 class ShieldCountTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(ShieldCountTask.class);
 	private int shields;
 	private int player;
 	public ShieldCountTask(GameBoardController gbc, int player, int shields) {
@@ -505,11 +538,13 @@ class ShieldCountTask extends Task {
 	@Override
 	public void run() {
 		//		gbc.CURRENT_STATE = STATE.DISCARDING_CARDS; //may add a state for shields
+		logger.info("Setting player " + player + " shields : " + shields);
 		gbc.setShield(player, shields);
 	}
 }
 
 class QuestBidTask extends Task {
+	final static Logger logger = LogManager.getLogger(QuestBidTask.class);
 	private int min;
 	private int max;
 	private int player;
@@ -525,6 +560,7 @@ class QuestBidTask extends Task {
 
 		gbc.setButtonsInvisible();
 		//this means the player can't bid higher than the max
+		logger.info("bidding min: " + min + ", bidding max : " + max);
 		if(min > max) {
 			gbc.showDecline();
 			if(gbc.playerManager.getAI(player) != null) {
@@ -535,6 +571,7 @@ class QuestBidTask extends Task {
 			gbc.showDecline();
 			//			//players can only drag over facedown pane.
 			gbc.removeStagePaneDragOver();
+			logger.info("Setting current state to GAME_STATE.QUEST_BID");
 			gbc.CURRENT_STATE = GAME_STATE.QUEST_BID;
 			gbc.bidSlider.setMin(min);
 			gbc.bidSlider.setMax(max);
@@ -560,6 +597,7 @@ class QuestBidTask extends Task {
 }
 
 class EventDiscardTask extends Task {
+	final static Logger logger = LogManager.getLogger(EventDiscardTask.class);
 	private int player;
 	private TYPE type;
 	private int amount;
@@ -574,6 +612,7 @@ class EventDiscardTask extends Task {
 	public void run() {
 		gbc.type = type;
 		gbc.toDiscard = amount;
+		logger.info("Setting current state to GAME_STATE.EVENT_DISCARD");
 		gbc.CURRENT_STATE = GAME_STATE.EVENT_DISCARD;
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
@@ -597,6 +636,7 @@ class EventDiscardTask extends Task {
 }
 
 class DiscardQuestTask extends Task {
+	final static Logger logger = LogManager.getLogger(DiscardQuestTask.class);
 	private int player;
 	private int toDiscard;
 	public DiscardQuestTask(GameBoardController gbc, int player, int toDiscard) {
@@ -609,6 +649,7 @@ class DiscardQuestTask extends Task {
 	public void run() {
 		//the task that is run before this is the bidquest so we have to hide the bidslider now
 		gbc.bidSlider.setVisible(false);
+		logger.info("Setting current state to : GAME_STATE.BID_DISCARD");
 		gbc.CURRENT_STATE = GAME_STATE.BID_DISCARD;
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
@@ -643,6 +684,7 @@ class JoinTournamentTask extends Task {
 	}
 	@Override
 	public void run() {
+		logger.info("Setting current state to : GAME_STATE.JOIN_TOURNAMENT");
 		gbc.CURRENT_STATE = GAME_STATE.JOIN_TOURNAMENT;
 		gbc.setButtonsInvisible();
 		gbc.showAcceptDecline();
@@ -671,6 +713,7 @@ class PickTournamentTask extends Task {
 	}
 	@Override
 	public void run() {
+		logger.info("Setting current state to : GAME_STATE.PICK_TOURNAMENT");
 		gbc.CURRENT_STATE = GAME_STATE.PICK_TOURNAMENT;
 		gbc.setButtonsInvisible();
 		gbc.showEndTurn();
@@ -696,6 +739,7 @@ class PickTournamentTask extends Task {
 
 
 class UpdateStageBattlePointTask extends Task {
+	final static Logger logger = LogManager.getLogger(UpdateStageBattlePointTask.class);
 	int player;
 	int points;
 	int stage;
@@ -710,11 +754,13 @@ class UpdateStageBattlePointTask extends Task {
 	public void run() {
 		if(gbc.playerManager.getCurrentPlayer() == player) {
 			gbc.bpTexts[stage].setText(points + "");
+			logger.info("Stage : " + stage + " , Battle Points : " + points);
 		}
 	}
 }
 
 class UpdateBattlePointTask extends Task {
+	final static Logger logger = LogManager.getLogger(UpdateBattlePointTask.class);
 	int player;
 	int points;
 	public UpdateBattlePointTask(GameBoardController gbc, int player, int points) {
@@ -727,6 +773,7 @@ class UpdateBattlePointTask extends Task {
 	public void run() {
 		if(gbc.playerManager.getCurrentPlayer() == player) {
 			gbc.currBP.setText(points + "");
+			logger.info("Player : " + player + " , Battle Points : " + points);
 		}
 	}
 }
@@ -745,7 +792,7 @@ class RevealAllCards extends Task {
 	}
 }
 class HandFullDiscardTask extends Task {
-
+	final static Logger logger = LogManager.getLogger(HandFullDiscardTask.class);
 	private int player;
 
 	public HandFullDiscardTask(GameBoardController gbc, int player) {
@@ -756,6 +803,7 @@ class HandFullDiscardTask extends Task {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		logger.info("Setting current state to GAME_STATE.DISCARDING_CARDS");
 		gbc.CURRENT_STATE = GAME_STATE.DISCARDING_CARDS;
 		gbc.showToast("Your hand is too full. Play Ally or Amour cards or discard cards until your hand has 12 or less cards");
 		gbc.showPlayerHand(player);
@@ -787,6 +835,7 @@ class GameOverTask extends Task {
 		for(int i = 0; i < players.length; i++) {
 			players[i] = players[i] + 1;
 		}
+		logger.info("Setting current state to GAME_STATE.GAMEOVER");
 		gbc.CURRENT_STATE = GAME_STATE.GAMEOVER;
 		gbc.showToast("Player #" + Arrays.toString(players) + " won the game!");
 		gbc.flipAllFaceDownPane(true);
