@@ -25,10 +25,10 @@ COMP3004B 2018 Team 2 Project
   - Apply and Run
   
 **Important Notes**
-- When running the JUnit tests inside the src.client package, it is recommended to use a largen screen (e.g on a 24" monitor and 15.6" laptop) and a resolution of either 1920x1080 or 1600x900 . 
+- When running the JUnit tests inside the src.client package, it is recommended to use a larger screen (e.g on a 24" monitor and 15.6" laptop) and a resolution of either 1920x1080 or 1600x900. 
 - Also, it is recommended to run the JUnit tests inside the src.client package separately (one by one) as log files may get confusing.
-- When reading the logs, the log will show player numbers from 0 to 3 because these are the indexes used in the code. However, for UI/UX purposes, the game application will display player numbers from 1 to 4. This holds true for any logs 
-- When playing the game, in order to keep the it "hot-seat" styled, a player must click on "start turn" button before they may begin their turn. This is true for AI turn as well so the player can see what the AI will do for their turn.
+- When reading the logs, the log will show player numbers from 0 to 3 because these are the indexes used in the code. However, for UI/UX purposes, the game application will display player numbers from 1 to 4. This holds true for any logs.
+- When playing the game, in order to keep it "hot-seat" styled, a player must click on "start turn" button before they may begin their turn. This is true for AI turn as well so the player can see what the AI will do for their turn.
 
  **FAQ**
  - If eclipse complains about src.client package error do the following:
