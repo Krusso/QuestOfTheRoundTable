@@ -706,6 +706,7 @@ public class GameBoardController implements Initializable{
 	 * @return
 	 */
 	public boolean isStageValid(ArrayList<AdventureCard> stageCards, AdventureCard toAdd) {
+		logger.info("Validating Stage...");
 		//Make sure the current stage has either 1 foe or 1 test card	
 		if(CURRENT_STATE == GAME_STATE.PICK_STAGES) {
 			TYPE cardType = toAdd.getType();
@@ -761,6 +762,7 @@ public class GameBoardController implements Initializable{
 	 * @return
 	 */
 	private boolean isPickQuestValid(ArrayList<AdventureCard> faceDownCards, AdventureCard toAdd) {
+		logger.info("Validating Quest...");
 		if(CURRENT_STATE == GAME_STATE.QUEST_PICK_CARDS || CURRENT_STATE == GAME_STATE.PICK_TOURNAMENT) {
 			TYPE cardType = toAdd.getType();
 			//A player cannot play 2 of the same weapon
@@ -788,6 +790,7 @@ public class GameBoardController implements Initializable{
 
 
 	private boolean stagesIncreasing() {
+		logger.info("Checking if stages have increasing battle points...");
 		int lastBp = Integer.MIN_VALUE;
 		for(int i = 0; i < stages.length; i++) {
 			if(stages[i].isVisible() && stageCards.get(i).get(0).getType() != TYPE.TESTS) {
@@ -809,6 +812,7 @@ public class GameBoardController implements Initializable{
 	 * @return boolean
 	 */
 	private boolean areQuestStagesValid() {
+		logger.info("Checking if quest stages are valid...");
 		//check visible stages (visible stages must have cards in them)
 		for(int i = 0 ; i < stages.length ; i++) {
 			if(stages[i].isVisible()) {
