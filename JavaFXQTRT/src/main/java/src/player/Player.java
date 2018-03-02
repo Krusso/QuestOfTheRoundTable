@@ -163,6 +163,7 @@ public class Player {
 				iseult = true;
 			}
 		});
+		if(tristan && iseult) { logger.info("Have both iseult and tristant"); }
 		logger.info("Face up deck: " + faceUp.getDeck());
 	}
 

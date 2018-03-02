@@ -5,12 +5,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import src.messages.game.GameStartClient.RIGGED;
 
 public class TestStoryDeck {
 
+	final static Logger logger = LogManager.getLogger(TestStoryDeck.class);
+	
 	@Test
 	public void test56Cards() {
 		DeckManager dm = new DeckManager();
@@ -18,12 +22,14 @@ public class TestStoryDeck {
 		ArrayList<StoryCard> cards = dm.getStoryCard(28);
 		assertEquals(0,dm.storySize()); 
 		for(StoryCard c: cards) {
+			logger.info("Ensuring card: " + c.getName() + " is in the deck");
 			assertTrue(contains(c.getName()));
 		}
 		
 		cards = dm.getStoryCard(28);
 		assertEquals(0,dm.storySize()); 
 		for(StoryCard c: cards) {
+			logger.info("Ensuring card: " + c.getName() + " is in the deck");
 			assertTrue(contains(c.getName()));
 		}
 	}
@@ -58,6 +64,7 @@ public class TestStoryDeck {
 	}
 	
 	private boolean contains(ArrayList<StoryCard> cards, String string, int i) {
+		logger.info("Checking cards: " + cards + " has " + i + " instances of " + string);
 		for(StoryCard c: cards) {
 			if(c.getName().equals(string)) {
 				i--;
