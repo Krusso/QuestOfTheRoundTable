@@ -35,11 +35,12 @@ function connect(event) {
 function onConnected() {
     // Subscribe to the Public Topic
     stompClient.subscribe('/topic/public', onMessageReceived);
+    stompClient.subscribe('/user/queue/response', onUser);
 
     // Tell your username to the server
-    stompClient.send("/app/chat.addUser",
+    stompClient.send("/app/game.joinGame",
         {},
-        JSON.stringify({sender: username, type: 'JOIN'})
+        JSON.stringify({playerName: username})
     )
 
     connectingElement.classList.add('hidden');
@@ -51,6 +52,10 @@ function onError(error) {
     connectingElement.style.color = 'red';
 }
 
+function onUser(payload){
+	var message = JSON.parse(payload.body);
+	console.log(message);
+}
 
 function sendMessage(event) {
     var messageContent = messageInput.value.trim();

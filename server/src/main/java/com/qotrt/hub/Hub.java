@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.qotrt.game.Game;
+import com.qotrt.model.UIPlayer;
 
 @Component
 public class Hub {
@@ -13,13 +14,12 @@ public class Hub {
 	private ArrayList<Game> games = new ArrayList<Game>();
 	private SimpMessagingTemplate messagingTemplate;
 	
-	public synchronized String[] addPlayer(String playerName) {
+	public synchronized void addPlayer(UIPlayer player) {
 		if(games.size() == 0) {
 			games.add(new Game(messagingTemplate));
 		}
 		
-		games.get(0).addPlayer(playerName);
-		return games.get(0).playerList();
+		games.get(0).addPlayer(player);
 	}
 
 	public void setTemplate(SimpMessagingTemplate messagingTemplate) {

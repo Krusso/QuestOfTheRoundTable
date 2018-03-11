@@ -5,18 +5,18 @@ import com.qotrt.messages.Message;
 //Client
 public class GameJoinClient extends Message {
 	
-	public String playerName;
-	
-	public GameJoinClient() {
-		
+	private String playerName;
+
+	public String getPlayerName() {
+		return playerName;
 	}
-	
-	public GameJoinClient(String playerName) {
+
+	public void setPlayerName(String playerName) {
 		this.playerName = playerName;
 	}
 
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINGAME;
+		this.message = Message.MESSAGETYPES.JOINGAME;	
 	}
 }
