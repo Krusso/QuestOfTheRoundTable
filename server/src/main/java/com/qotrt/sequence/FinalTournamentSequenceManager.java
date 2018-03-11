@@ -3,7 +3,7 @@ package com.qotrt.sequence;
 import java.util.Iterator;
 import java.util.List;
 
-public class FinalTournamentSequenceManager extends SequenceManager {
+public class FinalTournamentSequenceManager {
 
 //	@Override
 //	public void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm) {

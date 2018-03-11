@@ -17,11 +17,11 @@ import com.qotrt.sequence.SequenceManager;
 import com.qotrt.views.HubView;
 
 public class Game extends Observable {
-	
+
 	private int gameSize = 2;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
 	private HubView hv;
-	
+
 	public Game(SimpMessagingTemplate messagingTemplate) {
 		hv = new HubView(messagingTemplate);
 		subscribe(hv);
@@ -38,9 +38,13 @@ public class Game extends Observable {
 					DeckManager dm = new DeckManager();
 					// TODO: set rigged correctly
 					// TODO: set players correctly
-					PlayerManager pm = new PlayerManager(gameSize, dm, RIGGED.NORMAL);
+					PlayerManager pm = new PlayerManager(gameSize, 
+							players.toArray(new UIPlayer[players.size()]), 
+							dm, 
+							RIGGED.NORMAL);
+
 					pm.start();
-					
+
 					GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 					while(true) {
 						System.out.println("Next Turn");
@@ -48,10 +52,10 @@ public class Game extends Observable {
 						StoryCard s = dm.getStoryCard(1).get(0);
 						System.out.println("Next card being played: " + s.getName());
 						bm.setCard(s);
-						
+
 						SequenceManager sm = gsm.createStoryManager(bm.getCard());
 						//sm.start(actions, pm, bm);
-						
+
 						boolean winners = pm.rankUp();
 						if(winners) {
 							//pvs.joinFinalTournament(pm.getAllWithState(Player.STATE.WINNING), Player.STATE.WINNING);
@@ -68,19 +72,19 @@ public class Game extends Observable {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						
+
 					}
-					
+
 					System.out.println("Game is done");
 				}
 			}
 		});
 	}
-	
+
 	public void addPlayer(UIPlayer player) {
 		players.add(player);
 		fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
-		
+
 		if(players.size() == gameSize) {
 			startGame();
 		}

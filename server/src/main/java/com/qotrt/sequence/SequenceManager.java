@@ -14,13 +14,14 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.messages.Message.MESSAGETYPES;
 import com.qotrt.model.BoardModel;
+import com.qotrt.model.BoardModelMediator;
 
 
 public abstract class SequenceManager {
 
 	final static Logger logger = LogManager.getLogger(SequenceManager.class);
 	
-//	public abstract void start(QOTRTQueue actions, PlayerManager pm, BoardModel bm);
+	public abstract void start(PlayerManager pm, BoardModelMediator bmm);
 //
 //	protected void questionPlayersTournament(Iterator<Player> players, PlayerManager pm, QOTRTQueue actions) {
 //		while(players.hasNext()) {

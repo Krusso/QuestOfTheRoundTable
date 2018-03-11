@@ -12,6 +12,7 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.Card;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Rank.RANKS;
+import com.qotrt.model.UIPlayer;
 
 
 public class Player {
@@ -38,6 +39,7 @@ public class Player {
 		QUESTQUESTIONEDCANT
 	};
 	
+	private UIPlayer uiPlayer;
 	protected RANKS rank;
 	public AdventureDeck hand;
 	protected AdventureDeck faceDown;
@@ -51,14 +53,19 @@ public class Player {
 	public boolean tristan = false;
 	public boolean iseult = false;
 	
-	public Player(int id) {
-		rank = Rank.RANKS.SQUIRE;
-		hand = new AdventureDeck();
-		faceDown = new AdventureDeck();
-		faceUp = new AdventureDeck();
-		ID = id;
-		shields = 0;
-		questUp = new ArrayList<List<Card>>();
+	public Player(int id, UIPlayer uiPlayer) {
+		this.rank = Rank.RANKS.SQUIRE;
+		this.hand = new AdventureDeck();
+		this.faceDown = new AdventureDeck();
+		this.faceUp = new AdventureDeck();
+		this.ID = id;
+		this.shields = 0;
+		this.questUp = new ArrayList<List<Card>>();
+		this.uiPlayer = uiPlayer;
+	}
+	
+	public boolean compareSessionID(String otherSessionID) {
+		return uiPlayer.getSessionID().equals(otherSessionID);
 	}
 	
 	public int getID() {

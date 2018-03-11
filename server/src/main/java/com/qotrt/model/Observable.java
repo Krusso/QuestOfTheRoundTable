@@ -2,6 +2,8 @@ package com.qotrt.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public abstract class Observable {
 
@@ -19,4 +21,15 @@ public abstract class Observable {
 		pcs.firePropertyChange(propertyName, oldValue, newValue);
 	}
 	
+	public static <T> Collector<T, ?, T> singletonCollector() {
+	    return Collectors.collectingAndThen(
+	            Collectors.toList(),
+	            list -> {
+	                if (list.size() != 1) {
+	                    throw new IllegalStateException();
+	                }
+	                return list.get(0);
+	            }
+	    );
+	}
 }

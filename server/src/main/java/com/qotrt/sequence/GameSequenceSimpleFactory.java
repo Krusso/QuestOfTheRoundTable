@@ -13,7 +13,7 @@ public class GameSequenceSimpleFactory {
 		} else if (card.getType() == StoryCard.TYPE.EVENT) {
 			//return new EventSequenceManager((EventCard) card);
 		} else if (card.getType() == StoryCard.TYPE.TOURNAMENT) {
-			//return new TournamentSequenceManager((TournamentCard) card);
+			return new TournamentSequenceManager((TournamentCard) card);
 		} else if (card.getType() == StoryCard.TYPE.GAMEOVER) {
 			//return new FinalTournamentSequenceManager();
 		}

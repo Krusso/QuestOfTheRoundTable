@@ -19,6 +19,7 @@ import com.qotrt.cards.WeaponCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.gameplayer.Player.STATE;
 import com.qotrt.model.RiggedModel.RIGGED;
+import com.qotrt.model.UIPlayer;
 
 
 public class PlayerManager {
@@ -32,12 +33,12 @@ public class PlayerManager {
 	//private DiscardSequenceManager dsm;
 
 	public Player[] players;
-	public PlayerManager(int numPlayers, DeckManager dm, RIGGED rigged2) {
+	public PlayerManager(int numPlayers, UIPlayer[] uiPlayer, DeckManager dm, RIGGED rigged2) {
 		this.players = new Player[numPlayers];
 		this.dm = dm;
 		this.rigged = rigged2;
-		for(int i = numPlayers; i > 0; i--) {
-			players[i - 1] = new Player(i - 1);
+		for(int i = 0; i < uiPlayer.length; i++) {
+			players[i] = new Player(i, uiPlayer[i]);
 		}
 	}
 

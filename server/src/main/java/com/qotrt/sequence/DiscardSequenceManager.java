@@ -11,7 +11,7 @@ import com.qotrt.messages.Message.MESSAGETYPES;
 import com.qotrt.model.BoardModel;
 
 
-public class DiscardSequenceManager extends SequenceManager {
+public class DiscardSequenceManager  {
 	
 	final static Logger logger = LogManager.getLogger(DiscardSequenceManager.class);
 	

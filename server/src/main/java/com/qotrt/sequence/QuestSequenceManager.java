@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class QuestSequenceManager extends SequenceManager {
+public class QuestSequenceManager {
 
 //	QuestCard card;
 //	Quest quest;
