@@ -25,4 +25,14 @@ public class Hub {
 	public void setTemplate(SimpMessagingTemplate messagingTemplate) {
 		this.messagingTemplate = messagingTemplate;
 	}
+
+	public Game getGameBySessionID(String sessionId) {
+		for(Game game: games) {
+			if(game.getPlayerBySessionID(sessionId) != null) {
+				return game;
+			}
+		}
+		return null;
+	}
+
 }

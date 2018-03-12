@@ -7,6 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
+import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.Observable;
@@ -20,6 +21,7 @@ public class Game extends Observable {
 
 	private int gameSize = 2;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
+	private PlayerManager pm;
 	private HubView hv;
 
 	public Game(SimpMessagingTemplate messagingTemplate) {
@@ -27,6 +29,15 @@ public class Game extends Observable {
 		subscribe(hv);
 	}
 
+	public Player getPlayerBySessionID(String sessionID) {
+		for(Player player: pm.players) {
+			if(player.compareSessionID(sessionID)) {
+				return player;
+			}
+		}
+		return null;
+	}
+	
 	public void startGame() {
 		Executors.newScheduledThreadPool(1).execute(new Runnable() {
 			@Override
@@ -38,7 +49,7 @@ public class Game extends Observable {
 					DeckManager dm = new DeckManager();
 					// TODO: set rigged correctly
 					// TODO: set players correctly
-					PlayerManager pm = new PlayerManager(gameSize, 
+					pm = new PlayerManager(gameSize, 
 							players.toArray(new UIPlayer[players.size()]), 
 							dm, 
 							RIGGED.NORMAL);

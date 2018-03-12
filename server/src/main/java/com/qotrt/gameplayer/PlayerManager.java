@@ -326,23 +326,6 @@ public class PlayerManager {
 		return list.iterator();
 	}
 
-	public void flushState() {
-		for(int i = players.length; i > 0; i--) {
-			players[i - 1].setState(Player.STATE.NEUTRAL);
-		}
-	}
-
-	public void setState(Player partipcipants, Player.STATE state, int i, TYPE weapons) {
-		partipcipants.setState(state, i, weapons);
-	}
-
-	public void setState(Player participant, Player.STATE state) {
-		participant.setState(state);
-	}
-
-	public void setState(Player participant, STATE sponsoring, int numStages) {
-		participant.setState(sponsoring, numStages);
-	}
 
 	public List<Player> getAllWithState(Player.STATE state) {
 		return StreamSupport.stream(
@@ -350,19 +333,6 @@ public class PlayerManager {
 				false)
 				.filter(i -> i.getQuestion() == state)
 				.collect(Collectors.toList());
-	}
-
-	public void currentFaceDown(String[] cards) {
-		players[currentPlayer].setFaceDown(cards);
-	}
-
-
-	public void questDown(Player sponsor, List<List<Card>> cards) {
-		sponsor.setQuestDown(cards);
-	}
-
-	public void flipStage(Player sponsor, int stage) {
-		sponsor.flipStage(stage);
 	}
 
 	public void flipCards(Iterator<Player> players) {
@@ -403,41 +373,10 @@ public class PlayerManager {
 		round().forEachRemaining(player ->{
 			player.increaseLevel();
 			if(player.getRank() == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) {
-				player.setState(Player.STATE.WINNING);
+				//player.setState(Player.STATE.WINNING);
 				winners.set(true);
 			}
 		});
 		return winners.get();
 	}
-
-	public void setBidAmount(Player next, STATE bidding, int maxBidValue, int i) {
-		next.setBidAmount(bidding, maxBidValue, i);
-	}
-
-	public void setDiscarding(Player player, STATE testdiscard, int cardsToBid) {
-		player.setDiscardAmount(testdiscard, cardsToBid);
-	}
-
-//	public void setStates(List<Player> winners, STATE win) {
-//		winners.forEach(i -> i.setState(win));
-//		pvs.forEach(i -> i.win(winners, win));
-//	}
-//	
-//	public void passStage(List<Player> winners) {
-//		pvs.forEach(i -> i.passStage(winners));
-//	}
-//
-//	public void passQuest(List<Player> winners) {
-//		pvs.forEach(i -> i.passQuest(winners));
-//	}
-//
-//	public void sendContinue(String string) {
-//		pvs.forEach(i -> i.sendContinue(string));
-//	}
-//
-//	public void showTournamentTie(List<Player> winners) {
-//		pvs.forEach(i -> i.showTournamentTie(winners));
-//	}
-
-
 }

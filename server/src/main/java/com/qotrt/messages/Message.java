@@ -20,7 +20,13 @@ public abstract class Message {
 
 	public static enum MESSAGETYPES {
 		GAMESTART, 
-		JOINGAME
+		JOINGAME, 
+		JOINTOURNAMENT, 
+		PICKTOURNAMENT, 
+		TIETOURNAMENT, 
+		WINTOURNAMENT, 
+		SHIELDCOUNT, 
+		RANKUPDATE
 	};
 	
 	@Override

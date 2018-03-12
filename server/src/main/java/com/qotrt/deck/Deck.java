@@ -29,6 +29,10 @@ public abstract class Deck<E extends Card> {
 		cards.forEach(i -> deck.add(i));
 	}
 
+	public void addCard(E card) {
+		deck.add(card);
+	}
+	
 	public void addCard(E card, int quantity) {
 		for(int i=0; i<quantity; i++) {
 			deck.add(card);
@@ -90,5 +94,15 @@ public abstract class Deck<E extends Card> {
 
 	public int size() {
 		return deck.size();
+	}
+	
+
+	public E findCardByID(int id) {
+		for(E card: deck) {
+			if(card.id == id) {
+				return card;
+			}
+		}
+		return null;
 	}
 }
