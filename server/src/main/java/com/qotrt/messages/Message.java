@@ -26,7 +26,9 @@ public abstract class Message {
 		TIETOURNAMENT, 
 		WINTOURNAMENT, 
 		SHIELDCOUNT, 
-		RANKUPDATE
+		RANKUPDATE, 
+		ADDCARDS, 
+		FACEDOWNCARD
 	};
 	
 	@Override

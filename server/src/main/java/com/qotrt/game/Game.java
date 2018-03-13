@@ -16,16 +16,19 @@ import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
 import com.qotrt.views.HubView;
+import com.qotrt.views.PlayerView;
 
 public class Game extends Observable {
 
 	private int gameSize = 2;
+	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
 	private PlayerManager pm;
 	private HubView hv;
 
 	public Game(SimpMessagingTemplate messagingTemplate) {
-		hv = new HubView(messagingTemplate);
+		this.messagingTemplate = messagingTemplate;
+		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
 	}
 
@@ -54,6 +57,9 @@ public class Game extends Observable {
 							dm, 
 							RIGGED.NORMAL);
 
+					PlayerView pv = new PlayerView(messagingTemplate);
+					players.forEach(i -> pv.addWebSocket(i));
+					
 					pm.start();
 
 					GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
@@ -94,6 +100,7 @@ public class Game extends Observable {
 
 	public void addPlayer(UIPlayer player) {
 		players.add(player);
+		hv.addWebSocket(player);
 		fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
 
 		if(players.size() == gameSize) {

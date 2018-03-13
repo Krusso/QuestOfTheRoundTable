@@ -1,6 +1,6 @@
 package com.qotrt.views;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -24,13 +24,20 @@ public abstract class View {
 	
 	public View(SimpMessagingTemplate messagingTemplate) {
 		this.messagingTemplate = messagingTemplate;
+		this.sendList = new ArrayList<UIPlayer>();
 	}
 	
 	private SimpMessagingTemplate messagingTemplate;
-	private UIPlayer[] sendList;
+	private ArrayList<UIPlayer> sendList;
+	
+	public void addWebSocket(UIPlayer player) {
+		sendList.add(player);
+	}
 	
 	protected void sendMessage(String destination, Object e) {
-		Arrays.stream(sendList).forEach(i -> {
+		System.out.println("sending message: " + e + " to desitination: " + destination);
+		
+		sendList.forEach(i -> {
 			messagingTemplate.convertAndSendToUser(i.getSessionID(),
 					"/queue/response",
 					e,

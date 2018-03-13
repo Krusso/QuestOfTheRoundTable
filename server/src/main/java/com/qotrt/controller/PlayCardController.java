@@ -1,5 +1,7 @@
 package com.qotrt.controller;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.qotrt.cards.AdventureCard;
@@ -22,16 +25,17 @@ import com.qotrt.messages.game.PlayCardClient.ZONE;
 public class PlayCardController {
 
 	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
+
+	@Autowired
 	private Hub hub;
+
 	private Game game;
 	private Player player;
 
 	@PostConstruct
-	private void init(SimpMessageHeaderAccessor headerAccessor) {
-		//activeSessionManager.registerListener(this);
-		this.game = hub.getGameBySessionID(headerAccessor.getSessionId());
-		this.player = game.getPlayerBySessionID(headerAccessor.getSessionId());
-		System.out.println("created");
+	private void init() {
+		System.out.println("created 2");
 	}
 
 	@PreDestroy
@@ -40,9 +44,15 @@ public class PlayCardController {
 		System.out.println("deleted");
 	}
 
+	private void setPlayerGame(SimpMessageHeaderAccessor headerAccessor) {
+		this.game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		this.player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+	}
+	
 	@MessageMapping("/game.playCard")
 	public void playCard(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
+		setPlayerGame(headerAccessor);
 		if(chatMessage.zone.equals(ZONE.FACEDOWN)) {
 			if(verifyFaceDownCard(player, chatMessage.card)) {
 				player.setFaceDown(player.findCardByID(chatMessage.card));
@@ -65,7 +75,7 @@ public class PlayCardController {
 			//TODO: handle this case
 		}
 	}
-	
+
 	private boolean verifyFaceDownCard(Player player, int card) {
 		AdventureCard c = player.findCardByID(card);
 		switch(c.getType()) {
@@ -93,5 +103,4 @@ public class PlayCardController {
 			return false;
 		}
 	}
-	
 }

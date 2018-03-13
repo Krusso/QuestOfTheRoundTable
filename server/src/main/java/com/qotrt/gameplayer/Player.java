@@ -3,6 +3,7 @@ package com.qotrt.gameplayer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +21,7 @@ import com.qotrt.model.UIPlayer;
 public class Player extends Observable {
 
 	final static Logger logger = LogManager.getLogger(Player.class);
-	
+
 	public static enum STATE {
 		NEUTRAL, 
 		QUESTIONED, 
@@ -40,7 +41,7 @@ public class Player extends Observable {
 		DISCARDING,
 		QUESTQUESTIONEDCANT
 	};
-	
+
 	private UIPlayer uiPlayer;
 	protected RANKS rank;
 	public AdventureDeck hand;
@@ -52,7 +53,7 @@ public class Player extends Observable {
 	protected int shields;
 	public boolean tristan = false;
 	public boolean iseult = false;
-	
+
 	public Player(int id, UIPlayer uiPlayer) {
 		this.rank = Rank.RANKS.SQUIRE;
 		this.hand = new AdventureDeck();
@@ -62,19 +63,19 @@ public class Player extends Observable {
 		this.shields = 0;
 		this.uiPlayer = uiPlayer;
 	}
-	
+
 	public AdventureCard findCardByID(int id) {
 		return hand.findCardByID(id);
 	}
-	
+
 	public boolean compareSessionID(String otherSessionID) {
 		return uiPlayer.getSessionID().equals(otherSessionID);
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
-	
+
 	public void increaseLevel() {
 		if(rank == Rank.RANKS.SQUIRE && shields >= 5) {
 			rank = Rank.RANKS.KNIGHT;
@@ -88,19 +89,21 @@ public class Player extends Observable {
 		} else {
 			return;
 		}
-		
+
 		logger.info("Player id: " + ID + " current rank: " + rank + " current shields: " + shields);
 		fireEvent("increaseLevel", null, new GenericPair(rank, ID));
 		increaseLevel();
 	}
-	
+
 	public void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
 			logger.info("Player id: " + ID + " adding card " + card.getName());
 			hand.addCard(card, 1);
 		}
-		
-		fireEvent("addCards", null, new GenericPair(cards, ID));
+
+		fireEvent("addCards", null, new GenericPair(cards.stream().
+				map(i -> i.getName()).toArray(String[]::new), 
+				ID));
 	}
 
 	public String hand() {
@@ -116,15 +119,15 @@ public class Player extends Observable {
 		if(this.shields < 0) {
 			this.shields = 0;
 		}
-		
+
 		logger.info("Changing shields for player: " + ID + " to: " + this.shields);
 		fireEvent("changeShields", null, new GenericPair(this.shields, ID));
 	}
-	
+
 	public int faceDownDeckLength() {
 		return faceDown.size();
 	}
-	
+
 	public AdventureDeck getFaceDownDeck() {
 		return this.faceDown;
 	}
@@ -171,7 +174,7 @@ public class Player extends Observable {
 		logger.info("Player id: " + ID + " discarded cards: " + Arrays.toString(removedCards.stream().map(i -> i.getName()).toArray(String[]::new)));
 		fireEvent("discardType", null, new GenericPair(removedCards, ID));
 	}
-	
+
 	public int getShields() {
 		return this.shields;
 	}
@@ -179,7 +182,7 @@ public class Player extends Observable {
 	public int getTypeCount(TYPE type) {
 		return hand.typeCount(type);
 	}
-	
+
 	protected ArrayList<AdventureCard> removeCards(String[] split) {
 		ArrayList<AdventureCard> removed = new ArrayList<AdventureCard>();
 		for(String cardName: split) {
@@ -188,7 +191,7 @@ public class Player extends Observable {
 		logger.info("Player id: " + ID + " removing cards " + Arrays.toString(split));
 		return removed;
 	}
-	
+
 	public Card getCard(String cardName) {
 		return hand.getCardByName(cardName);
 	}
