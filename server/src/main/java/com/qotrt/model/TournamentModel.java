@@ -1,6 +1,7 @@
 package com.qotrt.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class TournamentModel extends Observable{
 	public synchronized void questionJoinPlayers(Iterator<Player> players) {
 		question = true;
 		players.forEachRemaining(i -> questionJoinPlayers.add(i));
-		fireEvent("questiontournament", null, questionJoinPlayers);
+		fireEvent("questiontournament", null, 
+				questionJoinPlayers.stream().mapToInt(i -> i.getID()).toArray());
 	}
 
 	public synchronized void acceptTournament(Player player) {
