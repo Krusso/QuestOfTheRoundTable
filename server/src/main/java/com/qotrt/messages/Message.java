@@ -6,17 +6,24 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.qotrt.messages.game.GameJoinServer;
 import com.qotrt.messages.game.GameListServer;
+import com.qotrt.messages.game.MiddleCardServer;
+import com.qotrt.messages.game.ShieldCountServer;
 import com.qotrt.messages.hand.AddCardsServer;
+import com.qotrt.messages.rank.RankServer;
 
 @JsonTypeInfo(  
 	    use = Id.NAME,  
 	    include = JsonTypeInfo.As.PROPERTY,  
-	    property = "TYPE",
-	    visible = true)  
+	    property = "java-class",
+	    visible = true)
+	// Needed for jackson converting to abstract class 
 	@JsonSubTypes({
 	    @Type(value = GameListServer.class, name = "LISTSERVER"), 
 	    @Type(value = GameJoinServer.class, name = "JOINGAME"),
 	    @Type(value = AddCardsServer.class, name = "ADDCARDS"),
+	    @Type(value = ShieldCountServer.class, name = "SHIELDCOUNT"),
+	    @Type(value = RankServer.class, name = "RANKUPDATE"),
+	    @Type(value = MiddleCardServer.class, name = "SHOWMIDDLECARD"),
 	    })  
 public abstract class Message {
 
@@ -47,7 +54,9 @@ public abstract class Message {
 		RANKUPDATE, 
 		ADDCARDS, 
 		FACEDOWNCARD, 
-		LISTSERVER
+		LISTSERVER, 
+		PLAYCARD, 
+		SHOWMIDDLECARD
 	};
 	
 //	@Override

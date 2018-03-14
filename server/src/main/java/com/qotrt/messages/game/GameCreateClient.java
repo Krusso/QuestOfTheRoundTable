@@ -1,12 +1,14 @@
 package com.qotrt.messages.game;
 
 import com.qotrt.messages.Message;
+import com.qotrt.model.RiggedModel.RIGGED;
 
 //Client
 public class GameCreateClient extends Message {
 	
 	private int numPlayers;
 	private String playerName;
+	private RIGGED rigged;
 	
 	public String getPlayerName() {
 		return playerName;
@@ -27,5 +29,13 @@ public class GameCreateClient extends Message {
 
 	public void setNumPlayers(int numPlayers) {
 		this.numPlayers = numPlayers;
+	}
+
+	public RIGGED getRigged() {
+		return rigged;
+	}
+
+	public void setRigged(RIGGED rigged) {
+		this.rigged = rigged;
 	}
 }

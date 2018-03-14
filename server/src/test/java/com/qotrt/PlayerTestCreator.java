@@ -90,10 +90,9 @@ public class PlayerTestCreator {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public <T> T take(Class<T> ca) throws InterruptedException {
 		Message message1;
-		while((message1 = messages.poll(2, SECONDS)) != null) {
+		while((message1 = messages.poll(10, SECONDS)) != null) {
 			System.out.println("checking type of: " + message1);
 			System.out.println("type match: " + ca.isInstance(message1));
 			ObjectMapper mapper = new ObjectMapper();
@@ -104,11 +103,6 @@ public class PlayerTestCreator {
 				System.out.println(e.getMessage());
 				System.out.println(message1);
 			}
-			//T value = mapper.readValue(new String(message1), ca);
-			//return (T) message1;
-			//				if(ca.isInstance(value)) {
-			//					return value;
-			//				}
 		}
 
 		System.out.println("couldnt find: " + ca);
@@ -118,9 +112,6 @@ public class PlayerTestCreator {
 	private List<Transport> createTransportClient() {	
 		List<Transport> transports = new ArrayList<>();
 		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-		//		RestTemplateXhrTransport xhrTransport = new RestTemplateXhrTransport(new RestTemplate());
-		//		transports.add(xhrTransport);
-
 		return transports;
 	}
 

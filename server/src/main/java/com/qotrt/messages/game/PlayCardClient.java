@@ -7,6 +7,8 @@ public class PlayCardClient extends Message {
 	public int card;
 	public ZONE zone;
 	
+	public PlayCardClient() {}
+	
 	public PlayCardClient(int player, int card, ZONE zone) {
 		super(player);
 		this.card = card;
@@ -15,7 +17,7 @@ public class PlayCardClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PICKTOURNAMENT;
+		this.message = MESSAGETYPES.PLAYCARD;
 	}
 	
 	public static enum ZONE {

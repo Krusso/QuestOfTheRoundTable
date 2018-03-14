@@ -235,6 +235,7 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 			}
 		}
 		catch (IOException ex) {
+			System.out.println("exception in parsing json: " + ex.getMessage());
 			throw new MessageConversionException(message, "Could not read JSON: " + ex.getMessage(), ex);
 		}
 	}

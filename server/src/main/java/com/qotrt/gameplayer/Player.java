@@ -3,7 +3,6 @@ package com.qotrt.gameplayer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,7 +101,7 @@ public class Player extends Observable {
 		}
 
 		fireEvent("addCards", null, new GenericPair(cards.stream().
-				map(i -> i.getName()).toArray(String[]::new), 
+				map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new), 
 				ID));
 	}
 

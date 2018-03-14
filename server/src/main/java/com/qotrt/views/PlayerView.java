@@ -19,11 +19,11 @@ public class PlayerView extends View implements PropertyChangeListener {
 	}
 
 	private void playerIncreasedLevel(GenericPair e) {
-		sendMessage("/queue/response", new RankServer((int) e.key, (Rank.RANKS) e.value));
+		sendMessage("/queue/response", new RankServer((int) e.value, (Rank.RANKS) e.key));
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("event got fired");
+		System.out.println("event got fired: playerview: " + evt.getPropertyName());
 		if(evt.getPropertyName().equals("increaseLevel")) {
 			playerIncreasedLevel((GenericPair) evt.getNewValue());
 		} 
@@ -43,18 +43,19 @@ public class PlayerView extends View implements PropertyChangeListener {
 		if(evt.getPropertyName().equals("discardType")) {
 			playerDiscardType((GenericPair) evt.getNewValue());
 		}
+		System.out.println("finished updating after event fired");
 	}
 
 	private void playerChangeShields(GenericPair e) {
-		sendMessage("/queue/response", new ShieldCountServer((int) e.key, (int) e.value));
+		sendMessage("/queue/response", new ShieldCountServer((int) e.value, (int) e.key));
 	}
 	
 	private void playerAddCards(GenericPair e) {
-		sendMessage("/queue/response", new AddCardsServer((int)e.value, (String[]) e.key));
+		sendMessage("/queue/response", new AddCardsServer((int)e.value, (GenericPair[]) e.key));
 	}
 	
 	private void playerSetFaceDown(GenericPair e) {
-		sendMessage("/queue/response", new FaceDownServer((int)e.value, (String) e.key));
+		sendMessage("/queue/response", new FaceDownServer((int)e.value, (int) e.key));
 	}
 	
 	private void playerDiscardType(GenericPair e) {

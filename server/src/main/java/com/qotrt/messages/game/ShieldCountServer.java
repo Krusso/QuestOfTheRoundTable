@@ -7,6 +7,8 @@ import com.qotrt.messages.Message;
 public class ShieldCountServer extends Message {
 	public int shields;
 	
+	public ShieldCountServer() {}
+	
 	public ShieldCountServer(int player, int shields) {
 		super(player);
 		this.shields = shields;

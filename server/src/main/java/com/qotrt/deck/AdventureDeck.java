@@ -2,6 +2,7 @@ package com.qotrt.deck;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AllyCard;
@@ -21,42 +22,43 @@ public class AdventureDeck extends Deck<AdventureCard> {
 	public ArrayList<AdventureCard> discards = new ArrayList<AdventureCard>();
 	
 	public void populate() {
-		addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS),2);
-		addCard(new WeaponCard("Lance",20, TYPE.WEAPONS),6);
-		addCard(new WeaponCard("Battle-ax",15, TYPE.WEAPONS),8);
-		addCard(new WeaponCard("Sword",10, TYPE.WEAPONS),16);
-		addCard(new WeaponCard("Horse",10, TYPE.WEAPONS),11);
-		addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS),6);
+		IntStream.range(0, 2).forEach(i -> addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS)));
+		IntStream.range(0, 6).forEach(i -> addCard(new WeaponCard("Lance",20, TYPE.WEAPONS)));
+		IntStream.range(0, 8).forEach(i -> addCard(new WeaponCard("Battle-ax",15, TYPE.WEAPONS)));
+		IntStream.range(0, 16).forEach(i -> addCard(new WeaponCard("Sword",10, TYPE.WEAPONS)));
+		IntStream.range(0, 11).forEach(i -> addCard(new WeaponCard("Horse",10, TYPE.WEAPONS)));
+		IntStream.range(0, 6).forEach(i -> addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS)));
 		
-		addCard(new FoeCard("Dragon",50,70, TYPE.FOES),1);
-		addCard(new FoeCard("Giant",40, TYPE.FOES),2);
-		addCard(new FoeCard("Mordred",30, TYPE.FOES),4);
-		addCard(new FoeCard("Green Knight",25,40, TYPE.FOES),2);
-		addCard(new FoeCard("Black Knight",25,35, TYPE.FOES),3);
-		addCard(new FoeCard("Evil Knight",20,30, TYPE.FOES),6);
-		addCard(new FoeCard("Saxon Knight",15,25, TYPE.FOES),8);
-		addCard(new FoeCard("Robber Knight",15, TYPE.FOES),7);
-		addCard(new FoeCard("Saxons",10,20, TYPE.FOES),5);
-		addCard(new FoeCard("Boar",5,15, TYPE.FOES),4);
-		addCard(new FoeCard("Thieves",5, TYPE.FOES),8);
+		IntStream.range(0, 1).forEach(i -> addCard(new FoeCard("Dragon",50,70, TYPE.FOES)));
+		IntStream.range(0, 2).forEach(i -> addCard(new FoeCard("Giant",40, TYPE.FOES)));
+		IntStream.range(0, 4).forEach(i -> addCard(new FoeCard("Mordred",30, TYPE.FOES)));
+		IntStream.range(0, 2).forEach(i -> addCard(new FoeCard("Green Knight",25,40, TYPE.FOES)));
+		IntStream.range(0, 3).forEach(i -> addCard(new FoeCard("Black Knight",25,35, TYPE.FOES)));
+		IntStream.range(0, 6).forEach(i -> addCard(new FoeCard("Evil Knight",20,30, TYPE.FOES)));
 		
-		addCard(new TestCard("Test of Valor", TYPE.TESTS),2);
-		addCard(new TestCard("Test of Temptation", TYPE.TESTS),2);
-		addCard(new TestCard("Test of Morgan Le Fey",3, TYPE.TESTS),2);
-		addCard(new TestCard("Test of the Questing Beast",3,4, TYPE.TESTS),2);
+		IntStream.range(0, 8).forEach(i -> addCard(new FoeCard("Saxon Knight",15,25, TYPE.FOES)));
+		IntStream.range(0, 7).forEach(i -> addCard(new FoeCard("Robber Knight",15, TYPE.FOES)));
+		IntStream.range(0, 5).forEach(i -> addCard(new FoeCard("Saxons",10,20, TYPE.FOES)));
+		IntStream.range(0, 4).forEach(i -> addCard(new FoeCard("Boar",5,15, TYPE.FOES)));
+		IntStream.range(0, 8).forEach(i -> addCard(new FoeCard("Thieves",5, TYPE.FOES)));
 		
-		addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES),1);
-		addCard(new AllyCard("Sir Lancelot",15,25, TYPE.ALLIES),1);
-		addCard(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES),1);
-		addCard(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES),1); // namedBattlePoints here = when Queen Iseult is in play
-		addCard(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES),1);
-		addCard(new AllyCard("Sir Gawain",10,20, TYPE.ALLIES),1);
-		addCard(new AllyCard("Sir Percival",5,20, TYPE.ALLIES),1);
-		addCard(new AllyCard("Queen Guinevere",0,0,3, TYPE.ALLIES),1);
-		addCard(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES),1); // namedBids here = when Tristan is in play
-		addCard(new AllyCard("Merlin", TYPE.ALLIES),1); // special power to preview any stage
+		IntStream.range(0, 2).forEach(i -> addCard(new TestCard("Test of Valor", TYPE.TESTS)));
+		IntStream.range(0, 2).forEach(i -> addCard(new TestCard("Test of Temptation", TYPE.TESTS)));
+		IntStream.range(0, 2).forEach(i -> addCard(new TestCard("Test of Morgan Le Fey",3, TYPE.TESTS)));
+		IntStream.range(0, 2).forEach(i -> addCard(new TestCard("Test of the Questing Beast",3,4, TYPE.TESTS)));
 		
-		addCard(new AmourCard("Amour",10,1, TYPE.AMOUR),8);
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Sir Lancelot",15,25, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("King Arthur",10,10,2, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES))); // namedBattlePoints here = when Queen Iseult is in play
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Sir Gawain",10,20, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Sir Percival",5,20, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Queen Guinevere",0,0,3, TYPE.ALLIES)));
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES)));// namedBids here = when Tristan is in play
+		IntStream.range(0, 1).forEach(i -> addCard(new AllyCard("Merlin", TYPE.ALLIES),1));  // special power to preview any stage
+		
+		IntStream.range(0, 8).forEach(i -> addCard(new AmourCard("Amour",10,1, TYPE.AMOUR)));
 	}
 	
 	public void reshuffle() {

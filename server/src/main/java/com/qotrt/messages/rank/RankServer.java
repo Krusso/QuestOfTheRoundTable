@@ -9,6 +9,8 @@ public class RankServer extends Message {
 
 	public Rank.RANKS newrank;
 	
+	public RankServer() {}
+	
 	public RankServer(int player, Rank.RANKS newrank) {
 		super(player);
 		this.newrank = newrank;

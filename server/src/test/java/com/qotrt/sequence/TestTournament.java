@@ -1,36 +1,38 @@
-package com.qotrt.views;
+package com.qotrt.sequence;
 
 import static org.junit.Assert.assertEquals;
 
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import com.qotrt.PlayerTestCreator;
 import com.qotrt.QotrtApplicationTests;
+import com.qotrt.gameplayer.Player;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
 import com.qotrt.messages.game.GameListServer;
-import com.qotrt.messages.hand.AddCardsServer;
+import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.model.RiggedModel.RIGGED;
 
 
-public class TestPlayerView extends PlayerTestCreator {
+public class TestTournament extends PlayerTestCreator {
 
 	WebSocketStompClient stompClient;
-	private static Log logger = LogFactory.getLog(QotrtApplicationTests.class);
+	final static Logger logger = LogManager.getLogger(TestTournament.class);
 	
     
 	@Test
-	public void testCreateGameEndpoint() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+	public void testTournament() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
 		Runnable thread2 = new Runnable() {
 			@Override
 			public void run() {
@@ -59,10 +61,10 @@ public class TestPlayerView extends PlayerTestCreator {
 		assertEquals(1, gls.getGames().length);
 		
 		sendMessage(ss, "/app/game.joinGame", gjc);
-		
-		AddCardsServer ads = take(AddCardsServer.class);
-		assertEquals(12, ads.getCards().length);
-		System.out.println("Cards: " + Arrays.toString(ads.getCards()));
+
+
+		MiddleCardServer mcs = take(MiddleCardServer.class);
+		assertEquals("Tournament at York", mcs.card);
 	}
 	
 

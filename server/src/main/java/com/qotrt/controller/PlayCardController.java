@@ -1,7 +1,5 @@
 package com.qotrt.controller;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 

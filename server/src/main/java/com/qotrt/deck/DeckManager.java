@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.Card;
 import com.qotrt.cards.StoryCard;
-import com.qotrt.model.RiggedModel;
 import com.qotrt.model.RiggedModel.RIGGED;
 
 public class DeckManager {

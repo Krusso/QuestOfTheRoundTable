@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.cards.StoryCard;
@@ -19,26 +20,31 @@ import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
+import com.qotrt.views.BoardView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
 
 public class Game extends Observable {
 
+	final static Logger logger = LogManager.getLogger(Game.class);
+	
 	private UUID uuid = UUID.randomUUID();
 	private int gameSize;
 	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
 	private PlayerManager pm;
 	private HubView hv;
+	private RIGGED rigged;
 
 	public UUID getUUID() {
 		return this.uuid;
 	}
 	
-	public Game(SimpMessagingTemplate messagingTemplate, int capacity) {
+	public Game(SimpMessagingTemplate messagingTemplate, int capacity, RIGGED rigged) {
 		this.messagingTemplate = messagingTemplate;
-		gameSize = capacity;
-		System.out.println("messaging template: " + this.messagingTemplate);
+		this.rigged = rigged;
+		this.gameSize = capacity;
+		logger.info("messaging template: " + this.messagingTemplate);
 		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
 	}
@@ -57,32 +63,39 @@ public class Game extends Observable {
 			@Override
 			public void run() {
 				while(true) {
-					System.out.println("Starting game");
+					logger.info("Starting game");
 
+					// model creation
 					BoardModel bm = new BoardModel();
 					DeckManager dm = new DeckManager();
-					// TODO: set rigged correctly
-					// TODO: set players correctly
 					pm = new PlayerManager(gameSize, 
 							players.toArray(new UIPlayer[players.size()]), 
 							dm, 
-							RIGGED.NORMAL);
-
-					PlayerView pv = new PlayerView(messagingTemplate);
-					players.forEach(i -> pv.addWebSocket(i));
-					pm.subscribe(pv);
-					
+							rigged);
 					TournamentModel tm = new TournamentModel();
 					BoardModelMediator bmm = new BoardModelMediator(tm);
 					
+					// view creation
+					PlayerView pv = new PlayerView(messagingTemplate);
+					BoardView bv = new BoardView(messagingTemplate);
+					
+					//subscriptions
+					players.forEach(i -> { 
+						pv.addWebSocket(i);
+						bv.addWebSocket(i);
+					});
+					
+					pm.subscribe(pv);
+					bm.subscribe(bv);
+
 					pm.start();
 
 					GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 					while(true) {
-						System.out.println("Next Turn");
+						logger.info("Next Turn");
 						pm.nextTurn();
 						StoryCard s = dm.getStoryCard(1).get(0);
-						System.out.println("Next card being played: " + s.getName());
+						logger.info("Next card being played: " + s.getName());
 						bm.setCard(s);
 
 						SequenceManager sm = gsm.createStoryManager(bm.getCard());
@@ -96,7 +109,7 @@ public class Game extends Observable {
 							break;
 						}
 
-						System.out.println("Waiting for player to continue to next turn");
+						logger.info("Waiting for player to continue to next turn");
 						// wait for a bit of time then proceed with next turn
 						try {
 							Thread.sleep(10000);
@@ -107,7 +120,7 @@ public class Game extends Observable {
 
 					}
 
-					System.out.println("Game is done");
+					logger.info("Game is done");
 				}
 			}
 		});
