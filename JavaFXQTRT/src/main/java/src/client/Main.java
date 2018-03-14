@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -13,10 +15,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.transform.Scale;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import src.messages.game.GameStartClient.RIGGED;
 import src.socket.Server;
+import static javafx.concurrent.Worker.State;
 
 public class Main extends Application {
 	final static Logger logger = LogManager.getLogger(Main.class);
@@ -34,7 +39,24 @@ public class Main extends Application {
 			Main.client = new Client(input, output);
 			Main.clientThread = new Thread(client);
 			Main.clientThread.start();
-
+			
+//			WebView webView = new WebView();
+//			final WebEngine webEngine = webView.getEngine();
+//			webEngine.load("http://www.google.ca");
+//			
+//			webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>(){
+//
+//				@Override
+//				public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+//					// TODO Auto-generated method stub
+//					if(newValue == State.SUCCEEDED) {
+//						primaryStage.setTitle(webEngine.getTitle());
+//					}
+//				}
+//				
+//			});
+			
+			
 //			Parent root = new AnchorPane();
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setLocation(getClass().getClassLoader().getResource("TitleScreen.fxml"));
