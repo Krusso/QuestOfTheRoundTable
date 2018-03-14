@@ -3,6 +3,7 @@ package com.qotrt.sequence;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,9 +36,9 @@ public class TournamentSequenceManager extends SequenceManager {
 		
 		// Wait for responses
 		try {
-			Thread.sleep(60000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			tm.cdl.await(60, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
 		
 		List<Player> participants = tm.playersWhoJoined();
