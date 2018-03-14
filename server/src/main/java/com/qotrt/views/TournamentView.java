@@ -5,8 +5,7 @@ import java.beans.PropertyChangeListener;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.qotrt.cards.StoryCard;
-import com.qotrt.messages.game.MiddleCardServer;
+import com.qotrt.gameplayer.Player;
 
 public class TournamentView extends View implements PropertyChangeListener {
 
@@ -14,16 +13,22 @@ public class TournamentView extends View implements PropertyChangeListener {
 		super(messagingTemplate);
 	}
 	
-	private void middleCardFlipped(StoryCard s) {
-		MiddleCardServer mcs = new MiddleCardServer(s.getName());
-		
-		sendMessage("/queue/response", mcs);
+	private void questionTournament(int[] players) {
+		sendMessage("/queue/response", players);
+	}
+	
+	private void joinTournament(Player player) {
+		sendMessage("/queue/response", player.getID());
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("event got fired");
 		if(evt.getPropertyName().equals("questiontournament")) {
-			middleCardFlipped((StoryCard) evt.getNewValue());
+			questionTournament((int[]) evt.getNewValue());
+		}
+		
+		if(evt.getPropertyName().equals("jointournament")) {
+			joinTournament((Player) evt.getNewValue());
 		}
 	}
 	

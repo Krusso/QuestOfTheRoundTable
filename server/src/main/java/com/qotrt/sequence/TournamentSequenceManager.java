@@ -61,6 +61,11 @@ public class TournamentSequenceManager extends SequenceManager {
 
 		// more than one player (x > 1) joined tournament ask them to play cards
 		tm.questionCards();
+		try {
+			Thread.sleep(60000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner

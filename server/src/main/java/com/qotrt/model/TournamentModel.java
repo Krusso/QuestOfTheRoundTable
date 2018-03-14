@@ -25,9 +25,11 @@ public class TournamentModel extends Observable{
 	}
 	
 	public synchronized void questionJoinPlayers(Iterator<Player> players) {
+		cdl = new CountDownLatch(1);
 		players.forEachRemaining(i -> questionJoinPlayers.add(i));
 		questioned = questionJoinPlayers.size();
-		fireEvent("questiontournament", null, questionJoinPlayers);
+		fireEvent("questiontournament", null, 
+				questionJoinPlayers.stream().mapToInt(i -> i.getID()).toArray());
 	}
 
 	public synchronized void acceptTournament(Player player) {
