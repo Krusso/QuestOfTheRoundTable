@@ -1,7 +1,9 @@
 package com.qotrt.hub;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,28 +13,38 @@ import com.qotrt.model.UIPlayer;
 @Component
 public class Hub {
 
-	private ArrayList<Game> games = new ArrayList<Game>();
+	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
+	private ArrayList<Game> games = new ArrayList<Game>();
 	
-	public synchronized void addPlayer(UIPlayer player) {
-		if(games.size() == 0) {
-			games.add(new Game(messagingTemplate));
+	public synchronized boolean addPlayer(UIPlayer player, UUID uuid) {
+		for(Game game: games) {
+			if(game.getUUID().equals(uuid)) {
+				return game.addPlayer(player);
+			}
 		}
-		
-		games.get(0).addPlayer(player);
+		return false;
 	}
 
-	public void setTemplate(SimpMessagingTemplate messagingTemplate) {
-		this.messagingTemplate = messagingTemplate;
-	}
-
-	public Game getGameBySessionID(String sessionId) {
+	public synchronized Game getGameBySessionID(String sessionId) {
 		for(Game game: games) {
 			if(game.getPlayerBySessionID(sessionId) != null) {
 				return game;
 			}
 		}
 		return null;
+	}
+
+	public synchronized UUID addGame(int numPlayers) {
+		Game game = new Game(messagingTemplate, numPlayers);
+		games.add(game);
+		System.out.println("added game");
+		System.out.println("games size: " + games.size());
+		return game.getUUID();
+	}
+
+	public synchronized ArrayList<Game> listGames() {
+		return games;
 	}
 
 }

@@ -4,17 +4,27 @@ import com.qotrt.messages.Message;
 
 //from server
 public class AddCardsServer extends Message {
-	public String[] cards;
+	private String[] cards;
+	
+	public AddCardsServer() {};
 	
 	// TODO: also send the IDs of the cards
 	public AddCardsServer(int player, String[] cards) {
 		super(player);
-		this.cards = cards;
+		this.setCards(cards);
 	}
 	
 	@Override
 	public void setMessage() {
 		this.message = MESSAGETYPES.ADDCARDS;
+	}
+
+	public String[] getCards() {
+		return cards;
+	}
+
+	public void setCards(String[] cards) {
+		this.cards = cards;
 	}
 
 }

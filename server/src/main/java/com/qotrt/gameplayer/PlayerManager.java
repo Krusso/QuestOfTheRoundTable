@@ -20,6 +20,7 @@ import com.qotrt.deck.DeckManager;
 import com.qotrt.gameplayer.Player.STATE;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
+import com.qotrt.views.PlayerView;
 
 
 public class PlayerManager {
@@ -378,5 +379,11 @@ public class PlayerManager {
 			}
 		});
 		return winners.get();
+	}
+
+	public void subscribe(PlayerView pv) {
+		for(Player p: players) {
+			p.subscribe(pv);
+		}
 	}
 }

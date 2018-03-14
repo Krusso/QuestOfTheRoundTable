@@ -1,15 +1,13 @@
 package com.qotrt.messages.game;
 
-import java.util.UUID;
-
 import com.qotrt.messages.Message;
 
 //Client
-public class GameJoinClient extends Message {
+public class GameCreateClient extends Message {
 	
-	private UUID uuid;
+	private int numPlayers;
 	private String playerName;
-
+	
 	public String getPlayerName() {
 		return playerName;
 	}
@@ -23,11 +21,11 @@ public class GameJoinClient extends Message {
 		this.message = Message.MESSAGETYPES.JOINGAME;	
 	}
 
-	public UUID getUuid() {
-		return uuid;
+	public int getNumPlayers() {
+		return numPlayers;
 	}
 
-	public void setUuid(UUID uuid) {
-		this.uuid = uuid;
+	public void setNumPlayers(int numPlayers) {
+		this.numPlayers = numPlayers;
 	}
 }
