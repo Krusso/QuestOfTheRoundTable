@@ -1,15 +1,15 @@
 package com.qotrt.model;
 
-import java.util.Iterator;
-
-import com.qotrt.gameplayer.Player;
-
 public class BoardModelMediator {
 
+	private TournamentModel tm;
 
+	public BoardModelMediator(TournamentModel tm) {
+		this.tm = tm;
+	}
+	
 	public TournamentModel getTournamentModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.tm;
 	}
 
 }

@@ -1,32 +1,57 @@
 package com.qotrt.game;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
+import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
+import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.Observable;
 import com.qotrt.model.RiggedModel.RIGGED;
+import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
 import com.qotrt.views.HubView;
+import com.qotrt.views.PlayerView;
 
 public class Game extends Observable {
 
-	private int gameSize = 2;
+	private UUID uuid = UUID.randomUUID();
+	private int gameSize;
+	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
+	private PlayerManager pm;
 	private HubView hv;
 
-	public Game(SimpMessagingTemplate messagingTemplate) {
-		hv = new HubView(messagingTemplate);
+	public UUID getUUID() {
+		return this.uuid;
+	}
+	
+	public Game(SimpMessagingTemplate messagingTemplate, int capacity) {
+		this.messagingTemplate = messagingTemplate;
+		gameSize = capacity;
+		System.out.println("messaging template: " + this.messagingTemplate);
+		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
 	}
 
+	public Player getPlayerBySessionID(String sessionID) {
+		for(Player player: pm.players) {
+			if(player.compareSessionID(sessionID)) {
+				return player;
+			}
+		}
+		return null;
+	}
+	
 	public void startGame() {
 		Executors.newScheduledThreadPool(1).execute(new Runnable() {
 			@Override
@@ -38,11 +63,18 @@ public class Game extends Observable {
 					DeckManager dm = new DeckManager();
 					// TODO: set rigged correctly
 					// TODO: set players correctly
-					PlayerManager pm = new PlayerManager(gameSize, 
+					pm = new PlayerManager(gameSize, 
 							players.toArray(new UIPlayer[players.size()]), 
 							dm, 
 							RIGGED.NORMAL);
 
+					PlayerView pv = new PlayerView(messagingTemplate);
+					players.forEach(i -> pv.addWebSocket(i));
+					pm.subscribe(pv);
+					
+					TournamentModel tm = new TournamentModel();
+					BoardModelMediator bmm = new BoardModelMediator(tm);
+					
 					pm.start();
 
 					GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
@@ -54,7 +86,7 @@ public class Game extends Observable {
 						bm.setCard(s);
 
 						SequenceManager sm = gsm.createStoryManager(bm.getCard());
-						//sm.start(actions, pm, bm);
+						sm.start(pm, bmm);
 
 						boolean winners = pm.rankUp();
 						if(winners) {
@@ -81,12 +113,28 @@ public class Game extends Observable {
 		});
 	}
 
-	public void addPlayer(UIPlayer player) {
+	public boolean addPlayer(UIPlayer player) {
+		
+		if(players.size() == gameSize) {
+			return false;
+		}
+		
 		players.add(player);
+		hv.addWebSocket(player);
 		fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
 
 		if(players.size() == gameSize) {
 			startGame();
 		}
+		
+		return true;
+	}
+
+	public int getPlayerCount() {
+		return this.players.size();
+	}
+
+	public int getPlayerCapacity() {
+		return this.gameSize;
 	}
 }

@@ -40,7 +40,6 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import com.qotrt.messages.Message;
 import com.qotrt.messages.game.GameJoinClient;
-import com.qotrt.messages.game.GameJoinServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = QotrtApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -169,7 +168,7 @@ public class QotrtApplicationTests {
 			System.out.println(stompHeaders.getSession());
 			System.out.println(stompHeaders.get("simpSessionId"));
 			System.out.println(stompHeaders.get("hello"));
-			return GameJoinServer.class;
+			return Object.class;
 		}
 
 		@Override

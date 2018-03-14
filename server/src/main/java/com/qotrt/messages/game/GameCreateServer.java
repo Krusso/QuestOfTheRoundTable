@@ -1,9 +1,12 @@
 package com.qotrt.messages.game;
 
+import java.util.Arrays;
+
 import com.qotrt.messages.Message;
+import com.qotrt.model.UIPlayer;
 
 // Server
-public class GameJoinServer extends Message  {
+public class GameCreateServer  {
 
 	private String[] players;
 
@@ -13,11 +16,6 @@ public class GameJoinServer extends Message  {
 
 	public void setPlayers(String[] players) {
 		this.players = players;
-	}
-
-	@Override
-	public void setMessage() {
-		this.message = MESSAGETYPES.JOINGAME;
 	}
 	
 //	public GameJoinServer(UIPlayer[] UIPlayers) {
