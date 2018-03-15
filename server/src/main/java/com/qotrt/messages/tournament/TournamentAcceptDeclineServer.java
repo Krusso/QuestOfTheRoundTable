@@ -4,8 +4,10 @@ import com.qotrt.messages.Message;
 
 public class TournamentAcceptDeclineServer extends Message {
 
-	public TournamentAcceptDeclineServer(int players) {
-		super(players);
+	public TournamentAcceptDeclineServer() {}
+	
+	public TournamentAcceptDeclineServer(int player) {
+		super(player);
 	}
 	
 	//from server

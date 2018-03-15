@@ -7,9 +7,13 @@ import com.qotrt.messages.Message;
 public class TournamentWinServer extends Message {
 
 	public int[] players;
+	public String response;
 	
-	public TournamentWinServer(int[] is) {
+	public TournamentWinServer() {}
+	
+	public TournamentWinServer(int[] is, String response) {
 		this.players = is;
+		this.response = response;
 	}
 	
 	@Override

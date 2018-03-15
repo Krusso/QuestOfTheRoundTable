@@ -10,6 +10,9 @@ import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
 import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.rank.RankServer;
+import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
+import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
+import com.qotrt.messages.tournament.TournamentWinServer;
 
 @JsonTypeInfo(  
 	    use = Id.NAME,  
@@ -24,6 +27,9 @@ import com.qotrt.messages.rank.RankServer;
 	    @Type(value = ShieldCountServer.class, name = "SHIELDCOUNT"),
 	    @Type(value = RankServer.class, name = "RANKUPDATE"),
 	    @Type(value = MiddleCardServer.class, name = "SHOWMIDDLECARD"),
+	    @Type(value = TournamentAcceptDeclineServer.class, name="JOINTOURNAMENT"),
+	    @Type(value = TournamentAcceptedDeclinedServer.class, name="JOINEDTOURNAMENT"),
+	    @Type(value = TournamentWinServer.class, name="WINTOURNAMENT")
 	    })  
 public abstract class Message {
 
@@ -56,7 +62,8 @@ public abstract class Message {
 		FACEDOWNCARD, 
 		LISTSERVER, 
 		PLAYCARD, 
-		SHOWMIDDLECARD
+		SHOWMIDDLECARD, 
+		JOINEDTOURNAMENT
 	};
 	
 //	@Override

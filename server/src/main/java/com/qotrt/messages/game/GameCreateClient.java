@@ -10,6 +10,15 @@ public class GameCreateClient extends Message {
 	private String playerName;
 	private RIGGED rigged;
 	
+	
+	public GameCreateClient() {}
+	
+	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged) {
+		this.numPlayers = numPlayers;
+		this.playerName = playerName;
+		this.rigged = rigged;
+	}
+	
 	public String getPlayerName() {
 		return playerName;
 	}

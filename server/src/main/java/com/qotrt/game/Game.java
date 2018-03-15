@@ -23,6 +23,7 @@ import com.qotrt.sequence.SequenceManager;
 import com.qotrt.views.BoardView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
+import com.qotrt.views.TournamentView;
 
 public class Game extends Observable {
 
@@ -35,6 +36,7 @@ public class Game extends Observable {
 	private PlayerManager pm;
 	private HubView hv;
 	private RIGGED rigged;
+	public BoardModelMediator bmm;
 
 	public UUID getUUID() {
 		return this.uuid;
@@ -73,20 +75,23 @@ public class Game extends Observable {
 							dm, 
 							rigged);
 					TournamentModel tm = new TournamentModel();
-					BoardModelMediator bmm = new BoardModelMediator(tm);
+					bmm = new BoardModelMediator(tm);
 					
 					// view creation
 					PlayerView pv = new PlayerView(messagingTemplate);
 					BoardView bv = new BoardView(messagingTemplate);
+					TournamentView tv = new TournamentView(messagingTemplate);
 					
 					//subscriptions
 					players.forEach(i -> { 
 						pv.addWebSocket(i);
 						bv.addWebSocket(i);
+						tv.addWebSocket(i);
 					});
 					
 					pm.subscribe(pv);
 					bm.subscribe(bv);
+					tm.subscribe(tv);
 
 					pm.start();
 

@@ -6,6 +6,10 @@ import java.beans.PropertyChangeListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.gameplayer.Player;
+import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
+import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
+import com.qotrt.messages.tournament.TournamentWinServer;
+import com.qotrt.model.GenericPair;
 
 public class TournamentView extends View implements PropertyChangeListener {
 
@@ -14,11 +18,21 @@ public class TournamentView extends View implements PropertyChangeListener {
 	}
 	
 	private void questionTournament(int[] players) {
-		sendMessage("/queue/response", players);
+		for(int i: players) {
+			sendMessage("/queue/response", new TournamentAcceptDeclineServer(i));
+		}
 	}
 	
 	private void joinTournament(Player player) {
-		sendMessage("/queue/response", player.getID());
+		sendMessage("/queue/response", new TournamentAcceptedDeclinedServer(player.getID(), true));
+	}
+	
+	private void declineTournament(Player player) {
+		sendMessage("/queue/response", new TournamentAcceptedDeclinedServer(player.getID(), false));
+	}
+	
+	private void setWinners(GenericPair e) {
+		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (String) e.value));
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -30,6 +44,14 @@ public class TournamentView extends View implements PropertyChangeListener {
 		if(evt.getPropertyName().equals("jointournament")) {
 			joinTournament((Player) evt.getNewValue());
 		}
+		
+		if(evt.getPropertyName().equals("declinetournament")) {
+			declineTournament((Player) evt.getNewValue());
+		}
+		
+		if(evt.getPropertyName().equals("tournamentwinners")) {
+			setWinners((GenericPair) evt.getNewValue());
+		}
 	}
-	
+
 }

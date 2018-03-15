@@ -9,18 +9,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -31,34 +23,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qotrt.config.MappingJackson2MessageConverter;
 import com.qotrt.messages.Message;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = QotrtApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-// used to restart spring application after every test
-// might be able to remove later
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+
 public class PlayerTestCreator {
 
 	protected LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
-	@Value("${local.server.port}")
-	private int port;
-	static String WEBSOCKET_URI;
-
-	@Before
-	public void setup() {
-		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
-	}
-
-	public StompSession connect() throws InterruptedException, ExecutionException, TimeoutException {
+	private StompSession stompSession;
+	
+	public StompSession connect(String WEBSOCKET_URI) throws InterruptedException, ExecutionException, TimeoutException {
 		System.out.println("starting");
 		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 		//stompClient.setMessageConverter(new StringMessageConverter());
 
 		System.out.println("connecting to: " + WEBSOCKET_URI);
-		StompSession stompSession = stompClient.connect(WEBSOCKET_URI, 
+		stompSession = stompClient.connect(WEBSOCKET_URI, 
 				new StompSessionHandlerAdapter() {}).get(1, SECONDS);
 
-		this.subscribe(stompSession, "/user/queue/response");
+		this.subscribe("/user/queue/response");
 
 		Thread.sleep(200);
 		//JmsOperations jmsOperations;
@@ -66,7 +47,7 @@ public class PlayerTestCreator {
 		return stompSession;
 	}
 
-	public void subscribe(StompSession stompSession, String destination) {
+	public void subscribe(String destination) {
 		//stompSession.subscribe(destination, new CreateGameStompFrameHandler());
 		stompSession.subscribe(destination, new StompFrameHandler() {
 			@Override
@@ -83,7 +64,7 @@ public class PlayerTestCreator {
 		});
 	}
 
-	public void sendMessage(StompSession stompSession, String destination, Object e) {
+	public void sendMessage(String destination, Object e) {
 		System.out.println("sending: " + e);
 		System.out.println("to: " + destination);
 		stompSession.send(destination, e);
@@ -113,29 +94,5 @@ public class PlayerTestCreator {
 		List<Transport> transports = new ArrayList<>();
 		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
 		return transports;
-	}
-
-	private class CreateGameStompFrameHandler extends StompSessionHandlerAdapter {
-
-		@Override
-		public void handleException(StompSession s, StompCommand c, StompHeaders h, byte[] p, Throwable ex) {
-			System.out.println("error1");
-		}
-
-		@Override
-		public void handleTransportError(StompSession session, Throwable ex) {
-			System.out.println("error2");
-		}
-
-		@Override
-		public Type getPayloadType(StompHeaders stompHeaders) {
-			return Object.class;
-		}
-
-		@Override
-		public void handleFrame(StompHeaders stompHeaders, Object o) {
-			System.out.println("payload: " + o);
-			//messages.add(o);
-		}
 	}
 }

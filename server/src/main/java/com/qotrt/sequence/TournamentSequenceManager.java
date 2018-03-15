@@ -42,7 +42,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		}
 		
 		List<Player> participants = tm.playersWhoJoined();
-		
+		logger.info("Players who joined: " + participants);
 
 		// determining if anyone joined
 		pm.drawCards(participants, 1);

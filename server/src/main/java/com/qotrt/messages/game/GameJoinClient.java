@@ -10,6 +10,14 @@ public class GameJoinClient extends Message {
 	private UUID uuid;
 	private String playerName;
 
+	
+	public GameJoinClient() {}
+	
+	public GameJoinClient(UUID uuid, String playerName) {
+		this.uuid = uuid;
+		this.playerName = playerName;
+	}
+	
 	public String getPlayerName() {
 		return playerName;
 	}
