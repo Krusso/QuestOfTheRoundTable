@@ -104,6 +104,12 @@ input {
     background-size: 100px 150px;
 }
 
+div[card-img]{
+    width: 100px;
+    height: 150px;
+    color: #fff;
+}
+
 .box {
 
     width: 200px;

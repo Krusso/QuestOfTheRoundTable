@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html ng-app="app" ng-init="person={fName: 'Michael', lName:'Kuang'}; capitals=[{city:'Ottawa', province:'Ontario'}, {city:'Toronto', province:'Ontario'},{city:'Quebec', province:'Ontario'}]">
+<html ng-app="gameApp" ng-init="person={fName: 'Michael', lName:'Kuang'}; capitals=[{city:'Ottawa', province:'Ontario'}, {city:'Toronto', province:'Ontario'},{city:'Quebec', province:'Ontario'}]">
 
 <head>
     <title>Quest of The Round Table</title>
     <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
-    <!--    <link rel="stylesheet" href="stylesheet.css" type="text/css">-->
+        <link rel="stylesheet" href="stylesheet.css" type="text/css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -12,44 +12,28 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
-    <!--    <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>-->
+        <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>
 </head>
 
 <body>
-    <div ng-controller="controller1">
-        <span>Values:</span>
-        <input type="text" ng-model="first" />
-        <input type="text" ng-model="second" />
-        <button ng-click="updateValue()">Sum</button>
-        <br><br> {{calculation}}
-
-        <p>Your second value is
-            <span data-ng-bind="second"></span>
-        </p>
-        <p>{{person.fName + " " + person.lName}}</p>
-        <ul>
-            <li ng-repeat="capital in capitals">
-                {{'City:' + capital.city + ', Province: ' + capital.province}}
+    
+    <div ng-controller="handController">
+        Add Card: <input ng-model="name">
+        {{name}}
+        <button ng-click="addCard(name)">Add</button>
+          <ul>
+            <li ng-repeat="card in cards">Name: {{card.name}} id: {{card.id}}
+            
+                <div card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}"  jqyoui-draggable="{animate:true}"></div>
             </li>
-
         </ul>
-
-
-
+        
+                        
+        
     </div>
-    <script src="drag.js"></script>
+
+    <script src="card.js"></script>
 </body>
 
 </html>
-<!--
-<div class="card" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="list2" jqyoui-draggable="{animate:true}" ng-hide="!list1.title">{{list1.title}}</div>
-<br>
--->
-
-<!--
-        <div class="card" data-drag="true" data-jqyoui-options="{revert: 'false'}" ng-model="list1" jqyoui-draggable="{deepCopy:true}"></div>
-
-        <div class="box" data-drop="true" data-jqyoui-options ng-model="abox" jqyoui-droppable="{onDrop: 'dropped'}">{{abox.title}}>
-
-        </div>
 -->
