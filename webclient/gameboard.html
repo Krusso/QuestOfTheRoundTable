@@ -4,7 +4,7 @@
 <head>
     <title>Quest of The Round Table</title>
     <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
-        <link rel="stylesheet" href="stylesheet.css" type="text/css">
+    <link rel="stylesheet" href="stylesheet.css" type="text/css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -12,28 +12,33 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
-        <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>
+    <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>
 </head>
 
 <body>
-    
-    <div ng-controller="handController">
-        Add Card: <input ng-model="name">
-        {{name}}
+
+    <div ng-controller="gameController">
+        Add Card: <input ng-model="name"> {{name}}
         <button ng-click="addCard(name)">Add</button>
-          <ul>
-            <li ng-repeat="card in cards">Name: {{card.name}} id: {{card.id}}
-            
-                <div card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}"  jqyoui-draggable="{animate:true}"></div>
+        <ul>
+            <li ng-repeat="card in deckMap.hand">Name: {{card.name}} id: {{card.id}}
+                <div id="{{card.id}}" card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{animate:true}" ng-></div>
+
             </li>
         </ul>
-        
-                        
-        
     </div>
+
+    <!--
+<div class="box" ng-controller="deckController" data-drop="true" data-jqyoui-options jqyoui-droppable>
+    <ul>
+        <li ng-repeat="card in cards">
+            <div card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{animate:true}"></div>
+        </li>
+    </ul>
+</div>
+-->
 
     <script src="card.js"></script>
 </body>
 
 </html>
--->
