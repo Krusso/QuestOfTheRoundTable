@@ -47,174 +47,165 @@ public class TestTournament {
 	public void setup() {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
-    
+
 	// testWinSecondRound
 	// testDrawSecondRound
 	// testFourPlayer
-	
+
 	@Test
 	public void testFourPlayer() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
-		Runnable thread2 = new Runnable() {
+		Runnable player1 = new Runnable() {
 			@Override
 			public void run() {
-				try {
-					PlayerTestCreator p = new PlayerTestCreator();
-					p.connect(WEBSOCKET_URI);
-					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT));
-					
-					while(true) {
-						TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
-						if(tads.player == 0) { break; }
-					}
-					
-					p.sendMessage("/app/game.joinTournament", 
-							new TournamentAcceptDeclineClient(0, false));
-					
-				} catch (InterruptedException | ExecutionException | TimeoutException e) {
-					e.printStackTrace();
-				}
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.sendMessage("/app/game.createGame", 
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
+
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
 			}
 		};
 		
-		new Thread(thread2).start();
-		Thread.sleep(1000);
+		Runnable player2 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.sendMessage("/app/game.createGame", 
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
+
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+			}
+		};
+		
+		Runnable player3 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.sendMessage("/app/game.createGame", 
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
+
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+			}
+		};
+
+		new Thread(player1).start();
+		Thread.sleep(500);
+		new Thread(player2).start();
+		Thread.sleep(500);
+		new Thread(player3).start();
+		Thread.sleep(500);
 		PlayerTestCreator p = new PlayerTestCreator();
 		p.connect(WEBSOCKET_URI);
-		p.sendMessage("/app/game.listGames", new GameListClient());
+		p.joinGame();
 		
-		GameListServer gls = p.take(GameListServer.class);
-		assertEquals(1, gls.getGames().length);
-		
-		p.sendMessage("/app/game.joinGame", 
-				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
+		p.waitForThenSend(TournamentAcceptDeclineServer.class, 1, 
+				"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
 
-
-		MiddleCardServer mcs = p.take(MiddleCardServer.class);
-		assertEquals("Tournament at York", mcs.card);
-		
-		while(true) {
-			TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
-			if(tads.player == 1) { break; }
-		}
-		
-		TournamentAcceptDeclineClient tadc = new TournamentAcceptDeclineClient(1, true);
-		p.sendMessage("/app/game.joinTournament", tadc);
-		
-		TournamentWinServer tws = p.take(TournamentWinServer.class);
-		assertEquals("Only one participant joined", tws.response);
-		assertEquals(1, tws.players.length);
-		assertEquals(1, tws.players[0]);
 	}
-	
+
 	@Test
 	public void testOnePlayer() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
 		Runnable thread2 = new Runnable() {
 			@Override
 			public void run() {
-				try {
-					PlayerTestCreator p = new PlayerTestCreator();
-					p.connect(WEBSOCKET_URI);
-					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT));
-					
-					while(true) {
-						TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
-						if(tads.player == 0) { break; }
-					}
-					
-					p.sendMessage("/app/game.joinTournament", 
-							new TournamentAcceptDeclineClient(0, false));
-					
-				} catch (InterruptedException | ExecutionException | TimeoutException e) {
-					e.printStackTrace();
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.sendMessage("/app/game.createGame", 
+						new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT));
+
+				while(true) {
+					TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
+					if(tads.player == 0) { break; }
 				}
+
+				p.sendMessage("/app/game.joinTournament", 
+						new TournamentAcceptDeclineClient(0, false));
 			}
 		};
-		
+
 		new Thread(thread2).start();
 		Thread.sleep(1000);
 		PlayerTestCreator p = new PlayerTestCreator();
 		p.connect(WEBSOCKET_URI);
 		p.sendMessage("/app/game.listGames", new GameListClient());
-		
+
 		GameListServer gls = p.take(GameListServer.class);
 		assertEquals(1, gls.getGames().length);
-		
+
 		p.sendMessage("/app/game.joinGame", 
 				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
 
 
 		MiddleCardServer mcs = p.take(MiddleCardServer.class);
 		assertEquals("Tournament at York", mcs.card);
-		
+
 		while(true) {
 			TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
 			if(tads.player == 1) { break; }
 		}
-		
+
 		TournamentAcceptDeclineClient tadc = new TournamentAcceptDeclineClient(1, true);
 		p.sendMessage("/app/game.joinTournament", tadc);
-		
+
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals("Only one participant joined", tws.response);
 		assertEquals(1, tws.players.length);
 		assertEquals(1, tws.players[0]);
 	}
-	
+
 	@Test
 	public void testNoOneEnter() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
 		Runnable thread2 = new Runnable() {
 			@Override
 			public void run() {
-				try {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
 							new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT));
-					
+
 					while(true) {
 						TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
 						if(tads.player == 0) { break; }
 					}
-					
+
 					p.sendMessage("/app/game.joinTournament", 
 							new TournamentAcceptDeclineClient(0, false));
-					
-				} catch (InterruptedException | ExecutionException | TimeoutException e) {
-					e.printStackTrace();
-				}
 			}
 		};
-		
+
 		new Thread(thread2).start();
 		Thread.sleep(1000);
 		PlayerTestCreator p = new PlayerTestCreator();
 		p.connect(WEBSOCKET_URI);
 		p.sendMessage("/app/game.listGames", new GameListClient());
-		
+
 		GameListServer gls = p.take(GameListServer.class);
 		assertEquals(1, gls.getGames().length);
-		
+
 		p.sendMessage("/app/game.joinGame", 
 				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
 
 
 		MiddleCardServer mcs = p.take(MiddleCardServer.class);
 		assertEquals("Tournament at York", mcs.card);
-		
+
 		while(true) {
 			TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
 			if(tads.player == 1) { break; }
 		}
-		
+
 		TournamentAcceptDeclineClient tadc = new TournamentAcceptDeclineClient(1, false);
 		p.sendMessage("/app/game.joinTournament", tadc);
-		
+
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals("No Players join the tournament", tws.response);
 		assertEquals(0, tws.players.length);
 	}
-	
+
 
 }

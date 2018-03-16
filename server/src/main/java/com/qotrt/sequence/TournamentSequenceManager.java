@@ -60,9 +60,9 @@ public class TournamentSequenceManager extends SequenceManager {
 		} 
 
 		// more than one player (x > 1) joined tournament ask them to play cards
-		tm.questionCards();
+		tm.questionCards(participants);
 		try {
-			Thread.sleep(60000);
+			tm.cdl.await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -83,10 +83,10 @@ public class TournamentSequenceManager extends SequenceManager {
 			tm.setWinners(winners);
 			
 			// question players for cards to play
-			tm.questionCards();
+			tm.questionCards(winners);
 			// Wait for responses
 			try {
-				Thread.sleep(60000);
+				tm.cdl.await(60, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

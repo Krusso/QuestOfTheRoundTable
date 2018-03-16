@@ -1,6 +1,7 @@
 package com.qotrt;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -22,28 +23,41 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qotrt.config.MappingJackson2MessageConverter;
 import com.qotrt.messages.Message;
+import com.qotrt.messages.game.GameJoinClient;
+import com.qotrt.messages.game.GameListClient;
+import com.qotrt.messages.game.GameListServer;
 
 
 public class PlayerTestCreator {
 
 	protected LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
 	private StompSession stompSession;
-	
-	public StompSession connect(String WEBSOCKET_URI) throws InterruptedException, ExecutionException, TimeoutException {
+
+	public StompSession connect(String WEBSOCKET_URI) {
 		System.out.println("starting");
 		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 		//stompClient.setMessageConverter(new StringMessageConverter());
 
 		System.out.println("connecting to: " + WEBSOCKET_URI);
-		stompSession = stompClient.connect(WEBSOCKET_URI, 
-				new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+		try {
+			stompSession = stompClient.connect(WEBSOCKET_URI, 
+					new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		this.subscribe("/user/queue/response");
 
-		Thread.sleep(200);
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//JmsOperations jmsOperations;
-		
+
 		return stompSession;
 	}
 
@@ -71,19 +85,24 @@ public class PlayerTestCreator {
 	}
 
 
-	public <T> T take(Class<T> ca) throws InterruptedException {
+	public <T> T take(Class<T> ca) {
 		Message message1;
-		while((message1 = messages.poll(10, SECONDS)) != null) {
-			System.out.println("checking type of: " + message1);
-			System.out.println("type match: " + ca.isInstance(message1));
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				return mapper.convertValue(message1, ca);
-			} catch(IllegalArgumentException e) {
-				System.out.println("-------");
-				System.out.println(e.getMessage());
-				System.out.println(message1);
+		try {
+			while((message1 = messages.poll(10, SECONDS)) != null) {
+				System.out.println("checking type of: " + message1);
+				System.out.println("type match: " + ca.isInstance(message1));
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					return mapper.convertValue(message1, ca);
+				} catch(IllegalArgumentException e) {
+					System.out.println("-------");
+					System.out.println(e.getMessage());
+					System.out.println(message1);
+				}
 			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		System.out.println("couldnt find: " + ca);
@@ -94,5 +113,24 @@ public class PlayerTestCreator {
 		List<Transport> transports = new ArrayList<>();
 		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
 		return transports;
+	}
+
+	public <T extends Message> void waitForThenSend(Class<T> class1, int player, String destination,
+			Object objectToSend) {
+		while(true) {
+			T tads = take(class1);
+			if(tads.player == 0) { break; }
+		}
+
+		sendMessage(destination, objectToSend);
+	}
+	
+	public void joinGame() {
+		sendMessage("/app/game.listGames", new GameListClient());
+		GameListServer gls = take(GameListServer.class);
+		assertEquals(1, gls.getGames().length);
+
+		sendMessage("/app/game.joinGame", 
+				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
 	}
 }

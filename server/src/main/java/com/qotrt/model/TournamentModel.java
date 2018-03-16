@@ -80,7 +80,11 @@ public class TournamentModel extends Observable{
 						this.message));
 	}
 
-	public void questionCards() {
+	public void questionCards(List<Player> toQuestion) {
+		this.joinPlayers = toQuestion;
 		fireEvent("questioncardtournament", null, joinPlayers);
 	}
+	
+	public void 
+	
 }

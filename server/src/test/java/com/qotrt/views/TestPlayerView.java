@@ -50,26 +50,22 @@ public class TestPlayerView {
 	public void setup() {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
-    
+
 	@Test
 	public void testCreateGameEndpoint() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
 		Runnable thread2 = new Runnable() {
 			@Override
 			public void run() {
-				try {
-					PlayerTestCreator p = new PlayerTestCreator();
-					p.connect(WEBSOCKET_URI);
-					GameCreateClient gcc = new GameCreateClient();
-					gcc.setNumPlayers(2);
-					gcc.setPlayerName("hello");
-					gcc.setRigged(RIGGED.AITOURNAMENT);
-					p.sendMessage("/app/game.createGame", gcc);
-				} catch (InterruptedException | ExecutionException | TimeoutException e) {
-					e.printStackTrace();
-				}
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				GameCreateClient gcc = new GameCreateClient();
+				gcc.setNumPlayers(2);
+				gcc.setPlayerName("hello");
+				gcc.setRigged(RIGGED.AITOURNAMENT);
+				p.sendMessage("/app/game.createGame", gcc);
 			}
 		};
-		
+
 		new Thread(thread2).start();
 		Thread.sleep(1000);
 		PlayerTestCreator p = new PlayerTestCreator();
@@ -81,13 +77,13 @@ public class TestPlayerView {
 		gjc.setPlayerName("world");
 		gjc.setUuid(gls.getGames()[0].getUuid());
 		assertEquals(1, gls.getGames().length);
-		
+
 		p.sendMessage("/app/game.joinGame", gjc);
-		
+
 		AddCardsServer ads = p.take(AddCardsServer.class);
 		assertEquals(12, ads.getCards().length);
 		System.out.println("Cards: " + Arrays.toString(ads.getCards()));
 	}
-	
+
 
 }
