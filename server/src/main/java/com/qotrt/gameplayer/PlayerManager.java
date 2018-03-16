@@ -313,30 +313,10 @@ public class PlayerManager {
 		//pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
 	}
 
-
-//	public void subscribe(PlayersView psv) {
-//		pvs.add(psv);
-//	}
-
-//	public void subscribe(PlayerView pv) {
-//		for(Player player: players) {
-//			player.subscribe(pv);
-//		}
-//	}
-
 	public Iterator<Player> round(){
 		List<Player> list = new ArrayList<Player>(Arrays.asList(players)).subList(actualPlayer, players.length);
 		list.addAll(new ArrayList<Player>(Arrays.asList(players)).subList(0, actualPlayer));
 		return list.iterator();
-	}
-
-
-	public List<Player> getAllWithState(Player.STATE state) {
-		return StreamSupport.stream(
-				Spliterators.spliteratorUnknownSize(round(), Spliterator.ORDERED),
-				false)
-				.filter(i -> i.getQuestion() == state)
-				.collect(Collectors.toList());
 	}
 
 	public void flipCards(Iterator<Player> players) {

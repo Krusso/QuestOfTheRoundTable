@@ -12,6 +12,7 @@ public class TournamentModel extends Observable{
 
 	public CountDownLatch cdl = new CountDownLatch(1);
 	private int questioned = 0;
+	private int picking = 0;
 	private List<Player> questionJoinPlayers = new ArrayList<Player>();
 	private List<Player> joinPlayers = new ArrayList<Player>();
 	private List<Player> winners = new ArrayList<Player>();
@@ -82,9 +83,27 @@ public class TournamentModel extends Observable{
 
 	public void questionCards(List<Player> toQuestion) {
 		this.joinPlayers = toQuestion;
-		fireEvent("questioncardtournament", null, joinPlayers);
+		cdl = new CountDownLatch(1);
+		picking = toQuestion.size();
+		fireEvent("questioncardtournament", null, this.joinPlayers.stream().mapToInt(i -> i.getID()).toArray());
 	}
 	
-	public void 
+	public void finishSelectingCards(Player player) {
+		System.out.println("player: " + player + " attempted to finish selecting cards");
+		if(picking > 0) {
+			picking--;
+			System.out.println("player: " + player + " finished selecting cards");
+			checkIfCanOpenLatch();
+		} else {
+			System.out.println("player: " + player + " finish selecting cards too late");
+		}
+	}
 	
+	public synchronized void finishPicking() {
+		picking = -1;
+	}
+	
+	public synchronized boolean canPick() {
+		return picking > 0;
+	}
 }

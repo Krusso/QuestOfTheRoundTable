@@ -67,6 +67,9 @@ public class TournamentSequenceManager extends SequenceManager {
 			e1.printStackTrace();
 		}
 		
+		// dont let users pick anymore
+		tm.finishPicking();
+		
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
 		players = participants.iterator();

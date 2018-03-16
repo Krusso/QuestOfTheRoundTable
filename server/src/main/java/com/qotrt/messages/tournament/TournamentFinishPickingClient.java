@@ -2,12 +2,10 @@ package com.qotrt.messages.tournament;
 
 import com.qotrt.messages.Message;
 
-// from server
-public class TournamentPickCardsServer extends Message {
-
-	public TournamentPickCardsServer() {}
+//from client
+public class TournamentFinishPickingClient extends Message {
 	
-	public TournamentPickCardsServer(int player) {
+	public TournamentFinishPickingClient(int player) {
 		super(player);
 	}
 	

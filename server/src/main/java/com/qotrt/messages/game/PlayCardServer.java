@@ -7,15 +7,17 @@ import com.qotrt.messages.game.PlayCardClient.ZONE;
 public class PlayCardServer extends Message {
 
 	public int card;
-	public ZONE zone;
+	public ZONE zoneTo;
+	public ZONE zoneFrom;
 	public String response;
 	
 	public PlayCardServer() {}
 	
-	public PlayCardServer(int player, int card, ZONE zone, String response) {
+	public PlayCardServer(int player, int card, ZONE zoneFrom, ZONE zoneTo, String response) {
 		super(player);
 		this.card = card;
-		this.zone = zone;
+		this.zoneFrom = zoneFrom;
+		this.zoneTo = zoneTo;
 		this.response = response;
 	}
 	

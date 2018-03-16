@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
+import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.model.GenericPair;
 
@@ -35,6 +36,13 @@ public class TournamentView extends View implements PropertyChangeListener {
 		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (String) e.value));
 	}
 	
+	private void questionCardTournament(int[] players) {
+		System.out.println("here??????");
+		for(int i: players) {
+			sendMessage("/queue/response", new TournamentPickCardsServer(i));	
+		}
+	}
+	
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("event got fired");
 		if(evt.getPropertyName().equals("questiontournament")) {
@@ -52,6 +60,9 @@ public class TournamentView extends View implements PropertyChangeListener {
 		if(evt.getPropertyName().equals("tournamentwinners")) {
 			setWinners((GenericPair) evt.getNewValue());
 		}
+		
+		if(evt.getPropertyName().equals("questioncardtournament")) {
+			questionCardTournament((int[]) evt.getNewValue());
+		}
 	}
-
 }

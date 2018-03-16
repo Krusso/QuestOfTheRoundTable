@@ -6,7 +6,11 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.util.MimeTypeUtils;
 
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
@@ -131,6 +135,24 @@ public class Game extends Observable {
 		});
 	}
 
+	public void sendMessageToAllPlayers(String destination, Object objectToSend) {
+		players.forEach(i -> {
+			messagingTemplate.convertAndSendToUser(i.getSessionID(), 
+					destination, 
+					objectToSend, 
+					createHeaders(i.getSessionID()));
+		});
+	}
+	
+	// TODO: move to some util class
+	private MessageHeaders createHeaders(String sessionId) {
+	    SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+	    headerAccessor.setSessionId(sessionId);
+	    headerAccessor.setLeaveMutable(true);
+	    headerAccessor.setContentType(MimeTypeUtils.APPLICATION_JSON);
+	    return headerAccessor.getMessageHeaders();
+	}
+	
 	public boolean addPlayer(UIPlayer player) {
 		
 		if(players.size() == gameSize) {

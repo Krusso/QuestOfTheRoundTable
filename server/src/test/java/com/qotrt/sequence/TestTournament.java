@@ -25,8 +25,12 @@ import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.messages.game.MiddleCardServer;
+import com.qotrt.messages.game.PlayCardClient;
+import com.qotrt.messages.game.PlayCardServer;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineClient;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
+import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.model.RiggedModel.RIGGED;
 
@@ -72,10 +76,8 @@ public class TestTournament {
 			public void run() {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
-				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
-
-				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+				p.joinGame();
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 1, 
 						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
 			}
 		};
@@ -85,10 +87,8 @@ public class TestTournament {
 			public void run() {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
-				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
-
-				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+				p.joinGame();
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 2, 
 						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
 			}
 		};
@@ -103,8 +103,19 @@ public class TestTournament {
 		p.connect(WEBSOCKET_URI);
 		p.joinGame();
 		
-		p.waitForThenSend(TournamentAcceptDeclineServer.class, 1, 
+		p.waitForThenSend(TournamentAcceptDeclineServer.class, 3, 
 				"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+		p.waitForThenSend(TournamentPickCardsServer.class, 1,
+				"/app/game.playCard", new PlayCardClient(3, 25, ZONE.HAND, ZONE.FACEDOWN));
+		p.sendMessageWithSleep("/app/game.playCard", new PlayCardClient(3, 31, ZONE.HAND, ZONE.FACEDOWN), 20);
+		p.sendMessageWithSleep("/app/game.playCard", new PlayCardClient(3, 114, ZONE.HAND, ZONE.FACEDOWN), 20);
+		PlayCardServer pcs = p.take(PlayCardServer.class);
+		assertEquals(25, pcs.card);
+		pcs = p.take(PlayCardServer.class);
+		assertEquals(31, pcs.card);
+		pcs = p.take(PlayCardServer.class);
+		assertEquals("Cant play foe cards for tournament", pcs.response);
+		Thread.sleep(5000);
 
 	}
 

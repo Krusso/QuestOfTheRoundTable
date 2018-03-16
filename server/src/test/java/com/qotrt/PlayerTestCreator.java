@@ -133,4 +133,18 @@ public class PlayerTestCreator {
 		sendMessage("/app/game.joinGame", 
 				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
 	}
+
+	public void sendMessageWithSleep(String string, Object e, int i) {
+		try {
+			Thread.sleep(i);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		sendMessage(string, e);
+		try {
+			Thread.sleep(i);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
 }

@@ -17,19 +17,14 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
 import com.qotrt.messages.game.PlayCardClient;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
+import com.qotrt.messages.game.PlayCardServer;
 
 
 @Controller
 public class PlayCardController {
 
 	@Autowired
-	private SimpMessagingTemplate messagingTemplate;
-
-	@Autowired
 	private Hub hub;
-
-	private Game game;
-	private Player player;
 
 	@PostConstruct
 	private void init() {
@@ -42,63 +37,87 @@ public class PlayCardController {
 		System.out.println("deleted");
 	}
 
-	private void setPlayerGame(SimpMessageHeaderAccessor headerAccessor) {
-		this.game = hub.getGameBySessionID(headerAccessor.getSessionId());
-		this.player = game.getPlayerBySessionID(headerAccessor.getSessionId());
-	}
-	
+
 	@MessageMapping("/game.playCard")
 	public void playCard(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
-		setPlayerGame(headerAccessor);
-		if(chatMessage.zone.equals(ZONE.FACEDOWN)) {
-			if(verifyFaceDownCard(player, chatMessage.card)) {
-				player.setFaceDown(player.findCardByID(chatMessage.card));
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+
+		//TODO: find a way to refactor this, maybe put it in the cards themselves?
+
+		if(chatMessage.zoneTo.equals(ZONE.FACEDOWN) && 
+				(game.bmm.getTournamentModel().canPick())) {
+			String response = verifyFaceDownCard(player, chatMessage.card);
+			if(response.equals("")) {
+				player.setFaceDown(player.getCardByID(chatMessage.card), ZONE.HAND);
+			} else {
+				game.sendMessageToAllPlayers("/queue/response", 
+						new PlayCardServer(player.getID(), 
+								chatMessage.card, 
+								chatMessage.zoneFrom, 
+								chatMessage.zoneFrom, 
+								response));
 			}
-		} else if(chatMessage.zone.equals(ZONE.FACEUP)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.FACEUP)) {
 			//TODO: handle this case
-		} else if(chatMessage.zone.equals(ZONE.DISCARD)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.DISCARD)) {
 			//TODO: handle this case
-		} else if(chatMessage.zone.equals(ZONE.HAND)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.HAND)) {
 			//TODO: handle this case
-		} else if(chatMessage.zone.equals(ZONE.STAGE1)) {
+
+
+			//			if(chatMessage.zoneFrom.equals(ZONE.FACEDOWN)) {
+			//				player
+			//			}
+
+		} else if(chatMessage.zoneTo.equals(ZONE.STAGE1)) {
 			//TODO: handle this case
-		} else if(chatMessage.zone.equals(ZONE.STAGE2)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.STAGE2)) {
 			//TODO: handle this case
-		} else if(chatMessage.zone.equals(ZONE.STAGE3)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.STAGE3)) {
 			//TODO: handle this case
-		} else if(chatMessage.zone.equals(ZONE.STAGE4)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.STAGE4)) {
 			//TODO: handle this case			
-		} else if(chatMessage.zone.equals(ZONE.STAGE5)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.STAGE5)) {
 			//TODO: handle this case
 		}
 	}
 
-	private boolean verifyFaceDownCard(Player player, int card) {
+	private String verifyFaceDownCard(Player player, int card) {
 		AdventureCard c = player.findCardByID(card);
+		System.out.println("Player: " + player.getID() + " trying to play: " + c.getName() + " id: " + card);
 		switch(c.getType()) {
 		case ALLIES:
-			return true;
+			System.out.println("Card is ally can play");
+			return "";
 		case AMOUR:
 			for(AdventureCard a: player.getFaceDownDeck().getDeck()) {
 				if(a.getType() == TYPE.AMOUR) {
-					return false;
+					System.out.println("amour card already face dont cant play");
+					return "Amour card already in facedown pane cant play more than 1";
 				}
 			}
-			return true;
+			System.out.println("amour card not already face down can play");
+			return "";
 		case FOES:
-			return false;
+			System.out.println("cant play foes card");
+			return "Cant play foe cards for tournament";
 		case TESTS:
-			return false;
+			System.out.println("cant play tests card");
+			return "Cant play test cards for tournament";
 		case WEAPONS:
 			for(AdventureCard a: player.getFaceDownDeck().getDeck()) {
 				if(a.getName().equals(c.getName())) {
-					return false;
+					System.out.println("cant play duplicate weapon cards");
+					return "Cant play duplicate weapons";
 				}
 			}
-			return true;
+			System.out.println("can play this card");
+			return "";
 		default:
-			return false;
+			System.out.println("error");
+			return "error play card with unknown type";
 		}
 	}
 }

@@ -42,5 +42,14 @@ public class TournamentController {
 			game.bmm.getTournamentModel().declineTournament(player);
 		}
 	}
+	
+	@MessageMapping("/game.finishSelectingTournament")	
+	public void finishSelectingTournament(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload TournamentAcceptDeclineClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		System.out.println("finish selecting cards: " + chatMessage.player);
+		game.bmm.getTournamentModel().finishSelectingCards(player);
+	}
 
 }

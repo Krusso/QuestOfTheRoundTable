@@ -105,4 +105,14 @@ public abstract class Deck<E extends Card> {
 		}
 		return null;
 	}
+	
+	public E getCardByID(int id) {
+		for(E card: deck) {
+			if(card.id == id) {
+				deck.remove(card);
+				return card;
+			}
+		}
+		return null;
+	}
 }

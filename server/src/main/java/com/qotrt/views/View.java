@@ -12,6 +12,8 @@ import com.qotrt.model.UIPlayer;
 
 public abstract class View {
 
+	
+	// TODO: used in multiple places move to util class
 	private MessageHeaders createHeaders(String sessionId) {
 	    SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
 	    headerAccessor.setSessionId(sessionId);

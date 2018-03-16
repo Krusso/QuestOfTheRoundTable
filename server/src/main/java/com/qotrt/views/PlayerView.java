@@ -6,9 +6,10 @@ import java.beans.PropertyChangeListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.gameplayer.Rank;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
+import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
 import com.qotrt.messages.hand.AddCardsServer;
-import com.qotrt.messages.hand.FaceDownServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.model.GenericPair;
 
@@ -36,8 +37,8 @@ public class PlayerView extends View implements PropertyChangeListener {
 			playerChangeShields((GenericPair) evt.getNewValue());
 		}
 		
-		if(evt.getPropertyName().equals("setFaceDown")) {
-			playerSetFaceDown((GenericPair) evt.getNewValue());
+		if(evt.getPropertyName().equals("moveCard")) {
+			moveCard((GenericPair) evt.getNewValue());
 		}
 		
 		if(evt.getPropertyName().equals("discardType")) {
@@ -54,8 +55,9 @@ public class PlayerView extends View implements PropertyChangeListener {
 		sendMessage("/queue/response", new AddCardsServer((int)e.value, (GenericPair[]) e.key));
 	}
 	
-	private void playerSetFaceDown(GenericPair e) {
-		sendMessage("/queue/response", new FaceDownServer((int)e.value, (int) e.key));
+	private void moveCard(GenericPair e) {
+		GenericPair p = (GenericPair) e.key;
+		sendMessage("/queue/response", new PlayCardServer((int)e.value, (int) p.key, (ZONE) p.value,  ZONE.FACEDOWN, ""));
 	}
 	
 	private void playerDiscardType(GenericPair e) {
