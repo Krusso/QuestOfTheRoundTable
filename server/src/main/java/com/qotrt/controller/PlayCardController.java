@@ -38,7 +38,7 @@ public class PlayCardController {
 	}
 
 
-	@MessageMapping("/game.playCard")
+	@MessageMapping("/game.playCardTournament")
 	public void playCard(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());

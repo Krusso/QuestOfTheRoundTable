@@ -62,6 +62,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		// more than one player (x > 1) joined tournament ask them to play cards
 		tm.questionCards(participants);
 		try {
+			logger.info("Waiting for 60 seconds for users to pick their cards");
 			tm.cdl.await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -69,6 +70,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		
 		// dont let users pick anymore
 		tm.finishPicking();
+		logger.info("finished selecting cards");
 		
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner

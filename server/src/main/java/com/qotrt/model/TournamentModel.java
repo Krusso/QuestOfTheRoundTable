@@ -64,6 +64,12 @@ public class TournamentModel extends Observable{
 			cdl.countDown();
 		}
 	}
+	
+	private void checkIfCanOpenLatch2() {
+		if(picking == 0) {
+			cdl.countDown();
+		}
+	}
 
 	public synchronized List<Player> playersWhoJoined(){
 		System.out.println("Getting players who joined the tournament");
@@ -93,7 +99,7 @@ public class TournamentModel extends Observable{
 		if(picking > 0) {
 			picking--;
 			System.out.println("player: " + player + " finished selecting cards");
-			checkIfCanOpenLatch();
+			checkIfCanOpenLatch2();
 		} else {
 			System.out.println("player: " + player + " finish selecting cards too late");
 		}

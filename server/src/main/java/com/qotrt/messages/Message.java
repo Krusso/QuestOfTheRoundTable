@@ -13,6 +13,7 @@ import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
+import com.qotrt.messages.tournament.TournamentFinishPickingClient;
 import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 
@@ -33,7 +34,7 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = TournamentAcceptedDeclinedServer.class, name="JOINEDTOURNAMENT"),
 	    @Type(value = TournamentWinServer.class, name="WINTOURNAMENT"),
 	    @Type(value = TournamentPickCardsServer.class, name="PICKTOURNAMENT"),
-	    @Type(value = PlayCardServer.class, name="PLAYCARD")
+	    @Type(value = PlayCardServer.class, name="PLAYCARD"),
 	    })  
 public abstract class Message {
 
@@ -67,7 +68,8 @@ public abstract class Message {
 		LISTSERVER, 
 		PLAYCARD, 
 		SHOWMIDDLECARD, 
-		JOINEDTOURNAMENT
+		JOINEDTOURNAMENT, 
+		FINISHPICKTOURNAMENT
 	};
 	
 //	@Override

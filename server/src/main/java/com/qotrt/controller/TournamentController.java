@@ -13,6 +13,7 @@ import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineClient;
+import com.qotrt.messages.tournament.TournamentFinishPickingClient;
 
 
 @Controller
@@ -45,7 +46,7 @@ public class TournamentController {
 	
 	@MessageMapping("/game.finishSelectingTournament")	
 	public void finishSelectingTournament(SimpMessageHeaderAccessor headerAccessor, 
-			@Payload TournamentAcceptDeclineClient chatMessage) {
+			@Payload TournamentFinishPickingClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		System.out.println("finish selecting cards: " + chatMessage.player);

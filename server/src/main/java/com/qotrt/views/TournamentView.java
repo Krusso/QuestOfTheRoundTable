@@ -2,6 +2,7 @@ package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Arrays;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -37,7 +38,8 @@ public class TournamentView extends View implements PropertyChangeListener {
 	}
 	
 	private void questionCardTournament(int[] players) {
-		System.out.println("here??????");
+		System.out.println("here123??????");
+		System.out.println(Arrays.toString(players));
 		for(int i: players) {
 			sendMessage("/queue/response", new TournamentPickCardsServer(i));	
 		}

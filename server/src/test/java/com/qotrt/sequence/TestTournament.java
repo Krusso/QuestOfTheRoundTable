@@ -30,6 +30,7 @@ import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineClient;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
+import com.qotrt.messages.tournament.TournamentFinishPickingClient;
 import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -54,7 +55,6 @@ public class TestTournament {
 
 	// testWinSecondRound
 	// testDrawSecondRound
-	// testFourPlayer
 
 	@Test
 	public void testFourPlayer() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
@@ -68,6 +68,8 @@ public class TestTournament {
 
 				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
 						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 0,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(0));
 			}
 		};
 		
@@ -78,7 +80,9 @@ public class TestTournament {
 				p.connect(WEBSOCKET_URI);
 				p.joinGame();
 				p.waitForThenSend(TournamentAcceptDeclineServer.class, 1, 
-						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(1, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 1,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(1));
 			}
 		};
 		
@@ -89,7 +93,9 @@ public class TestTournament {
 				p.connect(WEBSOCKET_URI);
 				p.joinGame();
 				p.waitForThenSend(TournamentAcceptDeclineServer.class, 2, 
-						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(2, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 2,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(2));
 			}
 		};
 
@@ -106,17 +112,19 @@ public class TestTournament {
 		p.waitForThenSend(TournamentAcceptDeclineServer.class, 3, 
 				"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
 		p.waitForThenSend(TournamentPickCardsServer.class, 1,
-				"/app/game.playCard", new PlayCardClient(3, 25, ZONE.HAND, ZONE.FACEDOWN));
-		p.sendMessageWithSleep("/app/game.playCard", new PlayCardClient(3, 31, ZONE.HAND, ZONE.FACEDOWN), 20);
-		p.sendMessageWithSleep("/app/game.playCard", new PlayCardClient(3, 114, ZONE.HAND, ZONE.FACEDOWN), 20);
+				"/app/game.playCardTournament", new PlayCardClient(3, 25, ZONE.HAND, ZONE.FACEDOWN));
+		p.sendMessageWithSleep("/app/game.playCardTournament", new PlayCardClient(3, 31, ZONE.HAND, ZONE.FACEDOWN), 20);
+		p.sendMessageWithSleep("/app/game.playCardTournament", new PlayCardClient(3, 114, ZONE.HAND, ZONE.FACEDOWN), 20);
 		PlayCardServer pcs = p.take(PlayCardServer.class);
 		assertEquals(25, pcs.card);
 		pcs = p.take(PlayCardServer.class);
 		assertEquals(31, pcs.card);
 		pcs = p.take(PlayCardServer.class);
 		assertEquals("Cant play foe cards for tournament", pcs.response);
-		Thread.sleep(5000);
-
+		p.sendMessage("/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
+		TournamentWinServer tws = p.take(TournamentWinServer.class);
+		assertEquals(3, tws.players[0]);
+		assertEquals(1, tws.players.length);
 	}
 
 	@Test
