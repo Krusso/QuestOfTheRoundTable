@@ -41,7 +41,7 @@ public class TournamentModel extends Observable{
 			System.out.println("player: " + player.getID() + " joined tournament");
 			joinPlayers.add(player);
 			fireEvent("jointournament", null, player);
-			checkIfCanOpenLatch();
+			checkIfCanOpenLatch(cdl, questioned);
 		} else {
 			System.out.println("player: " + player + " joined tournament too late");
 		}
@@ -53,21 +53,9 @@ public class TournamentModel extends Observable{
 			questioned--;
 			System.out.println("player: " + player + " decline tournament");
 			fireEvent("declinetournament", null, player);
-			checkIfCanOpenLatch();
+			checkIfCanOpenLatch(cdl, questioned);
 		} else {
 			System.out.println("player: " + player + " decline tournament too late");
-		}
-	}
-
-	private void checkIfCanOpenLatch() {
-		if(questioned == 0) {
-			cdl.countDown();
-		}
-	}
-	
-	private void checkIfCanOpenLatch2() {
-		if(picking == 0) {
-			cdl.countDown();
 		}
 	}
 
@@ -99,7 +87,7 @@ public class TournamentModel extends Observable{
 		if(picking > 0) {
 			picking--;
 			System.out.println("player: " + player + " finished selecting cards");
-			checkIfCanOpenLatch2();
+			checkIfCanOpenLatch(cdl, picking);
 		} else {
 			System.out.println("player: " + player + " finish selecting cards too late");
 		}
