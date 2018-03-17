@@ -1,5 +1,6 @@
 package com.qotrt.views;
 
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import org.springframework.messaging.MessageHeaders;
@@ -10,7 +11,7 @@ import org.springframework.util.MimeTypeUtils;
 
 import com.qotrt.model.UIPlayer;
 
-public abstract class View {
+public abstract class View implements PropertyChangeListener {
 
 	
 	// TODO: used in multiple places move to util class

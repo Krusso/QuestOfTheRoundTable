@@ -75,6 +75,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
 		players = participants.iterator();
+		// TODO: add flip card message to let players see result of the tournament
 		pm.flipCards(players);
 		logger.info("Flipping cards");
 

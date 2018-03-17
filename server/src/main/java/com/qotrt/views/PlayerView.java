@@ -13,7 +13,7 @@ import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.model.GenericPair;
 
-public class PlayerView extends View implements PropertyChangeListener {
+public class PlayerView extends View {
 		
 	public PlayerView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);

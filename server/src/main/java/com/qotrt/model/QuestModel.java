@@ -3,6 +3,7 @@ package com.qotrt.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.gameplayer.Player;
@@ -14,6 +15,10 @@ public class QuestModel extends Observable {
 	private List<Player> questionSponsorPlayers = new ArrayList<Player>();
 	private List<Player> questionCantSponsorPlayers = new ArrayList<Player>();
 	private Player sponsor = null;
+	
+	private List<Player> questionAcceptQuest = new ArrayList<Player>();
+	private int questionQuest = 0;
+			
 	private List<Player> winners = new ArrayList<Player>();
 	private String message;
 	
@@ -75,4 +80,45 @@ public class QuestModel extends Observable {
 		return null;
 	}
 
+	public synchronized void questionJoinQuest(List<Player> potentialQuestPlayers) {
+		this.cdl = new CountDownLatch(1);
+		this.questionAcceptQuest = potentialQuestPlayers;
+		this.questionQuest = potentialQuestPlayers.size();
+		fireEvent("questionQuest", 
+				null,
+				this.questionSponsorPlayers.stream().mapToInt(i -> i.getID()).toArray());
+	
+	}
+
+	public synchronized void acceptQuest(Player player) {
+		System.out.println("player: " + player + " attempting to accept quest");
+		if(questionQuest > 0) {
+			questionQuest = 0;
+			System.out.println("player: " + player.getID() + " accept quest");
+			this.questionAcceptQuest.add(player);
+			fireEvent("joinquest", null, player);
+			checkIfCanOpenLatch(cdl, questionQuest);
+		} else {
+			System.out.println("player: " + player + " attempted to accept quest too late");
+		}
+	}
+	
+	public synchronized void declineQuest(Player player) {
+		System.out.println("player: " + player + " attempting to decline quest");
+		if(questionQuest > 0) {
+			questionQuest--;
+			System.out.println("player: " + player + " decline quest");
+			checkIfCanOpenLatch(cdl, questionQuest);
+		} else {
+			System.out.println("player: " + player + " decline quest too late");
+		}
+	}
+
+	public List<Player> playerWhoJoined() {
+		System.out.println("Getting players who joined the quest");
+		System.out.println("Players: " + questionAcceptQuest.stream().map(i -> i.getID()).collect(Collectors.toList()));
+		questionQuest = -1;
+		return this.questionAcceptQuest;
+	}
+	
 }

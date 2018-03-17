@@ -19,6 +19,7 @@ import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.Observable;
+import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
@@ -27,7 +28,9 @@ import com.qotrt.sequence.SequenceManager;
 import com.qotrt.views.BoardView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
+import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
+import com.qotrt.views.View;
 
 public class Game extends Observable {
 
@@ -78,24 +81,28 @@ public class Game extends Observable {
 						dm, 
 						rigged);
 				TournamentModel tm = new TournamentModel();
-				bmm = new BoardModelMediator(tm);
+				QuestModel qm = new QuestModel();
+				bmm = new BoardModelMediator(tm, qm);
 
 				// view creation
-				PlayerView pv = new PlayerView(messagingTemplate);
-				BoardView bv = new BoardView(messagingTemplate);
-				TournamentView tv = new TournamentView(messagingTemplate);
+				View pv = new PlayerView(messagingTemplate);
+				View bv = new BoardView(messagingTemplate);
+				View tv = new TournamentView(messagingTemplate);
+				View qv = new QuestView(messagingTemplate);
 
 				//subscriptions
 				players.forEach(i -> { 
 					pv.addWebSocket(i);
 					bv.addWebSocket(i);
 					tv.addWebSocket(i);
+					qv.addWebSocket(i);
 				});
 
 				pm.subscribe(pv);
 				bm.subscribe(bv);
 				tm.subscribe(tv);
-
+				qm.subscribe(qv);
+				
 				pm.start();
 
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();

@@ -12,9 +12,9 @@ import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.model.GenericPair;
 
-public class TournamentView extends View {
+public class QuestView extends View {
 
-	public TournamentView(SimpMessagingTemplate messagingTemplate) {
+	public QuestView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);
 	}
 	

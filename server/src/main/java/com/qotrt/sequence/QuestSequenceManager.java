@@ -12,6 +12,7 @@ import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
+import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.QuestModel;
 
@@ -34,6 +35,7 @@ public class QuestSequenceManager extends SequenceManager {
 		// Finding player who wants to sponsor quest
 		Iterator<Player> players = pm.round();
 		QuestModel qm = bmm.getQuestModel();
+		BoardModel bm = bmm.getBoardModel();
 		List<Player> potentialSponsors = new ArrayList<Player>();
 		List<Player> cantSponsor = new ArrayList<Player>();
 		players.forEachRemaining(i -> {
@@ -47,7 +49,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 		qm.questionSponsorPlayers(potentialSponsors, cantSponsor);
 
-		// Wait four responses
+		// Wait for responses
 		try {
 			qm.cdl.await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
@@ -66,29 +68,28 @@ public class QuestSequenceManager extends SequenceManager {
 		quest.setUpQuest();
 
 		// Finding players who want to join
-		//		players = pm.round();
-		//		while(players.hasNext()) {
-		//			Player curr = players.next();
-		//			if(curr == sponsor) continue;
-		//			pm.setPlayer(curr);
-		//			pm.setState(curr, Player.STATE.QUESTJOINQUESTIONED);
-		//			QuestJoinClient qjc = actions.take(QuestJoinClient.class, MESSAGETYPES.JOINQUEST);
-		//			if(qjc.joined) {
-		//				pm.setState(curr, Player.STATE.YES);
-		//			} else {
-		//				pm.setState(curr, Player.STATE.NO);
-		//			}
-		//		}
-		//
-		//		List<Player> participants = pm.getAllWithState(Player.STATE.YES);
-		//		if(participants.size() != 0 && participants.get(participants.size() - 1).getID() > sponsor.getID()) {
-		//			while(participants.get(0).getID() < sponsor.getID()) {
-		//				participants.add(participants.remove(0));
-		//			}
-		//		}
-		//		List<Player> winners = new ArrayList<Player>(participants);
-		//
-		//		if(participants.size() != 0) {
+		players = pm.round();
+		List<Player> potentialQuestPlayers = new ArrayList<Player>();
+		players.forEachRemaining(i -> {
+			if(i != sponsor) {
+				potentialQuestPlayers.add(i);
+			}
+		});
+
+		qm.questionJoinQuest(potentialQuestPlayers);
+
+		// Wait for responses
+		try {
+			qm.cdl.await(60, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+
+		List<Player> participants = qm.playerWhoJoined();
+
+		List<Player> winners = new ArrayList<Player>(participants);
+		
+				if(participants.size() != 0) {
 		//			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
 		//				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
 		//				pm.drawCards(winners, 1);
@@ -125,29 +126,29 @@ public class QuestSequenceManager extends SequenceManager {
 		//				quest.advanceStage();
 		//				pm.passStage(winners);
 		//			}
-		//		}
-		//		
-		//		if(winners.size() > 0) {
-		//			if(bm.isSetKingRecognition()) {
-		//				bm.setSetKingRecognition(false);
-		//				logger.info("King Recognition");
-		//				pm.changeShields(winners, quest.getNumStages() + 2);	
-		//			} else {
-		//				pm.changeShields(winners, quest.getNumStages());
-		//			}
-		//		}
-		//		
-		//		pm.discardCards(participants);
-		//		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
-		//		
-		//		if(participants.size() != 0) {
-		//			logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
-		//			pm.passQuest(winners);
-		//		} else {
-		//			logger.info("No player join the tournament");
-		//			pm.sendContinue("No Player Joined the Tournament");
-		//		}
-		//		
+				}
+				
+		if(winners.size() > 0) {
+			if(bm.isSetKingRecognition()) {
+				bm.setSetKingRecognition(false);
+				logger.info("King Recognition");
+				pm.changeShields(winners, quest.getNumStages() + 2);	
+			} else {
+				pm.changeShields(winners, quest.getNumStages());
+			}
+		}
+//				
+//				pm.discardCards(participants);
+//				pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
+//				
+//				if(participants.size() != 0) {
+//					logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
+//					pm.passQuest(winners);
+//				} else {
+//					logger.info("No player join the tournament");
+//					pm.sendContinue("No Player Joined the Tournament");
+//				}
+//				
 		logger.info("finished quest sequence: " + this.card.getName());
 	}
 }
