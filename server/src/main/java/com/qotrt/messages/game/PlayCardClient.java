@@ -5,17 +5,21 @@ import com.qotrt.messages.Message;
 //from Client
 public class PlayCardClient extends Message {
 	public int card;
-	public ZONE zone;
+	public ZONE zoneFrom;
+	public ZONE zoneTo;
 	
-	public PlayCardClient(int player, int card, ZONE zone) {
+	public PlayCardClient() {}
+	
+	public PlayCardClient(int player, int card, ZONE zoneFrom, ZONE zoneTo) {
 		super(player);
 		this.card = card;
-		this.zone = zone;
+		this.zoneFrom = zoneFrom;
+		this.zoneTo = zoneTo;
 	}
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PICKTOURNAMENT;
+		this.message = MESSAGETYPES.PLAYCARD;
 	}
 	
 	public static enum ZONE {

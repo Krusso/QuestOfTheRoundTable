@@ -3,6 +3,7 @@ package com.qotrt.sequence;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,13 +36,13 @@ public class TournamentSequenceManager extends SequenceManager {
 		
 		// Wait for responses
 		try {
-			Thread.sleep(60000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			tm.cdl.await(60, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
 		
 		List<Player> participants = tm.playersWhoJoined();
-		
+		logger.info("Players who joined: " + participants);
 
 		// determining if anyone joined
 		pm.drawCards(participants, 1);
@@ -59,7 +60,17 @@ public class TournamentSequenceManager extends SequenceManager {
 		} 
 
 		// more than one player (x > 1) joined tournament ask them to play cards
-		tm.questionCards();
+		tm.questionCards(participants);
+		try {
+			logger.info("Waiting for 60 seconds for users to pick their cards");
+			tm.cdl.await(60, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
+		// dont let users pick anymore
+		tm.finishPicking();
+		logger.info("finished selecting cards");
 		
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
@@ -73,14 +84,14 @@ public class TournamentSequenceManager extends SequenceManager {
 			logger.info("Tie going again");
 			// tie do tournament again
 			pm.discardWeapons(participants);
-			tm.setMessage("Tournament win");
+			tm.setMessage("Player tie");
 			tm.setWinners(winners);
 			
 			// question players for cards to play
-			tm.questionCards();
+			tm.questionCards(winners);
 			// Wait for responses
 			try {
-				Thread.sleep(60000);
+				tm.cdl.await(60, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

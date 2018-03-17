@@ -9,7 +9,7 @@ public abstract class Card {
 	
 	final static Logger logger = LogManager.getLogger(Card.class);
 	
-	static final AtomicInteger NEXT_ID = new AtomicInteger(0);
+	public static AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
 	public final int id = NEXT_ID.getAndIncrement();
 	private String name;

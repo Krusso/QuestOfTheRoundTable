@@ -7,6 +7,8 @@ public class TournamentAcceptDeclineClient extends Message {
 
 	public boolean joined;
 	
+	public TournamentAcceptDeclineClient() {}
+	
 	public TournamentAcceptDeclineClient(int player, boolean joined) {
 		super(player);
 		this.joined = joined;

@@ -3,7 +3,6 @@ package com.qotrt.gameplayer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +12,7 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.Card;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Rank.RANKS;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.model.GenericPair;
 import com.qotrt.model.Observable;
 import com.qotrt.model.UIPlayer;
@@ -22,26 +22,6 @@ public class Player extends Observable {
 
 	final static Logger logger = LogManager.getLogger(Player.class);
 
-	public static enum STATE {
-		NEUTRAL, 
-		QUESTIONED, 
-		YES, 
-		NO, 
-		PICKING, 
-		EVENTDISCARDING, 
-		WIN, 
-		WINNING, 
-		GAMEWON,
-		SPONSORING, 
-		QUESTQUESTIONED, 
-		BIDDING, 
-		TESTDISCARD, 
-		QUESTPICKING, 
-		QUESTJOINQUESTIONED, 
-		DISCARDING,
-		QUESTQUESTIONEDCANT
-	};
-
 	private UIPlayer uiPlayer;
 	protected RANKS rank;
 	public AdventureDeck hand;
@@ -49,7 +29,6 @@ public class Player extends Observable {
 	private AdventureDeck faceUp;
 	//private PlayerView pv;
 	private final int ID;
-	private STATE question;
 	protected int shields;
 	public boolean tristan = false;
 	public boolean iseult = false;
@@ -68,6 +47,10 @@ public class Player extends Observable {
 		return hand.findCardByID(id);
 	}
 
+	public AdventureCard getCardByID(int id) {
+		return hand.getCardByID(id);
+	}
+	
 	public boolean compareSessionID(String otherSessionID) {
 		return uiPlayer.getSessionID().equals(otherSessionID);
 	}
@@ -102,7 +85,7 @@ public class Player extends Observable {
 		}
 
 		fireEvent("addCards", null, new GenericPair(cards.stream().
-				map(i -> i.getName()).toArray(String[]::new), 
+				map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new), 
 				ID));
 	}
 
@@ -110,9 +93,6 @@ public class Player extends Observable {
 		return hand.toString();
 	}
 
-	public STATE getQuestion() {
-		return question;
-	}
 
 	public void changeShields(int shields) {
 		this.shields += shields;
@@ -133,10 +113,10 @@ public class Player extends Observable {
 	}
 
 
-	public void setFaceDown(AdventureCard card) {
-		logger.info("Player id: " + ID + " setting face down: " + card);
+	public void setFaceDown(AdventureCard card, ZONE zoneFrom) {
+		logger.info("Player id: " + ID + " setting face down: " + card + " from zone: " + zoneFrom);
 		faceDown.addCard(card);
-		fireEvent("setFaceDown", null, new GenericPair(card,ID));
+		fireEvent("moveCard", null, new GenericPair(new GenericPair(card.id, zoneFrom),ID));
 	}
 
 	public RANKS getRank() {

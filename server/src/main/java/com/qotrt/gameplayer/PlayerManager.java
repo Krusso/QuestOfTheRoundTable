@@ -4,24 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
-import com.qotrt.cards.Card;
 import com.qotrt.cards.FoeCard;
 import com.qotrt.cards.TestCard;
 import com.qotrt.cards.WeaponCard;
 import com.qotrt.deck.DeckManager;
-import com.qotrt.gameplayer.Player.STATE;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.views.PlayerView;
-
 
 public class PlayerManager {
 
@@ -47,6 +40,7 @@ public class PlayerManager {
 	public void start() {
 		dm.setRigged(rigged);
 		for(int i = players.length; i > 0; i--) {
+			System.out.println("setting cards for: " + i);
 			if(rigged.equals(RIGGED.ONE)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -181,8 +175,11 @@ public class PlayerManager {
 				} else {
 					cards.add(dm.getAdventureCard("Battle-ax"));
 				}
+				System.out.println("stuck here2?");
 				players[i - 1].addCards(cards);
+				System.out.println("stuck here?");
 				players[i - 1].changeShields(18);
+				System.out.println("stuck here1?");
 				players[i - 1].increaseLevel();
 			} else if(rigged.equals(RIGGED.AIQUEST)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
@@ -275,6 +272,7 @@ public class PlayerManager {
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
+			System.out.println("finished setting up cards for: " + i);
 		}
 	}
 
@@ -310,30 +308,10 @@ public class PlayerManager {
 		//pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
 	}
 
-
-//	public void subscribe(PlayersView psv) {
-//		pvs.add(psv);
-//	}
-
-//	public void subscribe(PlayerView pv) {
-//		for(Player player: players) {
-//			player.subscribe(pv);
-//		}
-//	}
-
 	public Iterator<Player> round(){
 		List<Player> list = new ArrayList<Player>(Arrays.asList(players)).subList(actualPlayer, players.length);
 		list.addAll(new ArrayList<Player>(Arrays.asList(players)).subList(0, actualPlayer));
 		return list.iterator();
-	}
-
-
-	public List<Player> getAllWithState(Player.STATE state) {
-		return StreamSupport.stream(
-				Spliterators.spliteratorUnknownSize(round(), Spliterator.ORDERED),
-				false)
-				.filter(i -> i.getQuestion() == state)
-				.collect(Collectors.toList());
 	}
 
 	public void flipCards(Iterator<Player> players) {

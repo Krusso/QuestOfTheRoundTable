@@ -1,6 +1,7 @@
 package com.qotrt;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -9,18 +10,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -30,43 +23,45 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qotrt.config.MappingJackson2MessageConverter;
 import com.qotrt.messages.Message;
+import com.qotrt.messages.game.GameJoinClient;
+import com.qotrt.messages.game.GameListClient;
+import com.qotrt.messages.game.GameListServer;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = QotrtApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-// used to restart spring application after every test
-// might be able to remove later
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+
 public class PlayerTestCreator {
 
 	protected LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
-	@Value("${local.server.port}")
-	private int port;
-	static String WEBSOCKET_URI;
+	private StompSession stompSession;
 
-	@Before
-	public void setup() {
-		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
-	}
-
-	public StompSession connect() throws InterruptedException, ExecutionException, TimeoutException {
+	public StompSession connect(String WEBSOCKET_URI) {
 		System.out.println("starting");
 		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 		//stompClient.setMessageConverter(new StringMessageConverter());
 
 		System.out.println("connecting to: " + WEBSOCKET_URI);
-		StompSession stompSession = stompClient.connect(WEBSOCKET_URI, 
-				new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+		try {
+			stompSession = stompClient.connect(WEBSOCKET_URI, 
+					new StompSessionHandlerAdapter() {}).get(1, SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		this.subscribe(stompSession, "/user/queue/response");
+		this.subscribe("/user/queue/response");
 
-		Thread.sleep(200);
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//JmsOperations jmsOperations;
-		
+
 		return stompSession;
 	}
 
-	public void subscribe(StompSession stompSession, String destination) {
+	public void subscribe(String destination) {
 		//stompSession.subscribe(destination, new CreateGameStompFrameHandler());
 		stompSession.subscribe(destination, new StompFrameHandler() {
 			@Override
@@ -83,32 +78,31 @@ public class PlayerTestCreator {
 		});
 	}
 
-	public void sendMessage(StompSession stompSession, String destination, Object e) {
+	public void sendMessage(String destination, Object e) {
 		System.out.println("sending: " + e);
 		System.out.println("to: " + destination);
 		stompSession.send(destination, e);
 	}
 
 
-	@SuppressWarnings("unchecked")
-	public <T> T take(Class<T> ca) throws InterruptedException {
+	public <T> T take(Class<T> ca) {
 		Message message1;
-		while((message1 = messages.poll(2, SECONDS)) != null) {
-			System.out.println("checking type of: " + message1);
-			System.out.println("type match: " + ca.isInstance(message1));
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				return mapper.convertValue(message1, ca);
-			} catch(IllegalArgumentException e) {
-				System.out.println("-------");
-				System.out.println(e.getMessage());
-				System.out.println(message1);
+		try {
+			while((message1 = messages.poll(10, SECONDS)) != null) {
+				System.out.println("checking type of: " + message1);
+				System.out.println("type match: " + ca.isInstance(message1));
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					return mapper.convertValue(message1, ca);
+				} catch(IllegalArgumentException e) {
+					System.out.println("-------");
+					System.out.println(e.getMessage());
+					System.out.println(message1);
+				}
 			}
-			//T value = mapper.readValue(new String(message1), ca);
-			//return (T) message1;
-			//				if(ca.isInstance(value)) {
-			//					return value;
-			//				}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		System.out.println("couldnt find: " + ca);
@@ -118,33 +112,39 @@ public class PlayerTestCreator {
 	private List<Transport> createTransportClient() {	
 		List<Transport> transports = new ArrayList<>();
 		transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-		//		RestTemplateXhrTransport xhrTransport = new RestTemplateXhrTransport(new RestTemplate());
-		//		transports.add(xhrTransport);
-
 		return transports;
 	}
 
-	private class CreateGameStompFrameHandler extends StompSessionHandlerAdapter {
-
-		@Override
-		public void handleException(StompSession s, StompCommand c, StompHeaders h, byte[] p, Throwable ex) {
-			System.out.println("error1");
+	public <T extends Message> void waitForThenSend(Class<T> class1, int player, String destination,
+			Object objectToSend) {
+		while(true) {
+			T tads = take(class1);
+			if(tads.player == 0) { break; }
 		}
 
-		@Override
-		public void handleTransportError(StompSession session, Throwable ex) {
-			System.out.println("error2");
-		}
+		sendMessage(destination, objectToSend);
+	}
+	
+	public void joinGame() {
+		sendMessage("/app/game.listGames", new GameListClient());
+		GameListServer gls = take(GameListServer.class);
+		assertEquals(1, gls.getGames().length);
 
-		@Override
-		public Type getPayloadType(StompHeaders stompHeaders) {
-			return Object.class;
-		}
+		sendMessage("/app/game.joinGame", 
+				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
+	}
 
-		@Override
-		public void handleFrame(StompHeaders stompHeaders, Object o) {
-			System.out.println("payload: " + o);
-			//messages.add(o);
+	public void sendMessageWithSleep(String string, Object e, int i) {
+		try {
+			Thread.sleep(i);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		sendMessage(string, e);
+		try {
+			Thread.sleep(i);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
 		}
 	}
 }
