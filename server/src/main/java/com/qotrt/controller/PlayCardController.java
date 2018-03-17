@@ -86,6 +86,9 @@ public class PlayCardController {
 
 	private String verifyFaceDownCard(Player player, int card) {
 		AdventureCard c = player.findCardByID(card);
+		System.out.println("player: " + player.getID());
+		System.out.println("card id: " + card);
+		System.out.println("card: " + c);
 		System.out.println("Player: " + player.getID() + " trying to play: " + c.getName() + " id: " + card);
 		switch(c.getType()) {
 		case ALLIES:

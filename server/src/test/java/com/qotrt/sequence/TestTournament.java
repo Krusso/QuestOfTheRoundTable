@@ -53,8 +53,163 @@ public class TestTournament {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
 
-	// testWinSecondRound
-	// testDrawSecondRound
+	@Test
+	public void testWinSecondRound() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+		Runnable player1 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.sendMessage("/app/game.createGame", 
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
+
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 0,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(0));
+				
+				p.waitForThenSend(TournamentPickCardsServer.class, 0,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(0));
+			}
+		};
+		
+		Runnable player2 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.joinGame();
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 1, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(1, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 1,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(1));
+				
+				p.waitForThenSend(TournamentPickCardsServer.class, 1,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(1));
+			}
+		};
+		
+		Runnable player3 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.joinGame();
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 2, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(2, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 2,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(2));
+				
+				p.waitForThenSend(TournamentPickCardsServer.class, 2,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(2));
+			}
+		};
+
+		new Thread(player1).start();
+		Thread.sleep(500);
+		new Thread(player2).start();
+		Thread.sleep(500);
+		new Thread(player3).start();
+		Thread.sleep(500);
+		PlayerTestCreator p = new PlayerTestCreator();
+		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		
+		p.waitForThenSend(TournamentAcceptDeclineServer.class, 3, 
+				"/app/game.joinTournament", new TournamentAcceptDeclineClient(3, true));
+		p.waitForThenSend(TournamentPickCardsServer.class, 3,
+				"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
+		TournamentWinServer tws = p.take(TournamentWinServer.class);
+		assertEquals(4, tws.players.length);
+		assertEquals("Player tie", tws.response);
+		
+		
+		p.waitForThenSend(TournamentPickCardsServer.class, 1,
+				"/app/game.playCardTournament", new PlayCardClient(3, 25, ZONE.HAND, ZONE.FACEDOWN));
+		p.sendMessageWithSleep("/app/game.playCardTournament", new PlayCardClient(3, 31, ZONE.HAND, ZONE.FACEDOWN), 20);
+		p.sendMessage("/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
+		tws = p.take(TournamentWinServer.class);
+		assertEquals(1, tws.players.length);
+		assertEquals(3, tws.players[0]);
+		assertEquals("Player won", tws.response);
+	}
+	
+	@Test
+	public void testDrawSecondRound() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+		Runnable player1 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.sendMessage("/app/game.createGame", 
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT));
+
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 0,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(0));
+				
+				p.waitForThenSend(TournamentPickCardsServer.class, 0,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(0));
+			}
+		};
+		
+		Runnable player2 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.joinGame();
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 1, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(1, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 1,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(1));
+				
+				p.waitForThenSend(TournamentPickCardsServer.class, 1,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(1));
+			}
+		};
+		
+		Runnable player3 = new Runnable() {
+			@Override
+			public void run() {
+				PlayerTestCreator p = new PlayerTestCreator();
+				p.connect(WEBSOCKET_URI);
+				p.joinGame();
+				p.waitForThenSend(TournamentAcceptDeclineServer.class, 2, 
+						"/app/game.joinTournament", new TournamentAcceptDeclineClient(2, true));
+				p.waitForThenSend(TournamentPickCardsServer.class, 2,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(2));
+				
+				p.waitForThenSend(TournamentPickCardsServer.class, 2,
+						"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(2));
+			}
+		};
+
+		new Thread(player1).start();
+		Thread.sleep(500);
+		new Thread(player2).start();
+		Thread.sleep(500);
+		new Thread(player3).start();
+		Thread.sleep(500);
+		PlayerTestCreator p = new PlayerTestCreator();
+		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		
+		p.waitForThenSend(TournamentAcceptDeclineServer.class, 3, 
+				"/app/game.joinTournament", new TournamentAcceptDeclineClient(3, true));
+		p.waitForThenSend(TournamentPickCardsServer.class, 3,
+				"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
+		TournamentWinServer tws = p.take(TournamentWinServer.class);
+		assertEquals(4, tws.players.length);
+		assertEquals("Player tie", tws.response);
+		
+		p.waitForThenSend(TournamentPickCardsServer.class, 3,
+				"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
+		tws = p.take(TournamentWinServer.class);
+		assertEquals(4, tws.players.length);
+		assertEquals("Player won", tws.response);
+	}
 
 	@Test
 	public void testFourPlayer() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
@@ -110,7 +265,7 @@ public class TestTournament {
 		p.joinGame();
 		
 		p.waitForThenSend(TournamentAcceptDeclineServer.class, 3, 
-				"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
+				"/app/game.joinTournament", new TournamentAcceptDeclineClient(3, true));
 		p.waitForThenSend(TournamentPickCardsServer.class, 1,
 				"/app/game.playCardTournament", new PlayCardClient(3, 25, ZONE.HAND, ZONE.FACEDOWN));
 		p.sendMessageWithSleep("/app/game.playCardTournament", new PlayCardClient(3, 31, ZONE.HAND, ZONE.FACEDOWN), 20);
@@ -125,6 +280,7 @@ public class TestTournament {
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals(3, tws.players[0]);
 		assertEquals(1, tws.players.length);
+		assertEquals("Player won", tws.response);
 	}
 
 	@Test

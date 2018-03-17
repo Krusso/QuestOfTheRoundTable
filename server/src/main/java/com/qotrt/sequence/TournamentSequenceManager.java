@@ -84,7 +84,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			logger.info("Tie going again");
 			// tie do tournament again
 			pm.discardWeapons(participants);
-			tm.setMessage("Tournament win");
+			tm.setMessage("Player tie");
 			tm.setWinners(winners);
 			
 			// question players for cards to play
