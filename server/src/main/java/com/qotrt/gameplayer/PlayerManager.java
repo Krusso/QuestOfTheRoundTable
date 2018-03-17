@@ -280,6 +280,11 @@ public class PlayerManager {
 //		this.dsm = dsm;
 //	}
 	
+	public void drawCards(Player player, int cards) {
+		player.addCards(dm.getAdventureCard(cards));
+		//if(dsm != null) dsm.start(null, null, null);
+	}
+	
 	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> {
 			player.addCards(dm.getAdventureCard(cards));

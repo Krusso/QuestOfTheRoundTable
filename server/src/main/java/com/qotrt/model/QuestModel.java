@@ -120,5 +120,45 @@ public class QuestModel extends Observable {
 		questionQuest = -1;
 		return this.questionAcceptQuest;
 	}
+
+	public void passStage(List<Player> winners2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void questionCardsStage(List<Player> winners2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void finishPicking() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void flipStage() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void questionBid(List<Player> winners2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Player getBidWinners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void discardCards(Player bidWinner) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String[] getDiscardCards() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

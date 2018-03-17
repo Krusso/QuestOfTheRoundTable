@@ -1,6 +1,7 @@
 package com.qotrt.sequence;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -88,46 +89,63 @@ public class QuestSequenceManager extends SequenceManager {
 		List<Player> participants = qm.playerWhoJoined();
 
 		List<Player> winners = new ArrayList<Player>(participants);
-		
-				if(participants.size() != 0) {
-		//			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
-		//				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
-		//				pm.drawCards(winners, 1);
-		//				if (quest.currentStageType() == Quest.TYPE.FOE) {
-		//					players = winners.iterator();
-		//					// some constraints when choosing cards... can be done on client side c:
-		//					while(players.hasNext()) {
-		//						Player pick = players.next();
-		//						pm.setPlayer(pick);
-		//						pm.setState(pick, Player.STATE.QUESTPICKING);
-		//						QuestPickCardsClient qpcc = actions.take(QuestPickCardsClient.class, MESSAGETYPES.PICKQUEST);
-		//						pm.currentFaceDown(qpcc.cards); 
-		//					}
-		//					pm.flipStage(sponsor, quest.getCurrentStage());
-		//					quest.battleFoe(winners, pm);
-		//					pm.discardWeapons(participants);
-		//				} else if (quest.currentStageType() == Quest.TYPE.TEST) {
-		//					pm.flipStage(sponsor, quest.getCurrentStage());
-		//					players = winners.iterator();
-		//					Pair bidWinner = questionPlayersForBid(players, pm, actions, card, (TestCard) quest.getFoeOrTest());
-		//					logger.info("Bid winner: " + bidWinner.player);
-		//					if(bidWinner.player == null) {
-		//						winners.clear();
-		//						break;
-		//					}
-		//					pm.setPlayer(bidWinner.player);
-		//					pm.setDiscarding(bidWinner.player, Player.STATE.TESTDISCARD, Math.max(0, bidWinner.cardsToBid(card)));
-		//					QuestDiscardCardsClient qdcc = actions.take(QuestDiscardCardsClient.class, MESSAGETYPES.DISCARDQUEST);
-		//					pm.discardFromHand(bidWinner.player, qdcc.cards);
-		//					winners.clear();
-		//					winners.add(bidWinner.player);
-		//				}
-		//				logger.info("# of Players still in quest: " + winners.size());
-		//				quest.advanceStage();
-		//				pm.passStage(winners);
-		//			}
+
+		if(participants.size() != 0) {
+			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
+				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
+				pm.drawCards(winners, 1);
+				if (quest.currentStageType() == Quest.TYPE.FOE) {
+
+					qm.questionCardsStage(winners);
+					try {
+						logger.info("Waiting for 60 seconds for users to pick their cards");
+						qm.cdl.await(60, TimeUnit.SECONDS);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					qm.finishPicking();
+
+					//					pm.flipStage(sponsor, quest.getCurrentStage());
+					qm.flipStage();
+
+					quest.battleFoe(winners, pm);
+					pm.discardWeapons(participants);
+				} else if (quest.currentStageType() == Quest.TYPE.TEST) {
+					qm.flipStage();
+					//					pm.flipStage(sponsor, quest.getCurrentStage());
+
+					qm.questionBid(winners);
+					try {
+						logger.info("Waiting for users to finish bidding");
+						qm.cdl.await();
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+
+					Player bidWinner = qm.getBidWinners();
+					if(bidWinner == null) {
+						winners.clear();
+						break;
+					}
+
+					qm.discardCards(bidWinner);
+					try {
+						logger.info("Waiting for user to finish discarding");
+						qm.cdl.await();
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					pm.discardFromHand(bidWinner, qm.getDiscardCards());
+					winners.clear();
+					winners.add(bidWinner);
 				}
-				
+				logger.info("# of Players still in quest: " + winners.size());
+				quest.advanceStage();
+				qm.setMessage("Pass Stage");
+				qm.passStage(winners);
+			}
+		}
+
 		if(winners.size() > 0) {
 			if(bm.isSetKingRecognition()) {
 				bm.setSetKingRecognition(false);
@@ -137,18 +155,20 @@ public class QuestSequenceManager extends SequenceManager {
 				pm.changeShields(winners, quest.getNumStages());
 			}
 		}
-//				
-//				pm.discardCards(participants);
-//				pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
-//				
-//				if(participants.size() != 0) {
-//					logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
-//					pm.passQuest(winners);
-//				} else {
-//					logger.info("No player join the tournament");
-//					pm.sendContinue("No Player Joined the Tournament");
-//				}
-//				
+
+		pm.discardCards(participants);
+		pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
+
+		if(participants.size() != 0) {
+			logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
+			qm.setMessage("Tournament Winners");
+			qm.setWinners(winners);
+		} else {
+			logger.info("No player join the tournament");
+			qm.setMessage("No Player Joined the Tournament");
+			qm.setWinners(new ArrayList<Player>());
+		}
+
 		logger.info("finished quest sequence: " + this.card.getName());
 	}
 }
