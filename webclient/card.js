@@ -55,7 +55,6 @@ app.controller('gameController', function ($scope) {
                 return e;
             }
         })[0];
-        console.log(card);
         console.log("Copying card " + card.name + " of id " + card.id + " to target zone");
         targetZone.push(card);
         console.log("Removing card from original zone");
