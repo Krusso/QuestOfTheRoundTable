@@ -21,28 +21,30 @@
         Add Card: <input ng-model="name"> {{name}}
         <button ng-click="addCard(name)">Add</button>
         <div class="box">
-            
-<!--
+
+            <!--
             <ul>
                 <li ng-repeat="card in game.hand" ng-model='game.hand' >Name: {{card.name}} id: {{card.id}}
                     <div id={{card.id}} card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{onStart: 'startDrag(event, card)'}" ></div>
                 </li>
             </ul>
 -->
-            <div ng-repeat="card in game.hand" ng-model='game.hand' jqyoui-droppable="{index: {{$index}}}">
-                <div id='{{card.id}}' card-img="resources/{{card.name}}.png" data-drag="{{card.draggable}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{index: {{$index}}, onStart: 'startDrag($index)', onStop:'onDrop()'}" ></div>
+            <div ng-repeat="card in zones.handZone" ng-model='zones.handZone' jqyoui-droppable="{index: {{$index}}}">
+                Hand Zone
+                <div id='{{card.id}}' card-img="resources/{{card.name}}.png" data-drag="{{card.draggable}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{index: {{$index}}, onStart: 'startDrag(event)'}"></div>
             </div>
-     
+
         </div>
 
-        
+
         Field:
-        <div class="box" data-drop="true" data-jqyoui-options jqyoui-droppable>
+        <div id="faceDownZone" class="box" data-drop="true" data-jqyoui-options jqyoui-droppable="{onDrop: 'onDrop()'}">
+            Face Down Zone
             <ul>
-            <li ng-repeat="card in game.field" ng-model='game.field'>Name: {{card.name}} id: {{card.id}}
-                <div id="{{card.id}}" card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{animate:true}" ></div>
-            </li>
-        </ul>
+                <li ng-repeat="card in zones.faceDownZone" ng-model='zones.faceDownZone'>
+                    <div id="{{card.id}}" card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{animate:true}"></div>
+                </li>
+            </ul>
         </div>
 
     </div>
