@@ -36,7 +36,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		
 		// Wait for responses
 		try {
-			tm.cdl.await(60, TimeUnit.SECONDS);
+			tm.join().await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -63,7 +63,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		tm.questionCards(participants);
 		try {
 			logger.info("Waiting for 60 seconds for users to pick their cards");
-			tm.cdl.await(60, TimeUnit.SECONDS);
+			tm.questionCards().await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -92,10 +92,13 @@ public class TournamentSequenceManager extends SequenceManager {
 			tm.questionCards(winners);
 			// Wait for responses
 			try {
-				tm.cdl.await(60, TimeUnit.SECONDS);
+				tm.questionCards().await(60, TimeUnit.SECONDS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			// dont let users pick anymore
+			tm.finishPicking();
 
 			players = winners.iterator();
 			pm.flipCards(players);

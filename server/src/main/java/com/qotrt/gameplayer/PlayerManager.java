@@ -20,8 +20,6 @@ public class PlayerManager {
 
 	private int actualPlayer = -1;
 	private int currentPlayer = -1;
-	// Note: using arraylists but for now only have one instance of a view. Might change
-	//private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
 	private RIGGED rigged;
 	//private DiscardSequenceManager dsm;

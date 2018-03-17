@@ -7,15 +7,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.MimeTypeUtils;
 
 import com.qotrt.game.Game;
 import com.qotrt.hub.Hub;
@@ -24,6 +21,7 @@ import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.model.UIPlayer;
+import com.qotrt.util.WebSocketUtil;
 
 @Controller
 public class GameController {
@@ -46,15 +44,6 @@ public class GameController {
 		System.out.println("deleted");
 	}
 
-	// TODO: find some util class to put this in
-	private MessageHeaders createHeaders(String sessionId) {
-		SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-		headerAccessor.setSessionId(sessionId);
-		headerAccessor.setLeaveMutable(true);
-		headerAccessor.setContentType(MimeTypeUtils.APPLICATION_JSON);
-		return headerAccessor.getMessageHeaders();
-	}
-
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
 		UUID uuid = hub.addGame(chatMessage.getNumPlayers(), chatMessage.getRigged());
@@ -75,7 +64,7 @@ public class GameController {
 		messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), 
 				"/queue/response",
 				gls,
-				createHeaders(headerAccessor.getSessionId()));
+				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));
 	}
 
 	@MessageMapping("/game.joinGame")

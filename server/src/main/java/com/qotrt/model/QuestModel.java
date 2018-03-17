@@ -1,66 +1,70 @@
 package com.qotrt.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
 
 import com.qotrt.cards.AdventureCard;
+import com.qotrt.confirmation.Confirmation;
+import com.qotrt.confirmation.SingleShotConfirmation;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.sequence.Quest;
+import com.qotrt.util.PlayerUtil;
 
-public class QuestModel extends Observable {
+public class QuestModel extends Observable implements PropertyChangeListener {
 
-	public CountDownLatch cdl = new CountDownLatch(1);
-	private int questionSponsor = 0;
-	private List<Player> questionSponsorPlayers = new ArrayList<Player>();
-	private List<Player> questionCantSponsorPlayers = new ArrayList<Player>();
-	private Player sponsor = null;
 	
-	private List<Player> questionAcceptQuest = new ArrayList<Player>();
-	private int questionQuest = 0;
+	private Confirmation sponsor = new SingleShotConfirmation("questionSponsor", 
+			"jointournament", 
+			"declinetournament");
+	
+	private Confirmation participate = new SingleShotConfirmation("questionQuest", 
+			"joinquest", 
+			null);
+	
+	private List<Player> participatents = new ArrayList<Player>();
+	private Quest quest;
+	
+	
+	public QuestModel() {
+		sponsor.subscribe(this);
+		participate.subscribe(this);
+		cards.subscribe(this);
+	}
+	
+	public void setQuest(Quest quest) {
+		this.quest = quest;
+	}
+	
+	@Override
+	//propagating events up
+	public void propertyChange(PropertyChangeEvent arg0) {
+		fireEvent(arg0.getPropertyName(), arg0.getOldValue(), arg0.getNewValue());
+	}
 			
 	private List<Player> winners = new ArrayList<Player>();
 	private String message;
 	
-	public synchronized void questionSponsorPlayers(List<Player> potentialSponsors, List<Player> cantSponsor) {
-		this.cdl = new CountDownLatch(1);
-		this.questionSponsorPlayers = potentialSponsors;
-		this.questionCantSponsorPlayers = cantSponsor;
-		this.questionSponsor = this.questionSponsorPlayers.size();
-		fireEvent("questionSponsor", null,
-				new GenericPair(this.questionSponsorPlayers.stream().mapToInt(i -> i.getID()).toArray(),
-						this.questionCantSponsorPlayers.stream().mapToInt(i -> i.getID())));
+	public synchronized void questionSponsorPlayers(List<Player> potentialSponsors) {
+		sponsor.start(potentialSponsors);
 	}
 	
 	public synchronized void acceptSponsor(Player player) {
-		System.out.println("player: " + player + " attempting to sponsor");
-		if(questionSponsor > 0) {
-			questionSponsor = 0;
-			System.out.println("player: " + player.getID() + " sponsored quest");
-			this.sponsor = player;
-			fireEvent("jointournament", null, player);
-			checkIfCanOpenLatch(cdl, questionSponsor);
-		} else {
-			System.out.println("player: " + player + " attempted to sponsor too late");
-		}
+		sponsor.accept(player, "player: " + player + " attempting to sponsor",
+				"player: " + player.getID() + " sponsored quest", 
+				"player: " + player + " attempted to sponsor too late");
 	}
 	
 	public synchronized void declineSponsor(Player player) {
-		System.out.println("player: " + player + " attempting to decline sponsorship");
-		if(questionSponsor > 0) {
-			questionSponsor--;
-			System.out.println("player: " + player + " declined sponsorship");
-			checkIfCanOpenLatch(cdl, questionSponsor);
-		} else {
-			System.out.println("player: " + player + " decline sponsorship too late");
-		}
+		sponsor.decline(player, "player: " + player + " attempting to decline sponsorship",
+				"player: " + player + " declined sponsorship", 
+				"player: " + player + " decline sponsorship too late");
 	}
 	
-	public synchronized Player getPlayerWhoSponsor() {
-		System.out.println("Getting players who sponsor the quest");
-		System.out.println("Players: " + sponsor + " " + (sponsor != null ? sponsor.getID() : " "));
-		questionSponsor = -1;
-		return this.sponsor;
+	public synchronized List<Player> getPlayerWhoSponsor() {
+		return sponsor.get();
 	}
 	
 	public synchronized void setMessage(String message) {
@@ -75,88 +79,79 @@ public class QuestModel extends Observable {
 						this.message));
 	}
 
-	public List<List<AdventureCard>> getStageCards() {
+	public synchronized List<List<AdventureCard>> getStageCards() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public synchronized void questionJoinQuest(List<Player> potentialQuestPlayers) {
-		this.cdl = new CountDownLatch(1);
-		this.questionAcceptQuest = potentialQuestPlayers;
-		this.questionQuest = potentialQuestPlayers.size();
-		fireEvent("questionQuest", 
-				null,
-				this.questionSponsorPlayers.stream().mapToInt(i -> i.getID()).toArray());
 	
+	public synchronized void questionJoinQuest(List<Player> potentialQuestPlayers) {
+		participate.start(potentialQuestPlayers);
 	}
 
 	public synchronized void acceptQuest(Player player) {
-		System.out.println("player: " + player + " attempting to accept quest");
-		if(questionQuest > 0) {
-			questionQuest = 0;
-			System.out.println("player: " + player.getID() + " accept quest");
-			this.questionAcceptQuest.add(player);
-			fireEvent("joinquest", null, player);
-			checkIfCanOpenLatch(cdl, questionQuest);
-		} else {
-			System.out.println("player: " + player + " attempted to accept quest too late");
-		}
+		participate.accept(player, "player: " + player + " attempting to accept quest",
+				"player: " + player.getID() + " accept quest",
+				"player: " + player + " attempted to accept quest too late");
 	}
 	
 	public synchronized void declineQuest(Player player) {
-		System.out.println("player: " + player + " attempting to decline quest");
-		if(questionQuest > 0) {
-			questionQuest--;
-			System.out.println("player: " + player + " decline quest");
-			checkIfCanOpenLatch(cdl, questionQuest);
-		} else {
-			System.out.println("player: " + player + " decline quest too late");
-		}
+		participate.decline(player, "player: " + player + " attempting to decline quest",
+				"player: " + player + " decline quest", 
+				"player: " + player + " decline quest too late");
 	}
 
-	public List<Player> playerWhoJoined() {
+	public synchronized List<Player> playerWhoJoined() {
 		System.out.println("Getting players who joined the quest");
-		System.out.println("Players: " + questionAcceptQuest.stream().map(i -> i.getID()).collect(Collectors.toList()));
-		questionQuest = -1;
-		return this.questionAcceptQuest;
+		List<Player> x = participate.get();
+		System.out.println("Players: " + Arrays.toString(PlayerUtil.playersToIDs(x)));
+		participatents = x;
+		return x;
 	}
 
-	public void passStage(List<Player> winners2) {
+	public synchronized void passStage(List<Player> passedStage) {
+		participatents = passedStage;
+		fireEvent("passStage", null, PlayerUtil.playersToIDs(passedStage));
+	}
+
+	private Confirmation cards = new SingleShotConfirmation("questionCardQuest", 
+			"cardQuest", 
+			null);
+	
+	public synchronized void questionCardsStage() {
+		cards.start(participatents);
+	}
+
+	public synchronized void finishSelectingCards(Player player) {
+		cards.accept(player, "player: " + player + " attempted to finish selecting cards", 
+				"player: " + player + " finished selecting cards", 
+				"player: " + player + " finish selecting cards too late");
+	}
+	
+	public synchronized void finishPicking() {
+		cards.get();
+	}
+
+	public synchronized void flipStage() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void questionCardsStage(List<Player> winners2) {
+	public synchronized void questionBid(List<Player> winners2) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void finishPicking() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void flipStage() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void questionBid(List<Player> winners2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Player getBidWinners() {
+	public synchronized Player getBidWinners() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void discardCards(Player bidWinner) {
+	public synchronized void discardCards(Player bidWinner) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public String[] getDiscardCards() {
+	public synchronized String[] getDiscardCards() {
 		// TODO Auto-generated method stub
 		return null;
 	}

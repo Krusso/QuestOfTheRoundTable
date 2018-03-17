@@ -6,11 +6,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.util.MimeTypeUtils;
 
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
@@ -25,6 +21,7 @@ import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
+import com.qotrt.util.WebSocketUtil;
 import com.qotrt.views.BoardView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
@@ -82,7 +79,7 @@ public class Game extends Observable {
 						rigged);
 				TournamentModel tm = new TournamentModel();
 				QuestModel qm = new QuestModel();
-				bmm = new BoardModelMediator(tm, qm);
+				bmm = new BoardModelMediator(tm, qm, bm);
 
 				// view creation
 				View pv = new PlayerView(messagingTemplate);
@@ -90,7 +87,7 @@ public class Game extends Observable {
 				View tv = new TournamentView(messagingTemplate);
 				View qv = new QuestView(messagingTemplate);
 
-				//subscriptions
+				// adding websocket session ids to each view 
 				players.forEach(i -> { 
 					pv.addWebSocket(i);
 					bv.addWebSocket(i);
@@ -98,6 +95,7 @@ public class Game extends Observable {
 					qv.addWebSocket(i);
 				});
 
+				// subscriptions
 				pm.subscribe(pv);
 				bm.subscribe(bv);
 				tm.subscribe(tv);
@@ -145,17 +143,8 @@ public class Game extends Observable {
 			messagingTemplate.convertAndSendToUser(i.getSessionID(), 
 					destination, 
 					objectToSend, 
-					createHeaders(i.getSessionID()));
+					WebSocketUtil.createHeaders(i.getSessionID()));
 		});
-	}
-
-	// TODO: move to some util class
-	private MessageHeaders createHeaders(String sessionId) {
-		SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-		headerAccessor.setSessionId(sessionId);
-		headerAccessor.setLeaveMutable(true);
-		headerAccessor.setContentType(MimeTypeUtils.APPLICATION_JSON);
-		return headerAccessor.getMessageHeaders();
 	}
 
 	public boolean addPlayer(UIPlayer player) {

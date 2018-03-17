@@ -67,6 +67,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 		quest = new Quest(card, qm);
 		quest.setUpQuest();
+		qm.setQuest(quest);
 
 		// Finding players who want to join
 		players = pm.round();
@@ -96,7 +97,7 @@ public class QuestSequenceManager extends SequenceManager {
 				pm.drawCards(winners, 1);
 				if (quest.currentStageType() == Quest.TYPE.FOE) {
 
-					qm.questionCardsStage(winners);
+					qm.questionCardsStage();
 					try {
 						logger.info("Waiting for 60 seconds for users to pick their cards");
 						qm.cdl.await(60, TimeUnit.SECONDS);
@@ -117,7 +118,7 @@ public class QuestSequenceManager extends SequenceManager {
 					qm.questionBid(winners);
 					try {
 						logger.info("Waiting for users to finish bidding");
-						qm.cdl.await();
+						qm.cdl.await(60, TimeUnit.SECONDS);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
