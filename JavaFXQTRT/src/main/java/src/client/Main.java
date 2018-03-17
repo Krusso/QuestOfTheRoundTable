@@ -34,7 +34,8 @@ public class Main extends Application {
 			Main.client = new Client(input, output);
 			Main.clientThread = new Thread(client);
 			Main.clientThread.start();
-
+			
+			
 //			Parent root = new AnchorPane();
 			FXMLLoader fxmlLoader = new FXMLLoader();
 			fxmlLoader.setLocation(getClass().getClassLoader().getResource("TitleScreen.fxml"));
