@@ -14,7 +14,7 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
 
     service.RECONNECT_TIMEOUT = 30000;
     service.SOCKET_URL = "/ws";
-    service.CHAT_TOPIC = "/topic/public";
+    service.CHAT_TOPIC = "/user/queue/response";
     service.CHAT_BROKER = "/app/ws"; //gonna need multiple of these
 
 
@@ -31,7 +31,6 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
         var id = Math.floor(Math.random() * 1000000);
         console.log(endpoint);
         socket.stomp.send(endpoint, {}, JSON.stringify(message));
-        console.log("hello");
         messageIds.push(id);
     };
 

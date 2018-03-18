@@ -82,7 +82,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
     $scope.addMessage = function (endpoint) {
-        console.log("sending message: " + $scope.message);
         MessageService.send($scope.message, endpoint);
         $scope.message = null;
     };
