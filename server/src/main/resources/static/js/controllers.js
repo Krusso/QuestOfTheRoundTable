@@ -23,10 +23,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
     $scope.playerId = 0;
     $scope.addCard = function (n, id) {
-        card = {
+        var card = {
             name: n,
             id: ($scope.cardId++).toString(),
-            draggable: true,
+            draggable: true
         };
 
         $scope.zones.handZone.push(card);
@@ -94,11 +94,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            numPlayers: parseInt(np),
+            numPlayers: parseInt(np, 10),
             rigged: $scope.RIGGED.NORMAL,
             playerName: pName,
             java_class: "GameCreateClient"
-        }
+        };
         $scope.addMessage($scope.ep_createGame);
     };
 
@@ -106,8 +106,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            java_class: "GameListClient",
-
+            java_class: "GameListClient"
         };
         $scope.addMessage($scope.ep_listGames);
     };
@@ -126,7 +125,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     MessageService.receive().then(null, null, function (message) {
         console.log(message);
         $scope.messages.push(message);
-        if (message.messageType == "LISTSERVER") {
+        if (message.messageType === "LISTSERVER") {
             $scope.serverList = message.games;
             console.log("server list:");
             console.log($scope.serverList);
@@ -139,7 +138,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.startDrag = function (event) {
         var cardId = event.currentTarget.id;
-        console.log("Start drag on card id - " + cardId)
+        console.log("Start drag on card id - " + cardId);
         $scope.currentDrag = cardId;
     };
 
