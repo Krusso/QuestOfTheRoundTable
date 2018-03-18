@@ -152,8 +152,9 @@ public class Game extends Observable {
 	}
 
 	public boolean addPlayer(UIPlayer player) {
-
+		System.out.println("trying to add: " + player.getSessionID());
 		if(players.size() == gameSize) {
+			System.out.println("game full not adding");
 			return false;
 		}
 
@@ -165,6 +166,7 @@ public class Game extends Observable {
 			startGame();
 		}
 
+		System.out.println("game not full adding player: " + player.getSessionID());
 		return true;
 	}
 

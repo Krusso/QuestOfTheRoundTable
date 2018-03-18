@@ -12,7 +12,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
-    <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>
+    <script src="js/angular-dragdrop.min.js"></script>
 </head>
 
 <body>
@@ -54,7 +54,7 @@
         <br>
         <input ng-model="pName" placeholder="player name">
         <input ng-model="numPlayers" placeholder="numPlayers">
-        <button ng-click="sendCreateGameClient(pName, numPlayers, RIGGED.NORMAL)">Create Game</button>
+        <button ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, pName)">Create Game</button>
 
         <!--        Just some debugging stuff to see what we received -->
         <div ng-model="messages">
