@@ -20,7 +20,7 @@ h2 {
 }
 
 #titlescreenbg {
-    background-image: url("resources/titlescreen1.jpg");
+    background-image: url("../gameResources/titlescreen1.jpg");
     background-size: 100%;
     width: 100%;
     height: 100%;
@@ -85,22 +85,23 @@ h2 {
 }
 
 #shield1 {
-    background-image: url("resources/S1.png");
+    background-image: url("../gameResources/S1.png");
 }
 
 #shield2 {
-    background-image: url("resources/S2.png");
+    background-image: url("../gameResources/S2.png");
 }
 
 #shield3 {
-    background-image: url("resources/S3.png");
+    background-image: url("../gameResources/S3.png");
 }
 
 #shield4 {
-    background-image: url("resources/S4.png");
+    background-image: url("../gameResources/S4.png");
 }
 
 #status{
+    background-color: black;
     color: white;
     position: relative;
     top: 400px;
@@ -111,7 +112,7 @@ h2 {
     position: absolute;
     width: 100px;
     height: 150px;
-    background-image: url("resources/Adventure%20Back.png");
+    background-image: url("../gameResources/Adventure%20Back.png");
     background-size: auto;
     background-size: 100px 150px;
 }

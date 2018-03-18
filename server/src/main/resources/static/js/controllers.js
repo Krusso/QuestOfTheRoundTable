@@ -9,6 +9,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
 
     $scope.status = ""
+    $scope.range = [1,2,3,4];
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -92,6 +93,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
     $scope.sendCreateGameClient = function (np, rigType, pName) {
+        if(np<2) { $scope.showMessage("Need at least 2 players"); return; }
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
@@ -101,6 +103,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "GameCreateClient"
         }
         $scope.addMessage($scope.ep_createGame);
+        $scope.showMessage("Created game, click REFRESH LOBBY");
     };
 
     $scope.sendListGamesClient = function () {
@@ -122,7 +125,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "GameJoinClient"
         };
         $scope.addMessage($scope.ep_joinGame);
-        if()
     };
 
     MessageService.receive().then(null, null, function (message) {
