@@ -29,12 +29,41 @@ h2 {
     left: 0;
 }
 
+#lobby{
+    position: relative;
+    z-index: 2;
+    top: 0px;
+    width: 35%;
+    height: 400px;
+    margin-right: 40px;
+    float: right;
+    text-align: left;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+#lobbyTitle{
+    background-color: black;
+    color: white;
+    font-size: 150%;
+}
+
+#lobbyList{
+    color: white;
+}
+
+#join{
+    position: relative;
+    z-index: 2;
+    top: 400px;
+    float: right;    
+}
+
 #menu {
+    float: left;
     position: absolute;
     z-index: 2;
-    left: 250px;
-    right: 100px;
-    width: 46%;
+    top:0px;
+    width: 60%;
     text-align: center;
 }
 
