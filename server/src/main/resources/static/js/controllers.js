@@ -8,6 +8,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *            Controller Variables            *
      *=========================================== */
 
+    $scope.status = ""
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -76,7 +77,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.uuid = null; //TODO: the uuid for the gamelobby not sure if still need this 
 
-    //Specify all endpoints 
+    //Specify all endpoints
     $scope.ep_joinGame = "/app/game.joinGame";
     $scope.ep_listGames = "/app/game.listGames";
     $scope.ep_createGame = "/app/game.createGame";
@@ -121,6 +122,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "GameJoinClient"
         };
         $scope.addMessage($scope.ep_joinGame);
+        if()
     };
 
     MessageService.receive().then(null, null, function (message) {
@@ -132,6 +134,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log($scope.serverList);
         }
     });
+
+    /*=========================================   *
+     *             Display Functions              *
+     *=========================================== */
+
+    $scope.showMessage = function (message) {
+        $scope.status = message;
+    };
 
     /*=========================================   *
      *             Dragging Functions             *

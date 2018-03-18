@@ -7,44 +7,29 @@
     <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 
-    <script src="js/angular-dragdrop.min.js -->"></script>
+    <script src="js/angular-dragdrop.min.js "></script>
 </head>
 
 <body>
 
     <div ng-controller="gameController">
 
-        <!--        Just some debugging stuff to see what we received -->
-<!--         <div ng-model="messages">
-            <ul>
-                <li>MESSAGES RECEIVED:</li>
-                <li ng-repeat="message in messages">
-                    {{message}}
-                </li>
-            </ul>
-        </div>
-
-        EXAMPLE OF HOW WE DISPLAY SERVERS FOR THE LOBBY
-        <ul>
-            <li ng-repeat="game in serverList" ng-model='serverList'>
-                UUID:{{game.uuid}} NumPlayers: {{game.players}} Capacity:{{game.capacity}}
-                <button>JOIN</button>
-            </li>
-        </ul> -->
-
-        <div id="titlescreenbg"></div>
+        </br>
         <div id="lobby">
             <div id="lobbyTitle">LOBBY</div>
 
             <ul id="lobbyList">
                 <li ng-repeat="game in serverList" ng-model='serverList'>
-                    UUID:{{game.uuid}} NumPlayers: {{game.players}} Capacity:{{game.capacity}}
-                    <button>JOIN</button>
+                    UUID:{{game.uuid}} </br>
+                    NumPlayers: {{game.players}} </br>
+                    Capacity:{{game.capacity}} </br>
+                    <button ng-click="sendGameJoinClient(game.uuid);
+                    showMessage('Waiting for other players...')">JOIN</button></br>
                 </li>
             </ul>
 
@@ -55,18 +40,20 @@
             <h2> Select your shield: </h2>
 
             <div id="shields">
-                <button id="shield1" class="shield" onclick="selectShield(1)"></button>
-                <button id="shield2" class="shield" onclick="selectShield(2)"></button>
-                <button id="shield3" class="shield" onclick="selectShield(3)"></button>
-                <button id="shield4" class="shield" onclick="selectShield(4)"></button>
+                <button id="shield1" class="shield" ng-click="selectShield(1)"></button>
+                <button id="shield2" class="shield" ng-click="selectShield(2)"></button>
+                <button id="shield3" class="shield" ng-click="selectShield(3)"></button>
+                <button id="shield4" class="shield" ng-click="selectShield(4)"></button>
             </div></br></br></br></br>
             <p id="warning"></p>
 
-        </div></br>
-        <p id="status"></p>
-        <canvas id="canvas">
-            Canvas Not Supported
-        </canvas>
+            <button ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
+            <button ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, pName)">CREATE A GAME</button>
+            <input ng-model="pName" placeholder="player name">
+            <input ng-model="numPlayers" placeholder="numPlayers">
+
+        </div></br></br></br>
+        <p id="status">{{status}}</p>
 
     </div>
 
