@@ -41,7 +41,7 @@ public class Quest {
 	// verification for quest stages will be done on client side
 	public void setUpQuest() {
 		try {
-			qm.cdl.await();
+			qm.stageSetupLatch().await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

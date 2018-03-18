@@ -49,7 +49,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// Wait for responses
 		try {
-			qm.cdl.await(60, TimeUnit.SECONDS);
+			qm.sponsorLatch().await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -64,8 +64,8 @@ public class QuestSequenceManager extends SequenceManager {
 		Player sponsor = sponsors.get(0);
 		
 		quest = new Quest(card, qm);
+		qm.setQuest(quest, sponsors);
 		quest.setUpQuest();
-		qm.setQuest(quest);
 
 		// Finding players who want to join
 		players = pm.round();
@@ -80,7 +80,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// Wait for responses
 		try {
-			qm.cdl.await(60, TimeUnit.SECONDS);
+			qm.participateLatch().await(60, TimeUnit.SECONDS);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -98,7 +98,7 @@ public class QuestSequenceManager extends SequenceManager {
 					qm.questionCardsStage();
 					try {
 						logger.info("Waiting for 60 seconds for users to pick their cards");
-						qm.cdl.await(60, TimeUnit.SECONDS);
+						qm.cardsLatch().await(60, TimeUnit.SECONDS);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
@@ -116,13 +116,13 @@ public class QuestSequenceManager extends SequenceManager {
 					qm.questionBid(winners);
 					try {
 						logger.info("Waiting for users to finish bidding");
-						qm.cdl.await(60, TimeUnit.SECONDS);
+						qm.bidLatch().await(60, TimeUnit.SECONDS);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
 
-					Player bidWinner = qm.getBidWinners();
-					if(bidWinner == null) {
+					List<Player> bidWinner = qm.getBidWinner();
+					if(bidWinner.size() == 0 || bidWinner.get(0) == null) {
 						winners.clear();
 						break;
 					}
@@ -130,13 +130,14 @@ public class QuestSequenceManager extends SequenceManager {
 					qm.discardCards(bidWinner);
 					try {
 						logger.info("Waiting for user to finish discarding");
-						qm.cdl.await();
+						qm.discardLatch().await();
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
-					pm.discardFromHand(bidWinner, qm.getDiscardCards());
+					// TODO: discards
+					//pm.discardFromHand(bidWinner, qm.getDiscardCards());
 					winners.clear();
-					winners.add(bidWinner);
+					winners.add(bidWinner.get(0));
 				}
 				logger.info("# of Players still in quest: " + winners.size());
 				quest.advanceStage();

@@ -38,6 +38,16 @@ public class PlayCardController {
 	}
 
 
+	@MessageMapping("/game.playCardQuestSetup")
+	public void playCardQuestSetup(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload PlayCardClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		
+		//if(chatMessage)
+		
+	}
+	
 	@MessageMapping("/game.playCardTournament")
 	public void playCard(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
@@ -59,27 +69,7 @@ public class PlayCardController {
 								chatMessage.zoneFrom, 
 								response));
 			}
-		} else if(chatMessage.zoneTo.equals(ZONE.FACEUP)) {
-			//TODO: handle this case
-		} else if(chatMessage.zoneTo.equals(ZONE.DISCARD)) {
-			//TODO: handle this case
 		} else if(chatMessage.zoneTo.equals(ZONE.HAND)) {
-			//TODO: handle this case
-
-
-			//			if(chatMessage.zoneFrom.equals(ZONE.FACEDOWN)) {
-			//				player
-			//			}
-
-		} else if(chatMessage.zoneTo.equals(ZONE.STAGE1)) {
-			//TODO: handle this case
-		} else if(chatMessage.zoneTo.equals(ZONE.STAGE2)) {
-			//TODO: handle this case
-		} else if(chatMessage.zoneTo.equals(ZONE.STAGE3)) {
-			//TODO: handle this case
-		} else if(chatMessage.zoneTo.equals(ZONE.STAGE4)) {
-			//TODO: handle this case			
-		} else if(chatMessage.zoneTo.equals(ZONE.STAGE5)) {
 			//TODO: handle this case
 		}
 	}

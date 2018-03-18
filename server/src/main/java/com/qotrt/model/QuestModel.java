@@ -5,9 +5,12 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.confirmation.Confirmation;
+import com.qotrt.confirmation.MultiShotConfirmation;
+import com.qotrt.confirmation.NeverEndingConfirmation;
 import com.qotrt.confirmation.SingleShotConfirmation;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.sequence.Quest;
@@ -17,24 +20,52 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 
 	
 	private Confirmation sponsor = new SingleShotConfirmation("questionSponsor", 
-			"jointournament", 
-			"declinetournament");
+			"acceptSponsorQuest", 
+			"declineSponsorQuest");
 	
-	private Confirmation participate = new SingleShotConfirmation("questionQuest", 
-			"joinquest", 
+	public CountDownLatch sponsorLatch() { return sponsor.getCountDownLatch();}
+	
+	
+	private Confirmation stageSetup = new SingleShotConfirmation("questStage",
+			null,
 			null);
+	
+	public CountDownLatch stageSetupLatch() { return stageSetup.getCountDownLatch(); }
+	
+	private Confirmation participate = new MultiShotConfirmation("questionQuest", 
+			"joinQuest", 
+			null);
+	
+	public CountDownLatch participateLatch() { return participate.getCountDownLatch();}
+
+	private Confirmation cards = new MultiShotConfirmation("questionCardQuest", 
+			"cardQuest", 
+			null);
+	
+	public CountDownLatch cardsLatch() { return cards.getCountDownLatch();}
+	
+	private Confirmation discard = new SingleShotConfirmation("discardQuest",
+			null,
+			null);
+	
+	public CountDownLatch discardLatch() { return discard.getCountDownLatch();}
+	
+	private Confirmation bid = new NeverEndingConfirmation("bidQuest", null, null);
+	
+	public CountDownLatch bidLatch() { return bid.getCountDownLatch();}
 	
 	private List<Player> participatents = new ArrayList<Player>();
 	private Quest quest;
-	
 	
 	public QuestModel() {
 		sponsor.subscribe(this);
 		participate.subscribe(this);
 		cards.subscribe(this);
+		bid.subscribe(this);
 	}
 	
-	public void setQuest(Quest quest) {
+	public void setQuest(Quest quest, List<Player> sponsors) {
+		stageSetup.start(sponsors);
 		this.quest = quest;
 	}
 	
@@ -112,10 +143,6 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 		participatents = passedStage;
 		fireEvent("passStage", null, PlayerUtil.playersToIDs(passedStage));
 	}
-
-	private Confirmation cards = new SingleShotConfirmation("questionCardQuest", 
-			"cardQuest", 
-			null);
 	
 	public synchronized void questionCardsStage() {
 		cards.start(participatents);
@@ -138,17 +165,15 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 	}
 
 	public synchronized void questionBid(List<Player> winners2) {
-		// TODO Auto-generated method stub
+		bid.start(winners2);
 	}
 
-	public synchronized Player getBidWinners() {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized List<Player> getBidWinner() {
+		return bid.get();
 	}
 
-	public synchronized void discardCards(Player bidWinner) {
-		// TODO Auto-generated method stub
-		
+	public synchronized void discardCards(List<Player> bidWinner) {
+		discard.start(bidWinner);
 	}
 
 	public synchronized String[] getDiscardCards() {

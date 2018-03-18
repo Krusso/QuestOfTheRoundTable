@@ -32,7 +32,7 @@ public abstract class Confirmation extends Observable {
 		fireEvent(eventName, null, PlayerUtil.playersToIDs(toAsk));
 	}
 	
-	public abstract void accept(Player player, String attempt, String success, String failure);
+	public abstract boolean accept(Player player, String attempt, String success, String failure);
 	
 	public void decline(Player player, String attempt, String success, String failure) {
 		System.out.println(attempt);

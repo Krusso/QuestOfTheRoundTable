@@ -2,9 +2,9 @@ package com.qotrt.confirmation;
 
 import com.qotrt.gameplayer.Player;
 
-public class SingleShotConfirmation extends Confirmation {
+public class NeverEndingConfirmation extends Confirmation {
 
-	public SingleShotConfirmation(String eventName, String acceptEventName, String declineEventName) {
+	public NeverEndingConfirmation(String eventName, String acceptEventName, String declineEventName) {
 		super(eventName, acceptEventName, declineEventName);
 	}
 
@@ -12,13 +12,12 @@ public class SingleShotConfirmation extends Confirmation {
 	public boolean accept(Player player, String attempt, String success, String failure) {
 		System.out.println(attempt);
 		if(backingInt > 0) {
-			backingInt = 0;
 			System.out.println(success);
+			accepted.clear();
 			accepted.add(player);
 			if(acceptEventName != null) {
 				fireEvent(acceptEventName, null, player);
 			}
-			checkIfCanOpenLatch(cdl, backingInt);
 			return true;
 		} else {
 			System.out.println(failure);

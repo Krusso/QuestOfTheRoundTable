@@ -9,7 +9,7 @@ public class MultiShotConfirmation extends Confirmation {
 	}
 
 	@Override
-	public void accept(Player player, String attempt, String success, String failure) {
+	public boolean accept(Player player, String attempt, String success, String failure) {
 		System.out.println(attempt);
 		if(backingInt > 0) {
 			backingInt--;
@@ -19,8 +19,10 @@ public class MultiShotConfirmation extends Confirmation {
 				fireEvent(acceptEventName, null, player);
 			}
 			checkIfCanOpenLatch(cdl, backingInt);
+			return true;
 		} else {
 			System.out.println(failure);
+			return false;
 		}
 	}
 }

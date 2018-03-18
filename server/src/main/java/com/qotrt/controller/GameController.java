@@ -50,7 +50,7 @@ public class GameController {
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());
-		this.joinChat(headerAccessor, gjc);
+		this.joinGame(headerAccessor, gjc);
 		System.out.println("created game");
 	}
 
@@ -68,7 +68,7 @@ public class GameController {
 	}
 
 	@MessageMapping("/game.joinGame")
-	public void joinChat(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {
+	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {
 		System.out.println("joining game");
 		String sessionID = headerAccessor.getSessionId();
 		UIPlayer player = new UIPlayer(sessionID, chatMessage.getPlayerName());

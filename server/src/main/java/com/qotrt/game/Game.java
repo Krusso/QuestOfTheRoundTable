@@ -69,7 +69,9 @@ public class Game extends Observable {
 			@Override
 			public void run() {
 				logger.info("Starting game");
-
+				fireEvent("gameStart", null, 1);
+				
+				
 				// model creation
 				BoardModel bm = new BoardModel();
 				DeckManager dm = new DeckManager();
