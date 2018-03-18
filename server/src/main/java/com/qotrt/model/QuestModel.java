@@ -132,13 +132,13 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 	}
 
 	public synchronized void flipStage() {
-		// TODO Auto-generated method stub
-		
+		fireEvent("flipStage", null, new GenericPair(
+				quest.getCurrentStageCards().stream().map(i -> i.getName()).toArray(String[]::new), 
+				quest.getCurrentStage()));
 	}
 
 	public synchronized void questionBid(List<Player> winners2) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public synchronized Player getBidWinners() {

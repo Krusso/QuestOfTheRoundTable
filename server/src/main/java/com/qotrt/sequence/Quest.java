@@ -78,6 +78,10 @@ public class Quest {
 		return null;
 	}
 
+	public List<AdventureCard> getCurrentStageCards(){
+		return this.quest.get(getCurrentStage());
+	}
+	
 	public void advanceStage() { this.currentStage++; }
 	public int getCurrentStage() { return this.currentStage; }
 	public int getNumStages() { return this.stages; }

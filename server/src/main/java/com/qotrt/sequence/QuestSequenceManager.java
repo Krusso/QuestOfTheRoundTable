@@ -38,17 +38,14 @@ public class QuestSequenceManager extends SequenceManager {
 		QuestModel qm = bmm.getQuestModel();
 		BoardModel bm = bmm.getBoardModel();
 		List<Player> potentialSponsors = new ArrayList<Player>();
-		List<Player> cantSponsor = new ArrayList<Player>();
 		players.forEachRemaining(i -> {
 			if(bc.canSponsor(i, card)) {
 				potentialSponsors.add(i);
-			} else {
-				cantSponsor.add(i);
 			}
 		});
 
 
-		qm.questionSponsorPlayers(potentialSponsors, cantSponsor);
+		qm.questionSponsorPlayers(potentialSponsors);
 
 		// Wait for responses
 		try {
@@ -58,13 +55,14 @@ public class QuestSequenceManager extends SequenceManager {
 		}
 
 		// determining if anyone decided to sponsor
-		Player sponsor = qm.getPlayerWhoSponsor();
-		if(sponsor == null) {
+		List<Player> sponsors = qm.getPlayerWhoSponsor();
+		if(sponsors.size() == 0) {
 			qm.setMessage("No Player Sponsored the Tournament");
 			qm.setWinners(new ArrayList<Player>());
 			return;
 		}
-
+		Player sponsor = sponsors.get(0);
+		
 		quest = new Quest(card, qm);
 		quest.setUpQuest();
 		qm.setQuest(quest);
