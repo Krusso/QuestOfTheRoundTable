@@ -1,53 +1,69 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-      <title>Spring Boot WebSocket Chat Application</title>
-      <link rel="stylesheet" href="/css/main.css" />
-  </head>
-  <body>
-    <noscript>
-      <h2>Sorry! Your browser doesn't support Javascript</h2>
-    </noscript>
+<html ng-app="gameApp" ng-init="person={fName: 'Michael', lName:'Kuang'}; capitals=[{city:'Ottawa', province:'Ontario'}, {city:'Toronto', province:'Ontario'},{city:'Quebec', province:'Ontario'}]">
 
-    <div id="username-page">
-        <div class="username-page-container">
-            <h1 class="title">Type your username</h1>
-            <form id="usernameForm" name="usernameForm">
-                <div class="form-group">
-                    <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="accent username-submit">Start Chatting</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<head>
+    <title>Quest of The Round Table</title>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
 
-    <div id="chat-page" class="hidden">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h2>Spring WebSocket Chat Demo</h2>
-            </div>
-            <div class="connecting">
-                Connecting...
-            </div>
-            <ul id="messageArea">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+    <script src="js/angular-dragdrop.min.js "></script>
+</head>
+
+<body>
+
+    <div ng-controller="gameController">
+
+        </br>
+        <div id="titlescreenbg"></div>
+        <div id="lobby">
+            <div id="lobbyTitle">LOBBY</div>
+
+            <ul id="lobbyList">
+                <li ng-repeat="game in serverList" ng-model='serverList'>
+                    UUID:{{game.uuid}} </br>
+                    NumPlayers: {{game.players}} </br>
+                    Capacity:{{game.capacity}} </br>
+                    <button ng-click="sendGameJoinClient(game.uuid);
+                    showMessage('Waiting for other players...')">JOIN</button></br>
+                </li>
             </ul>
-            <form id="messageForm" name="messageForm" nameForm="messageForm">
-                <div class="form-group">
-                    <div class="input-group clearfix">
-                        <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
-                        <button type="submit" class="primary">Send</button>
-                    </div>
-                </div>
-            </form>
+
         </div>
+        <div id="menu">
+            
+            <h1>QUEST OF THE ROUND TABLE</h1>
+            <h2> Select your shield: </h2>
+
+            <div id="shields">
+                <button id="shield1" class="shield" ng-click="selectShield(1)"></button>
+                <button id="shield2" class="shield" ng-click="selectShield(2)"></button>
+                <button id="shield3" class="shield" ng-click="selectShield(3)"></button>
+                <button id="shield4" class="shield" ng-click="selectShield(4)"></button>
+            </div></br></br></br></br>
+            <p id="warning"></p>
+
+            <button ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
+            <button ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, pName)">CREATE A GAME</button>
+            <input ng-model="pName" placeholder="player name">
+            <input ng-model="numPlayers" placeholder="numPlayers">
+
+        </div></br></br></br><br><br><br>
+        <p id="status">{{status}}</p>
+
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="js/app.js"></script>>
+    <script src="js/services.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="/js/main.js"></script>
-  </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+</body>
+
 </html>

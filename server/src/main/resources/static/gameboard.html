@@ -4,7 +4,7 @@
 <head>
     <title>Quest of The Round Table</title>
     <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
-    <link rel="stylesheet" href="stylesheet.css" type="text/css">
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
@@ -58,7 +58,7 @@
         <!--        Just some debugging stuff to see what we received -->
         <div ng-model="messages">
             <ul>
-                <li>MESSAGES RECEIVEDD:</li>
+                <li>MESSAGES RECEIVED:</li>
                 <li ng-repeat="message in messages">
                     {{message}}
                 </li>
@@ -69,6 +69,7 @@
         <ul>
             <li ng-repeat="game in serverList" ng-model='serverList'>
                 UUID:{{game.uuid}} NumPlayers: {{game.players}} Capacity:{{game.capacity}}
+                <button>JOIN</button>
             </li>
         </ul>
 
