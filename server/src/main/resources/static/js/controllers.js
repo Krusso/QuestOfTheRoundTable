@@ -32,6 +32,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.zones.handZone.push(card);
     };
 
+    $scope.serverList = [];
+
     /*=========================================   *
      *             Messaging Functions            *
      *=========================================== */
@@ -122,10 +124,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
 
     MessageService.receive().then(null, null, function (message) {
-        $scope.messages.push(message);
         console.log(message);
+        $scope.messages.push(message);
+        if (message.messageType == "LISTSERVER") {
+            $scope.serverList = message.games;
+            console.log("server list:");
+            console.log($scope.serverList);
+        }
     });
-
 
     /*=========================================   *
      *             Dragging Functions             *

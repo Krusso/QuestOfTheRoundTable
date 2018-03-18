@@ -28,10 +28,7 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
      *
      */
     service.send = function (message, endpoint) {
-        var id = Math.floor(Math.random() * 1000000);
-        console.log(endpoint);
         socket.stomp.send(endpoint, {}, JSON.stringify(message));
-        messageIds.push(id);
     };
 
     var reconnect = function () {
@@ -41,15 +38,8 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
     };
 
     var getMessage = function (data) {
-        var message = JSON.parse(data),
-            out = {};
-        out.message = message.message;
-        out.time = new Date(message.time);
-        if (_.contains(messageIds, message.id)) {
-            out.self = true;
-            messageIds = _.remove(messageIds, message.id);
-        }
-        return out;
+        var message = JSON.parse(data)
+        return message;
     };
 
     var startListener = function () {
@@ -60,6 +50,7 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
 
     var initialize = function () {
         socket.client = new SockJS(service.SOCKET_URL);
+        console.log(service.SOCKET_URL);
         socket.stomp = Stomp.over(socket.client);
         socket.stomp.connect({}, startListener);
         socket.stomp.onclose = reconnect;
