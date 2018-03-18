@@ -24,7 +24,7 @@ public class PlayCardServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PLAYCARD;
+		this.messageType = MESSAGETYPES.PLAYCARD;
 	}
 
 }

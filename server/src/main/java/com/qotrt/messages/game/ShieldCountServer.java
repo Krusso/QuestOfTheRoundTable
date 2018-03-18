@@ -16,7 +16,7 @@ public class ShieldCountServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.SHIELDCOUNT;
+		this.messageType = MESSAGETYPES.SHIELDCOUNT;
 	}
 
 }

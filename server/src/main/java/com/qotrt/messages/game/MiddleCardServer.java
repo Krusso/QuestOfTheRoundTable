@@ -15,7 +15,7 @@ public class MiddleCardServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.SHOWMIDDLECARD;
+		this.messageType = MESSAGETYPES.SHOWMIDDLECARD;
 	}
 
 }

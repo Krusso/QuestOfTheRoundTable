@@ -29,7 +29,7 @@ public class GameCreateClient extends Message {
 
 	@Override
 	public void setMessage() {
-		this.message = Message.MESSAGETYPES.JOINGAME;	
+		this.messageType = Message.MESSAGETYPES.JOINGAME;	
 	}
 
 	public int getNumPlayers() {

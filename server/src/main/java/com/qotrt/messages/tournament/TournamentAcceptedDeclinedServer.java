@@ -16,7 +16,7 @@ public class TournamentAcceptedDeclinedServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINEDTOURNAMENT;
+		this.messageType = MESSAGETYPES.JOINEDTOURNAMENT;
 	}
 
 }

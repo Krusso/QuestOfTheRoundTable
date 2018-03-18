@@ -13,6 +13,6 @@ public class GameStartServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.GAMESTART;
+		this.messageType = MESSAGETYPES.GAMESTART;
 	}
 }

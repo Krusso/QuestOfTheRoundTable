@@ -47,6 +47,25 @@
             </ul>
         </div>
 
+
+        Message: <input ng-model="message">
+        <button ng-click="sendGameJoinClient(1234, message)">Send</button>
+        <button ng-click="sendListGamesClient()">List Games</button>
+        <br>
+        <input ng-model="pName" placeholder="player name">
+        <input ng-model="numPlayers" placeholder="numPlayers">
+        <button ng-click="sendCreateGameClient(pName, numPlayers, RIGGED.NORMAL)">Create Game</button>
+
+        <!--        Just some debugging stuff to see what we received -->
+        <div ng-model="messages">
+            <ul>
+                <li>MESSAGES RECEIVEDD:</li>
+                <li ng-repeat="message in messages">
+                    {{message}}
+                </li>
+            </ul>
+        </div>
+
     </div>
 
     <!--
@@ -59,8 +78,8 @@
 </div>
 -->
 
-    <script src="card.js"></script>
-    <script src="app.js"></script>
+    <script src="js/card.js"></script>
+    <script src="js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </body>

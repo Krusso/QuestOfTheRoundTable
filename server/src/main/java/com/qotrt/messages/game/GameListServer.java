@@ -30,6 +30,6 @@ public class GameListServer extends Message  {
 
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.LISTSERVER;
+		this.messageType = MESSAGETYPES.LISTSERVER;
 	}
 }

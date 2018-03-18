@@ -230,6 +230,6 @@ function giveBirth(e, u) {
 // *          sending data to server                      *
 // ********************************************************
 
-function send(message){
-    
+function send(message) {
+
 }

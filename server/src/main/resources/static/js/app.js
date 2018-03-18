@@ -48,17 +48,94 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /*=========================================   *
      *             Messaging Functions            *
      *=========================================== */
+
     //Message variables
     $scope.messages = [];
-    $scope.message = "";
-    $scope.max = 140;
+    $scope.message = null; //the message should be a JSON object
+    //Types//
+    $scope.TYPE_GAME = "GAME";
+    $scope.MESSAGETYPES = Object.freeze({
+        GAMESTART: 0,
+        JOINGAME: 1,
+        JOINTOURNAMENT: 2,
+        PICKTOURNAMENT: 3,
+        TIETOURNAMENT: 4,
+        WINTOURNAMENT: 5,
+        SHIELDCOUNT: 6,
+        RANKUPDATE: 7,
+        ADDCARDS: 8,
+        FACEDOWNCARD: 9,
+        LISTSERVER: 10,
+        PLAYCARD: 11,
+        SHOWMIDDLECARD: 12,
+        JOINEDTOURNAMENT: 13,
+        FINISHPICKTOURNAMENT: 14
+    });
+    $scope.RIGGED = Object.freeze({
+        ONE: 0,
+        TWO: 1,
+        THREE: 2,
+        FOUR: 3,
+        NORMAL: 4,
+        LONG: 5,
+        AITOURNAMENT: 6,
+        AIQUEST: 7,
+        AIQUEST1: 8,
+        AIQUEST2: 9,
+        GAMEEND: 10
+    });
 
-    $scope.addMessage = function () {
-        //        MessageService.send($scope.message);
-        $scope.message = "";
+    $scope.uuid = null; //the uuid for the gamelobby
+
+    //Specify all endpoints 
+    $scope.ep_joinGame = "/app/game.joinGame";
+    $scope.ep_listGames = "/app/game.listGames";
+    $scope.ep_createGame = "/app/game.createGame";
+
+    /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
+    /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
+    $scope.addMessage = function (endpoint) {
+        console.log("sending message: " + $scope.message);
+        MessageService.send($scope.message, endpoint);
+        $scope.message = null;
     };
+
+    $scope.sendCreateGameClient = function (np, rigType, pName) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.JOINGAME,
+            numPlayers: parseInt(np),
+            rigged: $scope.RIGGED.NORMAL,
+            playerName: pName,
+            java_class: "GameCreateClient"
+        }
+        $scope.addMessage($scope.ep_createGame);
+    };
+
+    $scope.sendListGamesClient = function () {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.JOINGAME,
+            java_class: "GameListClient",
+
+        };
+        $scope.addMessage($scope.ep_listGames);
+    };
+    $scope.sendGameJoinClient = function (uuid, playerName) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.JOINGAME,
+            player: 0,
+            uuid: uuid,
+            playerName: playerName,
+            java_class: "GameJoinClient"
+        };
+        $scope.addMessage($scope.ep_joinGame);
+    };
+
     MessageService.receive().then(null, null, function (message) {
         $scope.messages.push(message);
+        console.log(message);
     });
 
 
@@ -214,21 +291,23 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
 
     service.RECONNECT_TIMEOUT = 30000;
     service.SOCKET_URL = "/ws";
-    service.CHAT_TOPIC = "/topic/message";
-    service.CHAT_BROKER = "/app/chat";
+    service.CHAT_TOPIC = "/topic/public";
+    service.CHAT_BROKER = "/app/ws"; //gonna need multiple of these
+
 
     service.receive = function () {
         return listener.promise;
     };
 
-    service.send = function (message) {
+    /*  Parameters: message, json object
+                    endpoint, the endpoint we wish to send this to
+     *
+     */
+    service.send = function (message, endpoint) {
         var id = Math.floor(Math.random() * 1000000);
-        socket.stomp.send(service.CHAT_BROKER, {
-            priority: 9
-        }, JSON.stringify({
-            message: message,
-            id: id
-        }));
+        console.log(endpoint);
+        socket.stomp.send(endpoint, {}, JSON.stringify(message));
+        console.log("hello");
         messageIds.push(id);
     };
 

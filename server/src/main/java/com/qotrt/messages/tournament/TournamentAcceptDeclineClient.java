@@ -16,7 +16,7 @@ public class TournamentAcceptDeclineClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINTOURNAMENT;
+		this.messageType = MESSAGETYPES.JOINTOURNAMENT;
 	}
 
 }

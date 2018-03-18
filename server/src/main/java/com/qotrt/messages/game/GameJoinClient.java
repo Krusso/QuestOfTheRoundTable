@@ -28,7 +28,7 @@ public class GameJoinClient extends Message {
 
 	@Override
 	public void setMessage() {
-		this.message = Message.MESSAGETYPES.JOINGAME;	
+		this.messageType = Message.MESSAGETYPES.JOINGAME;	
 	}
 
 	public UUID getUuid() {
