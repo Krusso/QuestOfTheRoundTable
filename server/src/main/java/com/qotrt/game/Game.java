@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import com.google.common.eventbus.EventBus;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.gameplayer.Player;
@@ -70,10 +71,11 @@ public class Game extends Observable {
 			public void run() {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
-				
-				
+
+				EventBus eventBus = new EventBus();
+
 				// model creation
-				BoardModel bm = new BoardModel();
+				BoardModel bm = new BoardModel(eventBus);
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
 						players.toArray(new UIPlayer[players.size()]), 
@@ -102,7 +104,11 @@ public class Game extends Observable {
 				bm.subscribe(bv);
 				tm.subscribe(tv);
 				qm.subscribe(qv);
-				
+
+				// TODO: use this
+				// eventBus.register(bv);
+				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
+				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
 				pm.start();
 
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();

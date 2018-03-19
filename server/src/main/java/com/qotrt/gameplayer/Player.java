@@ -112,7 +112,10 @@ public class Player extends Observable {
 		return this.faceDown;
 	}
 
-
+	public void setBackToHandFromFaceDown(int card) {
+		faceDown.getCardByID(card)
+	}
+	
 	public void setFaceDown(AdventureCard card, ZONE zoneFrom) {
 		logger.info("Player id: " + ID + " setting face down: " + card + " from zone: " + zoneFrom);
 		faceDown.addCard(card);

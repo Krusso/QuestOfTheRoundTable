@@ -1,5 +1,9 @@
 package com.qotrt.controller;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -7,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.qotrt.cards.AdventureCard;
@@ -44,7 +47,17 @@ public class PlayCardController {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		
-		//if(chatMessage)
+		ZONE[] zones = new ZONE[]{ZONE.STAGE1, ZONE.STAGE2, ZONE.STAGE3, ZONE.STAGE4, ZONE.STAGE5};
+		Set<ZONE> mySet = new HashSet<ZONE>(Arrays.asList(zones));
+		if(mySet.contains(chatMessage.zoneFrom) && mySet.contains(chatMessage.zoneTo)){
+			
+		} else if(chatMessage.zoneFrom.equals(ZONE.HAND) && mySet.contains(chatMessage.zoneTo)){
+			
+		} else if(chatMessage.zoneTo.equals(ZONE.HAND) && mySet.contains(chatMessage.zoneFrom)){
+			
+		} else {
+			
+		}
 		
 	}
 	
@@ -57,11 +70,12 @@ public class PlayCardController {
 		//TODO: find a way to refactor this, maybe put it in the cards themselves?
 
 		if(chatMessage.zoneTo.equals(ZONE.FACEDOWN) && 
-				(game.bmm.getTournamentModel().canPick())) {
+				game.bmm.getTournamentModel().canPick()) {
 			String response = verifyFaceDownCard(player, chatMessage.card);
 			if(response.equals("")) {
 				player.setFaceDown(player.getCardByID(chatMessage.card), ZONE.HAND);
 			} else {
+				// error message
 				game.sendMessageToAllPlayers("/queue/response", 
 						new PlayCardServer(player.getID(), 
 								chatMessage.card, 
@@ -69,8 +83,18 @@ public class PlayCardController {
 								chatMessage.zoneFrom, 
 								response));
 			}
-		} else if(chatMessage.zoneTo.equals(ZONE.HAND)) {
+		} else if(chatMessage.zoneTo.equals(ZONE.HAND) && 
+				game.bmm.getTournamentModel().canPick()) {
 			//TODO: handle this case
+			player.setBackToHandFromFaceDown(chatMessage.card);
+		} else {
+			// error message
+			game.sendMessageToAllPlayers("/queue/response", 
+					new PlayCardServer(player.getID(), 
+							chatMessage.card, 
+							chatMessage.zoneFrom, 
+							chatMessage.zoneFrom, 
+							"not a playable zone currently"));
 		}
 	}
 

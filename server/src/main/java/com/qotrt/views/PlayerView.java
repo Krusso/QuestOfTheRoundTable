@@ -1,7 +1,6 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
