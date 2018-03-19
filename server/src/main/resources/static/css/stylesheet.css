@@ -29,7 +29,7 @@ h2 {
     left: 0;
 }
 
-#lobby{
+#lobby {
     position: relative;
     z-index: 2;
     top: 0px;
@@ -41,28 +41,28 @@ h2 {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-#lobbyTitle{
+#lobbyTitle {
     background-color: black;
     color: white;
     font-size: 150%;
 }
 
-#lobbyList{
+#lobbyList {
     color: white;
 }
 
-#join{
+#join {
     position: relative;
     z-index: 2;
     top: 400px;
-    float: right;    
+    float: right;
 }
 
 #menu {
     float: left;
     position: absolute;
     z-index: 2;
-    top:0px;
+    top: 0px;
     width: 60%;
     text-align: center;
 }
@@ -100,7 +100,7 @@ h2 {
     background-image: url("../gameResources/S4.png");
 }
 
-#status{
+#status {
     background-color: black;
     color: white;
     position: relative;
@@ -108,16 +108,9 @@ h2 {
     float: right;
 }
 
-.card {
-    position: absolute;
-    width: 100px;
-    height: 150px;
-    background-image: url("../gameResources/Adventure%20Back.png");
-    background-size: auto;
-    background-size: 100px 150px;
-}
 
-div[card-img]{
+
+div[card-img] {
     width: 100px;
     height: 150px;
     color: #fff;

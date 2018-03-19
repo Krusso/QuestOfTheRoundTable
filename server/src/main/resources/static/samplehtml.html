@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html ng-app="gameApp" ng-init="person={fName: 'Michael', lName:'Kuang'}; capitals=[{city:'Ottawa', province:'Ontario'}, {city:'Toronto', province:'Ontario'},{city:'Quebec', province:'Ontario'}]">
+
+<head>
+    <title>Quest of The Round Table</title>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+    <script src="js/angular-dragdrop.min.js"></script>
+</head>
+
+<body>
+
+    <div ng-controller="gameController">
+        Add Card: <input ng-model="name"> {{name}}
+        <button ng-click="addCard(name)">Add</button>
+        <div class="box">
+
+            <!--
+            <ul>
+                <li ng-repeat="card in game.hand" ng-model='game.hand' >Name: {{card.name}} id: {{card.id}}
+                    <div id={{card.id}} card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{onStart: 'startDrag(event, card)'}" ></div>
+                </li>
+            </ul>
+-->
+            <div ng-repeat="card in zones.handZone" ng-model='zones.handZone' jqyoui-droppable="{index: {{$index}}}">
+                Hand Zone
+                <div id='{{card.id}}' card-img="resources/{{card.name}}.png" data-drag="{{card.draggable}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{index: {{$index}}, onStart: 'startDrag(event)'}"></div>
+            </div>
+        </div>
+
+
+        Field:
+        <div id="faceDownZone" class="box" data-drop="true" data-jqyoui-options jqyoui-droppable="{onDrop: 'onDrop()'}">
+            Face Down Zone
+            <ul>
+                <li ng-repeat="card in zones.faceDownZone" ng-model='zones.faceDownZone'>
+                    <div id="{{card.id}}" card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{animate:true}"></div>
+                </li>
+            </ul>
+        </div>
+
+
+        Message: <input ng-model="message">
+        <button ng-click="sendGameJoinClient(1234, message)">Send</button>
+        <button ng-click="sendListGamesClient()">List Games</button>
+        <br>
+        <input ng-model="pName" placeholder="player name">
+        <input ng-model="numPlayers" placeholder="numPlayers">
+        <button ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, pName)">Create Game</button>
+
+        <!--        Just some debugging stuff to see what we received -->
+        <div ng-model="messages">
+            <ul>
+                <li>MESSAGES RECEIVED:</li>
+                <li ng-repeat="message in messages">
+                    {{message}}
+                </li>
+            </ul>
+        </div>
+
+        EXAMPLE OF HOW WE DISPLAY SERVERS FOR THE LOBBY
+        <ul>
+            <li ng-repeat="game in serverList" ng-model='serverList'>
+                UUID:{{game.uuid}} NumPlayers: {{game.players}} Capacity:{{game.capacity}}
+                <button>JOIN</button>
+            </li>
+        </ul>
+
+    </div>
+
+    <!--
+<div class="box" ng-controller="deckController" data-drop="true" data-jqyoui-options jqyoui-droppable>
+    <ul>
+        <li ng-repeat="card in cards">
+            <div card-img="resources/{{card.name}}.png" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{animate:true}"></div>
+        </li>
+    </ul>
+</div>
+-->
+
+    <!--    <script src="js/card.js"></script>-->
+    <script src="js/app.js"></script>>
+    <script src="js/services.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+</body>
+
+</html>
