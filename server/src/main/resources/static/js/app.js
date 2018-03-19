@@ -23,3 +23,5 @@ angular.module('gameApp.controllers').directive('cardImg', function () {
         });
     };
 });
+
+angular.module('ui.bootstrap.demo', ['ngAnimate', 'ui.bootstrap']);

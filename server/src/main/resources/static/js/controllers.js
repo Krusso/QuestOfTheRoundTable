@@ -9,7 +9,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
 
     $scope.status = "";
-    // $scope.pName = "";
     $scope.loginToast = "";
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.

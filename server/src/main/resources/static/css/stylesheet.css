@@ -3,7 +3,7 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    background: #2f294f;
+    background: black;
     margin: 0;
 }
 
@@ -19,6 +19,46 @@ h2 {
     font-family: 'Cinzel', serif;
 }
 
+.btn{
+    -webkit-border-radius: 10;
+    -moz-border-radius: 10;
+    border-radius: 10px;
+    font-family: Arial;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 10px 20px 10px 20px;
+}
+
+.menubtn {
+    width: 80%;
+    position: relative;
+
+    background: #db7911;
+    background-image: linear-gradient(to bottom, #db7911, #850f0f);
+}
+
+.menubtn:hover {
+    background-image: linear-gradient(to bottom, #850f0f, #db7911);
+}
+
+.joinbtn{
+    width: 20%;
+    float: right;
+    position: relative;
+    display: inline-block;
+    background-color: black;
+
+    background-image: linear-gradient(to bottom, #000000, #14378f);
+}
+
+.joinbtn:hover{
+    background-image: linear-gradient(to bottom, #00188f, #000000);
+}
+
+.whitetext{
+    color: white;
+}
+
 #titlescreenbg {
     background-image: url("../gameResources/titlescreen1.jpg");
     background-size: 100%;
@@ -29,40 +69,16 @@ h2 {
     left: 0;
 }
 
-#lobby{
-    position: relative;
-    top: 30px;
-    width: 90%;
-    height: 400px;
-    margin-right: 40px;
-    float: right;
-    text-align: left;
-    background-color: rgba(0, 0, 0, 0.3);
-}
-
-#lobbyTitle{
+#status{
     background-color: black;
     color: white;
-    font-size: 150%;
-}
-
-#lobbyList{
-    position: absolute;
-    max-height: 350px;
-    min-width: 900px;
-    overflow: scroll;
-    color: white;
-}
-
-#join{
     position: relative;
-    z-index: 2;
     top: 400px;
-    float: right;    
+    float: right;
 }
 
-#lobbybg{
-    /*background-image: url("../gameResources/titlescreen1.jpg");*/
+#main{
+    background-image: url("../gameResources/lobbybg.jpg");
     background-size: 100%;
     width: 100%;
     height: 100%;
@@ -71,25 +87,42 @@ h2 {
     left: 0;
 }
 
-#menu {
+#menu{
+	position: relative;
     display: inline-block;
-    float: left;
-    position: absolute;
-    top:30px;
-    width: 15%;
+	height: 100vh;
+	width: 30vw;
     text-align: center;
 }
 
-#main {
+#lobby{
+    position: absolute;
     display: inline-block;
-    float: right;
-    width: 80%;
-    height: 80%;
+    height: 100vh;
+    width: 70vw;
 }
 
-#nav {
-    position: absolute;
-    bottom: 0;
+#lobbyList{
+    list-style-type: none;
+    width: 90%;
+    height: 90%;
+    overflow: scroll;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.game{
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    border: 1px solid black;
+}
+
+.info{
+    width: 80%;
+    position: relative;
+    display: inline-block;
+    color: white;
+    font-size: 20px;
+    font-family: Bookman;
 }
 
 .shield {
@@ -125,16 +158,6 @@ h2 {
     background-image: url("../gameResources/S4.png");
 }
 
-#status{
-    background-color: black;
-    color: white;
-    position: relative;
-    top: 400px;
-    float: right;
-}
-.whitetext{
-    color: white;
-}
 .card {
     position: absolute;
     width: 100px;
@@ -156,7 +179,7 @@ div[card-img]{
     height: 100px;
     opacity: 20%;
     padding: 10px 20px;
-    border-width=10px;
+    border-width: 10px;
     border-color: bisque;
     background-color: white;
 }
