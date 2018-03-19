@@ -15,25 +15,28 @@
 </head>
 
 <body>
-    <div id="gameboard" ng-controller="gameController">
-        <div class="opponentHandsContainer">
-            <div class="opponentHand">
-                <div class="card"></div>
+    <div id="container">
+        <div id="gameboard" ng-controller="gameController">
+            <div class="opponentHandsContainer">
+                <div class="opponentHand">
+                    <div class="card"></div>
+                </div>
+                <div class="opponentHand">
+                    <div class="card"></div>
+                </div>
+                <div class="opponentHand">
+                    <div class="card"></div>
+                    <div class="card"></div>
+                    <div class="card"></div>
+                </div>
             </div>
-            <div class="opponentHand">
-                <div class="card"></div>
-            </div>
-            <div class="opponentHand">
-                <div class="card"></div>
-                <div class="card"></div>
-                <div class="card"></div>
-            </div>
-        </div>
 
-        <div class="playerHand">
-            <div class="card" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+            <div class="playerHand">
+                <div class="card" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+            </div>
         </div>
     </div>
+
     <!--    <script src="js/card.js"></script>-->
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>

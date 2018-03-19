@@ -1,14 +1,23 @@
+#container {
+    width: 100vw;
+    height: 100vh;
+    overflow: scroll
+}
+
 #gameboard {
     position: relative;
     width: 100vw;
     height: 56.25vw;
-    max-height: 100vh;
-    max-width: 177.78vh;
-    margin: auto;
+    max-height: 56.25vw;
+    max-width: 100vw;
     background-image: url("../gameResources/gameboardbg3.jpg");
     background-size: contain;
     background-repeat: no-repeat;
-
+    top: 0;
+    bottom: 0;
+    /* vertical center */
+    left: 0;
+    right: 0;
 }
 
 /*
