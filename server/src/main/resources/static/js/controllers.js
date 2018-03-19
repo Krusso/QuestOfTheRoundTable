@@ -8,8 +8,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *            Controller Variables            *
      *=========================================== */
 
-    $scope.status = ""
-    $scope.range = [1,2,3,4];
+    $scope.status = "";
+    // $scope.pName = "";
+    $scope.loginToast = "";
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -142,8 +143,17 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
 
     $scope.showMessage = function (message) {
-        $scope.status = message;
+        $scope.loginToast = message;
     };
+
+    $scope.loadLobby = function () {
+        if($scope.pName && $scope.pName!=""){
+            // redirect to lobby.html
+            // $scope.window.location.href="localhost:8080/lobby.html";
+        } else {
+            $scope.showMessage("Enter a name");
+        }
+    }
 
     /*=========================================   *
      *             Dragging Functions             *

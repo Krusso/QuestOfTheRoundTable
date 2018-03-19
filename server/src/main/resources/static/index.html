@@ -19,42 +19,18 @@
 
     <div ng-controller="gameController">
 
-        </br>
-        <div id="titlescreenbg"></div>
-        <div id="lobby">
-            <div id="lobbyTitle">LOBBY</div>
-
-            <ul id="lobbyList">
-                <li ng-repeat="game in serverList" ng-model='serverList'>
-                    UUID:{{game.uuid}} </br>
-                    NumPlayers: {{game.players}} </br>
-                    Capacity:{{game.capacity}} </br>
-                    <button ng-click="sendGameJoinClient(game.uuid);
-                    showMessage('Waiting for other players...')">JOIN</button></br>
-                </li>
-            </ul>
-
-        </div>
-        <div id="menu">
-            
+        <div id="titlescreenbg">
             <h1>QUEST OF THE ROUND TABLE</h1>
-            <h2> Select your shield: </h2>
-
-            <div id="shields">
-                <button id="shield1" class="shield" ng-click="selectShield(1)"></button>
-                <button id="shield2" class="shield" ng-click="selectShield(2)"></button>
-                <button id="shield3" class="shield" ng-click="selectShield(3)"></button>
-                <button id="shield4" class="shield" ng-click="selectShield(4)"></button>
-            </div></br></br></br></br>
-            <p id="warning"></p>
-
-            <button ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
-            <button ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, pName)">CREATE A GAME</button>
-            <input ng-model="pName" placeholder="player name">
-            <input ng-model="numPlayers" placeholder="numPlayers">
-
-        </div></br></br></br><br><br><br>
-        <p id="status">{{status}}</p>
+            <div id="loginMenu">
+                <p class="whitetext">Enter a name:</p>
+                </br>
+                <input ng-model="pName" placeholder="player name">
+                </br>
+                <button ng-click="loadLobby()">ENTER</button>
+                </br></br>
+                <p class="whitetext" id="loginToast">{{loginToast}}</p>
+            </div>
+        </div>
 
     </div>
 
