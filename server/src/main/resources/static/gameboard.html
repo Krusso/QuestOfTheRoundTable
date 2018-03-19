@@ -17,20 +17,69 @@
 <body>
     <div id="container">
         <div id="gameboard" ng-controller="gameController">
+
+            <!--    OPPONENT HAND ZONES        -->
             <div class="opponentHandsContainer">
-                <div class="opponentHand">
-                    <div class="card"></div>
+                <div class="opponentHandZone">
+                    <div class="opponentHand">
+                        <div class="card"></div>
+                        <div class="card" style="z-index: -1"></div>
+                    </div>
+                    <div class="opponentFaceUp">
+                        <div class="card"></div>
+                    </div>
+                    <div class="opponentFaceDown">
+                        <div class="card"></div>
+                    </div>
                 </div>
-                <div class="opponentHand">
-                    <div class="card"></div>
+                <div class="opponentHandZone">
+                    <div class="opponentHand">
+                        <div class="card"></div>
+                    </div>
+                    <div class="opponentFaceUp">
+                        <div class="card"></div>
+                    </div>
+
+                    <div class="opponentFaceDown">
+                        <div class="card"></div>
+                    </div>
                 </div>
-                <div class="opponentHand">
-                    <div class="card"></div>
-                    <div class="card"></div>
-                    <div class="card"></div>
+                <div class="opponentHandZone">
+                    <div class="opponentHand">
+                        <div class="card"></div>
+                    </div>
+                    <div class="opponentFaceUp">
+                        <div class="card"></div>
+                    </div>
+                    <div class="opponentFaceDown">
+                        <div class="card"></div>
+                    </div>
                 </div>
             </div>
-            
+
+            <!--    MIDDLE SECTION (Middle card/Stage cards/ discard pile/buttons)        -->
+            <div class="middleContainer">
+                <div class="middlecardContainer">
+                    <div class="card"></div>
+                </div>
+                <div class="stageZone">
+
+                    <div class="stageContainer">
+                        <div class="stage"></div>
+                        <div class="stage"></div>
+                        <div class="stage"></div>
+                        <div class="stage"></div>
+                        <div class="stage"></div>
+                    </div>
+
+                    <div class="buttonContainer">
+                        <button class="medievalButton">Accept</button>
+                        <button class="medievalButton"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!--    PLAYER HAND ZONES       -->
             <div class="playerZone">
                 <div class="playerFaceUp"></div>
                 <div class="playerFaceDown"></div>

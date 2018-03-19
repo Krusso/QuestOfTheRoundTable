@@ -1,7 +1,9 @@
+//Container is used to fix the vh/vw scaling issue
 #container {
+    position: absolute;
     width: 100vw;
     height: 100vh;
-    overflow: scroll
+    overflow: scroll;
 }
 
 #gameboard {
@@ -20,46 +22,49 @@
     right: 0;
 }
 
-/*
+/********************************
 * Player Zone, Hand and Card CSS
-*/
+*********************************/
+
 .playerZone {
-    position:absolute;
-    width:81vw;
-    height:12vw;
-    top:40vw;
-    left:10vw;
+    position: absolute;
+    width: 80vw;
+    height: 12vw;
+    top: 40vw;
+    left: 10vw;
 }
-.playerZone .playerFaceDown{
-    width:39.5vw;
-    height:6vw;
+
+.playerZone .playerFaceDown {
+    width: 39.75vw;
+    height: 5.5vw;
     background-color: rgba(66, 50, 50, 0.57);
-    margin-bottom:0.25vw;
-    margin-left: 0.25vw;
-    display:inline;
-    float:left;
+    margin-bottom: 0.50vw;
+    display: inline;
+    float: left;
 }
-.playerZone .playerFaceUp{
-    width:39.5vw;
-    height:6vw;
+
+.playerZone .playerFaceUp {
+    width: 39.75vw;
+    height: 5.5vw;
     background-color: rgba(66, 50, 50, 0.57);
-    margin-bottom:0.25vw;
-    margin-right:0.25vw;
-    display:inline;
-    float:left;
+    margin-bottom: 0.50vw;
+    display: inline;
+    float: right;
 }
+
 .playerZone .playerHand {
-    
-    top: 5vw;
+
     width: 80vw;
     height: 6vw;
     background-color: rgba(66, 50, 50, 0.57);
-    display:block;
-    
-    
+
+    display: inline;
+    float: left;
+
+
 }
 
-.playerHand .card {
+.playerZone .card {
     width: 4vw;
     height: 5.2vw;
     background-image: url("../gameResources/Adventure%20Back.png");
@@ -70,7 +75,7 @@
 
 .playerHand .card:hover {
     margin-top: -2.5vw;
-    margin-left: -4vw;
+    margin-left: -2.5vw;
     width: 10vw;
     height: 13vw;
     animation-name: cardhover;
@@ -83,45 +88,72 @@
         width: 6vw;
         height: 8vw;
     }
-
     to {
         margin-top: -2.5vw;
+        margin-left: -2.5vw;
         width: 10vw;
         height: 13vw;
     }
 }
 
-/*
+
+/****************************
 * Opponent Hand and Card CSS
-*/
+****************************/
 
 .opponentHandsContainer {
     position: absolute;
-    top: 3.5vw;
-    left: 2vw;
+    top: 3.20vw;
+    left: 4vw;
+    height: 10vw;
+    width: 96vw;
+}
+
+.opponentHandsContainer .opponentHandZone {
+    width: 30vw;
+    height: 10vw;
+    display: inline;
+    float: left;
+    margin-right: 0.25vw;
+    margin-left: 0.25vw;
 }
 
 .opponentHandsContainer .opponentHand {
     width: 30vw;
-    height: 5vw;
+    height: 4vw;
     background-color: rgba(66, 50, 50, 0.57);
-    margin-left: 1vw;
-    margin-right: 1vw;
     float: left;
 }
 
+.opponentHandsContainer .opponentFaceUp {
+    width: 14.75vw;
+    height: 4vw;
+    background-color: rgba(66, 50, 50, 0.57);
+    float: left;
+    margin-top: 0.25vw;
+}
+
+.opponentHandsContainer .opponentFaceDown {
+    width: 14.75vw;
+    height: 4vw;
+    background-color: rgba(66, 50, 50, 0.57);
+    float: right;
+    margin-top: 0.25vw;
+}
+
 .opponentHand .card {
+    /*    position: absolute; we are going to need to use this position:absoluate at some point
+    when we want to reposition cards that over flow (in otherwords stacking divs on top each other)*/
     width: 4vw;
     height: 5.2vw;
     background-image: url("../gameResources/Adventure%20Back.png");
     background-size: contain;
     background-repeat: no-repeat;
     float: left;
-    border: 0px solid black;
 }
 
 .opponentHand .card:hover {
-    margin-left: -4vw;
+    margin-left: -2.5vw;
     width: 10vw;
     height: 13vw;
     animation-name: cardhoveropponent;
@@ -139,6 +171,80 @@
     to {
         width: 10vw;
         height: 13vw;
-        margin-left: -4vw;
+        margin-left: -2.5vw;
     }
+}
+
+/* CSS for the Middle section of the gameboard 
+    e.g the stages, discardpile, buttons slider */
+
+.middleContainer {
+    position: absolute;
+    width: 100%;
+    height: 40%;
+    top: 25%;
+}
+
+.middleContainer .middlecardContainer {
+    position: absolute;
+    width: 10vw;
+    height: 15vw;
+    top: 2.5vw;
+    left: 9vw;
+    display: inline;
+    background-color: rgba(66, 50, 50, 0.57);
+}
+
+.middlecardContainer .card {
+    width: 100%;
+    height: 100%;
+    background-image: url("../gameResources/Slay%20the%20Dragon.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+}
+
+.middleContainer .stageZone {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 25%;
+    background-color: rgba(66, 50, 50, 0.57);
+}
+
+.stageZone .stageContainer {
+    height: 100%;
+    width: 80%;
+    display: inline-block;
+}
+
+.stageContainer .stage {
+    position: relative;
+    height: 90%;
+    width: 5vw;
+    top: 5%;
+    margin-left: 1vw;
+    display: inline-block;
+    background-color: rgb(116, 84, 51);
+}
+
+.stageZone .buttonContainer {
+    position: absolute;
+    height: 100%;
+    width: 20%;
+    float: right;
+    display: inline-block;
+}
+
+.stageZone .medievalButton {
+    width: 10vw;
+    height: 4.5vw;
+    background-image: url("../gameResources/medeival-btn1.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* make background color transparent */
+    background-color: rgba(0, 0, 0, 0);
+    text-align: center;
+    font-size: 16px;
+    font-family: "Times New Roman", Times, serif;
 }
