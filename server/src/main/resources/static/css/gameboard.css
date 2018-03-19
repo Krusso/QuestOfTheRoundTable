@@ -21,21 +21,47 @@
 }
 
 /*
-* Player Hand and Card CSS
+* Player Zone, Hand and Card CSS
 */
-
-.playerHand {
-    position: absolute;
-    width: 60vw;
-    height: 8vw;
+.playerZone {
+    position:absolute;
+    width:81vw;
+    height:12vw;
+    top:40vw;
+    left:10vw;
+}
+.playerZone .playerFaceDown{
+    width:39.5vw;
+    height:6vw;
     background-color: rgba(66, 50, 50, 0.57);
-    top: 45vw;
-    left: 20vw;
+    margin-bottom:0.25vw;
+    margin-left: 0.25vw;
+    display:inline;
+    float:left;
+}
+.playerZone .playerFaceUp{
+    width:39.5vw;
+    height:6vw;
+    background-color: rgba(66, 50, 50, 0.57);
+    margin-bottom:0.25vw;
+    margin-right:0.25vw;
+    display:inline;
+    float:left;
+}
+.playerZone .playerHand {
+    
+    top: 5vw;
+    width: 80vw;
+    height: 6vw;
+    background-color: rgba(66, 50, 50, 0.57);
+    display:block;
+    
+    
 }
 
 .playerHand .card {
-    width: 6vw;
-    height: 8vw;
+    width: 4vw;
+    height: 5.2vw;
     background-image: url("../gameResources/Adventure%20Back.png");
     background-size: contain;
     background-repeat: no-repeat;
