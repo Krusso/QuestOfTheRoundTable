@@ -3,7 +3,7 @@ angular.module("gameApp", [
     "gameApp.services"
 ]);
 
-angular.module("gameApp.controllers", ['ngDragDrop']);
+angular.module("gameApp.controllers", ['ngDragDrop', 'rzModule']);
 angular.module("gameApp.services", []);
 
 

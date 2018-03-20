@@ -6,12 +6,15 @@
     <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
     <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
     <link rel="stylesheet" href="css/gameboard.css" type="text/css">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
     <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>
+    <!--    Slider imports -->
+    <link rel="stylesheet" type="text/css" href="bower_components/angularjs-slider/dist/rzslider.css" />
+    <!--        <script src="bower_components/angularjs-slider/"></script>-->
+    <script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
 </head>
 
 <body>
@@ -61,6 +64,11 @@
             <div class="middleContainer">
                 <div class="middlecardContainer">
                     <div class="card"></div>
+                    <div class="accept-decline-container">
+                        <button class="btn-accept">Y</button>
+                        <button class="btn-decline">N</button>
+
+                    </div>
                 </div>
                 <div class="stageZone">
 
@@ -70,12 +78,22 @@
                         <div class="stage"></div>
                         <div class="stage"></div>
                         <div class="stage"></div>
+
+                    </div>
+                    <div class="slidecontainer">
+                        <rzslider rz-slider-model="bidSlider.value" rz-slider-options="bidSlider.options"></rzslider>
+                        <p>{{bidSlider.value}}</p>
                     </div>
 
                     <div class="buttonContainer">
-                        <button class="medievalButton">Accept</button>
-                        <button class="medievalButton"></button>
+                        <button class="brown-button">Continue</button>
+                        <button class="brown-button">End Turn</button>
                     </div>
+                </div>
+                <div class="discardContainer">
+                    <div class="discardPile"></div>
+                    <button class="brown-button">Discard</button>
+
                 </div>
             </div>
 
@@ -97,6 +115,7 @@
     <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
 </body>
 
 </html>

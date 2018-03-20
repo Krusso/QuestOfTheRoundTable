@@ -8,8 +8,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *            Controller Variables            *
      *=========================================== */
 
-    $scope.status = ""
-    $scope.range = [1,2,3,4];
+    $scope.status = "";
+    $scope.range = [1, 2, 3, 4];
+
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -35,6 +36,18 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
 
     $scope.serverList = [];
+
+    /*=========================================   *
+     *            Controller Variables: Stage      *
+     *=========================================== */
+    $scope.bidSlider = {
+        value: 200,
+        options: {
+            floor: 0,
+            ceil: 500,
+            vertical: true
+        }
+    }
 
     /*=========================================   *
      *             Messaging Functions            *
@@ -93,7 +106,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
     $scope.sendCreateGameClient = function (np, rigType, pName) {
-        if(np<2) { $scope.showMessage("Need at least 2 players"); return; }
+        if (np < 2) {
+            $scope.showMessage("Need at least 2 players");
+            return;
+        }
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
