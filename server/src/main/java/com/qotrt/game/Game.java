@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.google.common.eventbus.EventBus;
+import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.gameplayer.Player;
@@ -125,7 +126,7 @@ public class Game extends Observable {
 					boolean winners = pm.rankUp();
 					if(winners) {
 						//pvs.joinFinalTournament(pm.getAllWithState(Player.STATE.WINNING), Player.STATE.WINNING);
-						sm = gsm.createStoryManager(StoryCard.GAMEOVER);
+						sm = gsm.createStoryManager(GameOverStoryCard.GAMEOVER);
 						//sm.start(actions, pm, bm);
 						break;
 					}

@@ -36,10 +36,6 @@ public class PlayerView extends View {
 			playerChangeShields((GenericPair) evt.getNewValue());
 		}
 		
-		if(evt.getPropertyName().equals("moveCard")) {
-			moveCard((GenericPair) evt.getNewValue());
-		}
-		
 		if(evt.getPropertyName().equals("discardType")) {
 			playerDiscardType((GenericPair) evt.getNewValue());
 		}
@@ -52,11 +48,6 @@ public class PlayerView extends View {
 	
 	private void playerAddCards(GenericPair e) {
 		sendMessage("/queue/response", new AddCardsServer((int)e.value, (GenericPair[]) e.key));
-	}
-	
-	private void moveCard(GenericPair e) {
-		GenericPair p = (GenericPair) e.key;
-		sendMessage("/queue/response", new PlayCardServer((int)e.value, (int) p.key, (ZONE) p.value,  ZONE.FACEDOWN, ""));
 	}
 	
 	private void playerDiscardType(GenericPair e) {

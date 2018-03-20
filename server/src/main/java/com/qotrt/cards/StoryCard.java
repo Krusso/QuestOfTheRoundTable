@@ -1,14 +1,12 @@
 package com.qotrt.cards;
 
-import java.net.URL;
+import com.qotrt.deck.AdventureDeck;
 
-public class StoryCard extends Card {
+public abstract class StoryCard extends Card {
 	
 	public static enum TYPE {
 		QUEST, EVENT, TOURNAMENT, GAMEOVER;
 	}
-	
-	public static final StoryCard GAMEOVER = new StoryCard("GAME OVER TOURNAMENT", TYPE.GAMEOVER);
 	
 	protected TYPE type;
 	
@@ -18,4 +16,14 @@ public class StoryCard extends Card {
 	}
 	
 	public TYPE getType() { return this.type; }
+
+	@Override
+	public String playForStage(AdventureDeck deck) {
+		return "Can never play this card for a stage";
+	}
+
+	@Override
+	public String playFaceDown(AdventureDeck deck, AdventureDeck faceUpDeck) {
+		return "Can never play this card face down";
+	}
 }

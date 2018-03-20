@@ -1,8 +1,6 @@
 package com.qotrt.cards;
 
-import java.net.URL;
-
-public class AdventureCard extends Card{
+public abstract class AdventureCard extends Card{
 	
 	public static enum TYPE {
 		WEAPONS, FOES, TESTS, ALLIES, AMOUR

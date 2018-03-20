@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.confirmation.Confirmation;
 import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.confirmation.NeverEndingConfirmation;
 import com.qotrt.confirmation.SingleShotConfirmation;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.sequence.Quest;
+import com.qotrt.sequence.Stage;
 import com.qotrt.util.PlayerUtil;
 
 public class QuestModel extends Observable implements PropertyChangeListener {
@@ -180,5 +183,43 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public String attemptMove(Integer integer, Integer integer2, int card) {
+		Stage from = quest.getStage(integer);
+		Stage to = quest.getStage(integer2);
+		String response = to.validToAdd(from.findCardByID(card));
+		if(response.equals("")) {
+			to.addCard(from.getCardByID(card));
+		}
+		
+		return response;
+	}
+
+	public String attemptMove(Integer integer, AdventureCard card) {
+		Stage to = quest.getStage(integer);
+		String response = to.validToAdd(card);
 	
+		if(card.getType() == TYPE.TESTS && questContainsTest()) {
+			response = "Cant play more than one test per quest";
+		}
+		
+		if(response.equals("")) {
+			to.addCard(card);
+		}
+		
+		return response;
+	}
+	
+	private boolean questContainsTest() {
+		for(int i = 0; i < quest.getNumStages(); i++) {
+			if(quest.getStage(i).isTestStage()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public AdventureCard getCard(int card, Integer integer) {
+		return quest.getStage(integer).getCardByID(card);
+	}
 }

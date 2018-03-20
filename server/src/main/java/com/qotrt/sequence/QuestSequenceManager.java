@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qotrt.calculator.BattlePointCalculator;
+import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
@@ -93,7 +94,7 @@ public class QuestSequenceManager extends SequenceManager {
 			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
 				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
 				pm.drawCards(winners, 1);
-				if (quest.currentStageType() == Quest.TYPE.FOE) {
+				if (quest.currentStageType() == TYPE.FOES) {
 
 					qm.questionCardsStage();
 					try {
@@ -109,7 +110,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 					quest.battleFoe(winners, pm);
 					pm.discardWeapons(participants);
-				} else if (quest.currentStageType() == Quest.TYPE.TEST) {
+				} else if (quest.currentStageType() == TYPE.TESTS) {
 					qm.flipStage();
 					//					pm.flipStage(sponsor, quest.getCurrentStage());
 
