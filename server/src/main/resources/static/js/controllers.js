@@ -9,7 +9,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
 
     $scope.status = "";
-    $scope.loginToast = "";
+    $scope.np = [2,3,4];
+    $scope.ais = [];
+    $scope.strats = [1,2,3];
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -93,11 +95,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
     $scope.sendCreateGameClient = function (np, rigType, pName) {
-        if(np<2) { $scope.showMessage("Need at least 2 players"); return; }
+        numP = parseInt(np);
+        console.log(numP);
+        if(numP<2) { $scope.showMessage("Need at least 2 players"); return; }
+
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            numPlayers: parseInt(np),
+            numPlayers: numP,
             rigged: $scope.RIGGED.NORMAL,
             playerName: pName,
             java_class: "GameCreateClient"
@@ -142,7 +147,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
 
     $scope.showMessage = function (message) {
-        $scope.loginToast = message;
+        $scope.status = message;
     };
 
     $scope.loadLobby = function () {
@@ -153,6 +158,28 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.showMessage("Enter a name");
         }
     }
+
+    $scope.getAINums = function(numPlayers) {
+        a = [];
+        for(var i=0; i<numPlayers; i++){
+            a.push(i);
+        }
+        return a;
+    }
+
+    $scope.addAI = function(np) {
+        console.log(np);
+        if(!np){
+            $scope.showMessage("Select Num Players first");
+            return;
+        }
+        l = $scope.ais.length;
+        if(l+1<np){
+            $scope.ais.push({num : l+1});
+        } else {
+            $scope.showMessage("Max AIs");
+        }
+    }  
 
     /*=========================================   *
      *             Dragging Functions             *

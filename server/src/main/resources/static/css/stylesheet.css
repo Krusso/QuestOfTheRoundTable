@@ -19,6 +19,24 @@ h2 {
     font-family: 'Cinzel', serif;
 }
 
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background-color: #000000;
+    border: 2px solid #555555;
+}
+
 .btn{
     -webkit-border-radius: 10;
     -moz-border-radius: 10;
@@ -55,10 +73,6 @@ h2 {
     background-image: linear-gradient(to bottom, #00188f, #000000);
 }
 
-.whitetext{
-    color: white;
-}
-
 #titlescreenbg {
     background-image: url("../gameResources/titlescreen1.jpg");
     background-size: 100%;
@@ -69,12 +83,14 @@ h2 {
     left: 0;
 }
 
-#status{
+#status, #shieldWarning{
     background-color: black;
     color: white;
+    text-align: center;
+
     position: relative;
-    top: 400px;
-    float: right;
+    width: 80%;
+    left: 10%;
 }
 
 #main{
@@ -88,11 +104,48 @@ h2 {
 }
 
 #menu{
+    /*direction:rtl;
+    overflow: scroll;*/
 	position: relative;
     display: inline-block;
 	height: 100vh;
 	width: 30vw;
     text-align: center;
+}
+
+.createGameText{
+    color: white;
+    font-size: 20px;
+}
+.createGameInp{
+    width: 80%;
+}
+
+#addAI{
+    width: 80%;
+    font-size: 12px;
+    background: #000000;
+}
+
+#addAI:hover{
+    background: #1f2123;
+}
+
+#ais{
+    font-size: 12px;
+    background: #000000;
+
+    position: relative;
+    width: 80%;
+    left: 10%;
+}
+
+.AI{
+    color: white;
+}
+
+.stratSelect{
+    float: right;
 }
 
 #lobby{
@@ -105,7 +158,7 @@ h2 {
 #lobbyList{
     list-style-type: none;
     width: 90%;
-    height: 90%;
+    height: 65%;
     overflow: scroll;
     background-color: rgba(0, 0, 0, 0.3);
 }
@@ -123,6 +176,10 @@ h2 {
     color: white;
     font-size: 20px;
     font-family: Bookman;
+}
+
+#shields{
+    text-align: center;
 }
 
 .shield {

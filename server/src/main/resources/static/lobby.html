@@ -20,15 +20,27 @@
     <div ng-controller="gameController">
 
     	<div id="main">
-    		<div id="menu"><br><br>
+    		<div id="menu">
+                <p id="status">{{status}}</p>
 	            <button class="btn menubtn" ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
                 <div id="createGame">
 	               <button class="btn menubtn" ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, pName)">CREATE A GAME</button>
                 </div>
                 </br>
-	            <input ng-model="pName" placeholder="player name"></br>
-	            <select ng-init="# Players" ng-model="numPlayers" ng-options=""></br>
-                <select ng-model="" ng-options="">
+<!--                 <p class="createGameText">Player Name</p>
+	            <input class="createGameInp" ng-model="pName"></input> -->
+                <p class="createGameText">Num Players</p>
+	            <select class="createGameInp" ng-model="numPlayers" ng-options="n for n in np"></select><br><br>
+                <button class="btn" id="addAI" ng-click="addAI(numPlayers)">Add AIs + </button><br><br>
+
+                <div id="ais" ng-repeat="ai in ais" ng-model="ais">
+                    <div class="AI">
+                        AI {{ai.num}} <br>
+                        Strategy : <select class="stratSelect" ng-model="strat" ng-options="s for s in strats"></select>
+                        <br>
+                    </div>
+                </div>
+
     		</div>
     		<div id="lobby">
                 <br>
@@ -36,7 +48,7 @@
     				<li ng-repeat="game in serverList" ng-model='serverList'>
                         <div class="game">
                             <div class="info">
-    	    				UUID:{{game.uuid}} </br>
+    	    				Name:{{game.uuid}} </br> <!-- replace with game.name when its added -->
     	                    NumPlayers: {{game.players}} </br>
     	                    Capacity:{{game.capacity}} </br></br>
                             </div>
@@ -45,6 +57,13 @@
                         </div>
                 	</li>
             	</ul>
+                <div id="shields">
+                    <button id="shield1" class="shield" ng-click="selectShield(1)"></button>
+                    <button id="shield2" class="shield" ng-click="selectShield(2)"></button>
+                    <button id="shield3" class="shield" ng-click="selectShield(3)"></button>
+                    <button id="shield4" class="shield" ng-click="selectShield(4)"></button>
+                </div>
+                <p id="shieldWarning">{{shieldWarning}}</p>
     		</div>
     	</div>
     	
