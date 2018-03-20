@@ -57,16 +57,16 @@ public class PlayCardController {
 		
 		String response = "";
 		
-		if(map.containsKey(chatMessage.zoneFrom) && map.containsKey(chatMessage.zoneTo)){
+		if(map.containsKey(chatMessage.zoneFrom) && map.containsKey(chatMessage.zoneTo) && game.bmm.getQuestModel().canPickCardsForStage()){
 			response = game.bmm.getQuestModel().attemptMove(map.get(chatMessage.zoneFrom), map.get(chatMessage.zoneTo), chatMessage.card);
-		} else if(chatMessage.zoneFrom.equals(ZONE.HAND) && map.containsKey(chatMessage.zoneTo)){
+		} else if(chatMessage.zoneFrom.equals(ZONE.HAND) && map.containsKey(chatMessage.zoneTo) && game.bmm.getQuestModel().canPickCardsForStage()){
 			response = game.bmm.getQuestModel().attemptMove(map.get(chatMessage.zoneTo), player.findCardByID(chatMessage.card));
 			// ie valid move
 			if(response.equals("")) {
 				// stage has already added the reference to the card just need to remove from the hand
 				player.getCardByID(chatMessage.card);
 			}
-		} else if(chatMessage.zoneTo.equals(ZONE.HAND) && map.containsKey(chatMessage.zoneFrom)){
+		} else if(chatMessage.zoneTo.equals(ZONE.HAND) && map.containsKey(chatMessage.zoneFrom) && game.bmm.getQuestModel().canPickCardsForStage()){
 			AdventureCard c = game.bmm.getQuestModel().getCard(chatMessage.card, map.get(chatMessage.zoneTo));
 			player.hand.addCard(c);
 		} else {

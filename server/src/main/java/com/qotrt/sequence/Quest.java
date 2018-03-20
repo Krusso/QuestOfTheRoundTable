@@ -40,11 +40,6 @@ public class Quest {
 			e.printStackTrace();
 		}
 		
-		List<List<AdventureCard>> stages = qm.getStageCards();
-		for(int i = 0; i < stages.size(); i++) {
-			quest[i] = new Stage(stages.get(i));
-		}
-		
 		currentStage = 0;
 	}
 

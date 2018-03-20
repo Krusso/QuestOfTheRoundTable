@@ -14,7 +14,6 @@ import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.confirmation.NeverEndingConfirmation;
 import com.qotrt.confirmation.SingleShotConfirmation;
 import com.qotrt.gameplayer.Player;
-import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.sequence.Quest;
 import com.qotrt.sequence.Stage;
 import com.qotrt.util.PlayerUtil;
@@ -72,6 +71,16 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 		this.quest = quest;
 	}
 	
+	public boolean canPickCardsForStage() {
+		return stageSetup.can();
+	}
+	
+	public synchronized void finishSelectingStages(Player player) {
+		stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
+				"player: " + player + " finished selecting cards", 
+				"player: " + player + " finish selecting cards too late");
+	}
+	
 	@Override
 	//propagating events up
 	public void propertyChange(PropertyChangeEvent arg0) {
@@ -111,11 +120,6 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 				new GenericPair(
 						this.winners.stream().mapToInt(i -> i.getID()).toArray(),
 						this.message));
-	}
-
-	public synchronized List<List<AdventureCard>> getStageCards() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public synchronized void questionJoinQuest(List<Player> potentialQuestPlayers) {
@@ -184,9 +188,9 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 		return null;
 	}
 
-	public String attemptMove(Integer integer, Integer integer2, int card) {
-		Stage from = quest.getStage(integer);
-		Stage to = quest.getStage(integer2);
+	public String attemptMove(Integer zoneFrom, Integer zoneTo, int card) {
+		Stage from = quest.getStage(zoneFrom);
+		Stage to = quest.getStage(zoneTo);
 		String response = to.validToAdd(from.findCardByID(card));
 		if(response.equals("")) {
 			to.addCard(from.getCardByID(card));
@@ -195,8 +199,8 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 		return response;
 	}
 
-	public String attemptMove(Integer integer, AdventureCard card) {
-		Stage to = quest.getStage(integer);
+	public String attemptMove(Integer zoneTo, AdventureCard card) {
+		Stage to = quest.getStage(zoneTo);
 		String response = to.validToAdd(card);
 	
 		if(card.getType() == TYPE.TESTS && questContainsTest()) {

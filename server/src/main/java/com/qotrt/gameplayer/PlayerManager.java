@@ -34,12 +34,12 @@ public class PlayerManager {
 		}
 	}
 
-	// Used just so there is an animation at the start of all players getting cards
 	public void start() {
 		dm.setRigged(rigged);
 		for(int i = players.length; i > 0; i--) {
 			System.out.println("setting cards for: " + i);
-			if(rigged.equals(RIGGED.ONE)) {
+			if(rigged.equals(RIGGED.ONE) || rigged.equals(RIGGED.ONESTAGETOURNAMENT)
+					|| rigged.equals(RIGGED.TWOSTAGETOURNAMENT) || rigged.equals(RIGGED.ONEHUNDREDSTAGETOURNAMENT)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
