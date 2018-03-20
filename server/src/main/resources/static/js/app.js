@@ -1,14 +1,24 @@
-angular.module("gameApp", [
+var app = angular.module("gameApp", [
     "gameApp.controllers",
-    "gameApp.services"
+    "gameApp.services",
+    "ngRoute"
 ]);
+
+app.config(function($routeProvider) {
+  $routeProvider
+  .when("/", {
+    templateUrl : "login.html"
+  })
+  .when("/lobby", {
+    templateUrl : "lobby.html"
+  })
+  .when("/inlobby", {
+    templateUrl : "inlobby.html"
+  });
+});
 
 angular.module("gameApp.controllers", ['ngDragDrop']);
 angular.module("gameApp.services", []);
-
-
-
-
 
 
 //Example templating:

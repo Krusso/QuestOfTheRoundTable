@@ -35,6 +35,7 @@ public class Game extends Observable {
 
 	private UUID uuid = UUID.randomUUID();
 	private int gameSize;
+	private String gameName;
 	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
 	private PlayerManager pm;
@@ -46,8 +47,9 @@ public class Game extends Observable {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, int capacity, RIGGED rigged) {
+	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged) {
 		this.messagingTemplate = messagingTemplate;
+		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
 		logger.info("messaging template: " + this.messagingTemplate);
@@ -176,5 +178,9 @@ public class Game extends Observable {
 
 	public int getPlayerCapacity() {
 		return this.gameSize;
+	}
+
+	public String getGameName() {
+		return this.gameName;
 	}
 }

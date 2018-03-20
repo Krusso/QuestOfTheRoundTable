@@ -1,42 +1,17 @@
-<!DOCTYPE html>
-<html ng-app="gameApp" ng-init="person={fName: 'Michael', lName:'Kuang'}; capitals=[{city:'Ottawa', province:'Ontario'}, {city:'Toronto', province:'Ontario'},{city:'Quebec', province:'Ontario'}]">
+<div id="main">
+    <div id="inlobby">
+        <h1 id="pname">{{pname}}</h1>
 
-<head>
-    <title>Quest of The Round Table</title>
-    <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
-    <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+        <ul id="playerList">
+            <li ng-repeat="p in playerList" ng-model='playerList'>
+                <div class="player">
+                    <div class="name">
+                    Player : {{p.name}}
+                    </div>
+                </div>
+            </li>
+        </ul>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-
-    <script src="js/angular-dragdrop.min.js "></script>
-</head>
-
-<body>
-
-    <div ng-controller="gameController">
-
-        <div id="main">
-            <div id="inlobby">
-                <h1 id="uname"></h1>
-                <div id="players"></div>
-                <button id="refresh">REFRESH</button>
-            </div>
-        
-
-
-
+        <button class="btn bluebtn" id="refresh">REFRESH</button>
     </div>
-
-    <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
-    <script src="js/controllers.js"></script>
-    <script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-</body>
-
-</html>
+</div>

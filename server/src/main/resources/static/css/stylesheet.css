@@ -11,6 +11,7 @@ h1 {
     color: white;
     font-size: 50px;
     font-family: 'Cinzel', serif;
+    text-align: center;
 }
 
 h2 {
@@ -59,18 +60,20 @@ h2 {
     background-image: linear-gradient(to bottom, #850f0f, #db7911);
 }
 
+.bluebtn{
+    background-image: linear-gradient(to bottom, #000000, #14378f);
+}
+
+.bluebtn:hover{
+    background-image: linear-gradient(to bottom, #00188f, #000000);
+}
+
 .joinbtn{
     width: 20%;
     float: right;
     position: relative;
     display: inline-block;
     background-color: black;
-
-    background-image: linear-gradient(to bottom, #000000, #14378f);
-}
-
-.joinbtn:hover{
-    background-image: linear-gradient(to bottom, #00188f, #000000);
 }
 
 #titlescreenbg {
@@ -83,14 +86,26 @@ h2 {
     left: 0;
 }
 
-#status, #shieldWarning{
+#loginMenu{
+    text-align: center;
+}
+
+#status, #shieldWarning, #loginToast{
     background-color: black;
     color: white;
     text-align: center;
 
     position: relative;
+}
+
+#status{
     width: 80%;
     left: 10%;
+}
+
+#shieldWarning, #loginToast{
+    width: 50%;
+    left: 25%;
 }
 
 #main{
@@ -132,7 +147,7 @@ h2 {
 }
 
 #ais{
-    font-size: 12px;
+    font-size: 15px;
     background: #000000;
 
     position: relative;
@@ -140,12 +155,28 @@ h2 {
     left: 10%;
 }
 
+.aiDelete{
+    position: relative;
+    width: 30%;
+    float: right;
+}
+
 .AI{
     color: white;
+    text-align: left;
 }
 
 .stratSelect{
-    float: right;
+    width: 35px;
+}
+
+#inlobby{
+    position: relative;
+    width: 50%;
+    height: 70%;
+    left: 25%;
+    top: 10%;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 #lobby{
@@ -213,6 +244,18 @@ h2 {
 
 #shield4 {
     background-image: url("../gameResources/S4.png");
+}
+
+#pname {
+    text-align: left;
+}
+
+#refresh {
+    position: relative;
+    font-size: 100%;
+    width: 20%;
+    left: 40%;
+    text-align: center;
 }
 
 .card {

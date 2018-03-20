@@ -57,7 +57,7 @@ public class GameController {
 
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
-		UUID uuid = hub.addGame(chatMessage.getNumPlayers(), chatMessage.getRigged());
+		UUID uuid = hub.addGame(chatMessage.getGameName(), chatMessage.getNumPlayers(), chatMessage.getRigged());
 		String sessionID = headerAccessor.getSessionId();
 		System.out.println("s is: " + sessionID);
 		GameJoinClient gjc = new GameJoinClient();

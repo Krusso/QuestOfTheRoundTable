@@ -36,11 +36,12 @@ public class Hub {
 		return null;
 	}
 
-	public synchronized UUID addGame(int numPlayers, RIGGED rigged) {
-		Game game = new Game(messagingTemplate, numPlayers, rigged);
+	public synchronized UUID addGame(String gameName, int numPlayers, RIGGED rigged) {
+		Game game = new Game(messagingTemplate, gameName, numPlayers, rigged);
 		games.add(game);
 		System.out.println("added game");
 		System.out.println("games size: " + games.size());
+		System.out.println("game name: " + game.getGameName());
 		return game.getUUID();
 	}
 
