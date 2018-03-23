@@ -9,6 +9,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
 
     $scope.status = "";
+    $scope.range = [1, 2, 3, 4];
     $scope.loginToast = "";
     $scope.pname = ""; // hacky workaround but will do for now
     $scope.np = [2,3,4];
@@ -29,16 +30,28 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
     $scope.playerId = 0;
     $scope.addCard = function (n, id) {
-        card = {
+        var card = {
             name: n,
             id: ($scope.cardId++).toString(),
-            draggable: true,
+            draggable: true
         };
 
         $scope.zones.handZone.push(card);
     };
 
     $scope.serverList = [];
+    
+    /*=========================================   *
+     *            Controller Variables: Stage      *
+     *=========================================== */
+    $scope.bidSlider = {
+        value: 200,
+        options: {
+            floor: 0,
+            ceil: 500,
+            vertical: true
+        }
+    }
 
     /*=========================================   *
      *             Messaging Functions            *
@@ -97,7 +110,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
     $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
-        numP = parseInt(np);
+        numP = parseInt(np, 10);
         if(!numP) { $scope.showStatus("Select Num Players"); return; }
         if($scope.ais.length >= numP) { $scope.showStatus("Too many AIs"); return; }
         if(!gName) { $scope.showStatus("Enter a name for your game"); return; }
@@ -143,7 +156,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     MessageService.receive().then(null, null, function (message) {
         console.log(message);
         $scope.messages.push(message);
-        if (message.messageType == "LISTSERVER") {
+        if (message.messageType === "LISTSERVER") {
             $scope.serverList = message.games;
             console.log("server list:");
             console.log($scope.serverList);
@@ -213,7 +226,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.startDrag = function (event) {
         var cardId = event.currentTarget.id;
-        console.log("Start drag on card id - " + cardId)
+        console.log("Start drag on card id - " + cardId);
         $scope.currentDrag = cardId;
     };
 
