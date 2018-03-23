@@ -17,13 +17,13 @@ public abstract class Confirmation extends Observable {
 	protected int backingInt;
 	protected List<Player> toAsk;
 	protected List<Player> accepted = new ArrayList<Player>();
-	
+
 	public Confirmation(String eventName, String acceptEventName, String declineEventName) {
 		this.eventName = eventName;
 		this.acceptEventName = acceptEventName;
 		this.declineEventName = declineEventName;
 	}
-	
+
 	public void start(List<Player> toAsk) {
 		cdl = new CountDownLatch(1);
 		accepted = new ArrayList<Player>();
@@ -31,9 +31,9 @@ public abstract class Confirmation extends Observable {
 		backingInt = this.toAsk.size();
 		fireEvent(eventName, null, PlayerUtil.playersToIDs(toAsk));
 	}
-	
+
 	public abstract boolean accept(Player player, String attempt, String success, String failure);
-	
+
 	public void decline(Player player, String attempt, String success, String failure) {
 		System.out.println(attempt);
 		if(backingInt > 0) {
@@ -51,12 +51,12 @@ public abstract class Confirmation extends Observable {
 	public boolean can() {
 		return backingInt > 0;
 	}
-	
+
 	public List<Player> get(){
 		backingInt = -1;
 		return this.accepted;
 	}
-	
+
 	public CountDownLatch getCountDownLatch() {
 		return this.cdl;
 	}

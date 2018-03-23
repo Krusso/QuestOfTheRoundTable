@@ -5,8 +5,6 @@ import java.beans.PropertyChangeEvent;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.gameplayer.Rank;
-import com.qotrt.messages.game.PlayCardClient.ZONE;
-import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
 import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.rank.RankServer;

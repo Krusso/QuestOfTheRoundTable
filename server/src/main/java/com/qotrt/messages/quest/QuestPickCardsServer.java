@@ -1,12 +1,17 @@
 package com.qotrt.messages.quest;
 
-import src.messages.Message;
+import com.qotrt.messages.Message;
 
 // from server
 public class QuestPickCardsServer extends Message {
 
-	public QuestPickCardsServer(int player) {
+	public int[] players;
+	
+	public QuestPickCardsServer() {}
+	
+	public QuestPickCardsServer(int player, int[] players) {
 		super(player);
+		this.players = players;
 	}
 	
 	//from server

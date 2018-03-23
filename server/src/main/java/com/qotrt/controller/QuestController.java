@@ -20,8 +20,8 @@ public class QuestController {
 	@Autowired
 	private Hub hub;
 
-	@MessageMapping("/game.sponsorTournament")
-	public void sponsorTournament(SimpMessageHeaderAccessor headerAccessor, 
+	@MessageMapping("/game.sponsorQuest")
+	public void sponsorQuest(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload QuestSponsorClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());

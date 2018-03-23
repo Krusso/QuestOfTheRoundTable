@@ -1,16 +1,13 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
-import java.util.Arrays;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.qotrt.gameplayer.Player;
-import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
-import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
-import com.qotrt.messages.tournament.TournamentPickCardsServer;
-import com.qotrt.messages.tournament.TournamentWinServer;
-import com.qotrt.model.GenericPair;
+import com.qotrt.messages.quest.QuestJoinServer;
+import com.qotrt.messages.quest.QuestPickCardsServer;
+import com.qotrt.messages.quest.QuestPickStagesServer;
+import com.qotrt.messages.quest.QuestSponsorServer;
 
 public class QuestView extends View {
 
@@ -18,52 +15,46 @@ public class QuestView extends View {
 		super(messagingTemplate);
 	}
 	
-	private void questionTournament(int[] players) {
+	private void questionSponsor(int[] players) {
 		for(int i: players) {
-			sendMessage("/queue/response", new TournamentAcceptDeclineServer(i));
+			sendMessage("/queue/response", new QuestSponsorServer(i, players));
 		}
 	}
 	
-	private void joinTournament(Player player) {
-		sendMessage("/queue/response", new TournamentAcceptedDeclinedServer(player.getID(), true));
+	private void questStage(int[] players) {
+		// TODO: fix this hard coded 5
+		sendMessage("/queue/response", new QuestPickStagesServer(players[0], 5));
 	}
 	
-	private void declineTournament(Player player) {
-		sendMessage("/queue/response", new TournamentAcceptedDeclinedServer(player.getID(), false));
-	}
-	
-	private void setWinners(GenericPair e) {
-		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (String) e.value));
-	}
-	
-	private void questionCardTournament(int[] players) {
-		System.out.println("here123??????");
-		System.out.println(Arrays.toString(players));
+	private void questionQuest(int[] players) {
 		for(int i: players) {
-			sendMessage("/queue/response", new TournamentPickCardsServer(i));	
+			sendMessage("/queue/response", new QuestJoinServer(i, players));
+		}
+	}
+	
+	private void questionCardQuest(int[] players) {
+		for(int i: players) {
+			sendMessage("/queue/response", new QuestPickCardsServer(i, players));
 		}
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("event got fired");
-		if(evt.getPropertyName().equals("questiontournament")) {
-			questionTournament((int[]) evt.getNewValue());
+		
+		if(evt.getPropertyName().equals("questionSponsor")) {
+			questionSponsor((int[]) evt.getNewValue());
 		}
 		
-		if(evt.getPropertyName().equals("jointournament")) {
-			joinTournament((Player) evt.getNewValue());
+		if(evt.getPropertyName().equals("questStage")) {
+			questStage((int[]) evt.getNewValue());
 		}
 		
-		if(evt.getPropertyName().equals("declinetournament")) {
-			declineTournament((Player) evt.getNewValue());
+		if(evt.getPropertyName().equals("questionQuest")) {
+			questionQuest((int[]) evt.getNewValue());
 		}
 		
-		if(evt.getPropertyName().equals("tournamentwinners")) {
-			setWinners((GenericPair) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("questioncardtournament")) {
-			questionCardTournament((int[]) evt.getNewValue());
+		if(evt.getPropertyName().equals("questionCardQuest")) {
+			questionCardQuest((int[]) evt.getNewValue());
 		}
 	}
 }

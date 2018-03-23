@@ -275,7 +275,7 @@ public class TestTournament {
 		pcs = p.take(PlayCardServer.class);
 		assertEquals(31, pcs.card);
 		pcs = p.take(PlayCardServer.class);
-		assertEquals("Cant play foe cards for tournament", pcs.response);
+		assertEquals("Cant play foe face down", pcs.response);
 		p.sendMessage("/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals(3, tws.players[0]);

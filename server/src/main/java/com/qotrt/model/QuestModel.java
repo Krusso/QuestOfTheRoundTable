@@ -36,7 +36,7 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 	
 	private Confirmation participate = new MultiShotConfirmation("questionQuest", 
 			"joinQuest", 
-			null);
+			"declineQuest");
 	
 	public CountDownLatch participateLatch() { return participate.getCountDownLatch();}
 
@@ -52,7 +52,9 @@ public class QuestModel extends Observable implements PropertyChangeListener {
 	
 	public CountDownLatch discardLatch() { return discard.getCountDownLatch();}
 	
-	private Confirmation bid = new NeverEndingConfirmation("bidQuest", null, null);
+	private Confirmation bid = new NeverEndingConfirmation("bidQuest", 
+			null, 
+			null);
 	
 	public CountDownLatch bidLatch() { return bid.getCountDownLatch();}
 	

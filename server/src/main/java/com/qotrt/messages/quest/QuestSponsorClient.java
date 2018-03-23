@@ -8,6 +8,8 @@ public class QuestSponsorClient extends Message {
 
 	public boolean sponser;
 	
+	public QuestSponsorClient() {}
+	
 	public QuestSponsorClient(int player, boolean joined) {
 		super(player);
 		this.sponser = joined;

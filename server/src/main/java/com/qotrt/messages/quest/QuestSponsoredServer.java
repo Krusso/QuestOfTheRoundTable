@@ -3,17 +3,15 @@ package com.qotrt.messages.quest;
 import com.qotrt.messages.Message;
 
 // from server
-public class QuestSponsorServer extends Message {
+public class QuestSponsoredServer extends Message {
 
-	public int[] players;
+	public boolean sponsored;
 	
-	public QuestSponsorServer(int player, int[] players) {
+	public QuestSponsoredServer(int player, boolean sponsored) {
 		super(player);
-		this.players = players;
+		this.sponsored = sponsored;
 	}
 	
-	public QuestSponsorServer() {}
-
 	//from server
 	@Override
 	public void setMessage() {

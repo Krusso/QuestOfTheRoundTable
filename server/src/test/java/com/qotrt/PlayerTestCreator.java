@@ -146,9 +146,4 @@ public class PlayerTestCreator {
 			e1.printStackTrace();
 		}
 	}
-	
-	public void execute(Runnable thread, int y) {
-		final int x = y;
-		thread.run();
-	}
 }

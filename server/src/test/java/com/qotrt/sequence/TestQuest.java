@@ -27,6 +27,8 @@ import com.qotrt.messages.game.GameListServer;
 import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.PlayCardClient;
 import com.qotrt.messages.game.PlayCardServer;
+import com.qotrt.messages.quest.QuestSponsorClient;
+import com.qotrt.messages.quest.QuestSponsorServer;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineClient;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
@@ -56,7 +58,6 @@ public class TestQuest {
 	// testNoParticipants
 	// testDiscardForQuests
 	// testCantSponsorQuest
-	// testNoSponsor
 	// test2PlayerBidding
 	// testBidding
 	// testFightingFoe
@@ -67,8 +68,7 @@ public class TestQuest {
 	
 	@Test
 	public void testNoSponsor() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
-		final int x = 0;
-		
+
 		Runnable thread2 = new Runnable() {
 			@Override
 			public void run() {
@@ -77,13 +77,8 @@ public class TestQuest {
 					p.sendMessage("/app/game.createGame", 
 							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT));
 
-					while(true) {
-						TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
-						if(tads.player == x) { break; }
-					}
-
-					p.sendMessage("/app/game.joinTournament", 
-							new TournamentAcceptDeclineClient(x, false));
+					p.waitForThenSend(QuestSponsorServer.class, 0,
+							"/app/game.sponsorQuest", new QuestSponsorClient(0, false));
 			}
 		};
 		
@@ -91,35 +86,11 @@ public class TestQuest {
 		Thread.sleep(1000);
 		PlayerTestCreator p = new PlayerTestCreator();
 		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		p.waitForThenSend(QuestSponsorServer.class, 1,
+				"/app/game.sponsorQuest", new QuestSponsorClient(1, false));
 		
-		p.sendMessage("/app/game.createGame", 
-				new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT));
-		
-		p.execute(thread2, 0);
-		
-		p.sendMessage("/app/game.listGames", new GameListClient());
-
-		GameListServer gls = p.take(GameListServer.class);
-		assertEquals(1, gls.getGames().length);
-
-		p.sendMessage("/app/game.joinGame", 
-				new GameJoinClient(gls.getGames()[0].getUuid(), "world"));
-
-
-		MiddleCardServer mcs = p.take(MiddleCardServer.class);
-		assertEquals("Tournament at York", mcs.card);
-
-		while(true) {
-			TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
-			if(tads.player == 1) { break; }
-		}
-
-		TournamentAcceptDeclineClient tadc = new TournamentAcceptDeclineClient(1, false);
-		p.sendMessage("/app/game.joinTournament", tadc);
-
-		TournamentWinServer tws = p.take(TournamentWinServer.class);
-		assertEquals("No Players join the tournament", tws.response);
-		assertEquals(0, tws.players.length);
+		p.take(QuestSpons)
 	}
 
 
