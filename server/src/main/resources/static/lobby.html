@@ -1,0 +1,50 @@
+<div id="main">
+    <div id="menu">
+        <p id="status">{{status}}</p>
+        <button class="btn menubtn" ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
+        <div id="createGame">
+            <button class="btn menubtn" ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, gName, ais)">CREATE A GAME</button>
+        </div>
+        </br>
+        <p class="createGameText">Game Name</p>
+        <input class="createGameInp" ng-model="gName"></input>
+        <p class="createGameText">Num Players</p>
+        <select class="createGameInp" ng-model="numPlayers" ng-options="n for n in np"></select><br><br>
+        <button class="btn" id="addAI" ng-click="addAI(numPlayers)">Add AIs + </button><br><br>
+
+        <div id="ais" ng-repeat="ai in ais" ng-model="ais">
+            <div class="AI">
+                <button class="aiDelete" ng-click="deleteAI(ai.num)">DELETE</button>
+                AI {{ai.num}} <br>
+                Strategy : <select class="stratSelect" ng-model="strat" ng-options="s for s in strats"></select>
+                <br><br>
+            </div>
+        </div>
+
+    </div>
+    <div id="lobby">
+        <br>
+        <ul id="lobbyList">
+            <li ng-repeat="game in serverList" ng-model='serverList'>
+                <div class="game">
+                    <div class="info">
+                    Name: {{game.gameName}} </br>
+                    NumPlayers: {{game.players}} </br>
+                    Capacity:{{game.capacity}} </br></br>
+                    </div>
+                    <a href="#!inlobby">
+                    <button class="btn joinbtn bluebtn" ng-click="sendGameJoinClient(game.uuid);
+                    showMessage('Waiting for other players...')">JOIN</button>
+                    </a></br>
+                </div>
+            </li>
+        </ul>
+        <div id="shields">
+            <button id="shield1" class="shield" ng-click="selectShield(1)"></button>
+            <button id="shield2" class="shield" ng-click="selectShield(2)"></button>
+            <button id="shield3" class="shield" ng-click="selectShield(3)"></button>
+            <button id="shield4" class="shield" ng-click="selectShield(4)"></button>
+        </div>
+        <p id="shieldWarning">{{shieldWarning}}</p>
+    </div>
+</div>

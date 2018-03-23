@@ -2,7 +2,7 @@ var res = "resources/";
 /*=========================================   *
  *            Controllers                     *
  *=========================================== */
-angular.module('gameApp.controllers').controller('gameController', function ($scope, MessageService) {
+angular.module('gameApp.controllers').controller('gameController', function ($scope, MessageService, $location) {
 
     /*=========================================   *
      *            Controller Variables            *
@@ -10,7 +10,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.status = "";
     $scope.range = [1, 2, 3, 4];
-
+    $scope.loginToast = "";
+    $scope.pname = ""; // hacky workaround but will do for now
+    $scope.np = [2,3,4];
+    $scope.ais = [];
+    $scope.strats = [1,2,3];
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -36,7 +40,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
 
     $scope.serverList = [];
-
+    
     /*=========================================   *
      *            Controller Variables: Stage      *
      *=========================================== */
@@ -105,41 +109,48 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
-    $scope.sendCreateGameClient = function (np, rigType, pName) {
-        if (np < 2) {
-            $scope.showMessage("Need at least 2 players");
-            return;
-        }
+    $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
+        numP = parseInt(np, 10);
+        if(!numP) { $scope.showStatus("Select Num Players"); return; }
+        if($scope.ais.length >= numP) { $scope.showStatus("Too many AIs"); return; }
+        if(!gName) { $scope.showStatus("Enter a name for your game"); return; }
+
+        console.log($scope.pname);
+
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            numPlayers: parseInt(np, 10),
+            numPlayers: numP,
             rigged: $scope.RIGGED.NORMAL,
-            playerName: pName,
+            playerName: $scope.pname,
+            gameName: gName,
+            ais: ais[0],
             java_class: "GameCreateClient"
-        };
+        }
         $scope.addMessage($scope.ep_createGame);
-        $scope.showMessage("Created game, click REFRESH LOBBY");
+        $scope.loadInLobby();
     };
 
     $scope.sendListGamesClient = function () {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            java_class: "GameListClient"
+            java_class: "GameListClient",
+
         };
         $scope.addMessage($scope.ep_listGames);
     };
-    $scope.sendGameJoinClient = function (uuid, playerName) {
+    $scope.sendGameJoinClient = function (uuid) {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
             player: 0,
             uuid: uuid,
-            playerName: playerName,
+            playerName: $scope.pname,
             java_class: "GameJoinClient"
         };
         $scope.addMessage($scope.ep_joinGame);
+        console.log("got data");
     };
 
     MessageService.receive().then(null, null, function (message) {
@@ -156,9 +167,58 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *             Display Functions              *
      *=========================================== */
 
-    $scope.showMessage = function (message) {
+    $scope.showStatus = function (message) {
         $scope.status = message;
-    };
+    }
+
+    $scope.showLoginToast = function(message) {
+        $scope.loginToast = message;
+    }
+
+    $scope.loadLobby = function() {
+        $location.path('/lobby');
+    }
+
+    $scope.loadInLobby = function () {
+        $location.path('/inlobby');
+    }
+
+    $scope.enterLobby = function (pn) {
+        if(!pn){
+            $scope.showLoginToast("Enter a name");
+            return
+        } else {
+            console.log(pn);
+            $scope.pname = pn;
+            $scope.loadLobby();
+        }
+    }
+
+    $scope.addAI = function(np) {
+        if(!np){
+            $scope.showStatus("Select Num Players first", $scope.status);
+            return;
+        }
+        l = $scope.ais.length;
+        if(l+1<np){
+            $scope.ais.push({num : l+1});
+        } else {
+            $scope.showStatus("Max AIs", $scope.status);
+        }
+    }
+
+    $scope.deleteAI = function(num) {
+        console.log($scope.ais);
+        for(var i=$scope.ais.length-1; i>=0; i--){
+            if($scope.ais[i].num==num){
+                $scope.ais.splice(i,1);
+                return;
+            }
+            $scope.ais[i].num -= 1;
+        }
+    }
+
+    $scope.selectShield = function(num){}
 
     /*=========================================   *
      *             Dragging Functions             *

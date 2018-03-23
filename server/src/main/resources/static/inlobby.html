@@ -1,0 +1,17 @@
+<div id="main">
+    <div id="inlobby">
+        <h1 id="pname">{{pname}}</h1>
+
+        <ul id="playerList">
+            <li ng-repeat="p in playerList" ng-model='playerList'>
+                <div class="player">
+                    <div class="name">
+                    Player : {{p.name}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <button class="btn bluebtn" id="refresh">REFRESH</button>
+    </div>
+</div>

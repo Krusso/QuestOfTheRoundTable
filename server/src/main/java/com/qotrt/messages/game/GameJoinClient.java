@@ -9,6 +9,7 @@ public class GameJoinClient extends Message {
 	
 	private UUID uuid;
 	private String playerName;
+	private String gameName;
 
 	
 	public GameJoinClient() {}
@@ -24,6 +25,14 @@ public class GameJoinClient extends Message {
 
 	public void setPlayerName(String playerName) {
 		this.playerName = playerName;
+	}
+
+	public String getGameName() {
+		return gameName;
+	}
+
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
 	}
 
 	@Override

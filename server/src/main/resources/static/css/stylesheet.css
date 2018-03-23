@@ -3,7 +3,7 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    background: #2f294f;
+    background: #black;
     margin: 0;
 }
 
@@ -11,12 +11,69 @@ h1 {
     color: white;
     font-size: 50px;
     font-family: 'Cinzel', serif;
+    text-align: center;
 }
 
 h2 {
     color: white;
     font-size: 35px;
     font-family: 'Cinzel', serif;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    background-color: #000000;
+    border: 2px solid #555555;
+}
+
+.btn{
+    -webkit-border-radius: 10;
+    -moz-border-radius: 10;
+    border-radius: 10px;
+    font-family: Arial;
+    color: #ffffff;
+    font-size: 20px;
+    padding: 10px 20px 10px 20px;
+}
+
+.menubtn {
+    width: 80%;
+    position: relative;
+
+    background: #db7911;
+    background-image: linear-gradient(to bottom, #db7911, #850f0f);
+}
+
+.menubtn:hover {
+    background-image: linear-gradient(to bottom, #850f0f, #db7911);
+}
+
+.bluebtn{
+    background-image: linear-gradient(to bottom, #000000, #14378f);
+}
+
+.bluebtn:hover{
+    background-image: linear-gradient(to bottom, #00188f, #000000);
+}
+
+.joinbtn{
+    width: 20%;
+    float: right;
+    position: relative;
+    display: inline-block;
+    background-color: black;
 }
 
 #titlescreenbg {
@@ -29,46 +86,135 @@ h2 {
     left: 0;
 }
 
-#lobby {
+#loginMenu{
+    text-align: center;
+}
+
+#status, #shieldWarning, #loginToast{
+    background-color: black;
+    color: white;
+    text-align: center;
+
     position: relative;
-    z-index: 2;
-    top: 0px;
-    width: 35%;
-    height: 400px;
-    margin-right: 40px;
+}
+
+#status{
+    width: 80%;
+    left: 10%;
+}
+
+#shieldWarning, #loginToast{
+    width: 50%;
+    left: 25%;
+}
+
+#main{
+    background-image: url("../gameResources/lobbybg.jpg");
+    background-size: 100%;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#menu{
+    /*direction:rtl;
+    overflow: scroll;*/
+	position: relative;
+    display: inline-block;
+	height: 100vh;
+	width: 30vw;
+    text-align: center;
+}
+
+.createGameText{
+    color: white;
+    font-size: 20px;
+}
+.createGameInp{
+    width: 80%;
+}
+
+#addAI{
+    width: 80%;
+    font-size: 12px;
+    background: #000000;
+}
+
+#addAI:hover{
+    background: #1f2123;
+}
+
+#ais{
+    font-size: 15px;
+    background: #000000;
+
+    position: relative;
+    width: 80%;
+    left: 10%;
+}
+
+.aiDelete{
+    position: relative;
+    width: 30%;
     float: right;
+}
+
+.AI{
+    color: white;
     text-align: left;
+}
+
+.stratSelect{
+    width: 35px;
+}
+
+#inlobby{
+    position: relative;
+    width: 50%;
+    height: 70%;
+    left: 25%;
+    top: 10%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#lobby{
+    position: absolute;
+    display: inline-block;
+    height: 100vh;
+    width: 70vw;
+}
+
+#lobbyList{
+    list-style-type: none;
+    width: 90%;
+    height: 65%;
+    overflow: scroll;
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-#lobbyTitle {
-    background-color: black;
-    color: white;
-    font-size: 150%;
+.game{
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    border: 1px solid black;
 }
 
-#lobbyList {
-    color: white;
-}
-
-#join {
+.info{
+    width: 80%;
     position: relative;
-    z-index: 2;
-    top: 400px;
-    float: right;
+    display: inline-block;
+    color: white;
+    font-size: 20px;
+    font-family: Bookman;
 }
 
-#menu {
-    float: left;
-    position: absolute;
-    z-index: 2;
-    top: 0px;
-    width: 60%;
+#shields{
     text-align: center;
 }
 
 .shield {
-    width: 9%;
+    width: 70px;
     height: 100px;
     border: 4px solid black;
     border-radius: 10px;
@@ -100,17 +246,28 @@ h2 {
     background-image: url("../gameResources/S4.png");
 }
 
-#status {
-    background-color: black;
-    color: white;
-    position: relative;
-    top: 400px;
-    float: right;
+#pname {
+    text-align: left;
 }
 
+#refresh {
+    position: relative;
+    font-size: 100%;
+    width: 20%;
+    left: 40%;
+    text-align: center;
+}
 
+.card {
+    position: absolute;
+    width: 100px;
+    height: 150px;
+    background-image: url("../gameResources/Adventure%20Back.png");
+    background-size: auto;
+    background-size: 100px 150px;
+}
 
-div[card-img] {
+div[card-img]{
     width: 100px;
     height: 150px;
     color: #fff;
@@ -122,7 +279,7 @@ div[card-img] {
     height: 100px;
     opacity: 20%;
     padding: 10px 20px;
-    border-width=10px;
+    border-width: 10px;
     border-color: bisque;
     background-color: white;
 }
