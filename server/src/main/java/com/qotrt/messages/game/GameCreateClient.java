@@ -10,7 +10,7 @@ public class GameCreateClient extends Message {
 	private String playerName;
 	private String gameName;
 	private RIGGED rigged;
-	
+	private Object ais;
 	
 	public GameCreateClient() {}
 
@@ -62,5 +62,9 @@ public class GameCreateClient extends Message {
 
 	public void setRigged(RIGGED rigged) {
 		this.rigged = rigged;
+	}
+
+	public Object getAis() {
+		return ais;
 	}
 }

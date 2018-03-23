@@ -96,7 +96,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
-    $scope.sendCreateGameClient = function (np, rigType, gName) {
+    $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
         numP = parseInt(np);
         if(!numP) { $scope.showStatus("Select Num Players"); return; }
         if($scope.ais.length >= numP) { $scope.showStatus("Too many AIs"); return; }
@@ -111,6 +111,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             rigged: $scope.RIGGED.NORMAL,
             playerName: $scope.pname,
             gameName: gName,
+            ais: ais[0],
             java_class: "GameCreateClient"
         }
         $scope.addMessage($scope.ep_createGame);
@@ -203,6 +204,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.ais[i].num -= 1;
         }
     }
+
+    $scope.selectShield = function(num){}
 
     /*=========================================   *
      *             Dragging Functions             *
