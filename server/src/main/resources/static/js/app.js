@@ -4,17 +4,20 @@ var app = angular.module("gameApp", [
     "ngRoute"
 ]);
 
-app.config(function($routeProvider) {
-  $routeProvider
-  .when("/", {
-    templateUrl : "login.html"
-  })
-  .when("/lobby", {
-    templateUrl : "lobby.html"
-  })
-  .when("/inlobby", {
-    templateUrl : "inlobby.html"
-  });
+app.config(function ($routeProvider) {
+    $routeProvider
+        .when("/", {
+            templateUrl: "login.html"
+        })
+        .when("/lobby", {
+            templateUrl: "lobby.html"
+        })
+        .when("/inlobby", {
+            templateUrl: "inlobby.html"
+        })
+        .when("/gameboard", {
+            templateUrl: "gameboard.html"
+        });
 });
 
 angular.module("gameApp.controllers", ['ngDragDrop']);

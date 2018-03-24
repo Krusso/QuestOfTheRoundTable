@@ -12,9 +12,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.range = [1, 2, 3, 4];
     $scope.loginToast = "";
     $scope.pname = ""; // hacky workaround but will do for now
-    $scope.np = [2,3,4];
+    $scope.np = [2, 3, 4];
     $scope.ais = [];
-    $scope.strats = [1,2,3];
+    $scope.strats = [1, 2, 3];
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
@@ -40,7 +40,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
 
     $scope.serverList = [];
-    
+
     /*=========================================   *
      *            Controller Variables: Stage      *
      *=========================================== */
@@ -111,9 +111,18 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
         numP = parseInt(np, 10);
-        if(!numP) { $scope.showStatus("Select Num Players"); return; }
-        if($scope.ais.length >= numP) { $scope.showStatus("Too many AIs"); return; }
-        if(!gName) { $scope.showStatus("Enter a name for your game"); return; }
+        if (!numP) {
+            $scope.showStatus("Select Num Players");
+            return;
+        }
+        if ($scope.ais.length >= numP) {
+            $scope.showStatus("Too many AIs");
+            return;
+        }
+        if (!gName) {
+            $scope.showStatus("Enter a name for your game");
+            return;
+        }
 
         console.log($scope.pname);
 
@@ -171,11 +180,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.status = message;
     }
 
-    $scope.showLoginToast = function(message) {
+    $scope.showLoginToast = function (message) {
         $scope.loginToast = message;
     }
 
-    $scope.loadLobby = function() {
+    $scope.loadLobby = function () {
         $location.path('/lobby');
     }
 
@@ -184,7 +193,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
 
     $scope.enterLobby = function (pn) {
-        if(!pn){
+        if (!pn) {
             $scope.showLoginToast("Enter a name");
             return
         } else {
@@ -194,31 +203,33 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
     }
 
-    $scope.addAI = function(np) {
-        if(!np){
+    $scope.addAI = function (np) {
+        if (!np) {
             $scope.showStatus("Select Num Players first", $scope.status);
             return;
         }
         l = $scope.ais.length;
-        if(l+1<np){
-            $scope.ais.push({num : l+1});
+        if (l + 1 < np) {
+            $scope.ais.push({
+                num: l + 1
+            });
         } else {
             $scope.showStatus("Max AIs", $scope.status);
         }
     }
 
-    $scope.deleteAI = function(num) {
+    $scope.deleteAI = function (num) {
         console.log($scope.ais);
-        for(var i=$scope.ais.length-1; i>=0; i--){
-            if($scope.ais[i].num==num){
-                $scope.ais.splice(i,1);
+        for (var i = $scope.ais.length - 1; i >= 0; i--) {
+            if ($scope.ais[i].num == num) {
+                $scope.ais.splice(i, 1);
                 return;
             }
             $scope.ais[i].num -= 1;
         }
     }
 
-    $scope.selectShield = function(num){}
+    $scope.selectShield = function (num) {}
 
     /*=========================================   *
      *             Dragging Functions             *

@@ -24,39 +24,51 @@
             <!--    OPPONENT HAND ZONES        -->
             <div class="opponentHandsContainer">
                 <div class="opponentHandZone">
-                    <div class="opponentHand">
-                        <div class="card"></div>
-                        <div class="card" style="z-index: -1"></div>
-                    </div>
-                    <div class="opponentFaceUp">
-                        <div class="card"></div>
-                    </div>
-                    <div class="opponentFaceDown">
-                        <div class="card"></div>
-                    </div>
-                </div>
-                <div class="opponentHandZone">
-                    <div class="opponentHand">
-                        <div class="card"></div>
-                    </div>
-                    <div class="opponentFaceUp">
-                        <div class="card"></div>
+                    <div class="displayContainer"></div>
+                    <div class="cardZones">
+                        <div class="opponentHand">
+                            <div class="card"></div>
+                            <div class="card" style="z-index: -1"></div>
+                        </div>
+                        <div class="opponentFaceUp">
+                            <div class="card"></div>
+                        </div>
+                        <div class="opponentFaceDown">
+                            <div class="card"></div>
+                        </div>
                     </div>
 
-                    <div class="opponentFaceDown">
-                        <div class="card"></div>
-                    </div>
                 </div>
                 <div class="opponentHandZone">
-                    <div class="opponentHand">
-                        <div class="card"></div>
+                    <div class="displayContainer"></div>
+                    <div class="cardZones">
+                        <div class="opponentHand">
+                            <div class="card"></div>
+                        </div>
+                        <div class="opponentFaceUp">
+                            <div class="card"></div>
+                        </div>
+
+                        <div class="opponentFaceDown">
+                            <div class="card"></div>
+                        </div>
                     </div>
-                    <div class="opponentFaceUp">
-                        <div class="card"></div>
+
+                </div>
+                <div class="opponentHandZone">
+                    <div class="displayContainer"></div>
+                    <div class="cardZones">
+                        <div class="opponentHand">
+                            <div class="card"></div>
+                        </div>
+                        <div class="opponentFaceUp">
+                            <div class="card"></div>
+                        </div>
+                        <div class="opponentFaceDown">
+                            <div class="card"></div>
+                        </div>
                     </div>
-                    <div class="opponentFaceDown">
-                        <div class="card"></div>
-                    </div>
+
                 </div>
             </div>
 
@@ -99,11 +111,30 @@
 
             <!--    PLAYER HAND ZONES       -->
             <div class="playerZone">
-                <div class="playerFaceUp"></div>
-                <div class="playerFaceDown"></div>
-                <div class="playerHand">
-                    <div class="card" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+
+                <div class="displayContainer">
+                    <div class="rankCardContainer">
+                        <!--  RANK CARD IMAGE GOES HERE  -->
+                        <div>
+                        </div>
+                    </div>
+                    <div class="shieldBpContainer">
+                        <!--   BP VALUE GOES HERE       -->
+                        <div>
+                        </div>
+                        <!--  SHIELD IMAGE GOES HERE    -->
+                        <div>
+                        </div>
+                    </div>
                 </div>
+                <div class="cardZones">
+                    <div class="playerFaceUp"></div>
+                    <div class="playerFaceDown"></div>
+                    <div class="playerHand">
+                        <div class="card" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
