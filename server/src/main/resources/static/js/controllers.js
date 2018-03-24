@@ -165,7 +165,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     MessageService.receive().then(null, null, function (message) {
         console.log(message);
-        //        $scope.messages.push(message);
+        $scope.messages.push(message);
+        console.log("All my messages: ");
+        console.log($scope.messages);
         if (message.messageType === "LISTSERVER") {
             $scope.serverList = message.games;
             console.log("server list:");
