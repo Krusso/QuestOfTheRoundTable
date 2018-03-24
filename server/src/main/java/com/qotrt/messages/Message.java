@@ -6,14 +6,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.qotrt.messages.game.GameJoinServer;
 import com.qotrt.messages.game.GameListServer;
+import com.qotrt.messages.game.GameStartServer;
 import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
 import com.qotrt.messages.hand.AddCardsServer;
+import com.qotrt.messages.quest.QuestJoinServer;
+import com.qotrt.messages.quest.QuestPickStagesServer;
+import com.qotrt.messages.quest.QuestSponsorServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
-import com.qotrt.messages.tournament.TournamentFinishPickingClient;
 import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 
@@ -35,6 +38,10 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = TournamentWinServer.class, name="WINTOURNAMENT"),
 	    @Type(value = TournamentPickCardsServer.class, name="PICKTOURNAMENT"),
 	    @Type(value = PlayCardServer.class, name="PLAYCARD"),
+	    @Type(value = GameStartServer.class, name="GAMESTART"),
+	    @Type(value = QuestSponsorServer.class, name="SPONSORQUEST"),
+	    @Type(value = QuestJoinServer.class, name="JOINQUEST"),
+	    @Type(value = QuestPickStagesServer.class, name="PICKSTAGES"),
 	    })  
 public abstract class Message {
 
@@ -69,7 +76,10 @@ public abstract class Message {
 		PLAYCARD, 
 		SHOWMIDDLECARD, 
 		JOINEDTOURNAMENT, 
-		FINISHPICKTOURNAMENT
+		FINISHPICKTOURNAMENT, 
+		SPONSERQUEST, 
+		JOINQUEST, 
+		PICKSTAGES
 	};
 	
 //	@Override

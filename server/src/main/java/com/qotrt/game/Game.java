@@ -6,12 +6,10 @@ import java.util.concurrent.Executors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.util.MimeTypeUtils;
 
+import com.google.common.eventbus.EventBus;
+import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.gameplayer.Player;
@@ -19,15 +17,19 @@ import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.Observable;
+import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
+import com.qotrt.util.WebSocketUtil;
 import com.qotrt.views.BoardView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
+import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
+import com.qotrt.views.View;
 
 public class Game extends Observable {
 
@@ -73,33 +75,45 @@ public class Game extends Observable {
 			@Override
 			public void run() {
 				logger.info("Starting game");
+				fireEvent("gameStart", null, 1);
+
+				EventBus eventBus = new EventBus();
 
 				// model creation
-				BoardModel bm = new BoardModel();
+				BoardModel bm = new BoardModel(eventBus);
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
 						players.toArray(new UIPlayer[players.size()]), 
 						dm, 
 						rigged);
 				TournamentModel tm = new TournamentModel();
-				bmm = new BoardModelMediator(tm);
+				QuestModel qm = new QuestModel();
+				bmm = new BoardModelMediator(tm, qm, bm);
 
 				// view creation
-				PlayerView pv = new PlayerView(messagingTemplate);
-				BoardView bv = new BoardView(messagingTemplate);
-				TournamentView tv = new TournamentView(messagingTemplate);
+				View pv = new PlayerView(messagingTemplate);
+				View bv = new BoardView(messagingTemplate);
+				View tv = new TournamentView(messagingTemplate);
+				View qv = new QuestView(messagingTemplate);
 
-				//subscriptions
+				// adding websocket session ids to each view 
 				players.forEach(i -> { 
 					pv.addWebSocket(i);
 					bv.addWebSocket(i);
 					tv.addWebSocket(i);
+					qv.addWebSocket(i);
 				});
 
+				// subscriptions
 				pm.subscribe(pv);
 				bm.subscribe(bv);
 				tm.subscribe(tv);
+				qm.subscribe(qv);
 
+				// TODO: use this
+				// eventBus.register(bv);
+				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
+				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
 				pm.start();
 
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
@@ -116,7 +130,7 @@ public class Game extends Observable {
 					boolean winners = pm.rankUp();
 					if(winners) {
 						//pvs.joinFinalTournament(pm.getAllWithState(Player.STATE.WINNING), Player.STATE.WINNING);
-						sm = gsm.createStoryManager(StoryCard.GAMEOVER);
+						sm = gsm.createStoryManager(GameOverStoryCard.GAMEOVER);
 						//sm.start(actions, pm, bm);
 						break;
 					}
@@ -142,17 +156,8 @@ public class Game extends Observable {
 			messagingTemplate.convertAndSendToUser(i.getSessionID(), 
 					destination, 
 					objectToSend, 
-					createHeaders(i.getSessionID()));
+					WebSocketUtil.createHeaders(i.getSessionID()));
 		});
-	}
-
-	// TODO: move to some util class
-	private MessageHeaders createHeaders(String sessionId) {
-		SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-		headerAccessor.setSessionId(sessionId);
-		headerAccessor.setLeaveMutable(true);
-		headerAccessor.setContentType(MimeTypeUtils.APPLICATION_JSON);
-		return headerAccessor.getMessageHeaders();
 	}
 
 	public boolean addPlayer(UIPlayer player) {

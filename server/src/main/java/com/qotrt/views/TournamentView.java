@@ -1,7 +1,6 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -13,7 +12,7 @@ import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.model.GenericPair;
 
-public class TournamentView extends View implements PropertyChangeListener {
+public class TournamentView extends View {
 
 	public TournamentView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);

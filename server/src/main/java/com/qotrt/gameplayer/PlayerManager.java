@@ -14,14 +14,12 @@ import com.qotrt.cards.WeaponCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
-import com.qotrt.views.PlayerView;
+import com.qotrt.views.View;
 
 public class PlayerManager {
 
 	private int actualPlayer = -1;
 	private int currentPlayer = -1;
-	// Note: using arraylists but for now only have one instance of a view. Might change
-	//private ArrayList<PlayersView> pvs = new ArrayList<PlayersView>();
 	private DeckManager dm;
 	private RIGGED rigged;
 	//private DiscardSequenceManager dsm;
@@ -36,12 +34,12 @@ public class PlayerManager {
 		}
 	}
 
-	// Used just so there is an animation at the start of all players getting cards
 	public void start() {
 		dm.setRigged(rigged);
 		for(int i = players.length; i > 0; i--) {
 			System.out.println("setting cards for: " + i);
-			if(rigged.equals(RIGGED.ONE)) {
+			if(rigged.equals(RIGGED.ONE) || rigged.equals(RIGGED.ONESTAGETOURNAMENT)
+					|| rigged.equals(RIGGED.TWOSTAGETOURNAMENT) || rigged.equals(RIGGED.ONEHUNDREDSTAGETOURNAMENT)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -280,6 +278,11 @@ public class PlayerManager {
 //		this.dsm = dsm;
 //	}
 	
+	public void drawCards(Player player, int cards) {
+		player.addCards(dm.getAdventureCard(cards));
+		//if(dsm != null) dsm.start(null, null, null);
+	}
+	
 	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> {
 			player.addCards(dm.getAdventureCard(cards));
@@ -359,7 +362,7 @@ public class PlayerManager {
 		return winners.get();
 	}
 
-	public void subscribe(PlayerView pv) {
+	public void subscribe(View pv) {
 		for(Player p: players) {
 			p.subscribe(pv);
 		}

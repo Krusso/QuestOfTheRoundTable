@@ -1,7 +1,6 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -13,7 +12,7 @@ import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.model.GenericPair;
 
-public class PlayerView extends View implements PropertyChangeListener {
+public class PlayerView extends View {
 		
 	public PlayerView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);
@@ -37,10 +36,6 @@ public class PlayerView extends View implements PropertyChangeListener {
 			playerChangeShields((GenericPair) evt.getNewValue());
 		}
 		
-		if(evt.getPropertyName().equals("moveCard")) {
-			moveCard((GenericPair) evt.getNewValue());
-		}
-		
 		if(evt.getPropertyName().equals("discardType")) {
 			playerDiscardType((GenericPair) evt.getNewValue());
 		}
@@ -53,11 +48,6 @@ public class PlayerView extends View implements PropertyChangeListener {
 	
 	private void playerAddCards(GenericPair e) {
 		sendMessage("/queue/response", new AddCardsServer((int)e.value, (GenericPair[]) e.key));
-	}
-	
-	private void moveCard(GenericPair e) {
-		GenericPair p = (GenericPair) e.key;
-		sendMessage("/queue/response", new PlayCardServer((int)e.value, (int) p.key, (ZONE) p.value,  ZONE.FACEDOWN, ""));
 	}
 	
 	private void playerDiscardType(GenericPair e) {

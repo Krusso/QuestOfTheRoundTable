@@ -1,5 +1,7 @@
 package com.qotrt.cards;
 
+import com.qotrt.deck.AdventureDeck;
+
 public class AllyCard extends AdventureCard {
 	
 	private int bids;
@@ -35,4 +37,15 @@ public class AllyCard extends AdventureCard {
 
 	public int getBids() { return this.bids; }
 	public int getNamedBids() { return this.namedBids; }
+
+	@Override
+	public String playForStage(AdventureDeck stage) {
+		return "Cannot play Ally card for quest stage";
+	}
+
+	@Override
+	public String playFaceDown(AdventureDeck faceDownDeck, AdventureDeck faceUpDeck) {
+		return "";
+	}
+
 }

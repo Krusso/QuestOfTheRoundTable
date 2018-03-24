@@ -1,5 +1,8 @@
 package com.qotrt.cards;
 
+import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.deck.AdventureDeck;
+
 public class TestCard extends AdventureCard {
 	
 	private int minBids;
@@ -25,4 +28,17 @@ public class TestCard extends AdventureCard {
 	
 	public int getMinBids() { return this.minBids; }
 	public int getNamedMinBids() { return this.namedMinBids; }
+
+	@Override
+	public String playForStage(AdventureDeck stage) {
+		if(stage.typeCount(TYPE.FOES) == 0 && stage.typeCount(TYPE.TESTS) == 0) {
+			return "";
+		}
+		return "Cannot play more than 1 foe or test per stage";
+	}
+
+	@Override
+	public String playFaceDown(AdventureDeck faceDownDeck, AdventureDeck faceUpDeck) {
+		return "Cant play test card facedown";
+	}
 }
