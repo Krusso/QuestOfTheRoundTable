@@ -15,7 +15,7 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
     service.RECONNECT_TIMEOUT = 30000;
     service.SOCKET_URL = "/ws";
     service.CHAT_TOPIC = "/user/queue/response";
-    service.CHAT_BROKER = "/app/ws"; //gonna need multiple of these
+    service.CHAT_BROKER = "/app/ws";
 
 
     service.receive = function () {

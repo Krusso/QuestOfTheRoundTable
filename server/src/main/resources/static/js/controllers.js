@@ -165,7 +165,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     MessageService.receive().then(null, null, function (message) {
         console.log(message);
-        $scope.messages.push(message);
+        //        $scope.messages.push(message);
         if (message.messageType === "LISTSERVER") {
             $scope.serverList = message.games;
             console.log("server list:");
@@ -192,11 +192,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log($scope.players);
         }
         if (message.messageType === "ADDCARDS") {
+            console.log($scope.players);
             var playerNum = message.player;
-            console.log(typeof playerNum);
-            console.log(typeof message.player);
-            console.log(message.player);
-            console.log($scope.players[playerNum]);
             $scope.players[playerNum].hand = message.cards;
             console.log($scope.players[playerNum].hand);
         }
