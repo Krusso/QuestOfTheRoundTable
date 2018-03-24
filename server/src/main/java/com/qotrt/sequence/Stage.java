@@ -35,6 +35,7 @@ public class Stage {
 	}
 	
 	public String validToAdd(AdventureCard c) {
+		System.out.println("checking if card: " + c.getName() + " is valid to play in this stage");
 		return c.playForStage(cards);
 	}
 

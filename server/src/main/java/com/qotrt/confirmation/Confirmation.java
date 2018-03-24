@@ -29,7 +29,9 @@ public abstract class Confirmation extends Observable {
 		accepted = new ArrayList<Player>();
 		this.toAsk = toAsk;
 		backingInt = this.toAsk.size();
-		fireEvent(eventName, null, PlayerUtil.playersToIDs(toAsk));
+		if(eventName != null) {
+			fireEvent(eventName, null, PlayerUtil.playersToIDs(toAsk));
+		}
 	}
 
 	public void start(List<Player> toAsk, Object obj) {
@@ -37,7 +39,9 @@ public abstract class Confirmation extends Observable {
 		accepted = new ArrayList<Player>();
 		this.toAsk = toAsk;
 		backingInt = this.toAsk.size();
-		fireEvent(eventName, null, new GenericPair(PlayerUtil.playersToIDs(toAsk), obj));
+		if(eventName != null) {
+			fireEvent(eventName, null, new GenericPair(PlayerUtil.playersToIDs(toAsk), obj));
+		}
 	}
 	
 	public abstract boolean accept(Player player, String attempt, String success, String failure);

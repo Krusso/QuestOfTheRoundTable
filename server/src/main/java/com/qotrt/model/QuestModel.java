@@ -7,8 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import com.qotrt.calculator.BidCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.cards.QuestCard;
 import com.qotrt.confirmation.Confirmation;
 import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.confirmation.NeverEndingConfirmation;
@@ -53,7 +55,8 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	
 	public CountDownLatch discardLatch() { return discard.getCountDownLatch();}
 	
-	private Confirmation bid = new NeverEndingConfirmation("bidQuest", 
+	private int maxBid = -1;
+	private Confirmation bid = new NeverEndingConfirmation(null, 
 			null, 
 			null);
 	
@@ -180,10 +183,28 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 				quest.getCurrentStage()));
 	}
 
-	public synchronized void questionBid(List<Player> winners2) {
-		bid.start(winners2);
+	public synchronized void questionBid(List<Player> participants, BidCalculator bc, QuestCard card, int minBid) {
+		bid.start(participants);
+		maxBid = minBid - 1;
+		for(Player player: participants) {
+			fireEvent("bid", null, new int[] {player.getID(), bc.maxBid(player, card), minBid, -1});
+		}
 	}
 
+	public synchronized void bid(Player player, int bidAmount) {
+		if(maxBid < bidAmount) {
+			bid.accept(player, "player: " + player + " attempted to bid higher", 
+				"player: " + player + " finished bidding higher", 
+				"player: " + player + " finished bidding higher too late");
+		}
+	}
+	
+	public synchronized void declineBid(Player player) {
+		bid.decline(player, "player: " + player + " attempting to decline bid",
+				"player: " + player + " decline bid", 
+				"player: " + player + " decline bid too late");
+	}
+	
 	public synchronized List<Player> getBidWinner() {
 		return bid.get();
 	}

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
+import com.qotrt.messages.quest.QuestBidClient;
 import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestPickCardsClient;
 import com.qotrt.messages.quest.QuestPickStagesClient;
@@ -32,6 +33,18 @@ public class QuestController {
 			game.bmm.getQuestModel().acceptSponsor(player);
 		} else {
 			game.bmm.getQuestModel().declineSponsor(player);
+		}
+	}
+	
+	@MessageMapping("/game.bid")
+	public void bid(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload QuestBidClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		if(chatMessage.bid != -1) {
+			game.bmm.getQuestModel().bid(player, chatMessage.bid);
+		} else {
+			game.bmm.getQuestModel().declineBid(player);
 		}
 	}
 	

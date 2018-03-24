@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qotrt.calculator.BattlePointCalculator;
+import com.qotrt.calculator.BidCalculator;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.gameplayer.Player;
@@ -65,7 +66,7 @@ public class QuestSequenceManager extends SequenceManager {
 			return;
 		}
 		Player sponsor = sponsors.get(0);
-		
+
 		quest = new Quest(card, qm);
 		qm.setQuest(quest, sponsors);
 		quest.setUpQuest();
@@ -93,44 +94,44 @@ public class QuestSequenceManager extends SequenceManager {
 
 		List<Player> winners = new ArrayList<Player>(participants);
 
-		if(participants.size() != 0) {
-			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
-				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
-				pm.drawCards(winners, 1);
-				if (quest.currentStageType() == TYPE.FOES) {
+		while(participants.size() != 0 && winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
+			logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
+			pm.drawCards(winners, 1);
+			if (quest.currentStageType() == TYPE.FOES) {
 
-					qm.questionCardsStage();
-					try {
-						logger.info("Waiting for 60 seconds for users to pick their cards");
-						qm.cardsLatch().await(60, TimeUnit.SECONDS);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-					qm.finishPicking();
+				qm.questionCardsStage();
+				try {
+					logger.info("Waiting for 60 seconds for users to pick their cards");
+					qm.cardsLatch().await(60, TimeUnit.SECONDS);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				qm.finishPicking();
 
-					//					pm.flipStage(sponsor, quest.getCurrentStage());
-					qm.flipStage();
+				//					pm.flipStage(sponsor, quest.getCurrentStage());
+				qm.flipStage();
 
-					quest.battleFoe(winners, pm);
-					pm.discardWeapons(participants);
-				} else if (quest.currentStageType() == TYPE.TESTS) {
-					qm.flipStage();
-					//					pm.flipStage(sponsor, quest.getCurrentStage());
+				quest.battleFoe(winners, pm);
+				pm.discardWeapons(participants);
+			} else if (quest.currentStageType() == TYPE.TESTS) {
+				qm.flipStage();
+				//					pm.flipStage(sponsor, quest.getCurrentStage());
 
-					qm.questionBid(winners);
-					try {
-						logger.info("Waiting for users to finish bidding");
-						qm.bidLatch().await(60, TimeUnit.SECONDS);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
+				// TODO: set minbid correctly
+				qm.questionBid(winners, new BidCalculator(pm), card, 3);
+				try {
+					logger.info("Waiting for users to finish bidding");
+					qm.bidLatch().await(60, TimeUnit.SECONDS);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 
-					List<Player> bidWinner = qm.getBidWinner();
-					if(bidWinner.size() == 0 || bidWinner.get(0) == null) {
-						winners.clear();
-						break;
-					}
-
+				logger.info("users finished bidding");
+				
+				List<Player> bidWinner = qm.getBidWinner();
+				if(bidWinner.size() == 0 || bidWinner.get(0) == null) {
+					winners.clear();
+				} else {
 					qm.discardCards(bidWinner);
 					try {
 						logger.info("Waiting for user to finish discarding");
@@ -143,11 +144,11 @@ public class QuestSequenceManager extends SequenceManager {
 					winners.clear();
 					winners.add(bidWinner.get(0));
 				}
-				logger.info("# of Players still in quest: " + winners.size());
-				quest.advanceStage();
-				qm.setMessage(WINTYPES.PASSSTAGE);
-				qm.passStage(winners);
 			}
+			logger.info("# of Players still in quest: " + winners.size());
+			quest.advanceStage();
+			qm.setMessage(WINTYPES.PASSSTAGE);
+			qm.passStage(winners);
 		}
 
 		if(winners.size() > 0) {

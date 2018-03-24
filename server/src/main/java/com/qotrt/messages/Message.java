@@ -11,6 +11,7 @@ import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
 import com.qotrt.messages.hand.AddCardsServer;
+import com.qotrt.messages.quest.QuestBidServer;
 import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsServer;
 import com.qotrt.messages.quest.QuestPickStagesServer;
@@ -47,10 +48,12 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = QuestPickCardsServer.class, name="PICKQUEST"),
 	    @Type(value = QuestWinServer.class, name="WINQUEST"),
 	    @Type(value = QuestPickStagesServer.class, name="PICKSTAGES"),
+	    @Type(value = QuestBidServer.class, name="BIDQUEST"),
 	    })  
 public abstract class Message {
 
 	public final String TYPE = "GAME";
+	
 	public MESSAGETYPES message;
 	public int player;
 
@@ -86,7 +89,8 @@ public abstract class Message {
 		JOINQUEST, 
 		PICKSTAGES, 
 		PICKQUEST, 
-		WINQUEST
+		WINQUEST, 
+		BIDQUEST
 	};
 	
 //	@Override

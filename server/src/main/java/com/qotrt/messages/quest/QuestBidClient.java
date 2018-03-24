@@ -1,10 +1,12 @@
 package com.qotrt.messages.quest;
 
-import src.messages.Message;
+import com.qotrt.messages.Message;
 
 //from Client
 public class QuestBidClient extends Message {
 	public int bid;
+	
+	public QuestBidClient() {}
 	
 	public QuestBidClient(int player, int bid) {
 		super(player);
