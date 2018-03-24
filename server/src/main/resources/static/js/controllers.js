@@ -223,60 +223,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         
         console.log("done parsing");
         $scope.$apply()
-        }); 
-
-/*
-    MessageService.receive().then(function(success){
-    		console.log("success");
-    		console.log(success);
-    	}
-    	, function(error) {
-    		console.log("error"); 
-    		console.log(error);
-    	}, function (message) {
-    	console.log("Processing message: ");
-        console.log(message);
-        $scope.messages.push(message);
-        if (message.messageType === "LISTSERVER") {
-            $scope.serverList = message.games;
-            console.log("server list:");
-            console.log($scope.serverList);
-        }
-        if (message.messageType === "GAMESTART") {
-            $location.path('/gameboard');
-        }
-        if (message.messageType === "JOINGAME") {
-            $scope.players = []; //reset the array
-            var p = message.players; //array of strings that denote the player's name
-            for (var i = 0; i < p.length; i++) {
-                var playerInfo = {
-                    name: p,
-                    hand: [],
-                    faceUp: [],
-                    faceDown: [],
-                    shieldIcon: "", //should probably be the URL or the name of the icon.png
-                    rank: null
-                };
-                console.log("playerInfo");
-                console.log(playerInfo);
-                $scope.players.push(playerInfo);
-            }
-            console.log("currentPlayers");
-            console.log($scope.players);
-        }
-        if (message.messageType === "ADDCARDS") {
-            var playerNum = message.player;
-            console.log("here");
-            console.log(typeof playerNum);
-            console.log(typeof message.player);
-            console.log(message.player);
-            console.log($scope.players[playerNum]);
-            console.log(playerNum);
-            console.log($scope.players[playerNum]);
-            $scope.players[playerNum].hand = message.cards;
-            console.log($scope.players[playerNum].hand);
-        }
-    }); */
+        });
 
     /*=========================================   *
      *             Display Functions              *
