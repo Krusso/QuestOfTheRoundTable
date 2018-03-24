@@ -9,6 +9,7 @@ import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
 import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
+import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
 
 public class TournamentView extends View {
@@ -32,7 +33,7 @@ public class TournamentView extends View {
 	}
 	
 	private void setWinners(GenericPair e) {
-		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (String) e.value));
+		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (WINTYPES) e.value));
 	}
 	
 	private void questionCardTournament(int[] players) {
