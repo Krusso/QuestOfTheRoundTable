@@ -87,11 +87,12 @@ public class PlayerTestCreator {
 	public <T> T take(Class<T> ca) {
 		Message message1;
 		try {
-			while((message1 = messages.poll(10, SECONDS)) != null) {
+			while((message1 = messages.poll(20, SECONDS)) != null) {
 				System.out.println("checking type of: " + message1);
 				System.out.println("type match: " + ca.isInstance(message1));
 				ObjectMapper mapper = new ObjectMapper();
 				try {
+					System.out.println("returning: " + mapper.convertValue(message1, ca));
 					return mapper.convertValue(message1, ca);
 				} catch(IllegalArgumentException e) {
 					System.out.println("-------");
@@ -118,7 +119,8 @@ public class PlayerTestCreator {
 			Object objectToSend) {
 		while(true) {
 			T tads = take(class1);
-			if(tads.player == 0) { break; }
+			System.out.println("tads: " + tads);
+			if(tads.player == player) { break; }
 		}
 
 		sendMessage(destination, objectToSend);

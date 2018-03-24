@@ -1,6 +1,7 @@
 package com.qotrt.sequence;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
@@ -21,20 +22,19 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import com.qotrt.PlayerTestCreator;
 import com.qotrt.QotrtApplication;
 import com.qotrt.messages.game.GameCreateClient;
-import com.qotrt.messages.game.GameJoinClient;
-import com.qotrt.messages.game.GameListClient;
-import com.qotrt.messages.game.GameListServer;
-import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.PlayCardClient;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.game.PlayCardServer;
+import com.qotrt.messages.quest.QuestJoinClient;
+import com.qotrt.messages.quest.QuestJoinServer;
+import com.qotrt.messages.quest.QuestPickCardsClient;
+import com.qotrt.messages.quest.QuestPickCardsServer;
+import com.qotrt.messages.quest.QuestPickStagesClient;
+import com.qotrt.messages.quest.QuestPickStagesServer;
 import com.qotrt.messages.quest.QuestSponsorClient;
 import com.qotrt.messages.quest.QuestSponsorServer;
-import com.qotrt.messages.game.PlayCardClient.ZONE;
-import com.qotrt.messages.tournament.TournamentAcceptDeclineClient;
-import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
-import com.qotrt.messages.tournament.TournamentFinishPickingClient;
-import com.qotrt.messages.tournament.TournamentPickCardsServer;
-import com.qotrt.messages.tournament.TournamentWinServer;
+import com.qotrt.messages.quest.QuestWinServer;
+import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.RiggedModel.RIGGED;
 
 @RunWith(SpringRunner.class)
@@ -55,16 +55,133 @@ public class TestQuest {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
 
-	// testNoParticipants
 	// testDiscardForQuests
-	// testCantSponsorQuest
 	// test2PlayerBidding
 	// testBidding
-	// testFightingFoe
 	// testDontNeedToBidAnything
 	// testKingRecognition
 	// testNoBids
 	
+	@Test
+	public void testFightingFoe() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+
+		Runnable thread2 = new Runnable() {
+			@Override
+			public void run() {
+					PlayerTestCreator p = new PlayerTestCreator();
+					p.connect(WEBSOCKET_URI);
+					p.sendMessage("/app/game.createGame", 
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT));
+
+					p.waitForThenSend(QuestJoinServer.class, 0, 
+							"/app/game.joinQuest", new QuestJoinClient(0, true));
+					
+					p.waitForThenSend(QuestPickCardsServer.class, 0, 
+							"/app/game.playForQuest", new PlayCardClient(0, 159, ZONE.HAND, ZONE.FACEDOWN));
+					
+					PlayCardServer pcs = p.take(PlayCardServer.class);
+					assertEquals("", pcs.response);
+					assertEquals(ZONE.FACEDOWN, pcs.zoneTo);
+					
+					p.sendMessage("/app/game.playForQuest", new PlayCardClient(0, 160, ZONE.HAND, ZONE.FACEDOWN));;
+					pcs = p.take(PlayCardServer.class);
+					assertNotEquals("", pcs.response);
+					assertEquals(ZONE.HAND, pcs.zoneTo);
+					
+					p.sendMessage("/app/game.finishSelectingQuestCards", new QuestPickCardsClient(1));
+			}
+		};
+		
+		new Thread(thread2).start();
+		Thread.sleep(1000);
+		PlayerTestCreator p = new PlayerTestCreator();
+		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		p.waitForThenSend(QuestSponsorServer.class, 1,
+				"/app/game.sponsorQuest", new QuestSponsorClient(1, true));
+		p.waitForThenSend(QuestPickStagesServer.class, 1, "/app/game.playCardQuestSetup",
+				new PlayCardClient(1, 153, ZONE.HAND, ZONE.STAGE1));
+		PlayCardServer pcs = p.take(PlayCardServer.class);
+		assertEquals("", pcs.response);
+		assertEquals(ZONE.STAGE1, pcs.zoneTo);
+		p.sendMessage("/app/game.playCardQuestSetup", new PlayCardClient(1, 155, ZONE.HAND, ZONE.STAGE1));
+		pcs = p.take(PlayCardServer.class);
+		assertNotEquals("", pcs.response);
+		assertEquals(ZONE.HAND, pcs.zoneTo);
+		
+		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		
+		QuestWinServer qws = p.take(QuestWinServer.class);
+		assertEquals(WINTYPES.PASSSTAGE, qws.type);
+		assertEquals(1, qws.players.length);
+		assertEquals(0, qws.players[0]);
+		
+		qws = p.take(QuestWinServer.class);
+		assertEquals(WINTYPES.WON, qws.type);
+		assertEquals(1, qws.players.length);
+		assertEquals(0, qws.players[0]);
+	}
+	
+	@Test
+	public void testNoParticipants() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+
+		Runnable thread2 = new Runnable() {
+			@Override
+			public void run() {
+					PlayerTestCreator p = new PlayerTestCreator();
+					p.connect(WEBSOCKET_URI);
+					p.sendMessage("/app/game.createGame", 
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT));
+
+					p.waitForThenSend(QuestJoinServer.class, 0, "/app/game.joinQuest", new QuestJoinClient(0, false));
+			}
+		};
+		
+		new Thread(thread2).start();
+		Thread.sleep(1000);
+		PlayerTestCreator p = new PlayerTestCreator();
+		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		p.waitForThenSend(QuestSponsorServer.class, 1,
+				"/app/game.sponsorQuest", new QuestSponsorClient(1, true));
+		p.waitForThenSend(QuestPickStagesServer.class, 1, "/app/game.playCardQuestSetup",
+				new PlayCardClient(1, 153, ZONE.HAND, ZONE.STAGE1));
+		PlayCardServer pcs = p.take(PlayCardServer.class);
+		assertEquals("", pcs.response);
+		assertEquals(ZONE.STAGE1, pcs.zoneTo);
+		p.sendMessage("/app/game.playCardQuestSetup", new PlayCardClient(1, 155, ZONE.HAND, ZONE.STAGE1));
+		pcs = p.take(PlayCardServer.class);
+		assertNotEquals("", pcs.response);
+		assertEquals(ZONE.HAND, pcs.zoneTo);
+		
+		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		
+		QuestWinServer qws = p.take(QuestWinServer.class);
+		assertEquals(WINTYPES.NOJOIN, qws.type);
+		assertEquals(0, qws.players.length);
+	}
+	
+	@Test
+	public void testCantSponsorQuest() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+
+		Runnable thread2 = new Runnable() {
+			@Override
+			public void run() {
+					PlayerTestCreator p = new PlayerTestCreator();
+					p.connect(WEBSOCKET_URI);
+					p.sendMessage("/app/game.createGame", 
+							new GameCreateClient(2, "hello", RIGGED.ONEHUNDREDSTAGETOURNAMENT));
+			}
+		};
+		
+		new Thread(thread2).start();
+		Thread.sleep(1000);
+		PlayerTestCreator p = new PlayerTestCreator();
+		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		QuestSponsorServer qss = p.take(QuestSponsorServer.class);
+		assertEquals(0, qss.players.length);
+	}
 	
 	@Test
 	public void testNoSponsor() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
@@ -90,7 +207,9 @@ public class TestQuest {
 		p.waitForThenSend(QuestSponsorServer.class, 1,
 				"/app/game.sponsorQuest", new QuestSponsorClient(1, false));
 		
-		p.take(QuestSpons)
+		QuestWinServer qws = p.take(QuestWinServer.class);
+		assertEquals(WINTYPES.NOSPONSOR, qws.type);
+		assertEquals(0, qws.players.length);
 	}
 
 

@@ -7,6 +7,8 @@ public class QuestPickStagesServer extends Message {
 
 	public int numStages;
 	
+	public QuestPickStagesServer() {}
+	
 	public QuestPickStagesServer(int player, int numStages) {
 		super(player);
 		this.numStages = numStages;

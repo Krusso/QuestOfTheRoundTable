@@ -14,6 +14,7 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
+import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.QuestModel;
@@ -57,8 +58,9 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// determining if anyone decided to sponsor
 		List<Player> sponsors = qm.getPlayerWhoSponsor();
+		System.out.println("sponsors: " + sponsors);
 		if(sponsors.size() == 0) {
-			qm.setMessage("No Player Sponsored the Tournament");
+			qm.setMessage(WINTYPES.NOSPONSOR);
 			qm.setWinners(new ArrayList<Player>());
 			return;
 		}
@@ -77,6 +79,7 @@ public class QuestSequenceManager extends SequenceManager {
 			}
 		});
 
+		System.out.println("questioning players about joining");
 		qm.questionJoinQuest(potentialQuestPlayers);
 
 		// Wait for responses
@@ -142,7 +145,7 @@ public class QuestSequenceManager extends SequenceManager {
 				}
 				logger.info("# of Players still in quest: " + winners.size());
 				quest.advanceStage();
-				qm.setMessage("Pass Stage");
+				qm.setMessage(WINTYPES.PASSSTAGE);
 				qm.passStage(winners);
 			}
 		}
@@ -162,11 +165,11 @@ public class QuestSequenceManager extends SequenceManager {
 
 		if(participants.size() != 0) {
 			logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
-			qm.setMessage("Tournament Winners");
+			qm.setMessage(WINTYPES.WON);
 			qm.setWinners(winners);
 		} else {
 			logger.info("No player join the tournament");
-			qm.setMessage("No Player Joined the Tournament");
+			qm.setMessage(WINTYPES.NOJOIN);
 			qm.setWinners(new ArrayList<Player>());
 		}
 

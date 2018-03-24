@@ -1,14 +1,14 @@
 package com.qotrt.messages.quest;
 
-import src.messages.Message;
+import com.qotrt.messages.Message;
 
 //from Client
 public class QuestPickCardsClient extends Message {
-	public String[] cards;
 	
-	public QuestPickCardsClient(int player, String[] cards) {
+	public QuestPickCardsClient() {}
+	
+	public QuestPickCardsClient(int player) {
 		super(player);
-		this.cards = cards;
 	}
 	
 	@Override

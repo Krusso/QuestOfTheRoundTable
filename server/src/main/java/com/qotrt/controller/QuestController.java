@@ -10,6 +10,7 @@ import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
 import com.qotrt.messages.quest.QuestJoinClient;
+import com.qotrt.messages.quest.QuestPickCardsClient;
 import com.qotrt.messages.quest.QuestPickStagesClient;
 import com.qotrt.messages.quest.QuestSponsorClient;
 
@@ -36,7 +37,7 @@ public class QuestController {
 	
 	@MessageMapping("/game.finishSelectingQuestCards")
 	public void finishSelectingQuestCards(SimpMessageHeaderAccessor headerAccessor, 
-			@Payload QuestPickStagesClient chatMessage) {
+			@Payload QuestPickCardsClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		System.out.println("finish selecting cards: " + chatMessage.player);

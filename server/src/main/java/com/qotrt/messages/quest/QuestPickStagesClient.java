@@ -5,6 +5,8 @@ import com.qotrt.messages.Message;
 //from Client
 public class QuestPickStagesClient extends Message {
 	
+	public QuestPickStagesClient() {}
+	
 	public QuestPickStagesClient(int player) {
 		super(player);
 	}

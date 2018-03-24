@@ -15,6 +15,7 @@ import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsServer;
 import com.qotrt.messages.quest.QuestPickStagesServer;
 import com.qotrt.messages.quest.QuestSponsorServer;
+import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
@@ -43,7 +44,9 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = QuestSponsorServer.class, name="SPONSORQUEST"),
 	    @Type(value = QuestJoinServer.class, name="JOINQUEST"),
 	    @Type(value = QuestPickStagesServer.class, name="PICKSTAGES"),
-	    @Type(value = QuestPickCardsServer.class, name="PICKQUEST")
+	    @Type(value = QuestPickCardsServer.class, name="PICKQUEST"),
+	    @Type(value = QuestWinServer.class, name="WINQUEST"),
+	    @Type(value = QuestPickStagesServer.class, name="PICKSTAGES"),
 	    })  
 public abstract class Message {
 
@@ -82,7 +85,8 @@ public abstract class Message {
 		SPONSERQUEST, 
 		JOINQUEST, 
 		PICKSTAGES, 
-		PICKQUEST
+		PICKQUEST, 
+		WINQUEST
 	};
 	
 //	@Override
