@@ -28,7 +28,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         "stage4Zone": [],
         "stage5Zone": []
     };
-    $scope.playerId = 0;
     $scope.addCard = function (n, id) {
         var card = {
             name: n,
@@ -40,6 +39,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
 
     $scope.serverList = [];
+
+    $scope.players = [];
 
     /*=========================================   *
      *            Controller Variables: Stage      *
@@ -169,6 +170,35 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.serverList = message.games;
             console.log("server list:");
             console.log($scope.serverList);
+        }
+        if (message.messageType === "GAMESTART") {
+            $location.path('/gameboard');
+        }
+        if (message.messageType === "JOINGAME") {
+            $scope.players = []; //reset the array
+            var p = message.players; //array of strings that denote the player's name
+            for (var i = 0; i < p.length; i++) {
+                var playerInfo = {
+                    name: p,
+                    hand: [],
+                    faceUp: [],
+                    faceDown: [],
+                    shieldIcon: "", //should probably be the URL or the name of the icon.png
+                    rank: null
+                };
+                $scope.players.push(playerInfo);
+            }
+            console.log("currentPlayers");
+            console.log($scope.players);
+        }
+        if (message.messageType === "ADDCARDS") {
+            var playerNum = message.player;
+            console.log(typeof playerNum);
+            console.log(typeof message.player);
+            console.log(message.player);
+            console.log($scope.players[playerNum]);
+            $scope.players[playerNum].hand = message.cards;
+            console.log($scope.players[playerNum].hand);
         }
     });
 
