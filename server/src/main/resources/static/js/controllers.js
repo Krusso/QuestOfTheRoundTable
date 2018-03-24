@@ -173,7 +173,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 	// wait a bit for socket to be initialized
 	await sleep(2000);
 
-	MessageService.subscribe(function (message1) {
+	console.log("this");
+	console.log(this);
+	var that = this;
+	
+	MessageService.registerObserverCallback(that,function (message1) {
 		message = JSON.parse(message1.body);
     	console.log("Processing message: ");
         console.log(message);
@@ -185,8 +189,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log($scope.serverList);
         }
         if (message.messageType === "GAMESTART") {
-        	console.log("here?");
             $location.path('/gameboard');
+            MessageService.unregister(that);
         }
         if (message.messageType === "JOINGAME") {
             $scope.players = []; //reset the array
@@ -213,11 +217,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log(typeof playerNum);
             console.log(typeof message.player);
             console.log(message.player);
-            console.log($scope.players[playerNum]);
-            console.log(playerNum);
-            console.log($scope.players[playerNum]);
-            $scope.players[playerNum].hand = message.cards;
-            console.log($scope.players[playerNum].hand);
+            // TODO: use services to hold players
+            //console.log($scope.players[playerNum]);
+            //console.log(playerNum);
+            //console.log($scope.players[playerNum]);
+            //$scope.players[playerNum].hand = message.cards;
+            //console.log($scope.players[playerNum].hand);
+        }
+        
+        if(message.messageType === "SHOWMIDDLECARD"){
         }
         
         console.log("done parsing");
