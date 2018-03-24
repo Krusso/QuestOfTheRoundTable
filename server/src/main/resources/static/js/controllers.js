@@ -170,9 +170,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 	
 	demo();
 	async function demo() {
-	  	console.log('Taking a break...');
-	  	await sleep(2000);
-  		console.log('Two second later');
+	// wait a bit for socket to be initialized
+	await sleep(2000);
 
 	MessageService.subscribe(function (message1) {
 		message = JSON.parse(message1.body);
@@ -222,9 +221,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         
         console.log("done parsing");
-        $scope.$apply()
+        $scope.$apply();
         });
-
+	}
     /*=========================================   *
      *             Display Functions              *
      *=========================================== */
@@ -401,6 +400,4 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         return false
     }
-
-	}
 });

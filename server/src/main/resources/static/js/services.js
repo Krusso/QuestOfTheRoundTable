@@ -46,11 +46,7 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
 		socket.stomp.subscribe(service.CHAT_TOPIC, methodToDo);
 	}
 
-    var startListener = function () {
-       // socket.stomp.subscribe(service.CHAT_TOPIC, function (data) {
-       //     listener.notify(getMessage(data.body));
-        //});
-    };
+    var startListener = function () {};
 
     var initialize = function () {
         socket.client = new SockJS(service.SOCKET_URL);
