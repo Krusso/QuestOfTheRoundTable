@@ -42,10 +42,14 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
         return message;
     };
 
+	service.subscribe = function(methodToDo){
+		socket.stomp.subscribe(service.CHAT_TOPIC, methodToDo);
+	}
+
     var startListener = function () {
-        socket.stomp.subscribe(service.CHAT_TOPIC, function (data) {
-            listener.notify(getMessage(data.body));
-        });
+       // socket.stomp.subscribe(service.CHAT_TOPIC, function (data) {
+       //     listener.notify(getMessage(data.body));
+        //});
     };
 
     var initialize = function () {
