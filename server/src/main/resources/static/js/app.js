@@ -39,5 +39,12 @@ angular.module('gameApp.controllers').directive('cardImg', function () {
             'background-size': 'contain',
             'background-repeat': 'no-repeat',
         });
+        
+        scope.$watch('cardImg', function(newValue, oldValue) {
+          if (newValue !== oldValue) {
+            // You actions here
+            //console.log("I got the new value! ", newValue);
+          }
+      }, true);
     };
 });

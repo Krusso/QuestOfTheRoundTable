@@ -175,7 +175,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "GAMESTART") {
                 $location.path('/gameboard');
-                MessageService.unregister(that);
             }
             if (message.messageType === "JOINGAME") {
                 $scope.players = []; //reset the array
