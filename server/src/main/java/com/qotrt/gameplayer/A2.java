@@ -17,9 +17,6 @@ import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
-import com.qotrt.model.UIPlayer;
-
-import src.client.UIPlayerManager;
 
 public class A2 extends AbstractAI {
 	final static Logger logger = LogManager.getLogger(A2.class);
@@ -134,7 +131,7 @@ public class A2 extends AbstractAI {
 				logger.info("A2 doesnt want to sponsor tournament not enough different bp foes/tests");
 				return null;	
 			}
-			int pointsInStage = bc.calculateStage(this.pm.players[pm.getCurrentPlayer()].hand, 
+			int pointsInStage = bc.calculateStage(player.hand, 
 					i.stream().map(j -> j.getName()).toArray(String[]::new),
 					(StoryCard) questCard);
 			if(pointsInStage < min) {

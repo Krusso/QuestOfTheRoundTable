@@ -22,7 +22,6 @@ public class PlayerManager {
 	private int currentPlayer = -1;
 	private DeckManager dm;
 	private RIGGED rigged;
-	//private DiscardSequenceManager dsm;
 
 	public Player[] players;
 	public PlayerManager(int numPlayers, UIPlayer[] uiPlayer, DeckManager dm, RIGGED rigged2) {
@@ -364,5 +363,10 @@ public class PlayerManager {
 		for(Player p: players) {
 			p.subscribe(pv);
 		}
+	}
+
+	public Boolean iseultExists() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

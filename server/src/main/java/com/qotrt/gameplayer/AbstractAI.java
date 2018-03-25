@@ -14,9 +14,6 @@ import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 
-import src.client.GameBoardController;
-import src.client.UIPlayerManager;
-
 public abstract class AbstractAI {
 	final static Logger logger = LogManager.getLogger(AbstractAI.class);
 	
@@ -67,21 +64,21 @@ public abstract class AbstractAI {
 		return toReturn;
 	}
 	
-	public boolean winPlayer(int i) {
-		logger.info("Player i rank: " + pm.getPlayerRank(i) + " shields: " + pm.getShields(i));
-		if((pm.getPlayerRank(i) == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) || 
-				(pm.getPlayerRank(i) == Rank.RANKS.CHAMPION && pm.players[i].shields >= (10 - pm.getNumPlayers())) ||
-				(pm.getPlayerRank(i) == Rank.RANKS.KNIGHT && pm.players[i].shields >= (7 - pm.getNumPlayers())) ||
-				(pm.getPlayerRank(i) == Rank.RANKS.SQUIRE && pm.players[i].shields >= (5 - pm.getNumPlayers()))) {
+	public boolean winPlayer(Player p) {
+		logger.info("Player i rank: " + p.getRank() + " shields: " + p.getShields());
+		if((p.getRank()  == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) || 
+				(p.getRank()  == Rank.RANKS.CHAMPION && p.getShields() >= (10 - pm.players.length)) ||
+				(p.getRank()  == Rank.RANKS.KNIGHT && p.getShields() >= (7 - pm.players.length)) ||
+				(p.getRank()  == Rank.RANKS.SQUIRE && p.getShields() >= (5 - pm.players.length))) {
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean playerCanWinOrEvolve(PlayerManager pm) {
-		int length = pm.getNumPlayers();
-		for(int i = 0; i < length; i++) {
-			if(winPlayer(i)) {
+		Iterator<Player> round = pm.round();
+		while(round.hasNext()) {
+			if(winPlayer(round.next())) {
 				logger.info("Someone can win/evolve the game if they join the tournament");
 				return true;
 			}
