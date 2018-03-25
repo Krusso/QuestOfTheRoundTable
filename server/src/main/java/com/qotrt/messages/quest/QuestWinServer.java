@@ -22,7 +22,7 @@ public class QuestWinServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.WINQUEST;
+		this.messageType = MESSAGETYPES.WINQUEST;
 	}
 
 }

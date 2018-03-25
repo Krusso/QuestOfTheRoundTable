@@ -15,7 +15,7 @@ public class QuestBidClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.BIDQUEST;
+		this.messageType = MESSAGETYPES.BIDQUEST;
 	}
 
 }

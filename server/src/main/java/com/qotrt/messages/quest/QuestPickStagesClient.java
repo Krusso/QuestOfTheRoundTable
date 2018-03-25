@@ -13,7 +13,7 @@ public class QuestPickStagesClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PICKSTAGES;
+		this.messageType = MESSAGETYPES.PICKSTAGES;
 	}
 
 }

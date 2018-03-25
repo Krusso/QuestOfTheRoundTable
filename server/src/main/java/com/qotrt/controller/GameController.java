@@ -1,6 +1,7 @@
 package com.qotrt.controller;
 
 import java.util.ArrayList;
+
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -46,10 +47,14 @@ public class GameController {
 
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
-		UUID uuid = hub.addGame(chatMessage.getNumPlayers(), chatMessage.getRigged());
+		UUID uuid = hub.addGame(chatMessage.getGameName(), chatMessage.getNumPlayers(), chatMessage.getRigged(), chatMessage.getAis());
+		String sessionID = headerAccessor.getSessionId();
+		System.out.println("s is: " + sessionID);
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());
+
+		gjc.setGameName(chatMessage.getGameName());
 		this.joinGame(headerAccessor, gjc);
 		System.out.println("created game");
 	}
@@ -67,6 +72,11 @@ public class GameController {
 				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));
 	}
 
+	// @MessageMapping("/game.listPlayers")
+	// public void listPlayers(SimpMessageHeaderAccessor headerAccessor, @Payload PlayerListClient chatMessage) {
+	// 	//
+	// }
+
 	@MessageMapping("/game.joinGame")
 	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {
 		System.out.println("joining game");
@@ -80,5 +90,4 @@ public class GameController {
 	public void handleException(IllegalArgumentException ex) {
 		System.out.println("Got exception: " + ex.getMessage());
 	}
-
 }

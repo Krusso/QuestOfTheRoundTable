@@ -17,7 +17,7 @@ public class QuestSponsorClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.SPONSERQUEST;
+		this.messageType = MESSAGETYPES.SPONSERQUEST;
 	}
 
 }

@@ -16,7 +16,7 @@ public class QuestDiscardCardsServer extends Message {
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.DISCARDQUEST;
+		this.messageType = MESSAGETYPES.DISCARDQUEST;
 	}
 
 }

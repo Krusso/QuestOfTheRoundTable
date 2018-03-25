@@ -18,7 +18,7 @@ public class FaceDownServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.FACEDOWNCARD;
+		this.messageType = MESSAGETYPES.FACEDOWNCARD;
 	}
 
 }

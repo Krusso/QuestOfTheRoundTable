@@ -13,7 +13,7 @@ public class QuestPickCardsClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PICKQUEST;
+		this.messageType = MESSAGETYPES.PICKQUEST;
 	}
 
 }

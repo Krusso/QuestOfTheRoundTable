@@ -1,0 +1,130 @@
+<!--
+<!DOCTYPE html>
+<html ng-app="gameApp">
+
+<head>
+    <title>Quest of The Round Table</title>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Advent+Pro:100" rel="stylesheet">
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+    <link rel="stylesheet" href="css/gameboard.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="bower_components/angular-dragdrop/src/angular-dragdrop.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bower_components/angularjs-slider/dist/rzslider.css" />
+    <script src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
+</head>
+
+<body>
+-->
+<div id="container">
+    <div id="gameboard">
+        <!--    OPPONENT HAND ZONES        -->
+        <div class="opponentHandsContainer">
+            <div ng-repeat="player in players" ng-hide="$index == myPlayerId">
+                <div class="opponentHandZone">
+                    <div class="displayContainer" ng-model="player.shieldIcon"></div>
+                    <div class="cardZones">
+                        <div class="opponentHand" ng-model="player.hand">
+                            <div ng-repeat="card in player.hand">
+                                <div card-img="{{card.key}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="opponentFaceUp">
+                            <!--                        <div class="card"></div>-->
+                        </div>
+                        <div class="opponentFaceDown">
+                            <!--                        <div class="card"></div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--    MIDDLE SECTION (Middle card/Stage cards/ discard pile/buttons)        -->
+        <div class="middleContainer">
+            <div class="middlecardContainer">
+                <div c1 class="card1" card1="{{middleCard}}"></div>
+                <div class="accept-decline-container">
+                    <button class="btn-accept">Y</button>
+                    <button class="btn-decline">N</button>
+                </div>
+            </div>
+            <div class="stageZone">
+
+                <div class="stageContainer">
+                    <div class="stage"></div>
+                    <div class="stage"></div>
+                    <div class="stage"></div>
+                    <div class="stage"></div>
+                    <div class="stage"></div>
+
+                </div>
+                <div class="slidecontainer">
+                    <rzslider rz-slider-model="bidSlider.value" rz-slider-options="bidSlider.options"></rzslider>
+                    <p>{{bidSlider.value}}</p>
+                </div>
+
+                <div class="buttonContainer">
+                    <button class="brown-button">Continue</button>
+                    <button class="brown-button">End Turn</button>
+                </div>
+            </div>
+            <div class="discardContainer">
+                <div class="discardPile"></div>
+                <button class="brown-button">Discard</button>
+
+            </div>
+        </div>
+
+        <!--    PLAYER HAND ZONES       -->
+        <div class="playerZone">
+
+            <div class="displayContainer">
+                <div class="rankCardContainer">
+                    <!--  RANK CARD IMAGE GOES HERE  -->
+                    <div>
+                    </div>
+                </div>
+                <div class="shieldBpContainer">
+                    <!--   BP VALUE GOES HERE       -->
+                    <div>
+                    </div>
+                    <!--  SHIELD IMAGE GOES HERE    -->
+                    <div>
+                    </div>
+                </div>
+            </div>
+            <div class="cardZones">
+                <div class="playerFaceUp"></div>
+                <div class="playerFaceDown"></div>
+                <div class="playerHand">
+                    <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        </div>
+                    </div>
+                    <!--
+<div ng-repeat="card in players[0].hand">
+    {{card}}
+</div>
+-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--
+<script src="js/card.js">
+</script>
+<script src="js/app.js"></script>
+<script src="js/services.js"></script>
+<script src="js/controllers.js"></script>
+<script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+</body>
+
+</html>-->

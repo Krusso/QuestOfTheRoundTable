@@ -34,3 +34,9 @@ COMP3004B 2018 Team 2 Project
  - If eclipse complains about src.client package error do the following:
   - eclipse->right-click project -> Build Path -> Configure Build Path...
     - Then go to Java Build Path and under the Source tab delete src.client folder and then hit apply/close.
+    
+    
+ **Bower Components**
+ - The web client uses other AngularJS modules from github so, like Maven, download Bower. Instructions are on this page [https://bower.io/]
+ - Once you have bower installed, navigate to QuestOfTheRoundTable/server/src/main/resources/static on your terminal and do `bower install angular-dragdrop`
+ - We might consider to bower install sockjs and stomp (most likely not since they have a CDN)

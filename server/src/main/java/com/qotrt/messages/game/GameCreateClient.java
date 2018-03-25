@@ -8,17 +8,30 @@ public class GameCreateClient extends Message {
 	
 	private int numPlayers;
 	private String playerName;
+	private String gameName;
 	private RIGGED rigged;
-	
+	private Object ais;
 	
 	public GameCreateClient() {}
-	
+
 	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged) {
 		this.numPlayers = numPlayers;
 		this.playerName = playerName;
 		this.rigged = rigged;
 	}
 	
+	public GameCreateClient(int numPlayers, String playerName, String gameName, RIGGED rigged) {
+		this.numPlayers = numPlayers;
+		this.playerName = playerName;
+		this.gameName = gameName;
+		this.rigged = rigged;
+	}
+
+	@Override
+	public void setMessage() {
+		this.messageType = Message.MESSAGETYPES.JOINGAME;	
+	}
+
 	public String getPlayerName() {
 		return playerName;
 	}
@@ -27,9 +40,12 @@ public class GameCreateClient extends Message {
 		this.playerName = playerName;
 	}
 
-	@Override
-	public void setMessage() {
-		this.message = Message.MESSAGETYPES.JOINGAME;	
+	public String getGameName() {
+		return gameName;
+	}
+
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
 	}
 
 	public int getNumPlayers() {
@@ -46,5 +62,9 @@ public class GameCreateClient extends Message {
 
 	public void setRigged(RIGGED rigged) {
 		this.rigged = rigged;
+	}
+
+	public Object getAis() {
+		return ais;
 	}
 }

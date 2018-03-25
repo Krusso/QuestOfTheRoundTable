@@ -27,7 +27,7 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 @JsonTypeInfo(  
 	    use = Id.NAME,  
 	    include = JsonTypeInfo.As.PROPERTY,  
-	    property = "java-class",
+	    property = "java_class",
 	    visible = true)
 	// Needed for jackson converting to abstract class 
 	@JsonSubTypes({
@@ -55,8 +55,8 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 public abstract class Message {
 
 	public final String TYPE = "GAME";
-	
-	public MESSAGETYPES message;
+
+	public MESSAGETYPES messageType;
 	public int player;
 
 	public Message() {

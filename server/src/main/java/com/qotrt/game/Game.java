@@ -37,6 +37,8 @@ public class Game extends Observable {
 
 	private UUID uuid = UUID.randomUUID();
 	private int gameSize;
+	private String gameName;
+	private Object ais;
 	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
 	private PlayerManager pm;
@@ -48,10 +50,12 @@ public class Game extends Observable {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, int capacity, RIGGED rigged) {
+	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, Object ais) {
 		this.messagingTemplate = messagingTemplate;
+		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
+		this.ais = ais;
 		logger.info("messaging template: " + this.messagingTemplate);
 		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
@@ -72,7 +76,6 @@ public class Game extends Observable {
 			public void run() {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
-
 				EventBus eventBus = new EventBus();
 
 				// model creation
@@ -119,8 +122,9 @@ public class Game extends Observable {
 					StoryCard s = dm.getStoryCard(1).get(0);
 					logger.info("Next card being played: " + s.getName());
 					bm.setCard(s);
-
+					
 					SequenceManager sm = gsm.createStoryManager(bm.getCard());
+					logger.info("Running: " + sm);
 					sm.start(pm, bmm);
 
 					boolean winners = pm.rankUp();
@@ -157,8 +161,9 @@ public class Game extends Observable {
 	}
 
 	public boolean addPlayer(UIPlayer player) {
-
+		System.out.println("trying to add: " + player.getSessionID());
 		if(players.size() == gameSize) {
+			System.out.println("game full not adding");
 			return false;
 		}
 
@@ -170,6 +175,7 @@ public class Game extends Observable {
 			startGame();
 		}
 
+		System.out.println("game not full adding player: " + player.getSessionID());
 		return true;
 	}
 
@@ -179,5 +185,9 @@ public class Game extends Observable {
 
 	public int getPlayerCapacity() {
 		return this.gameSize;
+	}
+
+	public String getGameName() {
+		return this.gameName;
 	}
 }

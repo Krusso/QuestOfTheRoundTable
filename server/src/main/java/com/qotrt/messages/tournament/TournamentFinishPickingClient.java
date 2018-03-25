@@ -13,7 +13,7 @@ public class TournamentFinishPickingClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.FINISHPICKTOURNAMENT;
+		this.messageType = MESSAGETYPES.FINISHPICKTOURNAMENT;
 	}
 
 }

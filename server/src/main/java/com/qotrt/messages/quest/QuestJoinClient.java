@@ -17,7 +17,7 @@ public class QuestJoinClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINQUEST;
+		this.messageType = MESSAGETYPES.JOINQUEST;
 	}
 
 }

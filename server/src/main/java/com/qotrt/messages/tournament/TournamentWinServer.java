@@ -22,7 +22,7 @@ public class TournamentWinServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.WINTOURNAMENT;
+		this.messageType = MESSAGETYPES.WINTOURNAMENT;
 	}
 
 }
