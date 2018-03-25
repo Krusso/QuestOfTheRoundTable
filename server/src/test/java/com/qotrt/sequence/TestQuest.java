@@ -118,9 +118,15 @@ public class TestQuest {
 		
 		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
 		
-		QuestDiscardCardsServer qdcs = p.take(QuestDiscardCardsServer.class);
-		assertEquals(0, qdcs.player);
-		assertEquals(3, qdcs.cardsToDiscard);
+		QuestWinServer qws = p.take(QuestWinServer.class);
+		assertEquals(WINTYPES.PASSSTAGE, qws.type);
+		assertEquals(1, qws.players.length);
+		assertEquals(0, qws.players[0]);
+		
+		qws = p.take(QuestWinServer.class);
+		assertEquals(WINTYPES.WON, qws.type);
+		assertEquals(1, qws.players.length);
+		assertEquals(0, qws.players[0]);
 	}
 	
 	@Test
