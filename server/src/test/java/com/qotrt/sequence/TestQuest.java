@@ -27,6 +27,7 @@ import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.quest.QuestBidClient;
 import com.qotrt.messages.quest.QuestBidServer;
+import com.qotrt.messages.quest.QuestDiscardCardsClient;
 import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestJoinServer;
@@ -58,7 +59,6 @@ public class TestQuest {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
 
-	// testDiscardForQuests
 	// test2PlayerBidding
 	// testDontNeedToBidAnything
 	// testKingRecognition
@@ -82,7 +82,11 @@ public class TestQuest {
 					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(1, 3));
 					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(1, -1));
 					
-
+					p.waitForThenSend(QuestDiscardCardsServer.class, 0,
+							"/app/game.discard", new PlayCardClient(0, 171, ZONE.HAND, ZONE.DISCARD));
+					p.sendMessage("/app/game.discard", new PlayCardClient(0, 172, ZONE.HAND, ZONE.DISCARD));
+					p.sendMessage("/app/game.discard", new PlayCardClient(0, 173, ZONE.HAND, ZONE.DISCARD));
+					p.sendMessage("/app/game.finishDiscard", new QuestDiscardCardsClient(0));
 			}
 		};
 		

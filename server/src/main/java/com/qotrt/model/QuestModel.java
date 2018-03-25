@@ -66,6 +66,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	
 	private List<Player> participatents = new ArrayList<Player>();
 	private Quest quest;
+	private List<AdventureCard> discardCards;
 	
 	public QuestModel() {
 		sponsor.subscribe(this);
@@ -225,12 +226,32 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 
 	public synchronized void discardCards(List<Player> bidWinner, int toDiscard) {
 		discard.start(bidWinner, toDiscard);
+		discardCards = new ArrayList<AdventureCard>();
 	}
-
-	public synchronized String[] getDiscardCards() {
-		// TODO Auto-generated method stub
+	
+	public synchronized void finishDiscard(Player player) {
+		discard.accept(player, "player: " + player + " attempted to finish discard", 
+				"player: " + player + " finished discard", 
+				"player: " + player + " finish discard too late");
+	}
+	
+	public synchronized void addDiscard(AdventureCard c) {
+		discardCards.add(c);
+	}
+	
+	public synchronized AdventureCard getDiscardCard(int id) {
+		for(AdventureCard c: discardCards) {
+			if(c.id == id) {
+				return c;
+			}
+		}
 		return null;
 	}
+	
+	public synchronized boolean canDiscard() {
+		return discard.can();
+	}
+
 
 	public String attemptMove(Integer zoneFrom, Integer zoneTo, int card) {
 		Stage from = quest.getStage(zoneFrom);

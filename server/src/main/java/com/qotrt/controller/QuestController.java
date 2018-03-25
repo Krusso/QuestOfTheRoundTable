@@ -10,6 +10,7 @@ import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
 import com.qotrt.messages.quest.QuestBidClient;
+import com.qotrt.messages.quest.QuestDiscardCardsClient;
 import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestPickCardsClient;
 import com.qotrt.messages.quest.QuestPickStagesClient;
@@ -64,6 +65,15 @@ public class QuestController {
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		System.out.println("finish selecting cards: " + chatMessage.player);
 		game.bmm.getQuestModel().finishSelectingStages(player);
+	}
+	
+	@MessageMapping("/game.finishDiscard")
+	public void finishDiscard(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload QuestDiscardCardsClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		System.out.println("finish discard cards: " + chatMessage.player);
+		game.bmm.getQuestModel().finishDiscard(player);
 	}
 	
 	@MessageMapping("/game.joinQuest")	
