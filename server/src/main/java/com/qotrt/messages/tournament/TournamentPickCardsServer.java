@@ -13,7 +13,7 @@ public class TournamentPickCardsServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PICKTOURNAMENT;
+		this.messageType = MESSAGETYPES.PICKTOURNAMENT;
 	}
 
 }

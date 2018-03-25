@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.qotrt.deck.AdventureDeck;
+
 public abstract class Card {
 	
 	final static Logger logger = LogManager.getLogger(Card.class);
@@ -12,6 +14,7 @@ public abstract class Card {
 	public static AtomicInteger NEXT_ID = new AtomicInteger(0);
 	
 	public final int id = NEXT_ID.getAndIncrement();
+	
 	private String name;
 
 	public boolean inPlay = false;
@@ -58,5 +61,8 @@ public abstract class Card {
 	public void resetMerlinCharges() {
 		merlinUses = 1;
 	}
+	
+	public abstract String playForStage(AdventureDeck stage);
+	public abstract String playFaceDown(AdventureDeck faceDownDeck, AdventureDeck faceUpDeck);
 	
 }

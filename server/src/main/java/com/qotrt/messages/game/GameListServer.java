@@ -24,12 +24,13 @@ public class GameListServer extends Message  {
 		for(int i = 0; i < gamelist.size(); i++) {
 			games[i] = new GameDisplay(gamelist.get(i).getUUID(),
 					gamelist.get(i).getPlayerCount(),
+					gamelist.get(i).getGameName(),
 					gamelist.get(i).getPlayerCapacity());
 		}
 	}
 
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.LISTSERVER;
+		this.messageType = MESSAGETYPES.LISTSERVER;
 	}
 }

@@ -17,7 +17,7 @@ public class AddCardsServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.ADDCARDS;
+		this.messageType = MESSAGETYPES.ADDCARDS;
 	}
 
 	public GenericPair[] getCards() {

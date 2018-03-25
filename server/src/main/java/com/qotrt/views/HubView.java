@@ -7,6 +7,7 @@ import java.util.Arrays;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.messages.game.GameJoinServer;
+import com.qotrt.messages.game.GameStartServer;
 import com.qotrt.model.UIPlayer;
 
 public class HubView extends View implements PropertyChangeListener {
@@ -28,6 +29,14 @@ public class HubView extends View implements PropertyChangeListener {
 		if(evt.getPropertyName().equals("players")) {
 			playerJoinedGame((UIPlayer[]) evt.getNewValue());
 		}
+		
+		if(evt.getPropertyName().equals("gameStart")) {
+			startGame();
+		}
+	}
+
+	private void startGame() {
+		sendMessage("/queue/response", new GameStartServer());
 	}
 	
 }

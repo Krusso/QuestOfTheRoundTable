@@ -19,7 +19,7 @@ public class PlayCardClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.PLAYCARD;
+		this.messageType = MESSAGETYPES.PLAYCARD;
 	}
 	
 	public static enum ZONE {

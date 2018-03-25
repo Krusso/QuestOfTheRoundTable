@@ -17,7 +17,7 @@ public class GameJoinServer extends Message  {
 
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINGAME;
+		this.messageType = MESSAGETYPES.JOINGAME;
 	}
 	
 //	public GameJoinServer(UIPlayer[] UIPlayers) {

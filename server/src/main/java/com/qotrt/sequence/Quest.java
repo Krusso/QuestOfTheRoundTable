@@ -1,118 +1,94 @@
 package com.qotrt.sequence;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.qotrt.calculator.BattlePointCalculator;
+import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.cards.QuestCard;
+import com.qotrt.gameplayer.Player;
+import com.qotrt.gameplayer.PlayerManager;
+import com.qotrt.model.QuestModel;
 
 public class Quest {
 
 	final static Logger logger = LogManager.getLogger(Quest.class);
+
+	private int stages;
+	private int currentStage = -1;
+	private QuestCard questCard;
+	private Stage[] quest;
+	private QuestModel qm;
+
+	public Quest(QuestCard questCard, QuestModel qm) {
+		this.questCard = questCard;
+		this.stages = questCard.getNumStages();
+		this.quest = new Stage[questCard.getNumStages()];
+		this.qm = qm;
+	}
+
+	// verification for quest stages will be done on client side
+	public void setUpQuest() {
+		try {
+			qm.stageSetupLatch().await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		currentStage = 0;
+	}
+
+	public TYPE currentStageType() {
+		if(quest[currentStage].isFoeStage()) {
+			return TYPE.FOES;
+		} else if(quest[currentStage].isTestStage()) {
+			return TYPE.TESTS;
+		}
+		return null;
+	}
+
+	public List<AdventureCard> getCurrentStageCards(){
+		return this.quest[currentStage].getStageCards();
+	}
 	
-//	public static enum TYPE {
-//		FOE, TEST
-//	}
-//
-//	private int stages;
-//	private int currentStage = -1;
-//	private QuestCard questCard;
-//	private Player sponsor;
-//	private List<List<Card>> quest;
-//
-//	public Quest(QuestCard questCard, Player sponsor) {
-//		this.questCard = questCard;
-//		this.stages = questCard.getNumStages();
-//		this.sponsor = sponsor;
-//		this.quest = new ArrayList<List<Card>>();
-//	}
-//
-//	// verification for quest stages will be done on client side
-//	public void setUpQuest(QOTRTQueue actions, PlayerManager pm) {
-//		while(quest.size()<stages) {
-//			try {
-//				QuestPickStagesClient qpsc = actions.take(QuestPickStagesClient.class, MESSAGETYPES.PICKSTAGES);
-//				int stage = qpsc.stage;
-//				String[] cards = qpsc.cards;
-//				List<Card> cardlist = new ArrayList<Card>();
-//				for(int i=0; i<cards.length; i++) {
-//					AdventureCard card = (AdventureCard) sponsor.getCard(cards[i]);
-//					logger.info(card + " " + questCard);
-//					if (card.checkIfNamed(questCard.getFoe())) card.name();
-//					cardlist.add(card);
-//				}
-//				quest.add(stage, cardlist);
-//			} catch (Exception e) {
-//				logger.error(e.getMessage());
-//			}
-//		}
-//		if(quest.size()>0) {
-//			currentStage = 0;
-//			pm.questDown(sponsor, quest);
-//		}
-//	}
-//
-//	public AdventureCard getFoeOrTest() {
-//		for(Card c: quest.get(currentStage)) {
-//			if(c instanceof FoeCard) {
-//				return (AdventureCard) c;
-//			} else if(c instanceof TestCard) {
-//				return (AdventureCard) c;
-//			}
-//		}
-//		return null;
-//	}
-//	
-//	public TYPE currentStageType() {
-//		for(Card card : quest.get(currentStage)) {
-//			if (card instanceof FoeCard) {
-//				return TYPE.FOE;
-//			} else if (card instanceof TestCard) {
-//				return TYPE.TEST;
-//			}
-//		}
-//		return null;
-//	}
-//
-//	public void advanceStage() { this.currentStage++; }
-//	public int getCurrentStage() { return this.currentStage; }
-//	public int getNumStages() { return this.stages; }
-//
-//	public int getNumCards() {
-//		int count = 0;
-//		for(List<Card> stage : quest) {
-//			count += stage.size();
-//		}
-//		return count;
-//	}
-//
-//	public int getFoeBP() {
-//		int fbp = 0;
-//		for(Card card : quest.get(currentStage)) {
-//			AdventureCard advCard = (AdventureCard) card;
-//			if (advCard.getType() == AdventureCard.TYPE.FOES) {
-//				if (advCard.isNamed()) {
-//					fbp += advCard.getNamedBattlePoints();
-//				} else {
-//					fbp += advCard.getBattlePoints();
-//				}
-//			} else {
-//				fbp += advCard.getBattlePoints();
-//			}
-//		}
-//		logger.info("Foe BP: " + fbp);
-//		return fbp;
-//	}
-//
-//	public void battleFoe(List<Player> participants, PlayerManager pm) {
-//		Iterator<Player> players = participants.iterator();
-//		pm.flipCards(players);	
-//
-//		BattlePointCalculator bpc = new BattlePointCalculator(pm);
-//		bpc.getFoeWinners(participants, this.questCard, getFoeBP());
-//	}
+	public Stage getStage(int i) {
+		return quest[i];
+	}
+	public void advanceStage() { this.currentStage++; }
+	public int getCurrentStage() { return this.currentStage; }
+	public int getNumStages() { return this.stages; }
+
+	public int getNumCards() {
+		return Arrays.stream(quest).mapToInt(i -> i.getStageCards().size()).sum();
+	}
+
+	public int getFoeBP() {
+		int fbp = 0;
+		for(AdventureCard advCard : quest[currentStage].getStageCards()) {
+			if (advCard.getType() == AdventureCard.TYPE.FOES) {
+				if (advCard.isNamed()) {
+					fbp += advCard.getNamedBattlePoints();
+				} else {
+					fbp += advCard.getBattlePoints();
+				}
+			} else {
+				fbp += advCard.getBattlePoints();
+			}
+		}
+		logger.info("Foe BP: " + fbp);
+		return fbp;
+	}
+
+	public void battleFoe(List<Player> participants, PlayerManager pm) {
+		Iterator<Player> players = participants.iterator();
+		pm.flipCards(players);	
+
+		BattlePointCalculator bpc = new BattlePointCalculator(pm);
+		bpc.getFoeWinners(participants, this.questCard, getFoeBP());
+	}
 }

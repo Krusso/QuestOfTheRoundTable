@@ -5,14 +5,11 @@ import com.qotrt.messages.Message;
 // Server
 public class GameStartServer extends Message {
 
-	public String[] players;
-	
-	public GameStartServer(String[] players) {
-		this.players = players;
+	public GameStartServer() {
 	}
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.GAMESTART;
+		this.messageType = MESSAGETYPES.GAMESTART;
 	}
 }

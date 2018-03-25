@@ -27,7 +27,6 @@ public class Player extends Observable {
 	public AdventureDeck hand;
 	protected AdventureDeck faceDown;
 	private AdventureDeck faceUp;
-	//private PlayerView pv;
 	private final int ID;
 	protected int shields;
 	public boolean tristan = false;
@@ -112,11 +111,13 @@ public class Player extends Observable {
 		return this.faceDown;
 	}
 
-
-	public void setFaceDown(AdventureCard card, ZONE zoneFrom) {
-		logger.info("Player id: " + ID + " setting face down: " + card + " from zone: " + zoneFrom);
+	public void setBackToHandFromFaceDown(int card) {
+		faceUp.addCard(faceDown.getCardByID(card));
+	}
+	
+	public void setFaceDown(AdventureCard card) {
+		logger.info("Player id: " + ID + " setting face down: " + card);
 		faceDown.addCard(card);
-		fireEvent("moveCard", null, new GenericPair(new GenericPair(card.id, zoneFrom),ID));
 	}
 
 	public RANKS getRank() {

@@ -56,7 +56,6 @@ public class PlayerTestCreator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//JmsOperations jmsOperations;
 
 		return stompSession;
 	}
@@ -146,5 +145,10 @@ public class PlayerTestCreator {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public void execute(Runnable thread, int y) {
+		final int x = y;
+		thread.run();
 	}
 }

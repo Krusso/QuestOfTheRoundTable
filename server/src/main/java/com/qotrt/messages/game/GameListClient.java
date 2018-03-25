@@ -7,6 +7,6 @@ public class GameListClient extends Message {
 
 	@Override
 	public void setMessage() {
-		this.message = Message.MESSAGETYPES.JOINGAME;	
+		this.messageType = Message.MESSAGETYPES.JOINGAME;	
 	}
 }

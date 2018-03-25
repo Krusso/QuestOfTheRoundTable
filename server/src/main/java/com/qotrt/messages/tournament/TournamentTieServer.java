@@ -14,7 +14,7 @@ public class TournamentTieServer extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.TIETOURNAMENT;
+		this.messageType = MESSAGETYPES.TIETOURNAMENT;
 	}
 
 }
