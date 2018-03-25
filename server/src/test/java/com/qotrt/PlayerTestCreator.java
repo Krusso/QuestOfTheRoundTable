@@ -108,6 +108,15 @@ public class PlayerTestCreator {
 		System.out.println("couldnt find: " + ca);
 		return null;
 	}
+	
+	public <T extends Message> T take(Class<T> ca, int player) {
+		while(true) {
+			T tads = take(ca);
+			System.out.println("tads: " + tads);
+			if(tads.player == player) { return tads; }
+		}
+	}
+	
 
 	private List<Transport> createTransportClient() {	
 		List<Transport> transports = new ArrayList<>();

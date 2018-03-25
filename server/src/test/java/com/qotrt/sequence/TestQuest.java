@@ -59,10 +59,58 @@ public class TestQuest {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
 
-	// test2PlayerBidding
+	// TODO:
 	// testDontNeedToBidAnything
 	// testKingRecognition
 	
+	@Test
+	public void test2PlayerBidding() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+
+		Runnable thread2 = new Runnable() {
+			@Override
+			public void run() {
+					PlayerTestCreator p = new PlayerTestCreator();
+					p.connect(WEBSOCKET_URI);
+					p.sendMessage("/app/game.createGame", 
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT));
+
+					p.waitForThenSend(QuestJoinServer.class, 0, 
+							"/app/game.joinQuest", new QuestJoinClient(0, true));
+					
+					QuestBidServer qbs = p.take(QuestBidServer.class, 0);
+					assertEquals(3, qbs.minBidValue);
+					
+					p.sendMessage("/app/game.bid", new QuestBidClient(0, 3));
+					qbs = p.take(QuestBidServer.class, 0);
+					assertEquals(4, qbs.minBidValue);
+					
+					p.sendMessage("/app/game.bid", new QuestBidClient(0, 4));
+					qbs = p.take(QuestBidServer.class, 0);
+					assertEquals(5, qbs.minBidValue);
+					
+					p.sendMessage("/app/game.bid", new QuestBidClient(0, -1));
+			}
+		};
+		
+		new Thread(thread2).start();
+		Thread.sleep(1000);
+		PlayerTestCreator p = new PlayerTestCreator();
+		p.connect(WEBSOCKET_URI);
+		p.joinGame();
+		p.waitForThenSend(QuestSponsorServer.class, 1,
+				"/app/game.sponsorQuest", new QuestSponsorClient(1, true));
+		p.waitForThenSend(QuestPickStagesServer.class, 1, "/app/game.playCardQuestSetup",
+				new PlayCardClient(1, 152, ZONE.HAND, ZONE.STAGE1));
+		PlayCardServer pcs = p.take(PlayCardServer.class);
+		assertEquals("", pcs.response);
+		assertEquals(ZONE.STAGE1, pcs.zoneTo);
+		
+		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		
+		QuestDiscardCardsServer qdcs = p.take(QuestDiscardCardsServer.class);
+		assertEquals(0, qdcs.player);
+		assertEquals(4, qdcs.cardsToDiscard);
+	}
 	
 	@Test
 	public void testDiscardForQuests() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {

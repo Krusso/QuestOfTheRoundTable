@@ -204,7 +204,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 				"player: " + player + " finished bidding higher too late")) {
 				maxBid = bidAmount;
 				bid.forAllPlayers(i -> {
-					fireEvent("bid", null, new int[] {i.getID(), bc.maxBid(i, card), maxBid, player.getID()});
+					fireEvent("bid", null, new int[] {i.getID(), bc.maxBid(i, card), maxBid + 1, player.getID()});
 				});
 			}
 		}

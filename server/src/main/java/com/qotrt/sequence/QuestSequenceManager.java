@@ -118,7 +118,13 @@ public class QuestSequenceManager extends SequenceManager {
 				//					pm.flipStage(sponsor, quest.getCurrentStage());
 
 				// TODO: set minbid correctly
-				qm.questionBid(winners, new BidCalculator(pm), card, 1);
+				if(winners.size() == 1) {
+					qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") &&
+							card.getName().equals("Search for the Questing Beast") ? 4 : 3));	
+				} else {
+					qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") && card.getName().equals("Search for the Questing Beast")
+							? 4 : (card.getName().equals("Test of Morgan Le Fey") ? 3 : 1)));
+				}
 				try {
 					logger.info("Waiting for users to finish bidding");
 					qm.bidLatch().await(60, TimeUnit.SECONDS);
