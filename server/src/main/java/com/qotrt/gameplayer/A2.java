@@ -15,12 +15,13 @@ import org.apache.logging.log4j.Logger;
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.model.BoardModelMediator;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 
 public class A2 extends AbstractAI {
 	final static Logger logger = LogManager.getLogger(A2.class);
-	
+
 	public A2(Player player, PlayerManager pm) {
 		super(player, pm);
 	}

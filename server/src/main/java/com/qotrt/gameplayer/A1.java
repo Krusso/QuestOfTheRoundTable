@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.model.BoardModelMediator;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 
@@ -21,8 +22,11 @@ public class A1 extends AbstractAI {
 
 	final static Logger logger = LogManager.getLogger(A1.class);
 
-	public A1(Player player, PlayerManager pm) {
+	private BoardModelMediator bmm;
+	
+	public A1(Player player, PlayerManager pm, BoardModelMediator bmm) {
 		super(player, pm);
+		this.bmm = bmm;
 	}
 
 	@Override
@@ -68,19 +72,7 @@ public class A1 extends AbstractAI {
 	}
 
 	private boolean playerCanWinOrEvolveJoined(PlayerManager pm) {
-		// TODO
-		//		if(this.gbc != null) {
-		//			for(int i = 0; i < 4; i++) {
-		//				logger.info("join tournament: " + Arrays.toString(gbc.joinTournament));
-		//				if(gbc.joinTournament[i]) {
-		//					if(winPlayer(i)) {
-		//						logger.info("Player: " +i + " can evolve/win");
-		//						return true;
-		//					}
-		//				}
-		//			}
-		//		}
-		for(Player p: pm.players) {
+		for(Player p: bmm.getTournamentModel().playersWhoJoined()) {
 			if(winPlayer(p)) {
 				logger.info("Player: " + p + " can evolve/win");
 				return true;

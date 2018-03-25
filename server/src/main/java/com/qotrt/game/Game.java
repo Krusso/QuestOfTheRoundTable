@@ -135,7 +135,7 @@ public class Game extends Observable {
 				
 				System.out.println("starting AI players");
 				for(int i = 0; i < aiplayers.size(); i++) {
-					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm);
+					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm,  bmm);
 					bm.subscribe(aiplayers.get(i));
 					tm.subscribe(aiplayers.get(i));
 					qm.subscribe(aiplayers.get(i));

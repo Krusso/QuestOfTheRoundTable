@@ -15,40 +15,56 @@ import org.apache.logging.log4j.Logger;
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.model.BoardModelMediator;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 
 public class A3 extends AbstractAI {
-	final static Logger logger = LogManager.getLogger(A2.class);
+	final static Logger logger = LogManager.getLogger(A3.class);
 	
-	public A3(Player player, PlayerManager pm) {
+	private BoardModelMediator bmm;
+	
+	public A3(Player player, PlayerManager pm, BoardModelMediator bmm) {
 		super(player, pm);
+		this.bmm = bmm;
 	}
 	
 	@Override
 	public boolean doIParticipateInTournament() {
 		logger.info("Participate in tournament");
+		for(Player p: pm.players) {
+			if(p.hand.size() > player.hand.size() && p != player) {
+				logger.info("Someone has a bigger hand size dont participate");
+				return false;
+			}
+		}
+		logger.info("No one has a bigger hand size participate");
 		return true;
 	}
 
 	@Override
 	public List<AdventureCard> playCardsForTournament() {
-		int currentBp = bpc.calculatePoints(player, pm.iseultExists());
-		if(currentBp >= 50) {
-			logger.info("BP over 50 not playing any more cards");
-			return null;
+		int maxCards = Integer.MIN_VALUE;
+		for(Player p: bmm.getTournamentModel().playersWhoJoined()) {
+			if(p.hand.size() > maxCards) {
+				maxCards = p.hand.size();
+			}
 		}
 		
-		List<AdventureCard> alliesOrWeapons = bpc.uniqueListOfTypeDecreasingBp(player, null, pm.iseultExists(), TYPE.ALLIES, TYPE.WEAPONS, TYPE.AMOUR);
-		logger.info("Cards can use: " + alliesOrWeapons);
+		int cardsToPlay = maxCards - player.hand.size();
 		List<AdventureCard> cardsToUse = new ArrayList<AdventureCard>();
-		for(AdventureCard card: alliesOrWeapons) {
-			if(currentBp >= 50) {
-				break;
+		if(cardsToPlay >= 0) {
+			List<AdventureCard> alliesOrWeapons = bpc.uniqueListOfTypeDecreasingBp(player, null, pm.iseultExists(), 
+					TYPE.ALLIES, 
+					TYPE.WEAPONS, 
+					TYPE.AMOUR);
+			
+			logger.info("Cards can use: " + alliesOrWeapons);
+			for(int i = 0; i < cardsToPlay && i < alliesOrWeapons.size(); i++) {
+				cardsToUse.add(alliesOrWeapons.get(i));
 			}
-			cardsToUse.add(card);
-			currentBp += card.getBattlePoints();
 		}
+		
 		logger.info("Played cards: " + Arrays.toString(cardsToUse.stream().map(i -> i.getName()).toArray(String[]::new)));
 		return cardsToUse;
 
