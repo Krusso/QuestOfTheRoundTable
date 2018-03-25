@@ -368,7 +368,13 @@ public class PlayerManager {
 	}
 
 	public Boolean iseultExists() {
-		// TODO Auto-generated method stub
-		return null;
+		for(Player p: players) {
+			for(AdventureCard c: p.getFaceUp().getDeck()) {
+				if(c.getName().equals("Queen Iseult")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

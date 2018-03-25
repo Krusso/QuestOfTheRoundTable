@@ -16,8 +16,6 @@ import com.qotrt.cards.WeaponCard;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
-import src.client.UIPlayerManager;
-
 public class TestAbstractAI {
 	final static Logger logger = LogManager.getLogger(TestAbstractAI.class);
 
