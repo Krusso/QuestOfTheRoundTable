@@ -102,8 +102,8 @@
 }
 
 .playerHand .card:hover {
-    margin-top: -2.5vw;
-    margin-left: -2.5vw;
+    margin-top: -1vw;
+    margin-left: -1vw;
     width: 10vw;
     height: 13vw;
     animation-name: cardhover;
@@ -120,8 +120,8 @@
 }
 
 .playerHand .card1:hover {
-    margin-top: -2.5vw;
-    margin-left: -2.5vw;
+    margin-top: -1vw;
+    margin-left: -1vw;
     width: 10vw;
     height: 13vw;
     animation-name: cardhover;
@@ -139,13 +139,14 @@
 
 @keyframes cardhover {
     from {
-        margin-top: 0vw;
-        width: 6vw;
-        height: 8vw;
+        /*
+        margin-top: 0vw;width: 6vw;
+height: 8vw;
+*/
     }
     to {
-        margin-top: -2.5vw;
-        margin-left: -2.5vw;
+        margin-top: -1vw;
+        margin-left: -1vw;
         width: 10vw;
         height: 13vw;
     }
@@ -205,11 +206,35 @@
     z-index: 100;
 }
 
+.opponentHandsContainer div[card-img] {
+    /*    position: absolute; we are going to need to use this position:absoluate at some point
+    when we want to reposition cards that over flow (in otherwords stacking divs on top each other)*/
+    width: 3vw;
+    height: 4vw;
+    /*    background-image: url("../gameResources/Adventure%20Back.png");*/
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+    z-index: 100;
+}
+
+.playerHand div[card-img]:hover {
+    margin-top: -2.5vw;
+    margin-left: -2.5vw;
+    width: 10vw;
+    height: 13vw;
+    animation-name: cardhoveropponent;
+    animation-duration: 0.25s;
+}
+
+
+/*
 div[card-img] {
     width: 100px;
     height: 150px;
     color: #fff;
 }
+*/
 
 .opponentHandsContainer .card:hover {
     margin-left: -1vw;

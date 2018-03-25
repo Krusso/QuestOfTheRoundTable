@@ -20,55 +20,26 @@
 -->
 <div id="container">
     <div id="gameboard">
-
-
         <!--    OPPONENT HAND ZONES        -->
         <div class="opponentHandsContainer">
-            <div class="opponentHandZone">
-                <div class="displayContainer"></div>
-                <div class="cardZones">
-                    <div class="opponentHand">
-                        <!--                        <div class="card"></div>-->
-                        <!--                        <div class="card" style="z-index: -1"></div>-->
-                    </div>
-                    <div class="opponentFaceUp">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-                    <div class="opponentFaceDown">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-                </div>
-
-            </div>
-            <div class="opponentHandZone">
-                <div class="displayContainer"></div>
-                <div class="cardZones">
-                    <div class="opponentHand">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-                    <div class="opponentFaceUp">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-
-                    <div class="opponentFaceDown">
-                        <!--                        <div class="card"></div>-->
+            <div ng-repeat="player in players" ng-hide="$index == myPlayerId">
+                <div class="opponentHandZone">
+                    <div class="displayContainer" ng-model="player.shieldIcon"></div>
+                    <div class="cardZones">
+                        <div class="opponentHand" ng-model="player.hand">
+                            <div ng-repeat="card in player.hand">
+                                <div card-img="{{card.key}}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="opponentFaceUp">
+                            <!--                        <div class="card"></div>-->
+                        </div>
+                        <div class="opponentFaceDown">
+                            <!--                        <div class="card"></div>-->
+                        </div>
                     </div>
                 </div>
-
-            </div>
-            <div class="opponentHandZone">
-                <div class="cardZones">
-                    <div class="opponentHand">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-                    <div class="opponentFaceUp">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-                    <div class="opponentFaceDown">
-                        <!--                        <div class="card"></div>-->
-                    </div>
-                </div>
-
             </div>
         </div>
 
@@ -141,7 +112,6 @@
 -->
                 </div>
             </div>
-
         </div>
     </div>
 </div>

@@ -205,9 +205,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
+<<<<<<< HEAD
                 console.log("updated");
+=======
+>>>>>>> branch 'mkuang/stomp' of https://github.com/Krusso/QuestOfTheRoundTable
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> branch 'mkuang/stomp' of https://github.com/Krusso/QuestOfTheRoundTable
             console.log("done parsing");
             $scope.$apply();
         });

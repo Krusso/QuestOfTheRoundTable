@@ -26,6 +26,7 @@ angular.module("gameApp.services", []);
 
 //Example templating:
 //<div card-img="<url>"></div>
+<<<<<<< HEAD
 angular.module('gameApp.controllers').directive('c1', function () {
 return {
   compile: function(tElement, tAttrs) {
@@ -50,3 +51,29 @@ return {
 		};
     }
 }});
+=======
+angular.module('gameApp.controllers').directive('cardImg', function () {
+    return function (scope, element, attrs) {
+        console.log("entered directive");
+        console.log(attrs.cardImg);
+        var url = attrs.cardImg;
+        if (url == null || url == "") {
+            return;
+        }
+        var res = encodeURI(url);
+        console.log(res);
+        element.css({
+            'background-image': 'url(../gameResources/' + res + '.png)',
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
+        });
+
+        scope.$watch('cardImg', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                // You actions here
+                //console.log("I got the new value! ", newValue);
+            }
+        }, true);
+    };
+});
+>>>>>>> branch 'mkuang/stomp' of https://github.com/Krusso/QuestOfTheRoundTable
