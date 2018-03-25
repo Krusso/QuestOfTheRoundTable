@@ -28,23 +28,25 @@ angular.module("gameApp.services", []);
 //<div card-img="<url>"></div>
 angular.module('gameApp.controllers').directive('cardImg', function () {
     return function (scope, element, attrs) {
+        console.log("entered directive");
+        console.log(attrs.cardImg);
         var url = attrs.cardImg;
-        if (url === null || url === "") {
+        if (url == null || url == "") {
             return;
         }
-        var res = url.replace(/ /g, "%20");
+        var res = encodeURI(url);
         console.log(res);
         element.css({
             'background-image': 'url(../gameResources/' + res + '.png)',
             'background-size': 'contain',
             'background-repeat': 'no-repeat',
         });
-        
-        scope.$watch('cardImg', function(newValue, oldValue) {
-          if (newValue !== oldValue) {
-            // You actions here
-            //console.log("I got the new value! ", newValue);
-          }
-      }, true);
+
+        scope.$watch('cardImg', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                // You actions here
+                //console.log("I got the new value! ", newValue);
+            }
+        }, true);
     };
 });
