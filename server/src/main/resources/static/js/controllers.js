@@ -205,10 +205,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
-                $scope.$apply();
+                console.log("updated");
             }
-
-            if (message.messageType === "SHOWMIDDLECARD") {}
 
             console.log("done parsing");
             $scope.$apply();

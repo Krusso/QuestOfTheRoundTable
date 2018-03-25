@@ -112,14 +112,14 @@
 
 /*WE ARE USING card-img FOR OUR CARDS. NOT class='card' since this is the cleanest way to dynamically change the background image (which is using directives. see app.js to find the directive)*/
 
-.playerHand div[card-img] {
+.playerHand .card1 {
     width: 4vw;
     height: 5.2vw;
     display: inline-block;
     float: left;
 }
 
-.playerHand div[card-img]:hover {
+.playerHand .card1:hover {
     margin-top: -2.5vw;
     margin-left: -2.5vw;
     width: 10vw;
@@ -276,7 +276,7 @@ div[card-img] {
 
 /*SIMILARLY WE ARE USING CARD-IMG NOT .CARD*/
 
-.middlecardContainer div[card-img] {
+.middlecardContainer .card1 {
     position: absolute;
     width: 10vw;
     height: 15vw;
@@ -284,7 +284,6 @@ div[card-img] {
     top: 2.5vw;
     float: left;
     z-index: 50;
-
 }
 
 
