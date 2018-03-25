@@ -79,7 +79,7 @@
     position: relative;
     width: 60%;
     height: 100%;
-    background-image: url("../gameResources/R%20Squire.png");
+    background-image: url("../gameResources/Squire.png");
     background-size: contain;
     background-repeat: no-repeat;
     float: left;
@@ -92,13 +92,40 @@
     float: left;
 }
 
-.playerZone .card {
+.playerHand .card {
     width: 4vw;
     height: 5.2vw;
-    background-image: url("../gameResources/Adventure%20Back.png");
     background-size: contain;
     background-repeat: no-repeat;
+    display: inline-block;
     float: left;
+}
+
+.playerHand .card:hover {
+    margin-top: -2.5vw;
+    margin-left: -2.5vw;
+    width: 10vw;
+    height: 13vw;
+    animation-name: cardhover;
+    animation-duration: 0.25s;
+}
+
+/*WE ARE USING card-img FOR OUR CARDS. NOT class='card' since this is the cleanest way to dynamically change the background image (which is using directives. see app.js to find the directive)*/
+
+.playerHand div[card-img] {
+    width: 4vw;
+    height: 5.2vw;
+    display: inline-block;
+    float: left;
+}
+
+.playerHand div[card-img]:hover {
+    margin-top: -2.5vw;
+    margin-left: -2.5vw;
+    width: 10vw;
+    height: 13vw;
+    animation-name: cardhover;
+    animation-duration: 0.25s;
 }
 
 .playerHand .card:hover {
@@ -177,6 +204,12 @@
     float: left;
 }
 
+div[card-img] {
+    width: 100px;
+    height: 150px;
+    color: #fff;
+}
+
 .opponentHandsContainer .card:hover {
     margin-left: -1vw;
     width: 6vw;
@@ -236,7 +269,22 @@
     background-size: contain;
     background-repeat: no-repeat;
     float: left;
+    z-index: 50;
 }
+
+/*SIMILARLY WE ARE USING CARD-IMG NOT .CARD*/
+
+.middlecardContainer div[card-img] {
+    position: absolute;
+    width: 10vw;
+    height: 15vw;
+    left: 2.5vw;
+    top: 2.5vw;
+    float: left;
+    z-index: 50;
+
+}
+
 
 .middlecardContainer .accept-decline-container {
     position: absolute;

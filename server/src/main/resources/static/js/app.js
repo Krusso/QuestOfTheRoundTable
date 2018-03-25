@@ -29,10 +29,15 @@ angular.module("gameApp.services", []);
 angular.module('gameApp.controllers').directive('cardImg', function () {
     return function (scope, element, attrs) {
         var url = attrs.cardImg;
+        if (url === null || url === "") {
+            return;
+        }
+        var res = url.replace(/ /g, "%20");
+        console.log(res);
         element.css({
-            'background-image': 'url(' + url + ')',
-            'background-size': '100px 150px',
-            'background-repeat': 'no-repeat'
+            'background-image': 'url(../gameResources/' + res + '.png)',
+            'background-size': 'contain',
+            'background-repeat': 'no-repeat',
         });
     };
 });

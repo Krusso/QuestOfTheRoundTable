@@ -90,5 +90,4 @@ public class GameController {
 	public void handleException(IllegalArgumentException ex) {
 		System.out.println("Got exception: " + ex.getMessage());
 	}
-
 }

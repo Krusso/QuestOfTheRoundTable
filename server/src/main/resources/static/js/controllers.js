@@ -18,29 +18,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
-    $scope.zones = {
-        "handZone": [],
-        "faceDownZone": [],
-        "faceUpZone": [],
-        "stage1Zone": [],
-        "stage2Zone": [],
-        "stage3Zone": [],
-        "stage4Zone": [],
-        "stage5Zone": []
-    };
-    $scope.addCard = function (n, id) {
-        var card = {
-            name: n,
-            id: ($scope.cardId++).toString(),
-            draggable: true
-        };
-
-        $scope.zones.handZone.push(card);
-    };
 
     $scope.serverList = [];
-
+    /*=========================================   *
+     *        Controller Variables: GameData    *
+     *=========================================== */
+    $scope.joinedGame = false;
+    $scope.myPlayerId;
     $scope.players = [];
+    $scope.stageZones = [];
+    $scope.middleCard = "";
 
     /*=========================================   *
      *            Controller Variables: Stage      *
@@ -166,12 +153,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     MessageService.receive().then(null, null, function (message) {
         console.log(message);
         $scope.messages.push(message);
-        console.log("All my messages: ");
-        console.log($scope.messages);
         if (message.messageType === "LISTSERVER") {
             $scope.serverList = message.games;
-            console.log("server list:");
-            console.log($scope.serverList);
         }
         if (message.messageType === "GAMESTART") {
             $location.path('/gameboard');
@@ -181,7 +164,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             var p = message.players; //array of strings that denote the player's name
             for (var i = 0; i < p.length; i++) {
                 var playerInfo = {
-                    name: p,
+                    name: p[i],
+                    id: i,
                     hand: [],
                     faceUp: [],
                     faceDown: [],
@@ -190,14 +174,19 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 };
                 $scope.players.push(playerInfo);
             }
-            console.log("currentPlayers");
-            console.log($scope.players);
+            if ($scope.joinedGame == false) {
+                $scope.myPlayerId = $scope.players.length - 1;
+                $scope.joinedGame = true;
+            }
         }
         if (message.messageType === "ADDCARDS") {
-            console.log($scope.players);
             var playerNum = message.player;
-            $scope.players[playerNum].hand = message.cards;
-            console.log($scope.players[playerNum].hand);
+            $scope.players[playerNum].hand = message.cards
+        }
+        if (message.messageType === "SHOWMIDDLECARD") {
+            $scope.middleCard = message.card;
+            console.log($scope.middleCard);
+            $scope.$apply();
         }
     });
 
@@ -376,6 +365,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
         }
         return false
+    }
+
+    $scope.getCardStyle = function (cardName) {
+        var cardUrl = cardName.replace(" ", "%20");
+        var style = "background-image: url(../gameResources" + cardUrl + ".png)";
+        console.log(style);
+        return style;
     }
 
 });
