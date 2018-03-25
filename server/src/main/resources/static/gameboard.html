@@ -48,8 +48,8 @@
             <div class="middlecardContainer">
                 <div c1 class="card1" card1="{{middleCard}}"></div>
                 <div class="accept-decline-container">
-                    <button class="btn-accept">Y</button>
-                    <button class="btn-decline">N</button>
+                    <button class="btn-accept" ng-click="sendAccept()">Y</button>
+                    <button class="btn-decline" ng-click="sendDecline()">N</button>
                 </div>
             </div>
             <div class="stageZone">
@@ -103,17 +103,17 @@
                 <div class="playerHand">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
                         <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
-                        </div>
                     </div>
-                    <!--
+                </div>
+                <!--
 <div ng-repeat="card in players[0].hand">
     {{card}}
 </div>
 -->
-                </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 <!--
 <script src="js/card.js">

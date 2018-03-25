@@ -26,7 +26,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.joinedGame = false;
     $scope.myPlayerId;
     $scope.players = [];
-    $scope.stageZones = [];
+    $scope.stageZones = [{
+        stage1: [],
+        stage2: [],
+        stage3: [],
+        stage4: [],
+        stage5: []
+    }];
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
 
@@ -82,15 +88,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         GAMEEND: 10
     });
     $scope.ZONE = Object.freeze({
-       FACEDOWN: 0,
-       FACEUP: 1,
-       DISCARD: 2,
-       STAGE1: 3,
-       STAGE2: 4,
-       STAGE3: 5,
-       STAGE4: 6,
-       STAGE5: 7,
-       HAND: 8
+        FACEDOWN: 0,
+        FACEUP: 1,
+        DISCARD: 2,
+        STAGE1: 3,
+        STAGE2: 4,
+        STAGE3: 5,
+        STAGE4: 6,
+        STAGE5: 7,
+        HAND: 8
     });
 
     $scope.uuid = null; //TODO: the uuid for the gamelobby not sure if still need this 
@@ -162,19 +168,18 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.addMessage($scope.ep_joinGame);
         console.log("got data");
     };
-    
-    $scope.sendPlayCardClient = function (from, to, cardID, endpoint){
-    	$scope.message = {
-    		TYPE: $scope.TYPE_GAME,
-    		messageType: $scope.MESSAGETYPES.JOINGAME,
-    		player: 0,
-    		card: cardID,
-    		zoneFrom: from,
-    		zoneTo: to,
-    		java_class: "PlayCardClient"
-    	};
-    	
-    	$scope.addMessage(endpoint);
+
+    $scope.sendPlayCardClient = function (from, to, cardID, endpoint) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.JOINGAME,
+            player: 0,
+            card: cardID,
+            zoneFrom: from,
+            zoneTo: to,
+            java_class: "PlayCardClient"
+        };
+        $scope.addMessage(endpoint);
     };
 
 
@@ -227,33 +232,64 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "ADDCARDS") {
                 var playerNum = message.player;
-                for (var i = 0; i < message.cards.length; i++){
-    				message.cards[i].zone = $scope.ZONE.HAND;
-				}
+                for (var i = 0; i < message.cards.length; i++) {
+                    message.cards[i].zone = $scope.ZONE.HAND;
+                }
                 $scope.players[playerNum].hand = message.cards;
             }
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
             }
-            
+
             // TODO all combinations here
-            if(message.messageType === "PLAYCARD"){
-            	console.log("trying to play card");
-            	for(var i = 0; i < $scope.tryingToPlay.length; i++){
-            		console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
-            		if($scope.tryingToPlay[i].value === message.card){
-            			console.log("same id");
-            			console.log(message.zoneTo);
-            			if(message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND"){
-            				$scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
-            				$scope.tryingToPlay.slice(i);
-            				break;
-            			}
-            		}
-            	}	
+            if (message.messageType === "PLAYCARD") {
+                console.log("trying to play card");
+                for (var i = 0; i < $scope.tryingToPlay.length; i++) {
+                    console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
+                    if ($scope.tryingToPlay[i].value === message.card) {
+                        console.log("same id");
+                        console.log(message.zoneTo);
+                        if (message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND") {
+                            $scope.tryingToPlay[i].zone = $scope.ZONE.HAND;
+                            $scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
+                            $scope.tryingToPlay.slice(i);
+                            break;
+                        }
+                        if (message.zoneTo === $scope.ZONE.STAGE1 || message.zoneTo === "STAGE1") {
+                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE1;
+                            $scope.stageZones.stage1.push($scope.tryingToPlay[i]);
+                            $scope.tryingToPlay.slice(i);
+                            break;
+                        }
+                        if (message.zoneTo === $scope.ZONE.STAGE2 || message.zoneTo === "STAGE2") {
+                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE2;
+                            $scope.stageZones.stage2.push($scope.tryingToPlay[i]);
+                            $scope.tryingToPlay.slice(i);
+                            break;
+                        }
+                        if (message.zoneTo === $scope.ZONE.STAGE3 || message.zoneTo === "STAGE3") {
+                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE3;
+                            $scope.stageZones.stage3.push($scope.tryingToPlay[i]);
+                            $scope.tryingToPlay.slice(i);
+                            break;
+                        }
+                        if (message.zoneTo === $scope.ZONE.STAGE4 || message.zoneTo === "STAGE4") {
+                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE4;
+                            $scope.stageZones.stage4.push($scope.tryingToPlay[i]);
+                            $scope.tryingToPlay.slice(i);
+                            break;
+                        }
+                        if (message.zoneTo === $scope.ZONE.STAGE5 || message.zoneTo === "STAGE5") {
+                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE5;
+                            $scope.stageZones.stage5.push($scope.tryingToPlay[i]);
+                            $scope.tryingToPlay.slice(i);
+                            break;
+                        }
+                    }
+                }
             }
-            
+
             console.log("done parsing");
             $scope.$apply();
         });
@@ -436,23 +472,24 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         return false
     }
-    
 
 
-  $scope.dropCallback = function(event, ui) {
-    console.log(ui);
-    console.log(ui.draggable.scope());
-    console.log($scope.players[$scope.myPlayerId].hand);
-    // TODO: take it from the correct place based on ui.draggle.scope().card.zone
-    $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function(e){
-    	if(ui.draggable.scope().card.value === e.value){
-    		$scope.tryingToPlay.push(e);
-    	}
-    	return ui.draggable.scope().card.value !== e.value;
-    });
-    console.log($scope.players[$scope.myPlayerId].hand);
-    // change destination based on current state
-    $scope.sendPlayCardClient($scope.ZONE.HAND, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
-  }
+
+    $scope.dropCallback = function (event, ui) {
+        console.log(ui);
+        console.log(ui.draggable.scope());
+        console.log($scope.players[$scope.myPlayerId].hand);
+        console.log(ui.draggable.scope().card.zone);
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+            if (ui.draggable.scope().card.value === e.value) {
+                $scope.tryingToPlay.push(e);
+            }
+            return ui.draggable.scope().card.value !== e.value;
+        });
+        console.log($scope.players[$scope.myPlayerId].hand);
+        // change destination based on current state
+        $scope.sendPlayCardClient($scope.ZONE.HAND, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+    }
 
 });
