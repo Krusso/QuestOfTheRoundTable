@@ -73,6 +73,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		cards.subscribe(this);
 		bid.subscribe(this);
 		stageSetup.subscribe(this);
+		discard.subscribe(this);
 	}
 	
 	public void setQuest(Quest quest, List<Player> sponsors) {
