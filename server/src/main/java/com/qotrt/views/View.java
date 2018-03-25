@@ -26,7 +26,7 @@ public abstract class View implements PropertyChangeListener {
 	
 	protected void sendMessage(String destination, Object e) {
 		System.out.println("sending message: " + e + " to desitination: " + destination);
-		
+
 		sendList.forEach(i -> {
 			messagingTemplate.convertAndSendToUser(i.getSessionID(),
 					"/queue/response",

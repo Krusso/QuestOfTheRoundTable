@@ -33,6 +33,7 @@ import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentFinishPickingClient;
 import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
+import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 import com.qotrt.model.RiggedModel.RIGGED;
 
 @RunWith(SpringRunner.class)
@@ -121,7 +122,7 @@ public class TestTournament {
 				"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals(4, tws.players.length);
-		assertEquals("Player tie", tws.response);
+		assertEquals(WINTYPES.TIE, tws.type);
 		
 		
 		p.waitForThenSend(TournamentPickCardsServer.class, 1,
@@ -131,7 +132,7 @@ public class TestTournament {
 		tws = p.take(TournamentWinServer.class);
 		assertEquals(1, tws.players.length);
 		assertEquals(3, tws.players[0]);
-		assertEquals("Player won", tws.response);
+		assertEquals(WINTYPES.WON, tws.type);
 	}
 	
 	@Test
@@ -202,13 +203,13 @@ public class TestTournament {
 				"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals(4, tws.players.length);
-		assertEquals("Player tie", tws.response);
+		assertEquals(WINTYPES.TIE, tws.type);
 		
 		p.waitForThenSend(TournamentPickCardsServer.class, 3,
 				"/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
 		tws = p.take(TournamentWinServer.class);
 		assertEquals(4, tws.players.length);
-		assertEquals("Player won", tws.response);
+		assertEquals(WINTYPES.WON, tws.type);
 	}
 
 	@Test
@@ -275,12 +276,12 @@ public class TestTournament {
 		pcs = p.take(PlayCardServer.class);
 		assertEquals(31, pcs.card);
 		pcs = p.take(PlayCardServer.class);
-		assertEquals("Cant play foe cards for tournament", pcs.response);
+		assertEquals("Cant play foe face down", pcs.response);
 		p.sendMessage("/app/game.finishSelectingTournament", new TournamentFinishPickingClient(3));
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
 		assertEquals(3, tws.players[0]);
 		assertEquals(1, tws.players.length);
-		assertEquals("Player won", tws.response);
+		assertEquals(WINTYPES.WON, tws.type);
 	}
 
 	@Test
@@ -328,7 +329,7 @@ public class TestTournament {
 		p.sendMessage("/app/game.joinTournament", tadc);
 
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
-		assertEquals("Only one participant joined", tws.response);
+		assertEquals(WINTYPES.ONEJOIN, tws.type);
 		assertEquals(1, tws.players.length);
 		assertEquals(1, tws.players[0]);
 	}
@@ -378,7 +379,7 @@ public class TestTournament {
 		p.sendMessage("/app/game.joinTournament", tadc);
 
 		TournamentWinServer tws = p.take(TournamentWinServer.class);
-		assertEquals("No Players join the tournament", tws.response);
+		assertEquals(WINTYPES.NOJOIN, tws.type);
 		assertEquals(0, tws.players.length);
 	}
 

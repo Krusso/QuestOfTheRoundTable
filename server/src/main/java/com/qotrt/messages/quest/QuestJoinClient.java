@@ -8,6 +8,8 @@ public class QuestJoinClient extends Message {
 
 	public boolean joined;
 	
+	public QuestJoinClient() {}
+	
 	public QuestJoinClient(int player, boolean joined) {
 		super(player);
 		this.joined = joined;
@@ -15,7 +17,7 @@ public class QuestJoinClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINQUEST;
+		this.messageType = MESSAGETYPES.JOINQUEST;
 	}
 
 }

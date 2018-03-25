@@ -29,6 +29,9 @@ public class Quest {
 		this.questCard = questCard;
 		this.stages = questCard.getNumStages();
 		this.quest = new Stage[questCard.getNumStages()];
+		for(int i = 0; i < questCard.getNumStages(); i++) {
+			quest[i] = new Stage();
+		}
 		this.qm = qm;
 	}
 
@@ -40,6 +43,10 @@ public class Quest {
 			e.printStackTrace();
 		}
 		
+		for(Stage stage: quest) {
+			System.out.println("stage: " + Arrays.toString(stage.getStageCards().stream().
+					map(i -> i.getName()).toArray(String[]::new)));
+		}
 		currentStage = 0;
 	}
 

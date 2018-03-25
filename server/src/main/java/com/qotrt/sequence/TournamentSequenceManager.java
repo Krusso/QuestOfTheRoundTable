@@ -12,6 +12,7 @@ import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.TournamentCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
+import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.TournamentModel;
 
@@ -47,13 +48,13 @@ public class TournamentSequenceManager extends SequenceManager {
 		// determining if anyone joined
 		pm.drawCards(participants, 1);
 		if(participants.size() == 0) {
-			tm.setMessage("No Players join the tournament");
+			tm.setMessage(WINTYPES.NOJOIN);
 			tm.setWinners(new ArrayList<Player>());
 			logger.info("No Players joined the tournament");
 			return;
 		} else if(participants.size() == 1) {
 			pm.changeShields(participants, card.getShields() + 1);
-			tm.setMessage("Only one participant joined");
+			tm.setMessage(WINTYPES.ONEJOIN);
 			tm.setWinners(participants);
 			logger.info("Only one participant joined");
 			return;
@@ -85,7 +86,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			logger.info("Tie going again");
 			// tie do tournament again
 			pm.discardWeapons(participants);
-			tm.setMessage("Player tie");
+			tm.setMessage(WINTYPES.TIE);
 			tm.setWinners(winners);
 			
 			// question players for cards to play
@@ -106,13 +107,13 @@ public class TournamentSequenceManager extends SequenceManager {
 			winners = bpc.calculateHighest(winners, null);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			tm.setMessage("Player won");
+			tm.setMessage(WINTYPES.WON);
 			tm.setWinners(winners);
 			logger.info("Winners: " + winners);
 		} else {
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);
-			tm.setMessage("Player won");
+			tm.setMessage(WINTYPES.WON);
 			tm.setWinners(winners);
 			logger.info("Winners: " + winners);
 		}

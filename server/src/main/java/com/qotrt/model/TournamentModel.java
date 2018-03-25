@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 import com.qotrt.confirmation.Confirmation;
 import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 
-public class TournamentModel extends Observable implements PropertyChangeListener {
+public class TournamentModel extends Observable implements PropertyChangeListener, CanPick {
 
 	private Confirmation join = new MultiShotConfirmation("questiontournament", 
 			"jointournament", 
@@ -32,10 +33,10 @@ public class TournamentModel extends Observable implements PropertyChangeListene
 		fireEvent(arg0.getPropertyName(), arg0.getOldValue(), arg0.getNewValue());
 	}
 	
-	private String message;
+	private WINTYPES message;
 
-	public synchronized void setMessage(String message) {
-		this.message = message;
+	public synchronized void setMessage(WINTYPES win) {
+		this.message = win;
 	}
 
 	public synchronized void questionJoinPlayers(Iterator<Player> players) {

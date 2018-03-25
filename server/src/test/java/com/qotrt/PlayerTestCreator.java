@@ -87,11 +87,12 @@ public class PlayerTestCreator {
 	public <T> T take(Class<T> ca) {
 		Message message1;
 		try {
-			while((message1 = messages.poll(10, SECONDS)) != null) {
+			while((message1 = messages.poll(20, SECONDS)) != null) {
 				System.out.println("checking type of: " + message1);
 				System.out.println("type match: " + ca.isInstance(message1));
 				ObjectMapper mapper = new ObjectMapper();
 				try {
+					System.out.println("returning: " + mapper.convertValue(message1, ca));
 					return mapper.convertValue(message1, ca);
 				} catch(IllegalArgumentException e) {
 					System.out.println("-------");
@@ -107,6 +108,15 @@ public class PlayerTestCreator {
 		System.out.println("couldnt find: " + ca);
 		return null;
 	}
+	
+	public <T extends Message> T take(Class<T> ca, int player) {
+		while(true) {
+			T tads = take(ca);
+			System.out.println("tads: " + tads);
+			if(tads.player == player) { return tads; }
+		}
+	}
+	
 
 	private List<Transport> createTransportClient() {	
 		List<Transport> transports = new ArrayList<>();
@@ -118,7 +128,8 @@ public class PlayerTestCreator {
 			Object objectToSend) {
 		while(true) {
 			T tads = take(class1);
-			if(tads.player == 0) { break; }
+			System.out.println("tads: " + tads);
+			if(tads.player == player) { break; }
 		}
 
 		sendMessage(destination, objectToSend);
@@ -145,10 +156,5 @@ public class PlayerTestCreator {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-	}
-	
-	public void execute(Runnable thread, int y) {
-		final int x = y;
-		thread.run();
 	}
 }

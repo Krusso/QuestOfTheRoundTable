@@ -9,7 +9,10 @@ import org.springframework.stereotype.Controller;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
+import com.qotrt.messages.quest.QuestBidClient;
+import com.qotrt.messages.quest.QuestDiscardCardsClient;
 import com.qotrt.messages.quest.QuestJoinClient;
+import com.qotrt.messages.quest.QuestPickCardsClient;
 import com.qotrt.messages.quest.QuestPickStagesClient;
 import com.qotrt.messages.quest.QuestSponsorClient;
 
@@ -20,8 +23,8 @@ public class QuestController {
 	@Autowired
 	private Hub hub;
 
-	@MessageMapping("/game.sponsorTournament")
-	public void sponsorTournament(SimpMessageHeaderAccessor headerAccessor, 
+	@MessageMapping("/game.sponsorQuest")
+	public void sponsorQuest(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload QuestSponsorClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
@@ -34,9 +37,21 @@ public class QuestController {
 		}
 	}
 	
+	@MessageMapping("/game.bid")
+	public void bid(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload QuestBidClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		if(chatMessage.bid != -1) {
+			game.bmm.getQuestModel().bid(player, chatMessage.bid);
+		} else {
+			game.bmm.getQuestModel().declineBid(player);
+		}
+	}
+	
 	@MessageMapping("/game.finishSelectingQuestCards")
 	public void finishSelectingQuestCards(SimpMessageHeaderAccessor headerAccessor, 
-			@Payload QuestPickStagesClient chatMessage) {
+			@Payload QuestPickCardsClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		System.out.println("finish selecting cards: " + chatMessage.player);
@@ -50,6 +65,15 @@ public class QuestController {
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		System.out.println("finish selecting cards: " + chatMessage.player);
 		game.bmm.getQuestModel().finishSelectingStages(player);
+	}
+	
+	@MessageMapping("/game.finishDiscard")
+	public void finishDiscard(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload QuestDiscardCardsClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		System.out.println("finish discard cards: " + chatMessage.player);
+		game.bmm.getQuestModel().finishDiscard(player);
 	}
 	
 	@MessageMapping("/game.joinQuest")	

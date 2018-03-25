@@ -301,8 +301,6 @@ public class PlayerManager {
 	}
 
 	public void nextTurn() {
-		// TODO: probably need to reset some attributes there
-		// like questioning etc
 		actualPlayer++;
 		if(actualPlayer >= players.length) {
 			actualPlayer = 0;

@@ -5,14 +5,19 @@ import com.qotrt.messages.Message;
 // from server
 public class QuestJoinServer extends Message {
 
-	public QuestJoinServer(int player) {
+	public int[] players;
+	
+	public QuestJoinServer() {}
+	
+	public QuestJoinServer(int player, int[] players) {
 		super(player);
+		this.players = players;
 	}
 	
 	//from server
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.JOINQUEST;
+		this.messageType = MESSAGETYPES.JOINQUEST;
 	}
 
 }

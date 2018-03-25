@@ -10,10 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qotrt.calculator.BattlePointCalculator;
+import com.qotrt.calculator.BidCalculator;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
+import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.QuestModel;
@@ -57,13 +59,14 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// determining if anyone decided to sponsor
 		List<Player> sponsors = qm.getPlayerWhoSponsor();
+		System.out.println("sponsors: " + sponsors);
 		if(sponsors.size() == 0) {
-			qm.setMessage("No Player Sponsored the Tournament");
+			qm.setMessage(WINTYPES.NOSPONSOR);
 			qm.setWinners(new ArrayList<Player>());
 			return;
 		}
 		Player sponsor = sponsors.get(0);
-		
+
 		quest = new Quest(card, qm);
 		qm.setQuest(quest, sponsors);
 		quest.setUpQuest();
@@ -77,6 +80,7 @@ public class QuestSequenceManager extends SequenceManager {
 			}
 		});
 
+		System.out.println("questioning players about joining");
 		qm.questionJoinQuest(potentialQuestPlayers);
 
 		// Wait for responses
@@ -90,61 +94,64 @@ public class QuestSequenceManager extends SequenceManager {
 
 		List<Player> winners = new ArrayList<Player>(participants);
 
-		if(participants.size() != 0) {
-			while(winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
-				logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
-				pm.drawCards(winners, 1);
-				if (quest.currentStageType() == TYPE.FOES) {
+		while(participants.size() != 0 && winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
+			logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
+			pm.drawCards(winners, 1);
+			if (quest.currentStageType() == TYPE.FOES) {
 
-					qm.questionCardsStage();
-					try {
-						logger.info("Waiting for 60 seconds for users to pick their cards");
-						qm.cardsLatch().await(60, TimeUnit.SECONDS);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-					qm.finishPicking();
+				qm.questionCardsStage();
+				try {
+					logger.info("Waiting for 60 seconds for users to pick their cards");
+					qm.cardsLatch().await(60, TimeUnit.SECONDS);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				qm.finishPicking();
 
-					//					pm.flipStage(sponsor, quest.getCurrentStage());
-					qm.flipStage();
+				qm.flipStage();
 
-					quest.battleFoe(winners, pm);
-					pm.discardWeapons(participants);
-				} else if (quest.currentStageType() == TYPE.TESTS) {
-					qm.flipStage();
-					//					pm.flipStage(sponsor, quest.getCurrentStage());
+				quest.battleFoe(winners, pm);
+				pm.discardWeapons(participants);
+			} else if (quest.currentStageType() == TYPE.TESTS) {
+				qm.flipStage();
 
-					qm.questionBid(winners);
-					try {
-						logger.info("Waiting for users to finish bidding");
-						qm.bidLatch().await(60, TimeUnit.SECONDS);
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
+				if(winners.size() == 1) {
+					qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") &&
+							card.getName().equals("Search for the Questing Beast") ? 4 : 3));	
+				} else {
+					qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") && card.getName().equals("Search for the Questing Beast")
+							? 4 : (card.getName().equals("Test of Morgan Le Fey") ? 3 : 1)));
+				}
+				try {
+					logger.info("Waiting for users to finish bidding");
+					qm.bidLatch().await(60, TimeUnit.SECONDS);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 
-					List<Player> bidWinner = qm.getBidWinner();
-					if(bidWinner.size() == 0 || bidWinner.get(0) == null) {
-						winners.clear();
-						break;
-					}
-
-					qm.discardCards(bidWinner);
+				logger.info("users finished bidding");
+				
+				List<Player> bidWinner = qm.getBidWinner();
+				int maxBid = qm.getMaxBid();
+				if(bidWinner.size() == 0 || bidWinner.get(0) == null) {
+					winners.clear();
+				} else {
+					qm.discardCards(bidWinner, maxBid);
 					try {
 						logger.info("Waiting for user to finish discarding");
 						qm.discardLatch().await();
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
-					// TODO: discards
-					//pm.discardFromHand(bidWinner, qm.getDiscardCards());
+					
 					winners.clear();
 					winners.add(bidWinner.get(0));
 				}
-				logger.info("# of Players still in quest: " + winners.size());
-				quest.advanceStage();
-				qm.setMessage("Pass Stage");
-				qm.passStage(winners);
 			}
+			logger.info("# of Players still in quest: " + winners.size());
+			quest.advanceStage();
+			qm.setMessage(WINTYPES.PASSSTAGE);
+			qm.passStage(winners);
 		}
 
 		if(winners.size() > 0) {
@@ -162,11 +169,11 @@ public class QuestSequenceManager extends SequenceManager {
 
 		if(participants.size() != 0) {
 			logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));
-			qm.setMessage("Tournament Winners");
+			qm.setMessage(WINTYPES.WON);
 			qm.setWinners(winners);
 		} else {
 			logger.info("No player join the tournament");
-			qm.setMessage("No Player Joined the Tournament");
+			qm.setMessage(WINTYPES.NOJOIN);
 			qm.setWinners(new ArrayList<Player>());
 		}
 

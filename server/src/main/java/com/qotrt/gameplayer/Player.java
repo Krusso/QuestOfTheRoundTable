@@ -12,7 +12,6 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.Card;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Rank.RANKS;
-import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.model.GenericPair;
 import com.qotrt.model.Observable;
 import com.qotrt.model.UIPlayer;

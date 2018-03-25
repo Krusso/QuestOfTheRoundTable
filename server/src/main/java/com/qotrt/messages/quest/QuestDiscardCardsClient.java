@@ -1,19 +1,19 @@
 package com.qotrt.messages.quest;
 
-import src.messages.Message;
+import com.qotrt.messages.Message;
 
 //from Client
 public class QuestDiscardCardsClient extends Message {
-	public String[] cards;
+
+	public QuestDiscardCardsClient() {}
 	
-	public QuestDiscardCardsClient(int player, String[] cards) {
+	public QuestDiscardCardsClient(int player) {
 		super(player);
-		this.cards = cards;
 	}
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.DISCARDQUEST;
+		this.messageType = MESSAGETYPES.DISCARDQUEST;
 	}
 
 }
