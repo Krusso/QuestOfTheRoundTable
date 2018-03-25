@@ -14,7 +14,7 @@ import com.qotrt.cards.WeaponCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
-import com.qotrt.views.View;
+import com.qotrt.views.Observer;
 
 public class PlayerManager {
 
@@ -22,7 +22,6 @@ public class PlayerManager {
 	private int currentPlayer = -1;
 	private DeckManager dm;
 	private RIGGED rigged;
-	//private DiscardSequenceManager dsm;
 
 	public Player[] players;
 	public PlayerManager(int numPlayers, UIPlayer[] uiPlayer, DeckManager dm, RIGGED rigged2) {
@@ -360,9 +359,22 @@ public class PlayerManager {
 		return winners.get();
 	}
 
-	public void subscribe(View pv) {
+	public void subscribe(Observer pv) {
 		for(Player p: players) {
+			System.out.println("player subscription: " + pv + " p: " + p);
 			p.subscribe(pv);
 		}
+		System.out.println("finished setting up player subscriptions");
+	}
+
+	public Boolean iseultExists() {
+		for(Player p: players) {
+			for(AdventureCard c: p.getFaceUp().getDeck()) {
+				if(c.getName().equals("Queen Iseult")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

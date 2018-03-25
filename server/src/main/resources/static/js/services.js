@@ -28,7 +28,7 @@ angular.module("gameApp.services").service("MessageService", function ($rootScop
      *
      */
     service.send = function (message, endpoint) {
-        socket.stomp.send(endpoint, {}, JSON.stringify(message));
+        socket.stomp.send(endpoint, {}, angular.toJson(message));
     };
 
     var reconnect = function () {

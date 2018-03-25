@@ -16,7 +16,7 @@
             <div class="AI">
                 <button class="aiDelete" ng-click="deleteAI(ai.num)">DELETE</button>
                 AI {{ai.num}} <br>
-                Strategy : <select class="stratSelect" ng-model="strat" ng-options="s for s in strats"></select>
+                Strategy : <select class="stratSelect" ng-model="ai.strat" ng-options="s for s in strats"></select>
                 <br><br>
             </div>
         </div>
@@ -30,6 +30,7 @@
                     <div class="info">
                     Name: {{game.gameName}} </br>
                     NumPlayers: {{game.players}} </br>
+                    NumAIPlayers: {{game.aicount}} </br>
                     Capacity:{{game.capacity}} </br></br>
                     </div>
                     <a href="#!inlobby">

@@ -28,6 +28,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.players = [];
     $scope.stageZones = [];
     $scope.middleCard = "";
+    $scope.tryingToPlay = [];
 
     /*=========================================   *
      *            Controller Variables: Stage      *
@@ -80,6 +81,17 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         AIQUEST2: 9,
         GAMEEND: 10
     });
+    $scope.ZONE = Object.freeze({
+       FACEDOWN: 0,
+       FACEUP: 1,
+       DISCARD: 2,
+       STAGE1: 3,
+       STAGE2: 4,
+       STAGE3: 5,
+       STAGE4: 6,
+       STAGE5: 7,
+       HAND: 8
+    });
 
     $scope.uuid = null; //TODO: the uuid for the gamelobby not sure if still need this 
 
@@ -87,6 +99,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_joinGame = "/app/game.joinGame";
     $scope.ep_listGames = "/app/game.listGames";
     $scope.ep_createGame = "/app/game.createGame";
+    $scope.ep_playCardQuestSetup = "/app//game.playCardQuestSetup";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -121,7 +134,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             rigged: $scope.RIGGED.NORMAL,
             playerName: $scope.pname,
             gameName: gName,
-            ais: ais[0],
+            ais: ais,
             java_class: "GameCreateClient"
         }
         $scope.addMessage($scope.ep_createGame);
@@ -148,6 +161,20 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         };
         $scope.addMessage($scope.ep_joinGame);
         console.log("got data");
+    };
+    
+    $scope.sendPlayCardClient = function (from, to, cardID, endpoint){
+    	$scope.message = {
+    		TYPE: $scope.TYPE_GAME,
+    		messageType: $scope.MESSAGETYPES.JOINGAME,
+    		player: 0,
+    		card: cardID,
+    		zoneFrom: from,
+    		zoneTo: to,
+    		java_class: "PlayCardClient"
+    	};
+    	
+    	$scope.addMessage(endpoint);
     };
 
 
@@ -200,11 +227,31 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "ADDCARDS") {
                 var playerNum = message.player;
-                $scope.players[playerNum].hand = message.cards
+                for (var i = 0; i < message.cards.length; i++){
+    				message.cards[i].zone = $scope.ZONE.HAND;
+				}
+                $scope.players[playerNum].hand = message.cards;
             }
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
+            }
+            
+            // TODO all combinations here
+            if(message.messageType === "PLAYCARD"){
+            	console.log("trying to play card");
+            	for(var i = 0; i < $scope.tryingToPlay.length; i++){
+            		console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
+            		if($scope.tryingToPlay[i].value === message.card){
+            			console.log("same id");
+            			console.log(message.zoneTo);
+            			if(message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND"){
+            				$scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
+            				$scope.tryingToPlay.slice(i);
+            				break;
+            			}
+            		}
+            	}	
             }
             
             console.log("done parsing");
@@ -250,8 +297,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         l = $scope.ais.length;
         if (l + 1 < np) {
             $scope.ais.push({
-                num: l + 1
+                num: l + 1,
+                strat: 1
             });
+            console.log($scope.ais);
         } else {
             $scope.showStatus("Max AIs", $scope.status);
         }
@@ -387,4 +436,23 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         return false
     }
+    
+
+
+  $scope.dropCallback = function(event, ui) {
+    console.log(ui);
+    console.log(ui.draggable.scope());
+    console.log($scope.players[$scope.myPlayerId].hand);
+    // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+    $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function(e){
+    	if(ui.draggable.scope().card.value === e.value){
+    		$scope.tryingToPlay.push(e);
+    	}
+    	return ui.draggable.scope().card.value !== e.value;
+    });
+    console.log($scope.players[$scope.myPlayerId].hand);
+    // change destination based on current state
+    $scope.sendPlayCardClient($scope.ZONE.HAND, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+  }
+
 });

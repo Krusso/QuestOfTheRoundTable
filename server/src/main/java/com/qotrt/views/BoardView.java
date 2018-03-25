@@ -7,7 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.messages.game.MiddleCardServer;
 
-public class BoardView extends View {
+public class BoardView extends Observer {
 
 	public BoardView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);

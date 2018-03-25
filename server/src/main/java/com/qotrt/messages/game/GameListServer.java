@@ -25,7 +25,8 @@ public class GameListServer extends Message  {
 			games[i] = new GameDisplay(gamelist.get(i).getUUID(),
 					gamelist.get(i).getPlayerCount(),
 					gamelist.get(i).getGameName(),
-					gamelist.get(i).getPlayerCapacity());
+					gamelist.get(i).getPlayerCapacity(),
+					gamelist.get(i).getAICount());
 		}
 	}
 

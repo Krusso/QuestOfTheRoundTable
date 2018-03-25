@@ -1,11 +1,7 @@
 package com.qotrt.controller;
 
 import java.util.ArrayList;
-
 import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -14,9 +10,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.qotrt.game.Game;
 import com.qotrt.hub.Hub;
+import com.qotrt.messages.game.AIPlayer;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
@@ -33,18 +31,6 @@ public class GameController {
 	@Autowired
 	private Hub hub;
 
-	@PostConstruct
-	private void init() {
-		//activeSessionManager.registerListener(this);
-		System.out.println("created");
-	}
-
-	@PreDestroy
-	private void destroy() {
-		//activeSessionManager.removeListener(this);
-		System.out.println("deleted");
-	}
-
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
 		UUID uuid = hub.addGame(chatMessage.getGameName(), chatMessage.getNumPlayers(), chatMessage.getRigged(), chatMessage.getAis());
@@ -53,10 +39,9 @@ public class GameController {
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());
-
-		gjc.setGameName(chatMessage.getGameName());
 		this.joinGame(headerAccessor, gjc);
 		System.out.println("created game");
+
 	}
 
 	@MessageMapping("/game.listGames")
@@ -72,11 +57,6 @@ public class GameController {
 				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));
 	}
 
-	// @MessageMapping("/game.listPlayers")
-	// public void listPlayers(SimpMessageHeaderAccessor headerAccessor, @Payload PlayerListClient chatMessage) {
-	// 	//
-	// }
-
 	@MessageMapping("/game.joinGame")
 	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {
 		System.out.println("joining game");
@@ -86,8 +66,13 @@ public class GameController {
 		hub.addPlayer(player, chatMessage.getUuid());
 	}
 
-	@MessageExceptionHandler
-	public void handleException(IllegalArgumentException ex) {
+	@MessageExceptionHandler(Exception.class)
+	public void handleException(Exception ex) {
 		System.out.println("Got exception: " + ex.getMessage());
 	}
+	
+	@ExceptionHandler(Exception.class)
+	public void handleError(Exception ex) {
+		System.out.println("Got exception1: " + ex.getMessage());
+	  }
 }

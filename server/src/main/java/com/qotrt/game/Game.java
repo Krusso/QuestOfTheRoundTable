@@ -12,6 +12,7 @@ import com.google.common.eventbus.EventBus;
 import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
+import com.qotrt.gameplayer.AIPlayer;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
@@ -29,7 +30,7 @@ import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
 import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
-import com.qotrt.views.View;
+import com.qotrt.views.Observer;
 
 public class Game extends Observable {
 
@@ -38,9 +39,9 @@ public class Game extends Observable {
 	private UUID uuid = UUID.randomUUID();
 	private int gameSize;
 	private String gameName;
-	private Object ais;
 	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
+	private ArrayList<AIPlayer> aiplayers = new ArrayList<AIPlayer>();
 	private PlayerManager pm;
 	private HubView hv;
 	private RIGGED rigged;
@@ -50,12 +51,15 @@ public class Game extends Observable {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, Object ais) {
+	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, com.qotrt.messages.game.AIPlayer[] aiPlayers2) {
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
-		this.ais = ais;
+		for(com.qotrt.messages.game.AIPlayer x: aiPlayers2) {
+			System.out.println("strategy: " + x.strat);
+			aiplayers.add(new AIPlayer(x.strat,this));
+		}
 		logger.info("messaging template: " + this.messagingTemplate);
 		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
@@ -78,7 +82,12 @@ public class Game extends Observable {
 				fireEvent("gameStart", null, 1);
 				EventBus eventBus = new EventBus();
 
+				for(int i = 0; i < aiplayers.size(); i++) {
+					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
+				}
+				
 				// model creation
+				System.out.println("creating models");
 				BoardModel bm = new BoardModel(eventBus);
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
@@ -90,31 +99,50 @@ public class Game extends Observable {
 				bmm = new BoardModelMediator(tm, qm, bm);
 
 				// view creation
-				View pv = new PlayerView(messagingTemplate);
-				View bv = new BoardView(messagingTemplate);
-				View tv = new TournamentView(messagingTemplate);
-				View qv = new QuestView(messagingTemplate);
-
+				System.out.println("creating views");
+				Observer pv = new PlayerView(messagingTemplate);
+				Observer bv = new BoardView(messagingTemplate);
+				Observer tv = new TournamentView(messagingTemplate);
+				Observer qv = new QuestView(messagingTemplate);
+				
 				// adding websocket session ids to each view 
+				System.out.println("setting up subscriptions");
 				players.forEach(i -> { 
+					System.out.println("setting up player subscriptions");
 					pv.addWebSocket(i);
 					bv.addWebSocket(i);
 					tv.addWebSocket(i);
 					qv.addWebSocket(i);
 				});
 
+				System.out.println("setting up model subscriptions");
 				// subscriptions
+				System.out.println("setting up pm subscription");
 				pm.subscribe(pv);
+				System.out.println("setting up bm subscription");
 				bm.subscribe(bv);
+				System.out.println("setting up tm subscription");
 				tm.subscribe(tv);
+				System.out.println("setting up qm subscription");
 				qm.subscribe(qv);
 
 				// TODO: use this
 				// eventBus.register(bv);
 				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
 				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
+				System.out.println("starting pm");
 				pm.start();
-
+				
+				System.out.println("starting AI players");
+				for(int i = 0; i < aiplayers.size(); i++) {
+					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm);
+					bm.subscribe(aiplayers.get(i));
+					tm.subscribe(aiplayers.get(i));
+					qm.subscribe(aiplayers.get(i));
+				}
+				
+				System.out.println("finished setup");
+				
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 				while(true) {
 					logger.info("Next Turn");
@@ -171,7 +199,7 @@ public class Game extends Observable {
 		hv.addWebSocket(player);
 		fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
 
-		if(players.size() == gameSize) {
+		if(players.size() + aiplayers.size() == gameSize) {
 			startGame();
 		}
 
@@ -189,5 +217,11 @@ public class Game extends Observable {
 
 	public String getGameName() {
 		return this.gameName;
+	}
+
+	
+	
+	public int getAICount() {
+		return aiplayers.size();
 	}
 }

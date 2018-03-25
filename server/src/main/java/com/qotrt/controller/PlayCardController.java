@@ -96,7 +96,7 @@ public class PlayCardController {
 
 	private void playCard(Game game, Player player, CanPick pick, PlayCardClient chatMessage) {
 		if(chatMessage.zoneTo.equals(ZONE.FACEDOWN) && 
-				pick.canPick()) {
+				chatMessage.zoneFrom.equals(ZONE.HAND) && pick.canPick()) {
 			String response = verifyFaceDownCard(player, chatMessage.card);
 			if(response.equals("")) {
 				player.setFaceDown(player.getCardByID(chatMessage.card));
@@ -106,7 +106,7 @@ public class PlayCardController {
 				invalidMove(game, player, chatMessage, response);
 			}
 		} else if(chatMessage.zoneTo.equals(ZONE.HAND) && 
-				pick.canPick()) {
+				chatMessage.zoneFrom.equals(ZONE.FACEDOWN) && pick.canPick()) {
 			player.setBackToHandFromFaceDown(chatMessage.card);
 			validMove(game, player, chatMessage);
 		} else {

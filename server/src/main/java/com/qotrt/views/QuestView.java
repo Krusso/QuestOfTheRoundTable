@@ -15,7 +15,7 @@ import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
 
-public class QuestView extends View {
+public class QuestView extends Observer {
 
 	public QuestView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);

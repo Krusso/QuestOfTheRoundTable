@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import com.qotrt.game.Game;
+import com.qotrt.messages.game.AIPlayer;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
@@ -36,8 +37,8 @@ public class Hub {
 		return null;
 	}
 
-	public synchronized UUID addGame(String gameName, int numPlayers, RIGGED rigged, Object ais) {
-		Game game = new Game(messagingTemplate, gameName, numPlayers, rigged, ais);
+	public synchronized UUID addGame(String gameName, int numPlayers, RIGGED rigged, AIPlayer[] aiPlayers) {
+		Game game = new Game(messagingTemplate, gameName, numPlayers, rigged, aiPlayers);
 		games.add(game);
 		System.out.println("added game");
 		System.out.println("games size: " + games.size());

@@ -8,11 +8,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.util.WebSocketUtil;
 
-public abstract class View implements PropertyChangeListener {
+public abstract class Observer implements PropertyChangeListener {
 
-	protected View() {}
+	protected Observer() {}
 	
-	public View(SimpMessagingTemplate messagingTemplate) {
+	public Observer(SimpMessagingTemplate messagingTemplate) {
 		this.messagingTemplate = messagingTemplate;
 		this.sendList = new ArrayList<UIPlayer>();
 	}

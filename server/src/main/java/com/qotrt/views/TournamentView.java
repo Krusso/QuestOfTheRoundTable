@@ -12,7 +12,7 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
 
-public class TournamentView extends View {
+public class TournamentView extends Observer {
 
 	public TournamentView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);
