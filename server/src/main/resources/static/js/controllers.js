@@ -206,6 +206,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
             }
+            
             console.log("done parsing");
             $scope.$apply();
         });

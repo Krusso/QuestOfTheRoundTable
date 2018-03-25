@@ -46,7 +46,7 @@
         <!--    MIDDLE SECTION (Middle card/Stage cards/ discard pile/buttons)        -->
         <div class="middleContainer">
             <div class="middlecardContainer">
-                <div card-img="{{middleCard}}"></div>
+                <div c1 class="card1" card1="{{middleCard}}"></div>
                 <div class="accept-decline-container">
                     <button class="btn-accept">Y</button>
                     <button class="btn-decline">N</button>
@@ -102,7 +102,7 @@
                 <div class="playerFaceDown"></div>
                 <div class="playerHand">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
-                        <div card-img="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable>
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                         </div>
                     </div>
                     <!--
