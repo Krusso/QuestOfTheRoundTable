@@ -1,10 +1,12 @@
 package com.qotrt.messages.quest;
 
-import src.messages.Message;
+import com.qotrt.messages.Message;
 
 // from server
 public class QuestDiscardCardsServer extends Message {
 	public int cardsToDiscard;
+	
+	public QuestDiscardCardsServer() {}
 	
 	public QuestDiscardCardsServer(int player, int cardsToBid) {
 		super(player);

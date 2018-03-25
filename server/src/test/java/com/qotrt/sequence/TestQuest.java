@@ -27,6 +27,7 @@ import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.quest.QuestBidClient;
 import com.qotrt.messages.quest.QuestBidServer;
+import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsClient;
@@ -72,24 +73,47 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT));
+							new GameCreateClient(3, "hello", RIGGED.ONESTAGETOURNAMENT));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
 					
-					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(0, -1));
+					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(1, 1));
+					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(1, 3));
+					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(1, -1));
+					
+					QuestDiscardCardsServer qdcs = p.take(QuestDiscardCardsServer.class);
+					assertEquals(1, qdcs.player);
+					assertEquals(3, qdcs.cardsToDiscard);
+			}
+		};
+		
+		Runnable thread3 = new Runnable() {
+			@Override
+			public void run() {
+					PlayerTestCreator p = new PlayerTestCreator();
+					p.connect(WEBSOCKET_URI);
+					p.joinGame();
+					p.waitForThenSend(QuestJoinServer.class, 1, 
+							"/app/game.joinQuest", new QuestJoinClient(1, true));
+					
+					p.take(QuestBidServer.class);
+					p.waitForThenSend(QuestBidServer.class, 1, "/app/game.bid", new QuestBidClient(1, 2));
+					p.waitForThenSend(QuestBidServer.class, 1, "/app/game.bid", new QuestBidClient(1, -1));
 			}
 		};
 		
 		new Thread(thread2).start();
 		Thread.sleep(1000);
+		new Thread(thread3).start();
+		Thread.sleep(1000);
 		PlayerTestCreator p = new PlayerTestCreator();
 		p.connect(WEBSOCKET_URI);
 		p.joinGame();
-		p.waitForThenSend(QuestSponsorServer.class, 1,
-				"/app/game.sponsorQuest", new QuestSponsorClient(1, true));
-		p.waitForThenSend(QuestPickStagesServer.class, 1, "/app/game.playCardQuestSetup",
-				new PlayCardClient(1, 152, ZONE.HAND, ZONE.STAGE1));
+		p.waitForThenSend(QuestSponsorServer.class, 2,
+				"/app/game.sponsorQuest", new QuestSponsorClient(2, true));
+		p.waitForThenSend(QuestPickStagesServer.class, 2, "/app/game.playCardQuestSetup",
+				new PlayCardClient(2, 152, ZONE.HAND, ZONE.STAGE1));
 		PlayCardServer pcs = p.take(PlayCardServer.class);
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
@@ -98,11 +122,14 @@ public class TestQuest {
 		
 		QuestWinServer qws = p.take(QuestWinServer.class);
 		assertEquals(WINTYPES.PASSSTAGE, qws.type);
-		assertEquals(0, qws.players.length);
+		assertEquals(1, qws.players.length);
+		assertEquals(0, qws.players[0]);
 		
 		qws = p.take(QuestWinServer.class);
 		assertEquals(WINTYPES.WON, qws.type);
-		assertEquals(0, qws.players.length);
+		assertEquals(1, qws.players.length);
+		assertEquals(0, qws.players[0]);
+		
 	}
 	
 	@Test

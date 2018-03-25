@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.messages.quest.QuestBidServer;
+import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsServer;
 import com.qotrt.messages.quest.QuestPickStagesServer;
@@ -53,6 +54,10 @@ public class QuestView extends View {
 		sendMessage("/queue/response", new QuestBidServer(e[0], e[1], e[2], e[3]));
 	}
 	
+	private void discardQuest(GenericPair e) {
+		sendMessage("/queue/response", new QuestDiscardCardsServer(((int[])e.key)[0], (int) e.value));
+	}
+	
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("event got fired: " + evt.getPropertyName());
 		
@@ -82,6 +87,10 @@ public class QuestView extends View {
 		
 		if(evt.getPropertyName().equals("bid")) {
 			bid((int[]) evt.getNewValue());
+		}
+		
+		if(evt.getPropertyName().equals("discardQuest")) {
+			discardQuest((GenericPair) evt.getNewValue());
 		}
 	}
 }

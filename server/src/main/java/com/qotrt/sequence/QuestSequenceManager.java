@@ -118,7 +118,7 @@ public class QuestSequenceManager extends SequenceManager {
 				//					pm.flipStage(sponsor, quest.getCurrentStage());
 
 				// TODO: set minbid correctly
-				qm.questionBid(winners, new BidCalculator(pm), card, 3);
+				qm.questionBid(winners, new BidCalculator(pm), card, 1);
 				try {
 					logger.info("Waiting for users to finish bidding");
 					qm.bidLatch().await(60, TimeUnit.SECONDS);
@@ -129,10 +129,11 @@ public class QuestSequenceManager extends SequenceManager {
 				logger.info("users finished bidding");
 				
 				List<Player> bidWinner = qm.getBidWinner();
+				int maxBid = qm.getMaxBid();
 				if(bidWinner.size() == 0 || bidWinner.get(0) == null) {
 					winners.clear();
 				} else {
-					qm.discardCards(bidWinner);
+					qm.discardCards(bidWinner, maxBid);
 					try {
 						logger.info("Waiting for user to finish discarding");
 						qm.discardLatch().await();

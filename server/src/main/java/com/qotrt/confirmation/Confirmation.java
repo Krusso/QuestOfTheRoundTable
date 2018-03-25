@@ -3,6 +3,7 @@ package com.qotrt.confirmation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
 
 import com.qotrt.gameplayer.Player;
 import com.qotrt.util.PlayerUtil;
@@ -49,6 +50,7 @@ public abstract class Confirmation extends Observable {
 	public void decline(Player player, String attempt, String success, String failure) {
 		System.out.println(attempt);
 		if(backingInt > 0) {
+			toAsk.remove(player);
 			backingInt--;
 			System.out.println(success);
 			if(declineEventName != null) {
@@ -57,6 +59,12 @@ public abstract class Confirmation extends Observable {
 			checkIfCanOpenLatch(cdl, backingInt);
 		} else {
 			System.out.println(failure);
+		}
+	}
+	
+	public void forAllPlayers(Consumer<Player> c) {
+		for(Player player: toAsk) {
+			c.accept(player);
 		}
 	}
 

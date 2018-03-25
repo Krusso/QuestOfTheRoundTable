@@ -56,6 +56,8 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public CountDownLatch discardLatch() { return discard.getCountDownLatch();}
 	
 	private int maxBid = -1;
+	private BidCalculator bc;
+	private QuestCard card;
 	private Confirmation bid = new NeverEndingConfirmation(null, 
 			null, 
 			null);
@@ -186,16 +188,23 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized void questionBid(List<Player> participants, BidCalculator bc, QuestCard card, int minBid) {
 		bid.start(participants);
 		maxBid = minBid - 1;
+		this.bc = bc;
+		this.card = card;
 		for(Player player: participants) {
 			fireEvent("bid", null, new int[] {player.getID(), bc.maxBid(player, card), minBid, -1});
 		}
 	}
 
 	public synchronized void bid(Player player, int bidAmount) {
-		if(maxBid < bidAmount) {
-			bid.accept(player, "player: " + player + " attempted to bid higher", 
+		if(maxBid < bidAmount && bc.maxBid(player, card) >= bidAmount) {
+			if(bid.accept(player, "player: " + player + " attempted to bid higher", 
 				"player: " + player + " finished bidding higher", 
-				"player: " + player + " finished bidding higher too late");
+				"player: " + player + " finished bidding higher too late")) {
+				maxBid = bidAmount;
+				bid.forAllPlayers(i -> {
+					fireEvent("bid", null, new int[] {i.getID(), bc.maxBid(i, card), maxBid, player.getID()});
+				});
+			}
 		}
 	}
 	
@@ -208,9 +217,13 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized List<Player> getBidWinner() {
 		return bid.get();
 	}
+	
+	public synchronized int getMaxBid() {
+		return maxBid;
+	}
 
-	public synchronized void discardCards(List<Player> bidWinner) {
-		discard.start(bidWinner);
+	public synchronized void discardCards(List<Player> bidWinner, int toDiscard) {
+		discard.start(bidWinner, toDiscard);
 	}
 
 	public synchronized String[] getDiscardCards() {
