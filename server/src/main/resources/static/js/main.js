@@ -34,8 +34,9 @@ function connect(event) {
 
 function onConnected() {
     // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/public', onMessageReceived);
-    stompClient.subscribe('/user/queue/response', onUser);
+    // dont think we wanna subscribe to these here?
+    //stompClient.subscribe('/topic/public', onMessageReceived);
+    //stompClient.subscribe('/user/queue/response', onUser);
 
     // Tell your username to the server
     stompClient.send("/app/game.joinGame",

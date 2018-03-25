@@ -2,7 +2,7 @@
  *           Services                         *
  *=========================================== */
 
-angular.module("gameApp.services").service("MessageService", function ($q, $timeout) {
+angular.module("gameApp.services").service("MessageService", function ($rootScope, $q, $timeout) {
 
     var service = {},
         listener = $q.defer(),
@@ -42,10 +42,54 @@ angular.module("gameApp.services").service("MessageService", function ($q, $time
         return message;
     };
 
+	service.subscribe = function(scope, callback) {
+            var handler = $rootScope.$on('got-message', function(event, data) {
+            	callback(data);
+            });
+            scope.$on('$destroy', funct);
+    };
+
+
+	var observerCallbacks = [];
+	var missed = [];
+
+  	//register an observer
+  	service.registerObserverCallback = function(that, callback){
+	    observerCallbacks.push({that:that, callback: callback});
+	    while(missed.length != 0){
+	    	notifyObservers(missed.shift());
+	    }
+  	};
+
+  	//call this when you know 'foo' has been changed
+  	var notifyObservers = function(data){
+	    angular.forEach(observerCallbacks, function(item, index){
+      		item.callback(data);
+    	});
+  	};
+  	
+  	service.unregister = function(that){
+  		var index1 = -1;
+  		angular.forEach(observerCallbacks, function(item, index) {
+  			if(item.that = that){
+  				index1 = index;
+  			}
+		});
+		if(index1 != -1){
+			observerCallbacks.splice(index1,1);
+		}
+  	}
+
+    var notify = function(data) {
+    	if(observerCallbacks.length == 0){
+    		missed.push(data);
+    	} else {
+           notifyObservers(data);
+        }
+    };
+
     var startListener = function () {
-        socket.stomp.subscribe(service.CHAT_TOPIC, function (data) {
-            listener.notify(getMessage(data.body));
-        });
+    	socket.stomp.subscribe(service.CHAT_TOPIC, notify);
     };
 
     var initialize = function () {

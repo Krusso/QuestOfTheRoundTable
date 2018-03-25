@@ -202,6 +202,7 @@
     background-size: contain;
     background-repeat: no-repeat;
     float: left;
+    z-index: 100;
 }
 
 div[card-img] {
@@ -216,6 +217,7 @@ div[card-img] {
     height: 8vw;
     animation-name: cardhoveropponent;
     animation-duration: 0.25s;
+    z-index: 9000;
 }
 
 

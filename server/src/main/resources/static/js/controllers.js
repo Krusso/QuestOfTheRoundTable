@@ -150,46 +150,71 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         console.log("got data");
     };
 
-    MessageService.receive().then(null, null, function (message) {
-        console.log(message);
-        $scope.messages.push(message);
-        if (message.messageType === "LISTSERVER") {
-            $scope.serverList = message.games;
-        }
-        if (message.messageType === "GAMESTART") {
-            $location.path('/gameboard');
-        }
-        if (message.messageType === "JOINGAME") {
-            $scope.players = []; //reset the array
-            var p = message.players; //array of strings that denote the player's name
-            for (var i = 0; i < p.length; i++) {
-                var playerInfo = {
-                    name: p[i],
-                    id: i,
-                    hand: [],
-                    faceUp: [],
-                    faceDown: [],
-                    shieldIcon: "", //should probably be the URL or the name of the icon.png
-                    rank: null
-                };
-                $scope.players.push(playerInfo);
-            }
-            if ($scope.joinedGame == false) {
-                $scope.myPlayerId = $scope.players.length - 1;
-                $scope.joinedGame = true;
-            }
-        }
-        if (message.messageType === "ADDCARDS") {
-            var playerNum = message.player;
-            $scope.players[playerNum].hand = message.cards
-        }
-        if (message.messageType === "SHOWMIDDLECARD") {
-            $scope.middleCard = message.card;
-            console.log($scope.middleCard);
-            $scope.$apply();
-        }
-    });
 
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    demo();
+    async function demo() {
+        // wait a bit for socket to be initialized
+        await sleep(2000);
+
+        console.log("this");
+        console.log(this);
+        var that = this;
+
+        MessageService.registerObserverCallback(that, function (message1) {
+            message = JSON.parse(message1.body);
+            console.log("Processing message: ");
+            console.log(message);
+            console.log(message.messageType);
+            $scope.messages.push(message);
+            if (message.messageType === "LISTSERVER") {
+                $scope.serverList = message.games;
+            }
+            if (message.messageType === "GAMESTART") {
+                $location.path('/gameboard');
+                MessageService.unregister(that);
+            }
+            if (message.messageType === "JOINGAME") {
+                $scope.players = []; //reset the array
+                var p = message.players; //array of strings that denote the player's name
+                for (var i = 0; i < p.length; i++) {
+                    var playerInfo = {
+                        name: p[i],
+                        id: i,
+                        hand: [],
+                        faceUp: [],
+                        faceDown: [],
+                        shieldIcon: "", //should probably be the URL or the name of the icon.png
+                        rank: null
+                    };
+                    console.log("playerInfo");
+                    console.log(playerInfo);
+                    $scope.players.push(playerInfo);
+                }
+                if ($scope.joinedGame == false) {
+                    $scope.myPlayerId = $scope.players.length - 1;
+                    $scope.joinedGame = true;
+                }
+            }
+            if (message.messageType === "ADDCARDS") {
+                var playerNum = message.player;
+                $scope.players[playerNum].hand = message.cards
+            }
+            if (message.messageType === "SHOWMIDDLECARD") {
+                $scope.middleCard = message.card;
+                console.log($scope.middleCard);
+                $scope.$apply();
+            }
+
+            if (message.messageType === "SHOWMIDDLECARD") {}
+
+            console.log("done parsing");
+            $scope.$apply();
+        });
+    }
     /*=========================================   *
      *             Display Functions              *
      *=========================================== */
@@ -366,12 +391,4 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         return false
     }
-
-    $scope.getCardStyle = function (cardName) {
-        var cardUrl = cardName.replace(" ", "%20");
-        var style = "background-image: url(../gameResources" + cardUrl + ".png)";
-        console.log(style);
-        return style;
-    }
-
 });

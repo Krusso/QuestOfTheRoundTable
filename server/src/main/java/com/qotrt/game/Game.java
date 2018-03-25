@@ -76,7 +76,6 @@ public class Game extends Observable {
 			public void run() {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
-
 				EventBus eventBus = new EventBus();
 
 				// model creation
@@ -123,8 +122,9 @@ public class Game extends Observable {
 					StoryCard s = dm.getStoryCard(1).get(0);
 					logger.info("Next card being played: " + s.getName());
 					bm.setCard(s);
-
+					
 					SequenceManager sm = gsm.createStoryManager(bm.getCard());
+					logger.info("Running: " + sm);
 					sm.start(pm, bmm);
 
 					boolean winners = pm.rankUp();
