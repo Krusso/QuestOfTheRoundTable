@@ -1,21 +1,22 @@
 package com.qotrt.messages.quest;
 
-import src.messages.Message;
+import com.qotrt.messages.Message;
 
 //from server
 public class QuestUpServer extends Message {
 	public String[] cards;
 	public int stage;
 	
-	public QuestUpServer(int player, String[] cards, int stage) {
-		super(player);
+	public QuestUpServer() {}
+	
+	public QuestUpServer(String[] cards, int stage) {
 		this.cards = cards;
 		this.stage = stage;
 	}
 	
 	@Override
 	public void setMessage() {
-		this.message = MESSAGETYPES.UPQUEST;
+		this.messageType = MESSAGETYPES.UPQUEST;
 	}
 
 }

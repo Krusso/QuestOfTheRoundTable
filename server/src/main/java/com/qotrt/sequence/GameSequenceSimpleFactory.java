@@ -1,5 +1,6 @@
 package com.qotrt.sequence;
 
+import com.qotrt.cards.EventCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.cards.TournamentCard;
@@ -10,11 +11,11 @@ public class GameSequenceSimpleFactory {
 		if(card.getType() == StoryCard.TYPE.QUEST) {
 			return new QuestSequenceManager((QuestCard) card);
 		} else if (card.getType() == StoryCard.TYPE.EVENT) {
-			//return new EventSequenceManager((EventCard) card);
+			return new EventSequenceManager((EventCard) card);
 		} else if (card.getType() == StoryCard.TYPE.TOURNAMENT) {
 			return new TournamentSequenceManager((TournamentCard) card);
 		} else if (card.getType() == StoryCard.TYPE.GAMEOVER) {
-			//return new FinalTournamentSequenceManager();
+			return new FinalTournamentSequenceManager();
 		}
 		return null;
 	}

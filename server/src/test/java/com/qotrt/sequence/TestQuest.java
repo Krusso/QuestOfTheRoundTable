@@ -37,6 +37,7 @@ import com.qotrt.messages.quest.QuestPickStagesClient;
 import com.qotrt.messages.quest.QuestPickStagesServer;
 import com.qotrt.messages.quest.QuestSponsorClient;
 import com.qotrt.messages.quest.QuestSponsorServer;
+import com.qotrt.messages.quest.QuestUpServer;
 import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -76,6 +77,10 @@ public class TestQuest {
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
+					
+					QuestUpServer qus = p.take(QuestUpServer.class);
+					assertEquals("Test of Valor", qus.cards[0]);
+					assertEquals(1, qus.cards.length);
 					
 					QuestBidServer qbs = p.take(QuestBidServer.class, 0);
 					assertEquals(3, qbs.minBidValue);
@@ -309,6 +314,10 @@ public class TestQuest {
 					assertEquals(ZONE.HAND, pcs.zoneTo);
 					
 					p.sendMessage("/app/game.finishSelectingQuestCards", new QuestPickCardsClient(1));
+					
+					QuestUpServer qus = p.take(QuestUpServer.class);
+					assertEquals("Saxons", qus.cards[0]);
+					assertEquals(1, qus.cards.length);
 			}
 		};
 		

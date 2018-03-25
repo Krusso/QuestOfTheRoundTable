@@ -10,6 +10,7 @@ import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsServer;
 import com.qotrt.messages.quest.QuestPickStagesServer;
 import com.qotrt.messages.quest.QuestSponsorServer;
+import com.qotrt.messages.quest.QuestUpServer;
 import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
@@ -58,6 +59,10 @@ public class QuestView extends View {
 		sendMessage("/queue/response", new QuestDiscardCardsServer(((int[])e.key)[0], (int) e.value));
 	}
 	
+	private void flipStage(GenericPair e) {
+		sendMessage("/queue/response", new QuestUpServer((String[]) e.key, (int) e.value));
+	}
+	
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("event got fired: " + evt.getPropertyName());
 		
@@ -91,6 +96,10 @@ public class QuestView extends View {
 		
 		if(evt.getPropertyName().equals("discardQuest")) {
 			discardQuest((GenericPair) evt.getNewValue());
+		}
+		
+		if(evt.getPropertyName().equals("flipStage")) {
+			flipStage((GenericPair) evt.getNewValue());
 		}
 	}
 }

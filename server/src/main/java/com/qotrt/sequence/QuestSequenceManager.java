@@ -108,16 +108,13 @@ public class QuestSequenceManager extends SequenceManager {
 				}
 				qm.finishPicking();
 
-				//					pm.flipStage(sponsor, quest.getCurrentStage());
 				qm.flipStage();
 
 				quest.battleFoe(winners, pm);
 				pm.discardWeapons(participants);
 			} else if (quest.currentStageType() == TYPE.TESTS) {
 				qm.flipStage();
-				//					pm.flipStage(sponsor, quest.getCurrentStage());
 
-				// TODO: set minbid correctly
 				if(winners.size() == 1) {
 					qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") &&
 							card.getName().equals("Search for the Questing Beast") ? 4 : 3));	
@@ -146,8 +143,7 @@ public class QuestSequenceManager extends SequenceManager {
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
-					// TODO: discards
-					//pm.discardFromHand(bidWinner, qm.getDiscardCards());
+					
 					winners.clear();
 					winners.add(bidWinner.get(0));
 				}
