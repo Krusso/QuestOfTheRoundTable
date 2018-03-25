@@ -80,6 +80,12 @@ public class A1 extends AbstractAI {
 		//				}
 		//			}
 		//		}
+		for(Player p: pm.players) {
+			if(winPlayer(p)) {
+				logger.info("Player: " + p + " can evolve/win");
+				return true;
+			}
+		}
 		return false;
 	}
 

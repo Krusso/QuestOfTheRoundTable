@@ -14,23 +14,25 @@ import com.qotrt.cards.FoeCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.TestCard;
 import com.qotrt.cards.WeaponCard;
+import com.qotrt.gameplayer.Rank.RANKS;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
-
-import src.client.UIPlayerManager;
 
 public class TestA1 {
 	final static Logger logger = LogManager.getLogger(TestA1.class);
 	@Test
 	public void doIParticipateInTournament() {
-		AbstractAI player = new A2(new Player(0, new UIPlayer("", "")), null);
+		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {new UIPlayer("", "")}, null, RIGGED.ONE);
+		AbstractAI player = new A1(new Player(0, new UIPlayer("", "")), pm);
+		pm.nextTurn();
 		//what a great test good job me
 		assertEquals(false, player.doIParticipateInTournament());
 
-		UIPlayerManager pm = new UIPlayerManager(1);
-		pm.setPlayerRank(0, Rank.RANKS.CHAMPION);
-		pm.setCurrentPlayer(0);
-		player = new A1(new UIPlayer(0), pm);
+		Player p1 = new Player(0, new UIPlayer("", ""));
+		
+		pm.players[0] = p1;
+		p1.rank = RANKS.CHAMPION;
+		player = new A1(p1, pm);
 		assertEquals(false, player.doIParticipateInTournament());
 		
 		pm.players[0].shields = 10;
@@ -306,7 +308,7 @@ public class TestA1 {
 		pm.players[0] = p1;
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
-		AbstractAI player = new A2(p1, pm);
+		AbstractAI player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {}));
 		
@@ -314,7 +316,7 @@ public class TestA1 {
 		p1 = new Player(0, new UIPlayer("", ""));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
-		player = new A2(p1, pm);
+		player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {}));
 		
@@ -322,7 +324,7 @@ public class TestA1 {
 		p1 = new Player(0, new UIPlayer("", ""));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Giant",40, TYPE.FOES));
-		player = new A2(p1, pm);
+		player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {}));
 		
@@ -330,7 +332,7 @@ public class TestA1 {
 		p1 = new Player(0, new UIPlayer("", ""));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
-		player = new A2(p1, pm);
+		player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {"Thieves", "Thieves"}));
 		
@@ -338,7 +340,7 @@ public class TestA1 {
 		p1 = new Player(0, new UIPlayer("", ""));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
-		player = new A2(p1, pm);
+		player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {}));
 		
@@ -348,7 +350,7 @@ public class TestA1 {
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
-		player = new A2(p1, pm);
+		player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {}));
 		
@@ -362,7 +364,7 @@ public class TestA1 {
 		p1.hand.addCard(new FoeCard("Mordred",30, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
-		player = new A2(p1, pm);
+		player = new A1(p1, pm);
 		player.rounds = 1;
 		assertTrue(TestA2.compare(player.discardAfterWinningTest(), new String[] {"Thieves", "Thieves"}));
 	}
