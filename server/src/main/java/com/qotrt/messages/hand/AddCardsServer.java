@@ -9,7 +9,6 @@ public class AddCardsServer extends Message {
 	
 	public AddCardsServer() {};
 	
-	// TODO: also send the IDs of the cards
 	public AddCardsServer(int player, GenericPair[] cards) {
 		super(player);
 		this.setCards(cards);
