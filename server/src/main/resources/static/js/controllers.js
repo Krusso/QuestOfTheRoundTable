@@ -15,7 +15,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.np = [2, 3, 4];
     $scope.ais = [];
     $scope.strats = [1, 2, 3];
-
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
 
@@ -26,13 +25,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.joinedGame = false;
     $scope.myPlayerId;
     $scope.players = [];
-    $scope.stageZones = [{
+    $scope.stageZones = {
         stage1: [],
         stage2: [],
         stage3: [],
         stage4: [],
         stage5: []
-    }];
+    };
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
 
@@ -99,6 +98,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         HAND: 8
     });
 
+    $scope.GAME_STATE = Object.freeze({
+        NONE: 0,
+        SPONSORQUEST: 1
+    });
+
+    $scope.currentState = $scope.GAME_STATE.NONE;
     $scope.uuid = null; //TODO: the uuid for the gamelobby not sure if still need this 
 
     //Specify all endpoints
@@ -106,6 +111,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_listGames = "/app/game.listGames";
     $scope.ep_createGame = "/app/game.createGame";
     $scope.ep_playCardQuestSetup = "/app//game.playCardQuestSetup";
+    $scope.ep_sponsorQuest = "/app/game.sponsorQuest";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -182,6 +188,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.addMessage(endpoint);
     };
 
+    $scope.sendStoryResponse = function (isAccept) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.SPONSERQUEST,
+            sponser: isAccept,
+            java_class: "QuestSponsorClient"
+        };
+        $scope.addMessage($scope.ep_sponsorQuest);
+    }
+
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -240,6 +256,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
+            }
+
+            if (message.messageType === "SPONSERQUEST") {
+                $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
             }
 
             // TODO all combinations here
@@ -475,21 +495,39 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
 
 
-    $scope.dropCallback = function (event, ui) {
+    $scope.dropCallback_s1 = function (event, ui) {
         console.log(ui);
         console.log(ui.draggable.scope());
         console.log($scope.players[$scope.myPlayerId].hand);
         console.log(ui.draggable.scope().card.zone);
+        console.log(event.currentTarget);
         // TODO: take it from the correct place based on ui.draggle.scope().card.zone
-        $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
-            if (ui.draggable.scope().card.value === e.value) {
-                $scope.tryingToPlay.push(e);
-            }
-            return ui.draggable.scope().card.value !== e.value;
-        });
-        console.log($scope.players[$scope.myPlayerId].hand);
-        // change destination based on current state
-        $scope.sendPlayCardClient($scope.ZONE.HAND, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+        var cardFrom = ui.draggable.scope().card.zone;
+        if (cardFrom == $scope.ZONE.hand) {
+            console.log($scope.players[$scope.myPlayerId].hand);
+            // change destination based on current state
+            $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.stage1) {
+            $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.stage2) {
+            $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        }
+        $scope.sendPlayCardClient(cardFrom, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
 
 });

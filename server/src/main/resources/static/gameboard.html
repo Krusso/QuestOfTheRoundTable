@@ -48,14 +48,14 @@
             <div class="middlecardContainer">
                 <div c1 class="card1" card1="{{middleCard}}"></div>
                 <div class="accept-decline-container">
-                    <button class="btn-accept" ng-click="sendAccept()">Y</button>
-                    <button class="btn-decline" ng-click="sendDecline()">N</button>
+                    <button class="btn-accept" ng-click="sendStoryResponse('true')">Y</button>
+                    <button class="btn-decline" ng-click="sendStoryResponse('false')">N</button>
                 </div>
             </div>
             <div class="stageZone">
 
                 <div class="stageContainer">
-                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback'}"></div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s1'}"></div>
                     <div class="stage"></div>
                     <div class="stage"></div>
                     <div class="stage"></div>
