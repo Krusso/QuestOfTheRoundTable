@@ -12,6 +12,7 @@ import com.google.common.eventbus.EventBus;
 import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
+import com.qotrt.gameplayer.AIPlayer;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
@@ -29,7 +30,7 @@ import com.qotrt.views.HubView;
 import com.qotrt.views.PlayerView;
 import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
-import com.qotrt.views.View;
+import com.qotrt.views.Observer;
 
 public class Game extends Observable {
 
@@ -38,9 +39,9 @@ public class Game extends Observable {
 	private UUID uuid = UUID.randomUUID();
 	private int gameSize;
 	private String gameName;
-	private Object ais;
 	private SimpMessagingTemplate messagingTemplate;
 	private ArrayList<UIPlayer> players = new ArrayList<UIPlayer>();
+	private ArrayList<AIPlayer> aiplayers = new ArrayList<AIPlayer>();
 	private PlayerManager pm;
 	private HubView hv;
 	private RIGGED rigged;
@@ -50,12 +51,11 @@ public class Game extends Observable {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, Object ais) {
+	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged) {
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
-		this.ais = ais;
 		logger.info("messaging template: " + this.messagingTemplate);
 		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
@@ -90,10 +90,10 @@ public class Game extends Observable {
 				bmm = new BoardModelMediator(tm, qm, bm);
 
 				// view creation
-				View pv = new PlayerView(messagingTemplate);
-				View bv = new BoardView(messagingTemplate);
-				View tv = new TournamentView(messagingTemplate);
-				View qv = new QuestView(messagingTemplate);
+				Observer pv = new PlayerView(messagingTemplate);
+				Observer bv = new BoardView(messagingTemplate);
+				Observer tv = new TournamentView(messagingTemplate);
+				Observer qv = new QuestView(messagingTemplate);
 
 				// adding websocket session ids to each view 
 				players.forEach(i -> { 
@@ -189,5 +189,11 @@ public class Game extends Observable {
 
 	public String getGameName() {
 		return this.gameName;
+	}
+
+	
+	
+	public int getAICount() {
+		return aiplayers.size();
 	}
 }

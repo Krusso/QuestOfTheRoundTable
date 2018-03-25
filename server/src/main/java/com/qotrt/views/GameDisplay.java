@@ -7,13 +7,17 @@ public class GameDisplay {
 	private int players;
 	private String gameName;
 	private int capacity;
+	private int AICount;
+	
 	public GameDisplay() {}
-	public GameDisplay(UUID uuid, int players, String gameName, int capacity) {
+	public GameDisplay(UUID uuid, int players, String gameName, int capacity, int i) {
 		this.setUuid(uuid);
 		this.setPlayers(players);
 		this.setCapacity(capacity);
 		this.setGameName(gameName);
+		this.setAICount(i);
 	}
+	
 	public UUID getUuid() {
 		return uuid;
 	}
@@ -37,5 +41,11 @@ public class GameDisplay {
 	}
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
+	}
+	public int getAICount() {
+		return AICount;
+	}
+	public void setAICount(int aICount) {
+		AICount = aICount;
 	}
 }

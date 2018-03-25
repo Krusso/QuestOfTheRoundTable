@@ -10,7 +10,7 @@ import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.model.GenericPair;
 
-public class PlayerView extends View {
+public class PlayerView extends Observer {
 		
 	public PlayerView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);

@@ -14,7 +14,7 @@ import com.qotrt.cards.WeaponCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
-import com.qotrt.views.View;
+import com.qotrt.views.Observer;
 
 public class PlayerManager {
 
@@ -359,7 +359,7 @@ public class PlayerManager {
 		return winners.get();
 	}
 
-	public void subscribe(View pv) {
+	public void subscribe(Observer pv) {
 		for(Player p: players) {
 			p.subscribe(pv);
 		}

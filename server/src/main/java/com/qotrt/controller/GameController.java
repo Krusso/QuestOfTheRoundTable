@@ -1,11 +1,7 @@
 package com.qotrt.controller;
 
 import java.util.ArrayList;
-
 import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -33,18 +29,6 @@ public class GameController {
 	@Autowired
 	private Hub hub;
 
-	@PostConstruct
-	private void init() {
-		//activeSessionManager.registerListener(this);
-		System.out.println("created");
-	}
-
-	@PreDestroy
-	private void destroy() {
-		//activeSessionManager.removeListener(this);
-		System.out.println("deleted");
-	}
-
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
 		UUID uuid = hub.addGame(chatMessage.getGameName(), chatMessage.getNumPlayers(), chatMessage.getRigged(), chatMessage.getAis());
@@ -71,11 +55,6 @@ public class GameController {
 				gls,
 				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));
 	}
-
-	// @MessageMapping("/game.listPlayers")
-	// public void listPlayers(SimpMessageHeaderAccessor headerAccessor, @Payload PlayerListClient chatMessage) {
-	// 	//
-	// }
 
 	@MessageMapping("/game.joinGame")
 	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {

@@ -10,7 +10,7 @@ import com.qotrt.messages.game.GameJoinServer;
 import com.qotrt.messages.game.GameStartServer;
 import com.qotrt.model.UIPlayer;
 
-public class HubView extends View implements PropertyChangeListener {
+public class HubView extends Observer implements PropertyChangeListener {
 	
 	public HubView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);

@@ -1,7 +1,6 @@
 package com.qotrt.gameplayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +20,7 @@ import com.qotrt.cards.StoryCard;
 public class A1 extends AbstractAI {
 
 	final static Logger logger = LogManager.getLogger(A1.class);
-	
+
 	public A1(Player player, PlayerManager pm) {
 		super(player, pm);
 	}
@@ -69,18 +68,18 @@ public class A1 extends AbstractAI {
 	}
 
 	private boolean playerCanWinOrEvolveJoined(PlayerManager pm) {
-		if(this.gbc != null) {
-			for(int i = 0; i < 4; i++) {
-				logger.info("join tournament: " + Arrays.toString(gbc.joinTournament));
-				if(gbc.joinTournament[i]) {
-					if(winPlayer(i)) {
-						logger.info("Player: " +i + " can evolve/win");
-						return true;
-					}
-				}
-			}
-		}
-		logger.info("GBC: " + gbc);
+		// TODO
+		//		if(this.gbc != null) {
+		//			for(int i = 0; i < 4; i++) {
+		//				logger.info("join tournament: " + Arrays.toString(gbc.joinTournament));
+		//				if(gbc.joinTournament[i]) {
+		//					if(winPlayer(i)) {
+		//						logger.info("Player: " +i + " can evolve/win");
+		//						return true;
+		//					}
+		//				}
+		//			}
+		//		}
 		return false;
 	}
 
@@ -110,7 +109,7 @@ public class A1 extends AbstractAI {
 			return null;
 		}
 
-		
+
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
 		cards.get(stages).add(biggestFoe);
@@ -128,7 +127,7 @@ public class A1 extends AbstractAI {
 			logger.info("A1 doesnt want to sponsor tournament cant make last stage >50bp");
 			return null;
 		}
-		
+
 		// check if second last stage can be a test
 		if(test.size() != 0) cards.get(stages - 1).add(test.get(0));
 
@@ -173,7 +172,7 @@ public class A1 extends AbstractAI {
 			}
 			min = pointsInStage;
 		}
-		
+
 		logger.info("Sponsoring quest cards: " + cards);
 		return cards;
 	}
@@ -229,7 +228,7 @@ public class A1 extends AbstractAI {
 		logger.info("A1 selected: " + cards);
 		return cards;
 	}
-	
+
 	@Override
 	public int nextBid(int prevBid) {
 		rounds++;
@@ -245,7 +244,7 @@ public class A1 extends AbstractAI {
 			return cards.size();
 		}
 	}
-	
+
 	@Override
 	public List<AdventureCard> discardAfterWinningTest() {
 		if(rounds == 1) {

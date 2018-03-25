@@ -121,7 +121,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             rigged: $scope.RIGGED.NORMAL,
             playerName: $scope.pname,
             gameName: gName,
-            ais: ais[0],
+            ais: ais,
             java_class: "GameCreateClient"
         }
         $scope.addMessage($scope.ep_createGame);
@@ -250,8 +250,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         l = $scope.ais.length;
         if (l + 1 < np) {
             $scope.ais.push({
-                num: l + 1
+                num: l + 1,
+                strat: 1
             });
+            console.log($scope.ais);
         } else {
             $scope.showStatus("Max AIs", $scope.status);
         }
