@@ -51,11 +51,15 @@ public class Game extends Observable {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged) {
+	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, com.qotrt.messages.game.AIPlayer[] aiPlayers2) {
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
+		for(com.qotrt.messages.game.AIPlayer x: aiPlayers2) {
+			System.out.println("strategy: " + x.strat);
+			aiplayers.add(new AIPlayer(x.strat,this));
+		}
 		logger.info("messaging template: " + this.messagingTemplate);
 		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
@@ -78,7 +82,12 @@ public class Game extends Observable {
 				fireEvent("gameStart", null, 1);
 				EventBus eventBus = new EventBus();
 
+				for(int i = 0; i < aiplayers.size(); i++) {
+					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
+				}
+				
 				// model creation
+				System.out.println("creating models");
 				BoardModel bm = new BoardModel(eventBus);
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
@@ -90,31 +99,50 @@ public class Game extends Observable {
 				bmm = new BoardModelMediator(tm, qm, bm);
 
 				// view creation
+				System.out.println("creating views");
 				Observer pv = new PlayerView(messagingTemplate);
 				Observer bv = new BoardView(messagingTemplate);
 				Observer tv = new TournamentView(messagingTemplate);
 				Observer qv = new QuestView(messagingTemplate);
-
+				
 				// adding websocket session ids to each view 
+				System.out.println("setting up subscriptions");
 				players.forEach(i -> { 
+					System.out.println("setting up player subscriptions");
 					pv.addWebSocket(i);
 					bv.addWebSocket(i);
 					tv.addWebSocket(i);
 					qv.addWebSocket(i);
 				});
 
+				System.out.println("setting up model subscriptions");
 				// subscriptions
+				System.out.println("setting up pm subscription");
 				pm.subscribe(pv);
+				System.out.println("setting up bm subscription");
 				bm.subscribe(bv);
+				System.out.println("setting up tm subscription");
 				tm.subscribe(tv);
+				System.out.println("setting up qm subscription");
 				qm.subscribe(qv);
 
 				// TODO: use this
 				// eventBus.register(bv);
 				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
 				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
+				System.out.println("starting pm");
 				pm.start();
-
+				
+				System.out.println("starting AI players");
+				for(int i = 0; i < aiplayers.size(); i++) {
+					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm);
+					bm.subscribe(aiplayers.get(i));
+					tm.subscribe(aiplayers.get(i));
+					qm.subscribe(aiplayers.get(i));
+				}
+				
+				System.out.println("finished setup");
+				
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 				while(true) {
 					logger.info("Next Turn");
@@ -171,7 +199,7 @@ public class Game extends Observable {
 		hv.addWebSocket(player);
 		fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
 
-		if(players.size() == gameSize) {
+		if(players.size() + aiplayers.size() == gameSize) {
 			startGame();
 		}
 

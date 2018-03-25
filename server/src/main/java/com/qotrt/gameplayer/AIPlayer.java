@@ -4,6 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import javax.swing.plaf.synth.SynthSplitPaneUI;
+
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.game.Game;
@@ -23,6 +25,7 @@ public class AIPlayer extends Observer {
 	}
 
 	public void startAIPlayer(Player player, PlayerManager pm) {
+		System.out.println("Player: " + player.getID() + " strat: " + strat);
 		this.player = player;
 		if(strat == 1) {
 			ai = new A1(player, pm);
@@ -36,6 +39,8 @@ public class AIPlayer extends Observer {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		System.out.println("Player: " + player.getID() + " strat: " + strat + " got event: " + evt.getPropertyName());
+		
 		if(evt.getPropertyName().equals("questiontournament")) {
 			if(ai.doIParticipateInTournament()) {
 				game.bmm.getTournamentModel().acceptTournament(player);

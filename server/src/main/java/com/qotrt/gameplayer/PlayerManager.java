@@ -361,8 +361,10 @@ public class PlayerManager {
 
 	public void subscribe(Observer pv) {
 		for(Player p: players) {
+			System.out.println("player subscription: " + pv + " p: " + p);
 			p.subscribe(pv);
 		}
+		System.out.println("finished setting up player subscriptions");
 	}
 
 	public Boolean iseultExists() {

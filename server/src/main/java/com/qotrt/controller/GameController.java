@@ -10,9 +10,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.qotrt.game.Game;
 import com.qotrt.hub.Hub;
+import com.qotrt.messages.game.AIPlayer;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
@@ -37,10 +39,9 @@ public class GameController {
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());
-
-		gjc.setGameName(chatMessage.getGameName());
 		this.joinGame(headerAccessor, gjc);
 		System.out.println("created game");
+
 	}
 
 	@MessageMapping("/game.listGames")
@@ -65,8 +66,13 @@ public class GameController {
 		hub.addPlayer(player, chatMessage.getUuid());
 	}
 
-	@MessageExceptionHandler
-	public void handleException(IllegalArgumentException ex) {
+	@MessageExceptionHandler(Exception.class)
+	public void handleException(Exception ex) {
 		System.out.println("Got exception: " + ex.getMessage());
 	}
+	
+	@ExceptionHandler(Exception.class)
+	public void handleError(Exception ex) {
+		System.out.println("Got exception1: " + ex.getMessage());
+	  }
 }

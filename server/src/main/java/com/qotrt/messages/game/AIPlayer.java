@@ -3,13 +3,13 @@ package com.qotrt.messages.game;
 public class AIPlayer {
 
 	public int num;
-	public int strategy;
+	public int strat;
 	
 	public AIPlayer() {}
 	
-	public AIPlayer(int num, int strategy) {
+	public AIPlayer(int num, int strat) {
 		this.num = num;
-		this.strategy = strategy;
+		this.strat = strat;
 	}
 	
 }

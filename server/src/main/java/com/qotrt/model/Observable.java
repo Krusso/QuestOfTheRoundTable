@@ -9,6 +9,7 @@ public abstract class Observable {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	public void subscribe(PropertyChangeListener pcl) {
+		System.out.println("pcs: " + pcs + " pcl: " + pcl);
 		pcs.addPropertyChangeListener(pcl);
 	}
 	
