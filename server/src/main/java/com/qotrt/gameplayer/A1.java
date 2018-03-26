@@ -179,7 +179,7 @@ public class A1 extends AbstractAI {
 	public boolean doIParticipateInQuest(QuestCard questCard) {
 		rounds = 0;
 		stages = 0;
-		logger.info("Asking A1 if wants to join tournament");
+		logger.info("Asking A1 if wants to join quest");
 		int stages = questCard.getNumStages();
 		int weaponOrAllyCount = player.getTypeCount(TYPE.WEAPONS) + player.getTypeCount(TYPE.ALLIES);
 		if(stages*2 > weaponOrAllyCount) {
