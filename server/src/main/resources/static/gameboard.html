@@ -1,5 +1,5 @@
-<!--
 <!DOCTYPE html>
+<!--
 <html ng-app="gameApp">
 
 <head>
@@ -18,6 +18,7 @@
 
 <body>
 -->
+
 <div id="container">
     <div id="gameboard">
         <!--    OPPONENT HAND ZONES        -->
@@ -44,6 +45,9 @@
         </div>
 
         <!--    MIDDLE SECTION (Middle card/Stage cards/ discard pile/buttons)        -->
+        <div class="toastContainer">
+            <h2 ng-model="toast">{{toast}}</h2>
+        </div>
         <div class="middleContainer">
             <div class="middlecardContainer">
                 <div c1 class="card1" card1="{{middleCard}}"></div>
@@ -55,11 +59,31 @@
             <div class="stageZone">
 
                 <div class="stageContainer">
-                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s1'}"></div>
-                    <div class="stage"></div>
-                    <div class="stage"></div>
-                    <div class="stage"></div>
-                    <div class="stage"></div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s1'}" ng-hide="numStages<1">
+                        <div ng-repeat="card in stageZones.stage1" ng-model="stageZones.stage1">
+                            <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s2'}" ng-hide="numStages<2">
+                        <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
+                            <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s3'}" ng-hide="numStages<3">
+                        <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
+                            <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s4'}" ng-hide="numStages<4">
+                        <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
+                            <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s5'}" ng-hide="numStages<5">
+                        <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
+                            <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="slidecontainer">
@@ -114,7 +138,6 @@
         </div>
     </div>
 </div>
-</div>
 <!--
 <script src="js/card.js">
 </script>
@@ -127,4 +150,5 @@
 
 </body>
 
-</html>-->
+</html>
+-->

@@ -267,6 +267,21 @@ div[card-img] {
     display: inline-block;
 }
 
+.toastContainer {
+    position: absolute;
+    width: 80%;
+
+    height: 3vw;
+    top: 13.5vw;
+    left: 10%;
+    background-color: rgba(66, 50, 50, 0.57);
+}
+
+.toastContainer h2 {
+    text-align: center;
+    font-size: 1vw;
+}
+
 /* CSS for the Middle section of the gameboard 
     e.g the stages, discardpile, buttons slider */
 
@@ -274,7 +289,8 @@ div[card-img] {
     position: absolute;
     width: 100%;
     height: 40%;
-    top: 25%;
+    top: 17vw;
+
 }
 
 .middleContainer .middlecardContainer {
@@ -366,6 +382,12 @@ div[card-img] {
     margin-left: 1vw;
     display: inline-block;
     background-color: rgb(116, 84, 51);
+}
+
+.stageContainer .card1 {
+    width: 4vw;
+    height: 5.2vw;
+    float: left;
 }
 
 .slidecontainer {

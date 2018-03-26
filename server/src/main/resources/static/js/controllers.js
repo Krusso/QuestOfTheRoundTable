@@ -22,6 +22,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /*=========================================   *
      *        Controller Variables: GameData    *
      *=========================================== */
+    $scope.toast = "Just Chilling";
     $scope.joinedGame = false;
     $scope.myPlayerId;
     $scope.players = [];
@@ -34,6 +35,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
+    $scope.numStages = 0;
 
     /*=========================================   *
      *            Controller Variables: Stage      *
@@ -185,6 +187,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             zoneTo: to,
             java_class: "PlayCardClient"
         };
+        console.log("SENDING PLAYCARDCLIENT");
+        console.log(message);
         $scope.addMessage(endpoint);
     };
 
@@ -260,11 +264,19 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
             if (message.messageType === "SPONSERQUEST") {
                 $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
+                $scope.toast = "Sponsor " + $scope.middleCard + " ?";
+            }
+            if (message.messageType === "PICKSTAGES") {
+                $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
+                $scope.toast = "Player " + message.player + " is picking stage cards";
+                $scope.numStages = message.numStages;
             }
 
             // TODO all combinations here
             if (message.messageType === "PLAYCARD") {
                 console.log("trying to play card");
+                console.log("trying to play: ");
+                console.log($scope.tryingToPlay);
                 for (var i = 0; i < $scope.tryingToPlay.length; i++) {
                     console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
                     if ($scope.tryingToPlay[i].value === message.card) {
@@ -494,40 +506,373 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
 
 
-
+    //TODO need to make dropcallback for all stages
     $scope.dropCallback_s1 = function (event, ui) {
         console.log(ui);
         console.log(ui.draggable.scope());
         console.log($scope.players[$scope.myPlayerId].hand);
         console.log(ui.draggable.scope().card.zone);
         console.log(event.currentTarget);
-        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
         var cardFrom = ui.draggable.scope().card.zone;
-        if (cardFrom == $scope.ZONE.hand) {
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        if (cardFrom == $scope.ZONE.HAND) {
             console.log($scope.players[$scope.myPlayerId].hand);
             // change destination based on current state
             $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
                     $scope.tryingToPlay.push(e);
+                    console.log("hand| added" + e.toString() + "to trying To Play");
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
-        } else if (cardFrom == $scope.ZONE.stage1) {
+        } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
                     $scope.tryingToPlay.push(e);
+                    console.log("stage1| added" + e.toString() + "to trying To Play");
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
-        } else if (cardFrom == $scope.ZONE.stage2) {
+        } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
                     $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE3) {
+            $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage3| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE4) {
+            $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE5) {
+            $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
         }
-        $scope.sendPlayCardClient(cardFrom, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+        $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+    }
+    $scope.dropCallback_s1 = function (event, ui) {
+        console.log(ui);
+        console.log(ui.draggable.scope());
+        console.log($scope.players[$scope.myPlayerId].hand);
+        console.log(ui.draggable.scope().card.zone);
+        console.log(event.currentTarget);
+        var cardFrom = ui.draggable.scope().card.zone;
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        if (cardFrom == $scope.ZONE.HAND) {
+            console.log($scope.players[$scope.myPlayerId].hand);
+            // change destination based on current state
+            $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("hand| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE1) {
+            $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage1| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE2) {
+            $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE3) {
+            $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage3| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE4) {
+            $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE5) {
+            $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        }
+        $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+    }
+
+    $scope.dropCallback_s2 = function (event, ui) {
+        console.log(ui);
+        console.log(ui.draggable.scope());
+        console.log($scope.players[$scope.myPlayerId].hand);
+        console.log(ui.draggable.scope().card.zone);
+        console.log(event.currentTarget);
+        var cardFrom = ui.draggable.scope().card.zone;
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        if (cardFrom == $scope.ZONE.HAND) {
+            console.log($scope.players[$scope.myPlayerId].hand);
+            // change destination based on current state
+            $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("hand| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE1) {
+            $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage1| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE2) {
+            $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE3) {
+            $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage3| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE4) {
+            $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE5) {
+            $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        }
+        $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE2, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+    }
+    $scope.dropCallback_s3 = function (event, ui) {
+        console.log(ui);
+        console.log(ui.draggable.scope());
+        console.log($scope.players[$scope.myPlayerId].hand);
+        console.log(ui.draggable.scope().card.zone);
+        console.log(event.currentTarget);
+        var cardFrom = ui.draggable.scope().card.zone;
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        if (cardFrom == $scope.ZONE.HAND) {
+            console.log($scope.players[$scope.myPlayerId].hand);
+            // change destination based on current state
+            $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("hand| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE1) {
+            $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage1| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE2) {
+            $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE3) {
+            $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage3| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE4) {
+            $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE5) {
+            $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        }
+        $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE3, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+    }
+    $scope.dropCallback_s4 = function (event, ui) {
+        console.log(ui);
+        console.log(ui.draggable.scope());
+        console.log($scope.players[$scope.myPlayerId].hand);
+        console.log(ui.draggable.scope().card.zone);
+        console.log(event.currentTarget);
+        var cardFrom = ui.draggable.scope().card.zone;
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        if (cardFrom == $scope.ZONE.HAND) {
+            console.log($scope.players[$scope.myPlayerId].hand);
+            // change destination based on current state
+            $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("hand| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE1) {
+            $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage1| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE2) {
+            $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE3) {
+            $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage3| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE4) {
+            $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE5) {
+            $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        }
+        $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE4, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+    }
+    $scope.dropCallback_s5 = function (event, ui) {
+        console.log(ui);
+        console.log(ui.draggable.scope());
+        console.log($scope.players[$scope.myPlayerId].hand);
+        console.log(ui.draggable.scope().card.zone);
+        console.log(event.currentTarget);
+        var cardFrom = ui.draggable.scope().card.zone;
+        // TODO: take it from the correct place based on ui.draggle.scope().card.zone
+        if (cardFrom == $scope.ZONE.HAND) {
+            console.log($scope.players[$scope.myPlayerId].hand);
+            // change destination based on current state
+            $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("hand| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE1) {
+            $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage1| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE2) {
+            $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE3) {
+            $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage3| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE4) {
+            $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        } else if (cardFrom == $scope.ZONE.STAGE5) {
+            $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
+                if (ui.draggable.scope().card.value === e.value) {
+                    $scope.tryingToPlay.push(e);
+                    console.log("stage2| added" + e.toString() + "to trying To Play");
+                }
+                return ui.draggable.scope().card.value !== e.value;
+            });
+        }
+        $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE5, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
 
 });
