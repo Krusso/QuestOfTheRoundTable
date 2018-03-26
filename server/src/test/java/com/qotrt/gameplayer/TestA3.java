@@ -14,7 +14,6 @@ import org.junit.Test;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.AllyCard;
-import com.qotrt.cards.AmourCard;
 import com.qotrt.cards.Card;
 import com.qotrt.cards.FoeCard;
 import com.qotrt.cards.QuestCard;

@@ -95,7 +95,8 @@ public abstract class Message {
 		WINQUEST, 
 		BIDQUEST, 
 		DISCARDQUEST, 
-		UPQUEST
+		UPQUEST, 
+		BATTLEPOINTS
 	};
 	
 //	@Override

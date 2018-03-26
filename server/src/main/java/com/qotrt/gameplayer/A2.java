@@ -27,7 +27,7 @@ public class A2 extends AbstractAI implements AICommonImplementation {
 
 	@Override
 	public List<AdventureCard> playCardsForTournament() {
-		int currentBp = bpc.calculatePoints(player, pm.iseultExists());
+		int currentBp = bpc.calculatePlayer(player, null);
 		if(currentBp >= 50) {
 			logger.info("BP over 50 not playing any more cards");
 			return null;

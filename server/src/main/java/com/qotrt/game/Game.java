@@ -25,12 +25,13 @@ import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
 import com.qotrt.util.WebSocketUtil;
+import com.qotrt.views.BattlePointsView;
 import com.qotrt.views.BoardView;
 import com.qotrt.views.HubView;
+import com.qotrt.views.Observer;
 import com.qotrt.views.PlayerView;
 import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
-import com.qotrt.views.Observer;
 
 public class Game extends Observable {
 
@@ -104,6 +105,7 @@ public class Game extends Observable {
 				Observer bv = new BoardView(messagingTemplate);
 				Observer tv = new TournamentView(messagingTemplate);
 				Observer qv = new QuestView(messagingTemplate);
+				Observer bpv = new BattlePointsView(messagingTemplate, pm);
 				
 				// adding websocket session ids to each view 
 				System.out.println("setting up subscriptions");
@@ -113,18 +115,22 @@ public class Game extends Observable {
 					bv.addWebSocket(i);
 					tv.addWebSocket(i);
 					qv.addWebSocket(i);
+					bpv.addWebSocket(i);
 				});
 
 				System.out.println("setting up model subscriptions");
 				// subscriptions
 				System.out.println("setting up pm subscription");
 				pm.subscribe(pv);
+				pm.subscribe(bpv);
 				System.out.println("setting up bm subscription");
 				bm.subscribe(bv);
+				bm.subscribe(bpv);
 				System.out.println("setting up tm subscription");
 				tm.subscribe(tv);
 				System.out.println("setting up qm subscription");
 				qm.subscribe(qv);
+				qm.subscribe(bpv);
 
 				// TODO: use this
 				// eventBus.register(bv);

@@ -73,6 +73,7 @@ public class Player extends Observable {
 
 		logger.info("Player id: " + ID + " current rank: " + rank + " current shields: " + shields);
 		fireEvent("increaseLevel", null, new GenericPair(rank, ID));
+		fireEvent("battlePoints", null, this);
 		increaseLevel();
 	}
 
@@ -112,11 +113,13 @@ public class Player extends Observable {
 
 	public void setBackToHandFromFaceDown(int card) {
 		faceUp.addCard(faceDown.getCardByID(card));
+		fireEvent("battlePoints", null, this);
 	}
 	
 	public void setFaceDown(AdventureCard card) {
 		logger.info("Player id: " + ID + " setting face down: " + card);
 		faceDown.addCard(card);
+		fireEvent("battlePoints", null, this);
 	}
 
 	public RANKS getRank() {
@@ -135,6 +138,7 @@ public class Player extends Observable {
 		});
 		if(tristan && iseult) { logger.info("Have both iseult and tristant"); }
 		logger.info("Face up deck: " + faceUp.getDeck());
+		fireEvent("battlePoints", null, this);
 	}
 
 	public final AdventureDeck getFaceUp() {

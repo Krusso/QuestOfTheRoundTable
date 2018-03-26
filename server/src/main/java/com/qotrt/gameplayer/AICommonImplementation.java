@@ -90,11 +90,9 @@ public interface AICommonImplementation  {
 		for(List<AdventureCard> i: cards) {
 			if(i.size() == 0) {
 				logger.info("A3 doesnt want to sponsor tournament not enough different bp foes/tests");
-				return null;	
+				return null;
 			}
-			int pointsInStage = bc.calculateStage(player.hand, 
-					i.stream().map(j -> j.getName()).toArray(String[]::new),
-					(StoryCard) questCard);
+			int pointsInStage = bc.calculateStage(i,(StoryCard) questCard);
 			if(pointsInStage < min) {
 				logger.info("Cant make stages follow increasing bp order");
 				return null;
