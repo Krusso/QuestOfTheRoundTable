@@ -92,29 +92,11 @@
     float: left;
 }
 
-.playerHand .card {
+.playerHand .card1 {
     width: 4vw;
     height: 5.2vw;
     background-size: contain;
     background-repeat: no-repeat;
-    display: inline-block;
-    float: left;
-}
-
-.playerHand .card:hover {
-    margin-top: -1vw;
-    margin-left: -1vw;
-    width: 10vw;
-    height: 13vw;
-    animation-name: cardhover;
-    animation-duration: 0.25s;
-}
-
-/*WE ARE USING card-img FOR OUR CARDS. NOT class='card' since this is the cleanest way to dynamically change the background image (which is using directives. see app.js to find the directive)*/
-
-.playerHand .card1 {
-    width: 4vw;
-    height: 5.2vw;
     display: inline-block;
     float: left;
 }
@@ -128,13 +110,23 @@
     animation-duration: 0.25s;
 }
 
-.playerHand .card:hover {
-    margin-top: -2.5vw;
-    margin-left: -2.5vw;
+/*WE ARE USING card-img FOR OUR CARDS. NOT class='card' since this is the cleanest way to dynamically change the background image (which is using directives. see app.js to find the directive)*/
+
+.cardZones .card1 {
+    width: 4vw;
+    height: 5.2vw;
+    display: inline-block;
+    float: left;
+}
+
+.cardZones .card1:hover {
+    margin-top: -1vw;
+    margin-left: -1vw;
     width: 10vw;
     height: 13vw;
     animation-name: cardhover;
     animation-duration: 0.25s;
+    z-index: 1000;
 }
 
 @keyframes cardhover {
@@ -165,12 +157,21 @@ height: 8vw;
     width: 96vw;
 }
 
+
+
 .opponentHandsContainer .opponentHandZone {
     width: 30vw;
     height: 10vw;
     display: inline;
     float: left;
     margin-right: 0.25vw;
+}
+
+.opponentHandZone .card1 {
+    width: 4vw;
+    height: 5.2vw;
+    display: inline-block;
+    float: left;
 }
 
 .opponentHandsContainer .opponentHand {
@@ -205,36 +206,6 @@ height: 8vw;
     float: left;
     z-index: 100;
 }
-
-.opponentHandsContainer div[card-img] {
-    /*    position: absolute; we are going to need to use this position:absoluate at some point
-    when we want to reposition cards that over flow (in otherwords stacking divs on top each other)*/
-    width: 3vw;
-    height: 4vw;
-    /*    background-image: url("../gameResources/Adventure%20Back.png");*/
-    background-size: contain;
-    background-repeat: no-repeat;
-    float: left;
-    z-index: 100;
-}
-
-.playerHand div[card-img]:hover {
-    margin-top: -2.5vw;
-    margin-left: -2.5vw;
-    width: 10vw;
-    height: 13vw;
-    animation-name: cardhoveropponent;
-    animation-duration: 0.25s;
-}
-
-
-/*
-div[card-img] {
-    width: 100px;
-    height: 150px;
-    color: #fff;
-}
-*/
 
 .opponentHandsContainer .card:hover {
     margin-left: -1vw;
@@ -390,9 +361,19 @@ div[card-img] {
     float: left;
 }
 
+.stageContainer .card1:hover {
+    margin-top: -1vw;
+    margin-left: -1vw;
+    width: 10vw;
+    height: 13vw;
+    animation-name: cardhover;
+    animation-duration: 0.25s;
+    z-index: 1000;
+}
+
 .slidecontainer {
     position: absolute;
-    width: 90%;
+    width: 2vw;
     height: 95%;
     display: inline;
     padding: 1%;
