@@ -317,11 +317,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "ADDCARDS") {
                 var playerNum = message.player;
+
                 for (var i = 0; i < message.cards.length; i++) {
                     message.cards[i].zone = $scope.ZONE.HAND;
+                    $scope.players[playerNum].hand.push(message.cards[i]);
+                    console.log("Adding card" + message.cards[i].key + " " + message.cards[i].value);
                 }
-                $scope.players[playerNum].hand = $scope.players[playerNum].hand.concat(message.cards);
-                console.log("ADDED CARDS");
                 console.log($scope.playerZoneToListMap);
             }
             if (message.messageType === "SHOWMIDDLECARD") {
@@ -408,13 +409,36 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 } else {
                     //move the opponents card from pane to pane
                     console.log(message.zoneFrom + message.player);
+                    console.log(message.zoneTo + message.player);
                     console.log($scope.playerZoneToListMap);
-                    console.log($scope.playerZoneToListMap['HAND1']);
-                    var fromZone = $scope.playerZoneToListMap[message.zoneFrom + message.player];
-                    var toZone = $scope.playerZoneToListMap[message.zoneTo + message.player];
-                    console.log(fromZone);
-                    console.log(toZone);
-
+                    console.log($scope.playerZoneToListMap['STAGE1']);
+                    var fromZone;
+                    var toZone;
+                    var cardToMove
+                    //get the reference to the from/to zones for which we are moving cards to
+                    if (message.zoneFrom.includes("STAGE")) {
+                        fromZone = $scope.playerZoneToListMap[message.zoneFrom];
+                    } else {
+                        fromZone = $scope.playerZoneToListMap[message.zoneFrom + message.player];
+                    }
+                    if (message.zoneTo.includes("STAGE")) {
+                        toZone = $scope.playerZoneToListMap[message.zoneTo];
+                    } else {
+                        toZone = $scope.playerZoneToListMap[message.zoneTo + message.player];
+                    }
+                    //get reference to the card we want to move
+                    for (var i = 0; i < fromZone.length; i++) {
+                        if (fromZone[i].value == message.card) {
+                            cardToMove = fromZone[i];
+                            console.log("removing from zone");
+                            console.log(fromZone.toString());
+                            fromZone.splice(i, 1); // remove card from the fromZone
+                            console.log(fromZone);
+                            break;
+                        }
+                    }
+                    //move the card
+                    toZone.push(cardToMove);
                 }
 
             }
@@ -943,7 +967,4 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
 
     }
-
-
-
 });
