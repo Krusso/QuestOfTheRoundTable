@@ -33,6 +33,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         stage4: [],
         stage5: []
     };
+
+    $scope.playerZoneToListMap = {
+        'STAGE1': $scope.stageZones.stage1,
+        'STAGE2': $scope.stageZones.stage2,
+        'STAGE3': $scope.stageZones.stage3,
+        'STAGE4': $scope.stageZones.stage4,
+        'STAGE5': $scope.stageZones.stage5,
+    }; // eg {"hand0" : players[0].hand,}
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
     $scope.numStages = 0;
@@ -115,6 +123,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         PICKQUEST: 4,
     });
 
+
     $scope.currentState = $scope.GAME_STATE.NONE;
     $scope.uuid = null; //TODO: the uuid for the gamelobby not sure if still need this 
 
@@ -136,8 +145,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.message = null;
     };
 
-    /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
 
+    /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
     $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
         numP = parseInt(np, 10);
         if (!numP) {
@@ -240,6 +249,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         };
         $scope.addMessage($scope.ep_finishSelectingQuestStages);
     }
+    //Send this message when player is finished picking stages
+    $scope.sendQuestPickCardsClient = function () {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.PICKQUEST,
+            java_class: "QuestPickCardsClient"
+        };
+        $scope.addMessage($scope.ep_finishSelectingQuestCards);
+    }
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -265,6 +283,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "GAMESTART") {
                 $location.path('/gameboard');
+                //map the shit
+                for (var i = 0; i < $scope.players.length; i++) {
+                    $scope.playerZoneToListMap['HAND' + i] = $scope.players[i].hand;
+                    $scope.playerZoneToListMap['FACEUP' + i] = $scope.players[i].faceUp;
+                    $scope.playerZoneToListMap['FACEDOWN' + i] = $scope.players[i].faceDown;
+                }
             }
             if (message.messageType === "JOINGAME") {
                 $scope.players = []; //reset the array
@@ -285,6 +309,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     console.log(playerInfo);
                     $scope.players.push(playerInfo);
                 }
+
                 if ($scope.joinedGame == false) {
                     $scope.myPlayerId = $scope.players.length - 1;
                     $scope.joinedGame = true;
@@ -296,6 +321,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     message.cards[i].zone = $scope.ZONE.HAND;
                 }
                 $scope.players[playerNum].hand = $scope.players[playerNum].hand.concat(message.cards);
+                console.log("ADDED CARDS");
+                console.log($scope.playerZoneToListMap);
             }
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
@@ -322,59 +349,74 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 console.log("trying to play card");
                 console.log("trying to play: ");
                 console.log($scope.tryingToPlay);
-                for (var i = 0; i < $scope.tryingToPlay.length; i++) {
-                    console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
-                    if ($scope.tryingToPlay[i].value === message.card) {
-                        console.log("same id");
-                        console.log(message.zoneTo);
-                        if (message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.HAND;
-                            $scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            break;
-                        }
-                        if (message.zoneTo === $scope.ZONE.STAGE1 || message.zoneTo === "STAGE1") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE1;
-                            $scope.stageZones.stage1.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            break;
-                        }
-                        if (message.zoneTo === $scope.ZONE.STAGE2 || message.zoneTo === "STAGE2") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE2;
-                            $scope.stageZones.stage2.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            break;
-                        }
-                        if (message.zoneTo === $scope.ZONE.STAGE3 || message.zoneTo === "STAGE3") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE3;
-                            $scope.stageZones.stage3.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            break;
-                        }
-                        if (message.zoneTo === $scope.ZONE.STAGE4 || message.zoneTo === "STAGE4") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE4;
-                            $scope.stageZones.stage4.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            break;
-                        }
-                        if (message.zoneTo === $scope.ZONE.STAGE5 || message.zoneTo === "STAGE5") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE5;
-                            $scope.stageZones.stage5.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            console.log("STAGE5: ");
-                            console.log($scope.stageZones.stage5);
-                            break;
-                        }
-                        if (message.zoneTo === $scope.ZONE.FACEDOWN || message.zoneTo === "FACEDOWN") {
-                            $scope.tryingToPlay[i].zone = $scope.ZONE.FACEDOWN;
-                            $scope.players[$scope.myPlayerId].faceDown.push($scope.tryingToPlay[i]);
-                            $scope.tryingToPlay.slice(i);
-                            console.log("MY FACEDOWN CARDS: ");
-                            console.log($scope.players[$scope.myPlayerId].faceDown);
-                            break;
+                //trying to add only works for this player. 
+                //if we are trying to see the result from another client, we must search for this card and add it to the respective pane
+                if ($scope.myPlayerId == message.player) {
+                    for (var i = 0; i < $scope.tryingToPlay.length; i++) {
+                        console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
+                        if ($scope.tryingToPlay[i].value === message.card) {
+                            console.log("same id");
+                            console.log(message.zoneTo);
+                            if (message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.HAND;
+                                $scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                break;
+                            }
+                            if (message.zoneTo === $scope.ZONE.STAGE1 || message.zoneTo === "STAGE1") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE1;
+                                $scope.stageZones.stage1.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                break;
+                            }
+                            if (message.zoneTo === $scope.ZONE.STAGE2 || message.zoneTo === "STAGE2") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE2;
+                                $scope.stageZones.stage2.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                break;
+                            }
+                            if (message.zoneTo === $scope.ZONE.STAGE3 || message.zoneTo === "STAGE3") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE3;
+                                $scope.stageZones.stage3.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                break;
+                            }
+                            if (message.zoneTo === $scope.ZONE.STAGE4 || message.zoneTo === "STAGE4") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE4;
+                                $scope.stageZones.stage4.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                break;
+                            }
+                            if (message.zoneTo === $scope.ZONE.STAGE5 || message.zoneTo === "STAGE5") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE5;
+                                $scope.stageZones.stage5.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                console.log("STAGE5: ");
+                                console.log($scope.stageZones.stage5);
+                                break;
+                            }
+                            if (message.zoneTo === $scope.ZONE.FACEDOWN || message.zoneTo === "FACEDOWN") {
+                                $scope.tryingToPlay[i].zone = $scope.ZONE.FACEDOWN;
+                                $scope.players[$scope.myPlayerId].faceDown.push($scope.tryingToPlay[i]);
+                                $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
+                                console.log("MY FACEDOWN CARDS: ");
+                                console.log($scope.players[$scope.myPlayerId].faceDown);
+                                break;
+                            }
                         }
                     }
+                } else {
+                    //move the opponents card from pane to pane
+                    console.log(message.zoneFrom + message.player);
+                    console.log($scope.playerZoneToListMap);
+                    console.log($scope.playerZoneToListMap['HAND1']);
+                    var fromZone = $scope.playerZoneToListMap[message.zoneFrom + message.player];
+                    var toZone = $scope.playerZoneToListMap[message.zoneTo + message.player];
+                    console.log(fromZone);
+                    console.log(toZone);
+
                 }
+
             }
 
             if (message.messageType === "JOINQUEST") {
@@ -901,5 +943,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
 
     }
+
+
 
 });
