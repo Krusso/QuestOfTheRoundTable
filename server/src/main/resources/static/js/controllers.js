@@ -1059,33 +1059,27 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     //returns true/false if it should show the accept/decline
     $scope.showAcceptDecline = function () {
-        if ($scope.currentState == $scope.GAME_STATE.SPONSORQUEST) {
-            return true;
-        }
-        if ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring) {
-            return true;
-        }
-        return false;
+        console.log("checking showAcceptDecline");
+        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
+        return $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
     }
-    $scope.showDoneSettingUp = function () {
-        if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES && players[myPlayerId].isSponsoring) {
-            return true;
-        }
-        return false;
-    }
-
-    $scope.testShow = function(){
-        console.log("Checking display");
-        console.log($scope.currentState);
-        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST);
-        return $scope.currentState == $scope.GAME_STATE.SPONSORQUEST;
-    }
+    
     //Only show the done setting up button if the player is sponsoring and the state is picking stages
     $scope.showDoneSettingUp = function() {
         console.log("Checking display");
         console.log("player: " + $scope.myPlayerId + " is sponsoring? " + $scope.players[$scope.myPlayerId].isSponsoring);
         console.log("current state: " + $scope.currentState);
         return $scope.players[$scope.myPlayerId].isSponsoring && $scope.currentState ==$scope.GAME_STATE.PICKSTAGES;
+    }
+    //only show the bid slider if the player is in a quest and the state is GAME_STATE.BIDQUEST
+    $scope.showBidSlider = function(){
+        console.log("Showing bid slider");
+        console.log($scope.currentState == $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest == true);
+        return $scope.currentState == $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest == true;
+    }
+    $scope.showDonePickingQuestCards = function(){
+        console.log("Check display for show down picking cards");
+        return $scope.currentState == $scope.GAME_STATE.PICKQUEST && $scope.players[$scope.myPlayerId].joinedQuest;
     }
     
 });
