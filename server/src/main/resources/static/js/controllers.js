@@ -124,6 +124,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         PICKQUEST: 4,
         BIDQUEST: 5,
         DISCARDQUEST: 6,
+        JOINTOURNAMENT: 20,
+        PICKTOURNAMENT: 21
     });
 
 
@@ -131,6 +133,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.uuid = null; //TODO: the uuid for the gamelobby not sure if still need this 
 
     //Specify all endpoints
+    $scope.ep_joinTournament = "/app/game.joinTournament";
+    $scope.ep_playCardTournament = "/app/game.playCardTournament";
+    $scope.ep_finishSelectingTournament= "/app/game.finishSelectingTournament";
+
     $scope.ep_joinGame = "/app/game.joinGame";
     $scope.ep_listGames = "/app/game.listGames";
     $scope.ep_createGame = "/app/game.createGame";
@@ -241,8 +247,34 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 java_class: "QuestJoinClient"
             };
             $scope.addMessage($scope.ep_joinQuest);
-        }
+        } else if ($scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT){
+            $scope.message = {
+                TYPE: $scope.TYPE_GAME,
+                messageType: $scope.MESSAGETYPES.JOINTOURNAMENT,
+                player: $scope.myPlayerId,
+                joined: isAccept,
+                java_class: "TournamentAcceptDeclineClient"
+            };
+            $scope.addMessage($scope.ep_joinTournament);        
+        } else if ($scope.currentState == $scope.GAME_STATE.PICKTOURNAMENT){
+            $scope.message = {
+                TYPE: $scope.TYPE_GAME,
+                messageType: $scope.MESSAGETYPES.PICKTOURNAMENT,
+                player: $scope.myPlayerId,
+                java_class: "PlayCardClient"
+            };
+            $scope.addMessage($scope.ep_playCardTournament);
+        }        
     }
+
+    $scope.sendTournamentPickCardsClient = function() {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.PICKSTAGES,
+            java_class: "TournamentFinishPickingClient"
+        };
+        $scope.addMessage($scope.ep_finishSelectingTournament);
+    }    
 
     //Send this message when player is finished picking stages
     $scope.sendQuestPickStagesClient = function () {
@@ -345,6 +377,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.middleCard = message.card;
                 console.log($scope.middleCard);
             }
+            if (message.messageType === "JOINTOURNAMENT") {
+                $scope.currentState = $scope.GAME_STATE.JOINTOURNAMENT;
+                $scope.toast = "Join Tournament ?";
+            }
+
+            if (message.messageType === "PICKTOURNAMENT") {
+                $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
+                $scope.toast = "Select cards to use in tournament";
+            }            
 
             if (message.messageType === "SPONSERQUEST") {
                 $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
@@ -1025,7 +1066,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playForQuest);
         }
-
+        if ($scope.currentState == $scope.GAME_STATE.PICKTOURNAMENT) {
+            console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playCardTournament);
+        }
     }
     //can only discard cards from your hand
     $scope.dropCallback_discard = function (event, ui) {
