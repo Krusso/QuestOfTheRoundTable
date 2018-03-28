@@ -17,6 +17,8 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
+import com.qotrt.model.DiscardModel;
+import com.qotrt.model.EventModel;
 import com.qotrt.model.Observable;
 import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -27,6 +29,8 @@ import com.qotrt.sequence.SequenceManager;
 import com.qotrt.util.WebSocketUtil;
 import com.qotrt.views.BattlePointsView;
 import com.qotrt.views.BoardView;
+import com.qotrt.views.DiscardView;
+import com.qotrt.views.EventView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.Observer;
 import com.qotrt.views.PlayerView;
@@ -97,7 +101,9 @@ public class Game extends Observable {
 						rigged);
 				TournamentModel tm = new TournamentModel();
 				QuestModel qm = new QuestModel();
-				bmm = new BoardModelMediator(tm, qm, bm);
+				DiscardModel dmm = new DiscardModel();
+				EventModel em = new EventModel();
+				bmm = new BoardModelMediator(tm, qm, bm, dmm, em);
 
 				// view creation
 				System.out.println("creating views");
@@ -106,6 +112,8 @@ public class Game extends Observable {
 				Observer tv = new TournamentView(messagingTemplate);
 				Observer qv = new QuestView(messagingTemplate);
 				Observer bpv = new BattlePointsView(messagingTemplate, pm);
+				Observer ev = new EventView(messagingTemplate);
+				Observer dv = new DiscardView(messagingTemplate);
 				
 				// adding websocket session ids to each view 
 				System.out.println("setting up subscriptions");
@@ -116,6 +124,8 @@ public class Game extends Observable {
 					tv.addWebSocket(i);
 					qv.addWebSocket(i);
 					bpv.addWebSocket(i);
+					ev.addWebSocket(i);
+					dv.addWebSocket(i);
 				});
 
 				System.out.println("setting up model subscriptions");
@@ -131,6 +141,8 @@ public class Game extends Observable {
 				System.out.println("setting up qm subscription");
 				qm.subscribe(qv);
 				qm.subscribe(bpv);
+				dmm.subscribe(dv);
+				em.subscribe(ev);
 
 				// TODO: use this
 				// eventBus.register(bv);

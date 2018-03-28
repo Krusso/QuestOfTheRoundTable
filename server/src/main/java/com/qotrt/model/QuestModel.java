@@ -242,6 +242,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized AdventureCard getDiscardCard(int id) {
 		for(AdventureCard c: discardCards) {
 			if(c.id == id) {
+				discardCards.remove(c);
 				return c;
 			}
 		}

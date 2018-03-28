@@ -1,6 +1,8 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -11,11 +13,47 @@ import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
+import com.qotrt.model.GenericPair2;
 
 public class TournamentView extends Observer {
 
 	public TournamentView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);
+		
+		Function<PropertyChangeEvent, Boolean> funcF = 
+				x -> x.getPropertyName().equals("questiontournament");
+		Consumer<PropertyChangeEvent> funcC = 
+				x -> questionTournament(mapper.convertValue(x.getNewValue(), int[].class));
+		
+		Function<PropertyChangeEvent, Boolean> funcF1 = 
+				x -> x.getPropertyName().equals("jointournament");
+		Consumer<PropertyChangeEvent> funcC1 = 
+				x -> joinTournament(mapper.convertValue(x.getNewValue(), Player.class));
+		
+		Function<PropertyChangeEvent, Boolean> funcF2 = 
+				x -> x.getPropertyName().equals("declinetournament");
+		Consumer<PropertyChangeEvent> funcC2 = 
+				x -> declineTournament(mapper.convertValue(x.getNewValue(), Player.class));
+				
+		Function<PropertyChangeEvent, Boolean> funcF3 = x -> x.getPropertyName().equals("tournamentwinners");
+		
+		Consumer<PropertyChangeEvent> funcC3 = x -> setWinners(mapper.convertValue(x.getNewValue(), GenericPair.class));
+
+		Function<PropertyChangeEvent, Boolean> funcF4 = x -> x.getPropertyName().equals("questioncardtournament");
+		
+		Consumer<PropertyChangeEvent> funcC4 = x -> questionCardTournament(mapper.convertValue(x.getNewValue(), int[].class));
+
+		
+		events.add(new GenericPair2<>(funcF, funcC));
+		events.add(new GenericPair2<>(funcF1, funcC1));
+		events.add(new GenericPair2<>(funcF2, funcC2));
+		events.add(new GenericPair2<>(funcF3, funcC3));
+		events.add(new GenericPair2<>(funcF4, funcC4));
+		
+	}
+	
+	public void propertyChange(PropertyChangeEvent evt) {
+		handleEvent(evt);
 	}
 	
 	private void questionTournament(int[] players) {
@@ -39,29 +77,6 @@ public class TournamentView extends Observer {
 	private void questionCardTournament(int[] players) {
 		for(int i: players) {
 			sendMessage("/queue/response", new TournamentPickCardsServer(i, players));	
-		}
-	}
-	
-	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("event got fired");
-		if(evt.getPropertyName().equals("questiontournament")) {
-			questionTournament((int[]) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("jointournament")) {
-			joinTournament((Player) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("declinetournament")) {
-			declineTournament((Player) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("tournamentwinners")) {
-			setWinners((GenericPair) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("questioncardtournament")) {
-			questionCardTournament((int[]) evt.getNewValue());
 		}
 	}
 }

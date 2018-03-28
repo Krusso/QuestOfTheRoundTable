@@ -1,8 +1,5 @@
 package com.qotrt.controller;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,15 +18,6 @@ public class TournamentController {
 	
 	@Autowired
 	private Hub hub;
-	@PostConstruct
-	private void init() {
-		System.out.println("created 2");
-	}
-
-	@PreDestroy
-	private void destroy() {
-		System.out.println("deleted");
-	}
 
 	@MessageMapping("/game.joinTournament")
 	public void playCard(SimpMessageHeaderAccessor headerAccessor, 

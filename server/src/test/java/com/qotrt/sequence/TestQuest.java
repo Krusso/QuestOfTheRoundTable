@@ -136,9 +136,9 @@ public class TestQuest {
 					p.waitForThenSend(QuestBidServer.class, 0, "/app/game.bid", new QuestBidClient(1, -1));
 					
 					p.waitForThenSend(QuestDiscardCardsServer.class, 0,
-							"/app/game.discard", new PlayCardClient(0, 171, ZONE.HAND, ZONE.DISCARD));
-					p.sendMessage("/app/game.discard", new PlayCardClient(0, 172, ZONE.HAND, ZONE.DISCARD));
-					p.sendMessage("/app/game.discard", new PlayCardClient(0, 173, ZONE.HAND, ZONE.DISCARD));
+							"/app/game.discardBid", new PlayCardClient(0, 171, ZONE.HAND, ZONE.DISCARD));
+					p.sendMessage("/app/game.discardBid", new PlayCardClient(0, 172, ZONE.HAND, ZONE.DISCARD));
+					p.sendMessage("/app/game.discardBid", new PlayCardClient(0, 173, ZONE.HAND, ZONE.DISCARD));
 					p.sendMessage("/app/game.finishDiscard", new QuestDiscardCardsClient(0));
 			}
 		};

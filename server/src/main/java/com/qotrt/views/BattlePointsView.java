@@ -2,6 +2,8 @@ package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -11,6 +13,7 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.messages.game.BattlePointsServer;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
+import com.qotrt.model.GenericPair2;
 import com.qotrt.model.QuestModel;
 
 public class BattlePointsView extends Observer {
@@ -21,6 +24,25 @@ public class BattlePointsView extends Observer {
 	public BattlePointsView(SimpMessagingTemplate messagingTemplate, PlayerManager pm) {
 		super(messagingTemplate);
 		this.bpc = new BattlePointCalculator(pm);
+		
+		Function<PropertyChangeEvent, Boolean> funcF = 
+				x -> x.getPropertyName().equals("middlecard");
+		Consumer<PropertyChangeEvent> funcC = 
+				x -> sc = (mapper.convertValue(x.getNewValue(), StoryCard.class));
+		
+		Function<PropertyChangeEvent, Boolean> funcF1 = 
+				x -> x.getPropertyName().equals("battlePoints");
+		Consumer<PropertyChangeEvent> funcC1 = 
+				x -> battlePoints(mapper.convertValue(x.getNewValue(), Player.class));
+		
+		Function<PropertyChangeEvent, Boolean> funcF2 = 
+				x -> x.getPropertyName().equals("battlePointsStage");
+		Consumer<PropertyChangeEvent> funcC2 = 
+				x -> battlePointsStage(mapper.convertValue(x.getNewValue(), QuestModel.class));
+		
+		events.add(new GenericPair2<>(funcF, funcC));
+		events.add(new GenericPair2<>(funcF1, funcC1));
+		events.add(new GenericPair2<>(funcF2, funcC2));
 	}
 
 	private void battlePoints(Player p) {
@@ -44,15 +66,6 @@ public class BattlePointsView extends Observer {
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("event got fired");
-		if(evt.getPropertyName().equals("battlePoints")) {
-			battlePoints((Player) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("battlePointsStage")){
-			battlePointsStage((QuestModel) evt.getNewValue());
-		}
-		
-		// TODO handle middle card message
+		handleEvent(evt);
 	}
 }

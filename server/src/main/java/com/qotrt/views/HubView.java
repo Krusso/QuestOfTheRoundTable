@@ -3,17 +3,29 @@ package com.qotrt.views;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.messages.game.GameJoinServer;
 import com.qotrt.messages.game.GameStartServer;
+import com.qotrt.model.GenericPair2;
 import com.qotrt.model.UIPlayer;
 
 public class HubView extends Observer implements PropertyChangeListener {
 	
 	public HubView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate);
+		
+		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("players");
+		Consumer<PropertyChangeEvent> funcC = x -> playerJoinedGame(mapper.convertValue(x.getNewValue(), UIPlayer[].class));
+		
+		Function<PropertyChangeEvent, Boolean> funcF1 = x -> x.getPropertyName().equals("gameStart");
+		Consumer<PropertyChangeEvent> funcC1 = x -> startGame();
+
+		events.add(new GenericPair2<>(funcF, funcC));
+		events.add(new GenericPair2<>(funcF1, funcC1));
 	}
 
 	public void playerJoinedGame(UIPlayer[] UIPlayers) {
@@ -25,14 +37,7 @@ public class HubView extends Observer implements PropertyChangeListener {
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("event got fired");
-		if(evt.getPropertyName().equals("players")) {
-			playerJoinedGame((UIPlayer[]) evt.getNewValue());
-		}
-		
-		if(evt.getPropertyName().equals("gameStart")) {
-			startGame();
-		}
+		handleEvent(evt);
 	}
 
 	private void startGame() {
