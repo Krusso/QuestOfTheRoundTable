@@ -7,7 +7,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /*=========================================   *
      *            Controller Variables            *
      *=========================================== */
-
+	$scope.counter = 0;
+	
     $scope.status = "";
     $scope.range = [1, 2, 3, 4];
     $scope.loginToast = "";
@@ -24,7 +25,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
     $scope.toast = "Just Chilling";
     $scope.joinedGame = false;
-    $scope.myPlayerId;
+    $scope.myPlayerId = 0;
     $scope.players = [];
     $scope.stageZones = {
         stage1: [],
@@ -39,7 +40,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         'STAGE2': $scope.stageZones.stage2,
         'STAGE3': $scope.stageZones.stage3,
         'STAGE4': $scope.stageZones.stage4,
-        'STAGE5': $scope.stageZones.stage5,
+        'STAGE5': $scope.stageZones.stage5
     }; // eg {"hand0" : players[0].hand,}
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
@@ -56,7 +57,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             vertical: true,
             step: 1
         }
-    }
+    };
 
     /*=========================================   *
      *             Messaging Functions            *
@@ -67,7 +68,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.message = null; //the message should be a JSON object
     //Types//
     $scope.TYPE_GAME = "GAME";
-    $scope.MESSAGETYPES = Object.freeze({
+    $scope.MESSAGETYPES = {
         GAMESTART: 0,
         JOINGAME: 1,
         JOINTOURNAMENT: 2,
@@ -90,8 +91,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         BIDQUEST: 19,
         DISCARDQUEST: 20,
         UPQUEST: 21
-    });
-    $scope.RIGGED = Object.freeze({
+    };
+    $scope.RIGGED = {
         ONE: 0,
         TWO: 1,
         THREE: 2,
@@ -103,8 +104,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         AIQUEST1: 8,
         AIQUEST2: 9,
         GAMEEND: 10
-    });
-    $scope.ZONE = Object.freeze({
+    };
+    $scope.ZONE = {
         FACEDOWN: 0,
         FACEUP: 1,
         DISCARD: 2,
@@ -114,9 +115,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         STAGE4: 6,
         STAGE5: 7,
         HAND: 8
-    });
+    };
 
-    $scope.GAME_STATE = Object.freeze({
+    $scope.GAME_STATE = {
         NONE: 0,
         SPONSORQUEST: 1,
         JOINQUEST: 2,
@@ -126,7 +127,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         DISCARDQUEST: 6,
         JOINTOURNAMENT: 20,
         PICKTOURNAMENT: 21
-    });
+    };
 
 
     $scope.currentState = $scope.GAME_STATE.NONE;
@@ -158,7 +159,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
     $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
-        numP = parseInt(np, 10);
+        var numP = parseInt(np, 10);
         if (!numP) {
             $scope.showStatus("Select Num Players");
             return;
@@ -183,7 +184,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             gameName: gName,
             ais: ais,
             java_class: "GameCreateClient"
-        }
+        };
         $scope.addMessage($scope.ep_createGame);
         $scope.loadInLobby();
     };
@@ -192,7 +193,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            java_class: "GameListClient",
+            java_class: "GameListClient"
 
         };
         $scope.addMessage($scope.ep_listGames);
@@ -265,7 +266,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             };
             $scope.addMessage($scope.ep_playCardTournament);
         }        
-    }
+    };
 
     $scope.sendTournamentPickCardsClient = function() {
         $scope.message = {
@@ -274,7 +275,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "TournamentFinishPickingClient"
         };
         $scope.addMessage($scope.ep_finishSelectingTournament);
-    }    
+    };
 
     //Send this message when player is finished picking stages
     $scope.sendQuestPickStagesClient = function () {
@@ -284,7 +285,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "QuestPickStagesClient"
         };
         $scope.addMessage($scope.ep_finishSelectingQuestStages);
-    }
+    };
     //Send this message when player is finished picking stages
     $scope.sendQuestPickCardsClient = function () {
         $scope.message = {
@@ -293,7 +294,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "QuestPickCardsClient"
         };
         $scope.addMessage($scope.ep_finishSelectingQuestCards);
-    }
+    };
     $scope.sendQuestBidClient = function () {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
@@ -302,7 +303,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             bid: $scope.bidSlider.value
         };
         $scope.addMessage($scope.ep_bid);
-    }
+    };
 
     /***************************************************************/
     function sleep(ms) {
@@ -324,6 +325,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log(message);
             console.log(message.messageType);
             $scope.messages.push(message);
+            $scope.counter++;
+            console.log($scope.counter);
             if (message.messageType === "LISTSERVER") {
                 $scope.serverList = message.games;
             }
@@ -350,6 +353,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         rank: null,
                         isSponsoring: false,
                         joinedQuest: false,
+                        joinedTourn: false,
                         discardPile: [],
                         needToDiscard: 0,
                     };
@@ -384,6 +388,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
             if (message.messageType === "PICKTOURNAMENT") {
                 $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
+                $scope.players[message.player].joinedTourn = true;
+                console.log("Player sponsoring? : " + $scope.players[message.player].joinedTourn);
                 $scope.toast = "Select cards to use in tournament";
             }            
 
@@ -392,6 +398,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 console.log($scope.currentState + " " +
                     $scope.GAME_STATE.SPONSORQUEST);
                 $scope.toast = "Sponsor " + $scope.middleCard + " ?";
+                $scope.$apply();
             }
             if (message.messageType === "PICKSTAGES") {
                 $scope.currentState = $scope.GAME_STATE.PICKSTAGES;
@@ -543,6 +550,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.toast = "Players are currently bidding";
                 console.log($scope.currentState + " " + $scope.GAME_STATE.BIDQUEST);
                 console.log($scope.players[$scope.myPlayerId].joinedQuest);
+                if($scope.currentState === $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest){
+                    console.log("I should be showing the bidslider");
+                }
                 console.log($scope.currentState === $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest);
             }
             if (message.messageType === "DISCARDQUEST") {
@@ -1110,5 +1120,25 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         return false;
     }
+    $scope.showDonePickingCards = function () {
+        if ($scope.currentState == $scope.GAME_STATE.PICKTOURNAMENT && $scope.players[$scope.myPlayerId].joinedTourn) {
+            return true;
+        }
+        return false;
+    }
+    
+    $scope.testShow = function(){
+        console.log("Checking display");
+        console.log($scope.currentState);
+        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST);
+        return $scope.currentState == $scope.GAME_STATE.SPONSORQUEST;
+    }
+    //Only show the done setting up button if the player is sponsoring and the state is picking stages
+    $scope.showDoneSettingUp = function() {
+        console.log("Checking display");
+        console.log("player: " + $scope.myPlayerId + " is sponsoring? " + $scope.players[$scope.myPlayerId].isSponsoring);
+        console.log("current state: " + $scope.currentState);
+        return $scope.players[$scope.myPlayerId].isSponsoring && $scope.currentState ==$scope.GAME_STATE.PICKSTAGES;
+    }    
 
 });

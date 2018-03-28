@@ -89,12 +89,11 @@
                     <!--                    ng-show="players[myPlayerId].joinedQuest == true &&  currentState == GAME_STATE.BIDQUEST"-->
                     <rzslider rz-slider-model="bidSlider.value" rz-slider-options="bidSlider.options" ng-show="currentState == GAME_STATE.BIDQUEST && players[myPlayerId].joinedQuest == true"></rzslider>
                 </div>
-
                 <div class="buttonContainer">
-<!--                     <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDoneSettingUp">Done Setting Up</button> -->
+                    <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDonePickingCards()">Done Picking Cards</button>
+                    <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDoneSettingUp()">Done Setting Up</button>
                     <button class="brown-button" ng-click="sendQuestPickCardsClient()" ng-show="currentState == GAME_STATE.PICKQUEST && players[myPlayerId].joinedQuest">Done Picking Cards</button>
-                    <button class="brown-button" ng-click="sendQuestBidClient()" ng-show="currentState === GAME_STATE.BIDQUEST && players[myPlayerId].joinedQuest">Bid {{bidSlider.value}}</button>
-                    <button class="brown-button" ng-click="sendTournamentPickCardsClient()" ng-show="currentState == GAME_STATE.PICKTOURNAMENT">Done Picking Cards</button>
+                    <button class="brown-button" ng-click="sendQuestBidClient()" ng-show="currentState == GAME_STATE.BIDQUEST && players[myPlayerId].joinedQuest==true">Bid {{bidSlider.value}}</button>        
                 </div>
             </div>
             <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">

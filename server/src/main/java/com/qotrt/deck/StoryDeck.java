@@ -27,7 +27,6 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Boar Hunt",2,new String[] {"Boar"}),2);
 //		addCard(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"}),2);
 
-
 		addCard(new TournamentCard("Tournament at Camelot",3),1);
 		addCard(new TournamentCard("Tournament at Orkney",2),1);
 		addCard(new TournamentCard("Tournament at Tintagel",1),1);
