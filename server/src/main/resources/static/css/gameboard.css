@@ -336,7 +336,6 @@ height: 8vw;
     height: 100%;
     left: 25%;
     background-color: rgba(66, 50, 50, 0.57);
-    overflow: auto;
 }
 
 .stageZone .stageContainer {

@@ -50,7 +50,7 @@
         <div class="middleContainer">
             <div class="middlecardContainer">
                 <div c1 class="card1" card1="{{middleCard}}"></div>
-                <div class="accept-decline-container" ng-show="currentState == GAME_STATE.SPONSORQUEST || currentState == GAME_STATE.JOINQUEST && !players[myPlayerId].isSponsoring">
+                <div class="accept-decline-container" ng-if="showAcceptDecline">
                     <button class="btn-accept" ng-click="sendStoryResponse('true')">Y</button>
                     <button class="btn-decline" ng-click="sendStoryResponse('false')">N</button>
                 </div>
@@ -86,19 +86,21 @@
 
                 </div>
                 <div class="slidecontainer">
+                    <!--                    ng-show="players[myPlayerId].joinedQuest == true &&  currentState == GAME_STATE.BIDQUEST"-->
                     <rzslider rz-slider-model="bidSlider.value" rz-slider-options="bidSlider.options"></rzslider>
-                    <p>{{bidSlider.value}}</p>
                 </div>
 
                 <div class="buttonContainer">
-                    <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="currentState == GAME_STATE.PICKSTAGES && players[myPlayerId].isSponsoring">Done Setting Up</button>
+                    <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDoneSettingUp">Done Setting Up</button>
                     <button class="brown-button" ng-click="sendQuestPickCardsClient()" ng-show="currentState == GAME_STATE.PICKQUEST && players[myPlayerId].joinedQuest">Done Picking Cards</button>
+                    <button class="brown-button" ng-click="sendQuestBidClient()" ng-show="currentState === GAME_STATE.BIDQUEST && players[myPlayerId].joinedQuest">Bid {{bidSlider.value}}</button>
                     <!--                    <button class="brown-button">End Turn</button>-->
                 </div>
             </div>
-            <div class="discardContainer">
+            <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">
                 <div class="discardPile"></div>
-                <button class="brown-button">Discard</button>
+                <!--                Only show discard button if player needs to discard cards-->
+                <button class="brown-button" ng-show="currentState = GAME_STATE.DISCARDQUEST && players[myPlayerId].cardsToDiscard>0">Discard</button>
 
             </div>
         </div>
@@ -109,7 +111,9 @@
             <div class="displayContainer">
                 <div class="rankCardContainer">
                     <!--  RANK CARD IMAGE GOES HERE  -->
-                    <div>
+
+                    <div ng-model="myPlayerId">
+                        <h1>{{myPlayerId}}</h1>
                     </div>
                 </div>
                 <div class="shieldBpContainer">

@@ -20,34 +20,34 @@ app.config(function ($routeProvider) {
         });
 });
 
-angular.module("gameApp.controllers", ['ngDragDrop']);
+angular.module("gameApp.controllers", ['ngDragDrop', 'rzModule']);
 angular.module("gameApp.services", []);
 
 
 //Example templating:
 //<div card-img="<url>"></div>
 angular.module('gameApp.controllers').directive('c1', function () {
-return {
-  compile: function(tElement, tAttrs) {
-      return function link(scope, element, attrs) {
-        attrs.$observe('card1', function(value) { 
-				var url = value;
-        		if (url === null || url === "") {
-		            return;
-    	    	}
-    	    	// encoding spaces for http connection
-	        	var res = encodeURI(url);
-	        	// encoding single quote so that css lets me do it
-        		res = res.replace(/'/g, "%27");
-        		console.log("res: " + res);
-        		element.css({
-		        	'background-image': "url(../gameResources/" + res + ".png)",
-            		'background-size': 'contain',
-            		'background-repeat': 'no-repeat',
-        		});
-             });
-		
-		};
-    }
-}});
+    return {
+        compile: function (tElement, tAttrs) {
+            return function link(scope, element, attrs) {
+                attrs.$observe('card1', function (value) {
+                    var url = value;
+                    if (url === null || url === "") {
+                        return;
+                    }
+                    // encoding spaces for http connection
+                    var res = encodeURI(url);
+                    // encoding single quote so that css lets me do it
+                    res = res.replace(/'/g, "%27");
+                    console.log("res: " + res);
+                    element.css({
+                        'background-image': "url(../gameResources/" + res + ".png)",
+                        'background-size': 'contain',
+                        'background-repeat': 'no-repeat',
+                    });
+                });
 
+            };
+        }
+    }
+});
