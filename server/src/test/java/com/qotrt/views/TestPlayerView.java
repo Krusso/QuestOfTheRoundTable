@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -16,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,14 +21,13 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import com.qotrt.PlayerTestCreator;
 import com.qotrt.QotrtApplication;
-import com.qotrt.QotrtApplicationTests;
+import com.qotrt.messages.game.AIPlayer;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.model.RiggedModel.RIGGED;
-import com.qotrt.sequence.TestTournament;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = QotrtApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -58,11 +54,7 @@ public class TestPlayerView {
 			public void run() {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
-				GameCreateClient gcc = new GameCreateClient();
-				gcc.setNumPlayers(2);
-				gcc.setPlayerName("hello");
-				gcc.setRigged(RIGGED.AITOURNAMENT);
-				p.sendMessage("/app/game.createGame", gcc);
+				p.sendMessage("/app/game.createGame", new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
 			}
 		};
 

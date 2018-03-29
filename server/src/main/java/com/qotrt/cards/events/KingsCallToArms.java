@@ -45,19 +45,8 @@ public class KingsCallToArms implements EventImplementation {
 			e1.printStackTrace();
 		}
 		
-//		highest.forEach(player -> {
-//			if(player.getTypeCount(TYPE.WEAPONS) >= 1) {
-//				pm.setPlayer(player);
-//				pm.setState(player, Player.STATE.EVENTDISCARDING, 1, AdventureCard.TYPE.WEAPONS);
-//			} else if(player.getTypeCount(TYPE.FOES) >= 1) {
-//				pm.setPlayer(player);
-//				pm.setState(player, Player.STATE.EVENTDISCARDING, Math.min(2, player.getTypeCount(TYPE.FOES)), AdventureCard.TYPE.FOES);
-//			} else {
-//				return;
-//			}
-//			EventDiscardCardsClient edc = actions.take(EventDiscardCardsClient.class, MESSAGETYPES.EVENTDISCARD);
-//			pm.discardFromHand(player, edc.cards);
-//		});
+		em.finish();
+		logger.info("Finished discarding cards");
 	}
 
 }

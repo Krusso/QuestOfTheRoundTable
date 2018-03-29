@@ -18,6 +18,7 @@ public abstract class Observable {
 	}
 	
 	public void fireEvent(String propertyName, Object oldValue, Object newValue) {
+		System.out.println("firing event: " + propertyName);
 		pcs.firePropertyChange(propertyName, oldValue, newValue);
 	}
 	

@@ -9,8 +9,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.Card;
+import com.qotrt.cards.EventCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
+import com.qotrt.cards.events.KingsCallToArms;
 import com.qotrt.model.RiggedModel.RIGGED;
 
 public class DeckManager {
@@ -37,6 +39,12 @@ public class DeckManager {
 		if(rigged.equals(RIGGED.ONESTAGETOURNAMENT)) {
 			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
 			toReturn.add(new QuestCard("Slay the Dragon",1,new String[] {"Dragon"}));
+			return toReturn;
+		}
+		
+		if(rigged.equals(RIGGED.KINGSCALLTOARMS)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			toReturn.add(new EventCard("King's Call to Arms", new KingsCallToArms()));
 			return toReturn;
 		}
 		

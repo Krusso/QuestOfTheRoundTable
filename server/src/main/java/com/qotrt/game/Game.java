@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.google.common.eventbus.EventBus;
 import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
@@ -85,7 +84,6 @@ public class Game extends Observable {
 			public void run() {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
-				EventBus eventBus = new EventBus();
 
 				for(int i = 0; i < aiplayers.size(); i++) {
 					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
@@ -93,7 +91,7 @@ public class Game extends Observable {
 				
 				// model creation
 				System.out.println("creating models");
-				BoardModel bm = new BoardModel(eventBus);
+				BoardModel bm = new BoardModel();
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
 						players.toArray(new UIPlayer[players.size()]), 
@@ -124,8 +122,11 @@ public class Game extends Observable {
 					tv.addWebSocket(i);
 					qv.addWebSocket(i);
 					bpv.addWebSocket(i);
+					System.out.println("still setting up player subscriptions");
 					ev.addWebSocket(i);
+					System.out.println("still setting up player subscriptions");
 					dv.addWebSocket(i);
+					System.out.println("finished setting up player subscriptions");
 				});
 
 				System.out.println("setting up model subscriptions");
@@ -144,10 +145,6 @@ public class Game extends Observable {
 				dmm.subscribe(dv);
 				em.subscribe(ev);
 
-				// TODO: use this
-				// eventBus.register(bv);
-				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
-				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
 				System.out.println("starting pm");
 				pm.start();
 				
@@ -186,7 +183,6 @@ public class Game extends Observable {
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 

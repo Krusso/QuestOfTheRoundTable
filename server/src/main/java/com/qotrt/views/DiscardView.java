@@ -7,13 +7,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 public class DiscardView extends Observer {
 
 	public DiscardView(SimpMessagingTemplate messagingTemplate) {
-		// TODO Auto-generated constructor stub
+		super(messagingTemplate);
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		// TODO Auto-generated method stub
-
+		handleEvent(evt);
 	}
 
 }

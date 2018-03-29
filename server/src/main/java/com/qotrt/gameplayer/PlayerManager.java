@@ -38,7 +38,7 @@ public class PlayerManager {
 		for(int i = players.length; i > 0; i--) {
 			System.out.println("setting cards for: " + i);
 			if(rigged.equals(RIGGED.ONE) || rigged.equals(RIGGED.ONESTAGETOURNAMENT)
-					|| rigged.equals(RIGGED.TWOSTAGETOURNAMENT) || rigged.equals(RIGGED.ONEHUNDREDSTAGETOURNAMENT)) {
+					|| rigged.equals(RIGGED.TWOSTAGETOURNAMENT) || rigged.equals(RIGGED.ONEHUNDREDSTAGETOURNAMENT) || rigged.equals(RIGGED.KINGSCALLTOARMS)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 				cards.add(new WeaponCard("Excalibur",30, TYPE.WEAPONS));

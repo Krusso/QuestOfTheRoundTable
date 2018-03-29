@@ -79,7 +79,7 @@ public class Player extends Observable {
 
 	public void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
-			logger.info("Player id: " + ID + " adding card " + card.getName());
+			logger.info("Player id: " + ID + " adding card " + card.getName() + " card id: " + card.id);
 			hand.addCard(card, 1);
 		}
 

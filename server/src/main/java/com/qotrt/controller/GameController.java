@@ -67,11 +67,13 @@ public class GameController {
 
 	@MessageExceptionHandler(Exception.class)
 	public void handleException(Exception ex) {
-		System.out.println("Got exception: " + ex.getMessage());
+		System.out.println("Got exception: " + ex.getMessage() + " " + ex);
+		ex.printStackTrace();
 	}
 	
 	@ExceptionHandler(Exception.class)
 	public void handleError(Exception ex) {
-		System.out.println("Got exception1: " + ex.getMessage());
+		System.out.println("Got exception: " + ex.getMessage() + " " + ex);
+		ex.printStackTrace();
 	  }
 }

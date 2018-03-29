@@ -26,7 +26,7 @@ public class PlayCardController {
 	@Autowired
 	private Hub hub;
 
-	@MessageMapping("/game.game.discardEvent")
+	@MessageMapping("/game.discardEvent")
 	public void discardEvent(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());

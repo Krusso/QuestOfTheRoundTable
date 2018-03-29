@@ -46,6 +46,7 @@ public class BattlePointsView extends Observer {
 	}
 
 	private void battlePoints(Player p) {
+		if(sc == null) return;
 		int points = bpc.calculatePlayer(p, sc);
 		sendMessage("/queue/response", new BattlePointsServer(p.getID(), points, ZONE.HAND));
 	}

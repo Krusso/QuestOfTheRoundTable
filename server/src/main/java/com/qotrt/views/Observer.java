@@ -22,6 +22,7 @@ public abstract class Observer implements PropertyChangeListener {
 			new ArrayList<GenericPair2<Function<PropertyChangeEvent, Boolean>, Consumer<PropertyChangeEvent>>>();
 	
 	public Observer(SimpMessagingTemplate messagingTemplate) {
+		this.mapper = new ObjectMapper();
 		this.messagingTemplate = messagingTemplate;
 		this.sendList = new ArrayList<UIPlayer>();
 	}

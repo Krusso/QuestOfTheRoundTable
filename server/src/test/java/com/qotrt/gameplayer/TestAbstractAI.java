@@ -41,7 +41,7 @@ public class TestAbstractAI {
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
-		AbstractAI player = new A1(p1, pm, new BoardModelMediator(null, null, null));
+		AbstractAI player = new A1(p1, pm, new BoardModelMediator(null, null, null, null, null));
 		assertEquals(2, player.discardWhenHandFull(2).size());
 	}
 
@@ -56,7 +56,7 @@ public class TestAbstractAI {
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
-		AbstractAI player = new A1(p1, pm, new BoardModelMediator(null, null, null));
+		AbstractAI player = new A1(p1, pm, new BoardModelMediator(null, null, null, null, null));
 		
 		List<AdventureCard> discarded = player.discardKingsCalltoArms(2, TYPE.WEAPONS);
 		assertTrue(discarded.get(0).getName().equals("Excalibur") || discarded.get(0).getName().equals("Lance"));
@@ -81,7 +81,7 @@ public class TestAbstractAI {
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
-		AbstractAI player = new A1(p1, pm, new BoardModelMediator(null, null, null));
+		AbstractAI player = new A1(p1, pm, new BoardModelMediator(null, null, null, null, null));
 		
 		List<AdventureCard> discarded = player.discardKingsCalltoArms(1, TYPE.WEAPONS);
 		assertTrue(discarded.get(0).getName().equals("Excalibur") || discarded.get(0).getName().equals("Lance"));
