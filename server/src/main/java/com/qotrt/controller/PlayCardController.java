@@ -17,6 +17,7 @@ import com.qotrt.messages.game.PlayCardClient;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.model.CanPick;
+import com.qotrt.model.DiscardModel;
 import com.qotrt.model.EventModel;
 
 
@@ -26,6 +27,65 @@ public class PlayCardController {
 	@Autowired
 	private Hub hub;
 
+	@MessageMapping("/game.discardFullHand")
+	public void discardFull(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload PlayCardClient chatMessage) {
+		
+		
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		DiscardModel dm = game.bmm.getDiscardModel();
+		String response = "";
+		
+		if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.DISCARD) && 
+				chatMessage.zoneFrom.equals(ZONE.HAND)) {
+			response = dm.playCard(player, chatMessage.card, player.hand);
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.DISCARD) && 
+				chatMessage.zoneFrom.equals(ZONE.FACEDOWN)) {
+			response = dm.playCard(player, chatMessage.card, player.getFaceDownDeck());
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.HAND) && 
+				chatMessage.zoneFrom.equals(ZONE.DISCARD)) {
+			player.hand.addCard(dm.getCard(player, chatMessage.card));
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.HAND) && 
+				chatMessage.zoneFrom.equals(ZONE.FACEDOWN)) {
+			player.hand.addCard(player.getFaceDownDeck().getCardByID(chatMessage.card));
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.FACEDOWN) && 
+				chatMessage.zoneFrom.equals(ZONE.DISCARD)) {
+			
+			
+			AdventureCard c = dm.findCard(player, chatMessage.card);
+			response = c.playFaceDown(player.getFaceDownDeck(), player.getFaceUp());
+			if(!response.equals("") || !c.getType().equals(TYPE.AMOUR) || c.getType().equals(TYPE.ALLIES)) {
+				response = "can only play amour or allies face down during discarding";
+			} else {
+				player.getFaceDownDeck().addCard(dm.getCard(player, chatMessage.card));
+			}
+			
+			
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.FACEDOWN) && 
+				chatMessage.zoneFrom.equals(ZONE.HAND)) {
+
+			AdventureCard c = player.hand.findCardByID(chatMessage.card);
+			response = c.playFaceDown(player.getFaceDownDeck(), player.getFaceUp());
+			if(!response.equals("") || !c.getType().equals(TYPE.AMOUR) || c.getType().equals(TYPE.ALLIES)) {
+				response = "can only play amour or allies face down during discarding";
+			} else {
+				player.getFaceDownDeck().addCard(player.hand.getCardByID(chatMessage.card));
+			}
+			
+		} else {
+			response = "not a playable zone currently";
+		}
+
+		checkValidityAndSend(game, player, chatMessage, response);
+	}
+	
 	@MessageMapping("/game.discardEvent")
 	public void discardEvent(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
