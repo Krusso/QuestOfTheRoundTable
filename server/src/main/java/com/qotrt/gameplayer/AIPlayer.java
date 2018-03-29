@@ -4,11 +4,10 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-import javax.swing.plaf.synth.SynthSplitPaneUI;
-
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.game.Game;
+import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.GenericPair;
 import com.qotrt.views.Observer;
 
@@ -24,16 +23,15 @@ public class AIPlayer extends Observer {
 		this.game = game;
 	}
 
-	public void startAIPlayer(Player player, PlayerManager pm) {
+	public void startAIPlayer(Player player, PlayerManager pm, BoardModelMediator bmm) {
 		System.out.println("Player: " + player.getID() + " strat: " + strat);
 		this.player = player;
 		if(strat == 1) {
-			ai = new A1(player, pm);
+			ai = new A1(player, pm, bmm);
 		} else if(strat == 2) {
 			ai = new A2(player, pm);
 		} else {
-			// TODO
-			//ai = new A3(player, pm); 
+			ai = new A3(player, pm, bmm); 
 		}
 	}
 

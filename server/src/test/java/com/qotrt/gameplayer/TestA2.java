@@ -37,6 +37,7 @@ public class TestA2 {
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
 		Player p1 = new Player(0, new UIPlayer("", ""));
 		
+		pm.nextTurn();
 		pm.players[0] = p1;
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));

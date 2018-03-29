@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.model.BoardModelMediator;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 
@@ -21,8 +22,11 @@ public class A1 extends AbstractAI {
 
 	final static Logger logger = LogManager.getLogger(A1.class);
 
-	public A1(Player player, PlayerManager pm) {
+	private BoardModelMediator bmm;
+	
+	public A1(Player player, PlayerManager pm, BoardModelMediator bmm) {
 		super(player, pm);
+		this.bmm = bmm;
 	}
 
 	@Override
@@ -68,19 +72,7 @@ public class A1 extends AbstractAI {
 	}
 
 	private boolean playerCanWinOrEvolveJoined(PlayerManager pm) {
-		// TODO
-		//		if(this.gbc != null) {
-		//			for(int i = 0; i < 4; i++) {
-		//				logger.info("join tournament: " + Arrays.toString(gbc.joinTournament));
-		//				if(gbc.joinTournament[i]) {
-		//					if(winPlayer(i)) {
-		//						logger.info("Player: " +i + " can evolve/win");
-		//						return true;
-		//					}
-		//				}
-		//			}
-		//		}
-		for(Player p: pm.players) {
+		for(Player p: bmm.getTournamentModel().playersWhoJoined()) {
 			if(winPlayer(p)) {
 				logger.info("Player: " + p + " can evolve/win");
 				return true;
@@ -96,7 +88,7 @@ public class A1 extends AbstractAI {
 			logger.info("Quest card: " + questCard.getName());
 		}
 		if(playerCanWinOrEvolve(pm)) {
-			logger.info("A1 doesnt want to sponsor tournament someone could win");
+			logger.info("A1 doesnt want to sponsor quest someone could win");
 			return null;
 		}
 
@@ -111,7 +103,7 @@ public class A1 extends AbstractAI {
 
 		//set up last stage to be atleast 50
 		if(sortedfoes.size() <= 0) {
-			logger.info("A1 doesnt want to sponsor tournament dont have enough foes/test");
+			logger.info("A1 doesnt want to sponsor quest dont have enough foes/test");
 			return null;
 		}
 
@@ -130,7 +122,7 @@ public class A1 extends AbstractAI {
 		}
 
 		if(bp < 50) {
-			logger.info("A1 doesnt want to sponsor tournament cant make last stage >50bp");
+			logger.info("A1 doesnt want to sponsor quest cant make last stage >50bp");
 			return null;
 		}
 
@@ -166,12 +158,10 @@ public class A1 extends AbstractAI {
 		int min = Integer.MIN_VALUE;
 		for(List<AdventureCard> i: cards) {
 			if(i.size() == 0) {
-				logger.info("A1 doesnt want to sponsor tournament not enough different bp foes/tests");
+				logger.info("A1 doesnt want to sponsor quest not enough different bp foes/tests");
 				return null;	
 			}
-			int pointsInStage = bc.calculateStage(player.hand, 
-					i.stream().map(j -> j.getName()).toArray(String[]::new),
-					(StoryCard) questCard);
+			int pointsInStage = bc.calculateStage(i, (StoryCard) questCard);
 			if(pointsInStage < min) {
 				logger.info("Not sponsoring quest");
 				return null;
@@ -187,7 +177,7 @@ public class A1 extends AbstractAI {
 	public boolean doIParticipateInQuest(QuestCard questCard) {
 		rounds = 0;
 		stages = 0;
-		logger.info("Asking A1 if wants to join tournament");
+		logger.info("Asking A1 if wants to join quest");
 		int stages = questCard.getNumStages();
 		int weaponOrAllyCount = player.getTypeCount(TYPE.WEAPONS) + player.getTypeCount(TYPE.ALLIES);
 		if(stages*2 > weaponOrAllyCount) {

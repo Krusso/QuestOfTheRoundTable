@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.qotrt.game.Game;
 import com.qotrt.hub.Hub;
-import com.qotrt.messages.game.AIPlayer;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
@@ -68,11 +67,13 @@ public class GameController {
 
 	@MessageExceptionHandler(Exception.class)
 	public void handleException(Exception ex) {
-		System.out.println("Got exception: " + ex.getMessage());
+		System.out.println("Got exception: " + ex.getMessage() + " " + ex);
+		ex.printStackTrace();
 	}
 	
 	@ExceptionHandler(Exception.class)
 	public void handleError(Exception ex) {
-		System.out.println("Got exception1: " + ex.getMessage());
+		System.out.println("Got exception: " + ex.getMessage() + " " + ex);
+		ex.printStackTrace();
 	  }
 }
