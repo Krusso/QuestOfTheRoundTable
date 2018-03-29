@@ -142,7 +142,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_joinQuest = "/app/game.joinQuest";
     $scope.ep_playForQuest = "/app/game.playForQuest";
     $scope.ep_bid = "/app/game.bid";
-    $scope.ep_discard = "/app/game.discard";
+    $scope.ep_discardBid = "/app/game.discardBid";
+    $scope.ep_discardFinish = "/app/game.finishDiscard";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -274,8 +275,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         };
         $scope.addMessage($scope.ep_bid);
     };
-    $scope.sendQuestDiscardClient = function () {
+    $scope.sendFinishDiscard = function () {
         console.log("hello");
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.DISCARDQUEST,
+            java_class: "QuestDiscardCardsClient",
+        };
+        $scope.addMessage($scope.ep_discardFinish);
     }
 
     /***************************************************************/
@@ -1085,7 +1092,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         if ($scope.currentState == $scope.GAME_STATE.DISCARDQUEST) {
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
-            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_discard);
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_discardBid);
         }
     }
 
