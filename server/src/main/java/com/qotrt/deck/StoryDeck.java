@@ -6,6 +6,14 @@ import com.qotrt.cards.EventCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.cards.TournamentCard;
+import com.qotrt.cards.events.ChivalrousDeed;
+import com.qotrt.cards.events.CourtCalledToCamelot;
+import com.qotrt.cards.events.KingRecognition;
+import com.qotrt.cards.events.KingsCallToArms;
+import com.qotrt.cards.events.Plague;
+import com.qotrt.cards.events.Pox;
+import com.qotrt.cards.events.ProsperityThroughoutTheRealm;
+import com.qotrt.cards.events.QueenFavor;
 
 public class StoryDeck extends Deck<StoryCard> {
 	
@@ -26,6 +34,7 @@ public class StoryDeck extends Deck<StoryCard> {
 //		addCard(new QuestCard("Slay the Dragon",3,new String[] {"Dragon"}),1);
 		addCard(new QuestCard("Boar Hunt",2,new String[] {"Boar"}),2);
 		addCard(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"}),2);
+
 
 
 		

@@ -14,17 +14,19 @@ public class GameCreateClient extends Message {
 	
 	public GameCreateClient() {}
 
-	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged) {
+	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged, AIPlayer[] ais) {
 		this.numPlayers = numPlayers;
 		this.playerName = playerName;
 		this.rigged = rigged;
+		this.ais = ais;
 	}
 	
-	public GameCreateClient(int numPlayers, String playerName, String gameName, RIGGED rigged) {
+	public GameCreateClient(int numPlayers, String playerName, String gameName, RIGGED rigged, AIPlayer[] ais) {
 		this.numPlayers = numPlayers;
 		this.playerName = playerName;
 		this.gameName = gameName;
 		this.rigged = rigged;
+		this.ais = ais;
 	}
 
 	@Override

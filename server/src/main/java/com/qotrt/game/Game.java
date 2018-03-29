@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.google.common.eventbus.EventBus;
 import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
@@ -17,6 +16,8 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
+import com.qotrt.model.DiscardModel;
+import com.qotrt.model.EventModel;
 import com.qotrt.model.Observable;
 import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -25,12 +26,15 @@ import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
 import com.qotrt.util.WebSocketUtil;
+import com.qotrt.views.BattlePointsView;
 import com.qotrt.views.BoardView;
+import com.qotrt.views.DiscardView;
+import com.qotrt.views.EventView;
 import com.qotrt.views.HubView;
+import com.qotrt.views.Observer;
 import com.qotrt.views.PlayerView;
 import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
-import com.qotrt.views.Observer;
 
 public class Game extends Observable {
 
@@ -80,7 +84,6 @@ public class Game extends Observable {
 			public void run() {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
-				EventBus eventBus = new EventBus();
 
 				for(int i = 0; i < aiplayers.size(); i++) {
 					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
@@ -88,7 +91,7 @@ public class Game extends Observable {
 				
 				// model creation
 				System.out.println("creating models");
-				BoardModel bm = new BoardModel(eventBus);
+				BoardModel bm = new BoardModel();
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
 						players.toArray(new UIPlayer[players.size()]), 
@@ -96,7 +99,9 @@ public class Game extends Observable {
 						rigged);
 				TournamentModel tm = new TournamentModel();
 				QuestModel qm = new QuestModel();
-				bmm = new BoardModelMediator(tm, qm, bm);
+				DiscardModel dmm = new DiscardModel();
+				EventModel em = new EventModel();
+				bmm = new BoardModelMediator(tm, qm, bm, dmm, em);
 
 				// view creation
 				System.out.println("creating views");
@@ -104,6 +109,9 @@ public class Game extends Observable {
 				Observer bv = new BoardView(messagingTemplate);
 				Observer tv = new TournamentView(messagingTemplate);
 				Observer qv = new QuestView(messagingTemplate);
+				Observer bpv = new BattlePointsView(messagingTemplate, pm);
+				Observer ev = new EventView(messagingTemplate);
+				Observer dv = new DiscardView(messagingTemplate);
 				
 				// adding websocket session ids to each view 
 				System.out.println("setting up subscriptions");
@@ -113,29 +121,36 @@ public class Game extends Observable {
 					bv.addWebSocket(i);
 					tv.addWebSocket(i);
 					qv.addWebSocket(i);
+					bpv.addWebSocket(i);
+					System.out.println("still setting up player subscriptions");
+					ev.addWebSocket(i);
+					System.out.println("still setting up player subscriptions");
+					dv.addWebSocket(i);
+					System.out.println("finished setting up player subscriptions");
 				});
 
 				System.out.println("setting up model subscriptions");
 				// subscriptions
 				System.out.println("setting up pm subscription");
 				pm.subscribe(pv);
+				pm.subscribe(bpv);
 				System.out.println("setting up bm subscription");
 				bm.subscribe(bv);
+				bm.subscribe(bpv);
 				System.out.println("setting up tm subscription");
 				tm.subscribe(tv);
 				System.out.println("setting up qm subscription");
 				qm.subscribe(qv);
+				qm.subscribe(bpv);
+				dmm.subscribe(dv);
+				em.subscribe(ev);
 
-				// TODO: use this
-				// eventBus.register(bv);
-				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
-				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
 				System.out.println("starting pm");
 				pm.start();
 				
 				System.out.println("starting AI players");
 				for(int i = 0; i < aiplayers.size(); i++) {
-					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm);
+					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm,  bmm);
 					bm.subscribe(aiplayers.get(i));
 					tm.subscribe(aiplayers.get(i));
 					qm.subscribe(aiplayers.get(i));
@@ -168,7 +183,6 @@ public class Game extends Observable {
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 

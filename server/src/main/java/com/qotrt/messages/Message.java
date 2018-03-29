@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.qotrt.messages.events.EventDiscardCardsServer;
+import com.qotrt.messages.events.EventDiscardFinishPickingServer;
+import com.qotrt.messages.events.EventDiscardOverServer;
 import com.qotrt.messages.game.GameJoinServer;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.messages.game.GameStartServer;
@@ -53,6 +56,9 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = QuestBidServer.class, name="BIDQUEST"),
 	    @Type(value = QuestDiscardCardsServer.class, name="DISCARDQUEST"),
 	    @Type(value = QuestUpServer.class, name="UPQUEST"),
+	    @Type(value = EventDiscardCardsServer.class, name="EVENTDISCARD"),
+	    @Type(value = EventDiscardFinishPickingServer.class, name="FINISHPICKEVENT"),
+	    @Type(value = EventDiscardOverServer.class, name = "EVENTDISCARDOVER"),
 	    })  
 public abstract class Message {
 
@@ -95,7 +101,11 @@ public abstract class Message {
 		WINQUEST, 
 		BIDQUEST, 
 		DISCARDQUEST, 
-		UPQUEST
+		UPQUEST, 
+		BATTLEPOINTS, 
+		EVENTDISCARD, 
+		FINISHPICKEVENT, 
+		EVENTDISCARDOVER
 	};
 	
 //	@Override
