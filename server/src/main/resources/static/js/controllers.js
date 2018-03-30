@@ -265,7 +265,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 java_class: "PlayCardClient"
             };
             $scope.addMessage($scope.ep_playCardTournament);
-        }        
+        }
     };
 
     $scope.sendTournamentPickCardsClient = function() {
@@ -391,7 +391,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.players[message.player].joinedTourn = true;
                 console.log("Player sponsoring? : " + $scope.players[message.player].joinedTourn);
                 $scope.toast = "Select cards to use in tournament";
-            }            
+            }
+
+            if (message.messageType === "FACEDOWN") {
+                //
+            }
 
             if (message.messageType === "SPONSERQUEST") {
                 $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
