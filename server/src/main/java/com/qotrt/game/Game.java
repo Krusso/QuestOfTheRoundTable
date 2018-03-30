@@ -68,6 +68,13 @@ public class Game extends Observable {
 		hv = new HubView(this.messagingTemplate);
 		subscribe(hv);
 	}
+	
+	public ArrayList getPlayers() {
+		ArrayList p = new ArrayList();
+		p.addAll(aiplayers);
+		p.addAll(players);
+		return p;
+	}
 
 	public Player getPlayerBySessionID(String sessionID) {
 		for(Player player: pm.players) {

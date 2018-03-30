@@ -25,6 +25,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
     $scope.joinedGame = false;
     $scope.myPlayerId;
+    $scope.myUUID;
     $scope.players = [];
     $scope.stageZones = [{
         stage1: [],
@@ -104,6 +105,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     //Specify all endpoints
     $scope.ep_joinGame = "/app/game.joinGame";
     $scope.ep_listGames = "/app/game.listGames";
+    $scope.ep_listPlayers = "/app/game.listPlayers";
     $scope.ep_createGame = "/app/game.createGame";
     $scope.ep_playCardQuestSetup = "/app//game.playCardQuestSetup";
 
@@ -151,12 +153,24 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            java_class: "GameListClient",
-
+            java_class: "GameListClient"
         };
         $scope.addMessage($scope.ep_listGames);
     };
+
+    $scope.sendListPlayersClient = function () {
+        console.log("listing players");
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            // messageType: $scope.MESSAGETYPES.JOINGAME,
+            java_class: "PlayerListClient"
+
+        };
+        $scope.addMessage($scope.ep_listPlayers);        
+    }
+
     $scope.sendGameJoinClient = function (uuid) {
+        $scope.myUUID = uuid;
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,

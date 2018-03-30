@@ -17,6 +17,7 @@ import com.qotrt.hub.Hub;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
+import com.qotrt.messages.game.PlayerListClient;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.util.WebSocketUtil;
@@ -54,6 +55,16 @@ public class GameController {
 				"/queue/response",
 				gls,
 				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));
+	}
+	
+	@MessageMapping("/game.listPlayers")
+	public void listPlayers(SimpMessageHeaderAccessor headerAccessor, @Payload PlayerListClient chatMessage) {
+		System.out.println("listing players");
+		ArrayList players = hub.listPlayers(headerAccessor.getSessionId());
+		messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), 
+				"/queue/response",
+				players,
+				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));		
 	}
 
 	@MessageMapping("/game.joinGame")
