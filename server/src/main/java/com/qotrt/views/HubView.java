@@ -2,6 +2,7 @@ package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -16,7 +17,7 @@ import com.qotrt.model.UIPlayer;
 public class HubView extends Observer implements PropertyChangeListener {
 	
 	public HubView(SimpMessagingTemplate messagingTemplate) {
-		super(messagingTemplate);
+		super(messagingTemplate, new ArrayList<UIPlayer>());
 		
 		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("players");
 		Consumer<PropertyChangeEvent> funcC = x -> playerJoinedGame(mapper.convertValue(x.getNewValue(), UIPlayer[].class));

@@ -63,7 +63,7 @@ public class TestTournament {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 
 				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
 						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
@@ -144,7 +144,7 @@ public class TestTournament {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 
 				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
 						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
@@ -221,7 +221,7 @@ public class TestTournament {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+						new GameCreateClient(4, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 
 				p.waitForThenSend(TournamentAcceptDeclineServer.class, 0, 
 						"/app/game.joinTournament", new TournamentAcceptDeclineClient(0, true));
@@ -293,7 +293,7 @@ public class TestTournament {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+						new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 
 				while(true) {
 					TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);
@@ -343,7 +343,7 @@ public class TestTournament {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 
 					while(true) {
 						TournamentAcceptDeclineServer tads = p.take(TournamentAcceptDeclineServer.class);

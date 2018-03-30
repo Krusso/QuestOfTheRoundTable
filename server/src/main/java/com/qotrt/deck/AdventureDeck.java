@@ -69,8 +69,8 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		return deck.stream().mapToInt(i -> i.getBattlePoints()).sum();
 	}
 
-	public List<Card> discardType(TYPE type) {
-		List<Card> removed = new ArrayList<Card>();
+	public List<AdventureCard> discardType(TYPE type) {
+		List<AdventureCard> removed = new ArrayList<AdventureCard>();
 		deck.removeIf(i -> {
 			if(i.getType() != type) {
 				return false;

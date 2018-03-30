@@ -74,7 +74,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
@@ -127,7 +127,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(3, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(3, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
@@ -196,7 +196,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(3, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(3, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
@@ -255,7 +255,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
@@ -297,7 +297,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, 
 							"/app/game.joinQuest", new QuestJoinClient(0, true));
@@ -361,7 +361,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestJoinServer.class, 0, "/app/game.joinQuest", new QuestJoinClient(0, false));
 			}
@@ -400,7 +400,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONEHUNDREDSTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.ONEHUNDREDSTAGETOURNAMENT, new AIPlayer[] {}, false));
 			}
 		};
 		
@@ -422,7 +422,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}));
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
 
 					p.waitForThenSend(QuestSponsorServer.class, 0,
 							"/app/game.sponsorQuest", new QuestSponsorClient(0, false));

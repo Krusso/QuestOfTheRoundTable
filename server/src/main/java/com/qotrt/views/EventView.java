@@ -1,6 +1,7 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -13,11 +14,12 @@ import com.qotrt.messages.events.EventDiscardCardsServer;
 import com.qotrt.messages.events.EventDiscardFinishPickingServer;
 import com.qotrt.messages.events.EventDiscardOverServer;
 import com.qotrt.model.GenericPair2;
+import com.qotrt.model.UIPlayer;
 
 public class EventView extends Observer {
 
-	public EventView(SimpMessagingTemplate messagingTemplate) {
-		super(messagingTemplate);
+	public EventView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
+		super(messagingTemplate, players);
 
 		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("discardEvent");
 		Consumer<PropertyChangeEvent> func1 = x -> discard(mapper.convertValue(x.getNewValue(), Player[].class));

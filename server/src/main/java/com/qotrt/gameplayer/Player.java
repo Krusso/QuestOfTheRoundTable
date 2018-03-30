@@ -35,6 +35,7 @@ public class Player extends Observable {
 		this.rank = Rank.RANKS.SQUIRE;
 		this.hand = new AdventureDeck();
 		this.faceDown = new AdventureDeck();
+		System.out.println("faceDown is: " + faceDown);
 		this.faceUp = new AdventureDeck();
 		this.ID = id;
 		this.shields = 0;
@@ -139,6 +140,7 @@ public class Player extends Observable {
 		if(tristan && iseult) { logger.info("Have both iseult and tristant"); }
 		logger.info("Face up deck: " + faceUp.getDeck());
 		fireEvent("battlePoints", null, this);
+		fireEvent("flipCards", null, this);
 	}
 
 	public final AdventureDeck getFaceUp() {
@@ -146,7 +148,7 @@ public class Player extends Observable {
 	}
 
 	public void discardType(TYPE type) {
-		List<Card> removedCards = faceUp.discardType(type);
+		List<AdventureCard> removedCards = faceUp.discardType(type);
 		removedCards.forEach(i -> {
 			if(i.getName().equals("Sir Tristan")) {
 				tristan = false;
@@ -156,7 +158,10 @@ public class Player extends Observable {
 		});
 		logger.info("Player id: " + ID + " discarded type: " + type);
 		logger.info("Player id: " + ID + " discarded cards: " + Arrays.toString(removedCards.stream().map(i -> i.getName()).toArray(String[]::new)));
-		fireEvent("discardType", null, new GenericPair(removedCards, ID));
+		fireEvent("discardType", null, 
+				new GenericPair(removedCards.stream().
+						map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new), 
+						ID));
 	}
 
 	public int getShields() {

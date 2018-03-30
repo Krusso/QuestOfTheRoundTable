@@ -54,7 +54,7 @@ public class TestPlayerView {
 			public void run() {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
-				p.sendMessage("/app/game.createGame", new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+				p.sendMessage("/app/game.createGame", new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 			}
 		};
 

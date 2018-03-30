@@ -1,6 +1,7 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -17,11 +18,12 @@ import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
 import com.qotrt.model.GenericPair2;
+import com.qotrt.model.UIPlayer;
 
 public class QuestView extends Observer {
 
-	public QuestView(SimpMessagingTemplate messagingTemplate) {
-		super(messagingTemplate);
+	public QuestView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
+		super(messagingTemplate, players);
 
 		Function<PropertyChangeEvent, Boolean> funcF = 
 				x -> x.getPropertyName().equals("questionSponsor");

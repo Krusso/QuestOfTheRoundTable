@@ -14,7 +14,7 @@ import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Player;
 
-public class EventModel extends Observable{
+public class EventModel extends Observable implements Discard{
 
 	private Confirmation discard = new MultiShotConfirmation(null, "finishDiscard", null);
 	private Map<Player, GenericPair2<TYPE, Integer>> map = new HashMap<Player, GenericPair2<TYPE, Integer>>();
@@ -63,6 +63,10 @@ public class EventModel extends Observable{
 		return "";
 	}
 
+	public synchronized AdventureCard findCard(Player p, int id) {
+		return cards.get(p).findCardByID(id);
+	}
+	
 	public synchronized AdventureCard getCard(Player p, int id) {
 		return cards.get(p).getCardByID(id);
 	}
@@ -79,10 +83,6 @@ public class EventModel extends Observable{
 				"player: " + player.getID() + " finished discarding",
 				"player: " + player + " finished discarding too late");
 		return "";
-	}
-
-	public synchronized AdventureCard findCard(Player player, int card) {
-		return cards.get(player).findCardByID(card);
 	}
 
 	public synchronized void finish() {

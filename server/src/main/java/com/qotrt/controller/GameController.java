@@ -32,7 +32,18 @@ public class GameController {
 
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
-		UUID uuid = hub.addGame(chatMessage.getGameName(), chatMessage.getNumPlayers(), chatMessage.getRigged(), chatMessage.getAis());
+		System.out.println("Discard: " + chatMessage.getDiscard());
+		if(null == chatMessage.getDiscard()) {
+			System.out.println("defaulting discard to true");
+			chatMessage.setDiscard(true);
+			System.out.println("Discard: " + chatMessage.getDiscard());
+		}
+		UUID uuid = hub.addGame(chatMessage.getGameName(), 
+				chatMessage.getNumPlayers(),
+				chatMessage.getRigged(), 
+				chatMessage.getAis(),
+				chatMessage.getDiscard());
+		
 		String sessionID = headerAccessor.getSessionId();
 		System.out.println("s is: " + sessionID);
 		GameJoinClient gjc = new GameJoinClient();

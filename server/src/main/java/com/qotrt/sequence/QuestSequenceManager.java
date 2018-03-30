@@ -124,7 +124,7 @@ public class QuestSequenceManager extends SequenceManager {
 		}
 
 		pm.discardCards(participants);
-		pm.drawCards(sponsor, quest.getNumStages() + quest.getNumCards());
+		pm.drawCards(sponsors, quest.getNumStages() + quest.getNumCards());
 
 		if(participants.size() != 0) {
 			logger.info("Winners of the Quest: " + Arrays.toString(winners.stream().map(i -> i.getID()).toArray(Integer[]::new)));

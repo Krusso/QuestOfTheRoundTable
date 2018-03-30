@@ -60,7 +60,7 @@ public class TestEventKingsCallToArms {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(2, "hello", RIGGED.KINGSCALLTOARMS, new AIPlayer[] {}));
+						new GameCreateClient(2, "hello", RIGGED.KINGSCALLTOARMS, new AIPlayer[] {}, false));
 
 				p.waitForThenSend(EventDiscardCardsServer.class, 0, "/app/game.discardEvent",
 						new PlayCardClient(0, 170, ZONE.HAND, ZONE.DISCARD));

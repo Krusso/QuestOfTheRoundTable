@@ -14,6 +14,7 @@ import com.qotrt.cards.WeaponCard;
 import com.qotrt.deck.DeckManager;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
+import com.qotrt.sequence.DiscardSequenceManager;
 import com.qotrt.views.Observer;
 
 public class PlayerManager {
@@ -22,6 +23,7 @@ public class PlayerManager {
 	private int currentPlayer = -1;
 	private DeckManager dm;
 	private RIGGED rigged;
+	private DiscardSequenceManager dsm;
 
 	public Player[] players;
 	public PlayerManager(int numPlayers, UIPlayer[] uiPlayer, DeckManager dm, RIGGED rigged2) {
@@ -124,7 +126,7 @@ public class PlayerManager {
 				
 				cards.add(dm.getAdventureCard("Thieves"));
 				players[i - 1].addCards(cards);
-			} else if (rigged.equals(RIGGED.LONG)) {
+			} else if (rigged.equals(RIGGED.LONG) || rigged.equals(RIGGED.PROSPERITY)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 				if(i == 2) {
 					cards.add(dm.getAdventureCard("Sir Percival"));
@@ -273,20 +275,16 @@ public class PlayerManager {
 		}
 	}
 
-//	public void setDiscardSequenceManager(DiscardSequenceManager dsm) {
-//		this.dsm = dsm;
-//	}
-	
-	public void drawCards(Player player, int cards) {
-		player.addCards(dm.getAdventureCard(cards));
-		//if(dsm != null) dsm.start(null, null, null);
+	public void setDiscardSequenceManager(DiscardSequenceManager dsm) {
+		this.dsm = dsm;
 	}
+	
 	
 	public void drawCards(List<Player> players, int cards) {
 		players.forEach(player -> {
 			player.addCards(dm.getAdventureCard(cards));
 		});
-		//if(dsm != null) dsm.start(null, null, null);
+		if(dsm != null) dsm.start(this, null);;
 	}
 	
 	public void setPlayer(Player playerFind) {

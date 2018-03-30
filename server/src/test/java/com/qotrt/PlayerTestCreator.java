@@ -37,7 +37,6 @@ public class PlayerTestCreator {
 		System.out.println("starting");
 		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-		//stompClient.setMessageConverter(new StringMessageConverter());
 
 		System.out.println("connecting to: " + WEBSOCKET_URI);
 		try {

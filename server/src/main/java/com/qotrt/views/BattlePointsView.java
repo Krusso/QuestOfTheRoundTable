@@ -1,6 +1,7 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -15,14 +16,15 @@ import com.qotrt.messages.game.BattlePointsServer;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.model.GenericPair2;
 import com.qotrt.model.QuestModel;
+import com.qotrt.model.UIPlayer;
 
 public class BattlePointsView extends Observer {
 
 	private BattlePointCalculator bpc;
 	private StoryCard sc;
 	
-	public BattlePointsView(SimpMessagingTemplate messagingTemplate, PlayerManager pm) {
-		super(messagingTemplate);
+	public BattlePointsView(SimpMessagingTemplate messagingTemplate, PlayerManager pm, ArrayList<UIPlayer> players) {
+		super(messagingTemplate, players);
 		this.bpc = new BattlePointCalculator(pm);
 		
 		Function<PropertyChangeEvent, Boolean> funcF = 

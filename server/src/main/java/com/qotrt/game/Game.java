@@ -23,6 +23,7 @@ import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
+import com.qotrt.sequence.DiscardSequenceManager;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
 import com.qotrt.util.WebSocketUtil;
@@ -50,16 +51,23 @@ public class Game extends Observable {
 	private HubView hv;
 	private RIGGED rigged;
 	public BoardModelMediator bmm;
+	private Boolean discard;
 
 	public UUID getUUID() {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, com.qotrt.messages.game.AIPlayer[] aiPlayers2) {
+	public Game(SimpMessagingTemplate messagingTemplate, 
+			String gameName, 
+			int capacity, 
+			RIGGED rigged, 
+			com.qotrt.messages.game.AIPlayer[] aiPlayers2, 
+			Boolean discard) {
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
+		this.discard = discard;
 		for(com.qotrt.messages.game.AIPlayer x: aiPlayers2) {
 			System.out.println("strategy: " + x.strat);
 			aiplayers.add(new AIPlayer(x.strat,this));
@@ -105,29 +113,13 @@ public class Game extends Observable {
 
 				// view creation
 				System.out.println("creating views");
-				Observer pv = new PlayerView(messagingTemplate);
-				Observer bv = new BoardView(messagingTemplate);
-				Observer tv = new TournamentView(messagingTemplate);
-				Observer qv = new QuestView(messagingTemplate);
-				Observer bpv = new BattlePointsView(messagingTemplate, pm);
-				Observer ev = new EventView(messagingTemplate);
-				Observer dv = new DiscardView(messagingTemplate);
-				
-				// adding websocket session ids to each view 
-				System.out.println("setting up subscriptions");
-				players.forEach(i -> { 
-					System.out.println("setting up player subscriptions");
-					pv.addWebSocket(i);
-					bv.addWebSocket(i);
-					tv.addWebSocket(i);
-					qv.addWebSocket(i);
-					bpv.addWebSocket(i);
-					System.out.println("still setting up player subscriptions");
-					ev.addWebSocket(i);
-					System.out.println("still setting up player subscriptions");
-					dv.addWebSocket(i);
-					System.out.println("finished setting up player subscriptions");
-				});
+				Observer pv = new PlayerView(messagingTemplate, players);
+				Observer bv = new BoardView(messagingTemplate, players);
+				Observer tv = new TournamentView(messagingTemplate, players);
+				Observer qv = new QuestView(messagingTemplate, players);
+				Observer bpv = new BattlePointsView(messagingTemplate, pm, players);
+				Observer ev = new EventView(messagingTemplate, players);
+				Observer dv = new DiscardView(messagingTemplate, players);
 
 				System.out.println("setting up model subscriptions");
 				// subscriptions
@@ -145,6 +137,11 @@ public class Game extends Observable {
 				dmm.subscribe(dv);
 				em.subscribe(ev);
 
+				System.out.println("creating discard sequence manager: " + discard);
+				if(discard) {
+					pm.setDiscardSequenceManager(new DiscardSequenceManager(bmm));
+				}
+				
 				System.out.println("starting pm");
 				pm.start();
 				
