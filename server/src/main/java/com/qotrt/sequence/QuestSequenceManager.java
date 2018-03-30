@@ -66,7 +66,7 @@ public class QuestSequenceManager extends SequenceManager {
 			}
 		});
 
-		System.out.println("questioning players about joining");
+		logger.info("questioning players about joining");
 		qm.questionJoinQuest(potentialQuestPlayers);
 
 		// Wait for responses
@@ -90,7 +90,7 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// determining if anyone decided to sponsor
 		List<Player> sponsors = qm.getPlayerWhoSponsor();
-		System.out.println("sponsors: " + sponsors);
+		logger.info("sponsors: " + sponsors);
 		if(sponsors.size() == 0) {
 			qm.setMessage(WINTYPES.NOSPONSOR);
 			qm.setWinners(new ArrayList<Player>());

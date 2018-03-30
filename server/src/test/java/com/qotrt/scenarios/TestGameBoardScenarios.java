@@ -1,9 +1,19 @@
 package com.qotrt.scenarios;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
+
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
+
+import com.qotrt.cards.AdventureCard;
+import com.qotrt.gameplayer.Rank.RANKS;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -16,15 +26,6 @@ import javafx.scene.text.Text;
 import src.client.GameBoardController;
 import src.client.GameBoardController.GAME_STATE;
 import src.client.TitleScreenController;
-import src.game_logic.AdventureCard;
-import src.game_logic.Rank.RANKS;
-import static org.junit.Assert.*;
-
-import static org.junit.Assert.assertTrue;
-
-import static org.testfx.api.FxAssert.verifyThat;
-
-import java.util.ArrayList;
 
 public class TestGameBoardScenarios extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestGameBoardScenarios.class);

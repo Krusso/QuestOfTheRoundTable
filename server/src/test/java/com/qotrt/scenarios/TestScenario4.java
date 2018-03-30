@@ -8,12 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.WaitForAsyncUtils;
 
+import com.qotrt.cards.AdventureCard;
+
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import src.game_logic.AdventureCard;
 
 public class TestScenario4 extends TestFXBase {
 	final static Logger logger = LogManager.getLogger(TestScenario4.class);

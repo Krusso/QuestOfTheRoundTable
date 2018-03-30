@@ -12,9 +12,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
-import com.qotrt.cards.AdventureCard.TYPE;
 
 public interface AICommonImplementation  {
 	public default List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard, Logger logger, PlayerManager pm, Player player, Boolean canWinOrEvolve, BattlePointCalculator bpc) {

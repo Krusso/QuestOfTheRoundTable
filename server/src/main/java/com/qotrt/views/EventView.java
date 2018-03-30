@@ -13,7 +13,7 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.messages.events.EventDiscardCardsServer;
 import com.qotrt.messages.events.EventDiscardFinishPickingServer;
 import com.qotrt.messages.events.EventDiscardOverServer;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
 
 public class EventView extends Observer {
@@ -31,9 +31,9 @@ public class EventView extends Observer {
 		Consumer<PropertyChangeEvent> funcC3 = x -> finishEvent(mapper.convertValue(x.getNewValue(), Integer.class));
 
 
-		events.add(new GenericPair2<>(func, func1));
-		events.add(new GenericPair2<>(funcC, funcC1));
-		events.add(new GenericPair2<>(funcC2, funcC3));
+		events.add(new GenericPairTyped<>(func, func1));
+		events.add(new GenericPairTyped<>(funcC, funcC1));
+		events.add(new GenericPairTyped<>(funcC2, funcC3));
 	}
 
 	

@@ -35,7 +35,7 @@ public class Player extends Observable {
 		this.rank = Rank.RANKS.SQUIRE;
 		this.hand = new AdventureDeck();
 		this.faceDown = new AdventureDeck();
-		System.out.println("faceDown is: " + faceDown);
+		logger.info("faceDown is: " + faceDown);
 		this.faceUp = new AdventureDeck();
 		this.ID = id;
 		this.shields = 0;

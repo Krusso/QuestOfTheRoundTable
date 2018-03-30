@@ -14,7 +14,7 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.messages.game.BattlePointsServer;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.QuestModel;
 import com.qotrt.model.UIPlayer;
 
@@ -42,9 +42,9 @@ public class BattlePointsView extends Observer {
 		Consumer<PropertyChangeEvent> funcC2 = 
 				x -> battlePointsStage(mapper.convertValue(x.getNewValue(), QuestModel.class));
 		
-		events.add(new GenericPair2<>(funcF, funcC));
-		events.add(new GenericPair2<>(funcF1, funcC1));
-		events.add(new GenericPair2<>(funcF2, funcC2));
+		events.add(new GenericPairTyped<>(funcF, funcC));
+		events.add(new GenericPairTyped<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(funcF2, funcC2));
 	}
 
 	private void battlePoints(Player p) {

@@ -18,6 +18,7 @@ import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
 import com.qotrt.model.DiscardModel;
 import com.qotrt.model.EventModel;
+import com.qotrt.model.FinalTournamentModel;
 import com.qotrt.model.Observable;
 import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -31,6 +32,7 @@ import com.qotrt.views.BattlePointsView;
 import com.qotrt.views.BoardView;
 import com.qotrt.views.DiscardView;
 import com.qotrt.views.EventView;
+import com.qotrt.views.FinalTournamentView;
 import com.qotrt.views.HubView;
 import com.qotrt.views.Observer;
 import com.qotrt.views.PlayerView;
@@ -69,7 +71,7 @@ public class Game extends Observable {
 		this.gameSize = capacity;
 		this.discard = discard;
 		for(com.qotrt.messages.game.AIPlayer x: aiPlayers2) {
-			System.out.println("strategy: " + x.strat);
+			logger.info("strategy: " + x.strat);
 			aiplayers.add(new AIPlayer(x.strat,this));
 		}
 		logger.info("messaging template: " + this.messagingTemplate);
@@ -98,7 +100,7 @@ public class Game extends Observable {
 				}
 				
 				// model creation
-				System.out.println("creating models");
+				logger.info("creating models");
 				BoardModel bm = new BoardModel();
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
@@ -109,10 +111,11 @@ public class Game extends Observable {
 				QuestModel qm = new QuestModel();
 				DiscardModel dmm = new DiscardModel();
 				EventModel em = new EventModel();
-				bmm = new BoardModelMediator(tm, qm, bm, dmm, em);
+				FinalTournamentModel ftm = new FinalTournamentModel();
+				bmm = new BoardModelMediator(tm, qm, bm, dmm, em, ftm);
 
 				// view creation
-				System.out.println("creating views");
+				logger.info("creating views");
 				Observer pv = new PlayerView(messagingTemplate, players);
 				Observer bv = new BoardView(messagingTemplate, players);
 				Observer tv = new TournamentView(messagingTemplate, players);
@@ -120,32 +123,34 @@ public class Game extends Observable {
 				Observer bpv = new BattlePointsView(messagingTemplate, pm, players);
 				Observer ev = new EventView(messagingTemplate, players);
 				Observer dv = new DiscardView(messagingTemplate, players);
+				Observer ftv = new FinalTournamentView(messagingTemplate, players);
 
-				System.out.println("setting up model subscriptions");
+				logger.info("setting up model subscriptions");
 				// subscriptions
-				System.out.println("setting up pm subscription");
+				logger.info("setting up pm subscription");
 				pm.subscribe(pv);
 				pm.subscribe(bpv);
-				System.out.println("setting up bm subscription");
+				logger.info("setting up bm subscription");
 				bm.subscribe(bv);
 				bm.subscribe(bpv);
-				System.out.println("setting up tm subscription");
+				logger.info("setting up tm subscription");
 				tm.subscribe(tv);
-				System.out.println("setting up qm subscription");
+				logger.info("setting up qm subscription");
 				qm.subscribe(qv);
 				qm.subscribe(bpv);
 				dmm.subscribe(dv);
 				em.subscribe(ev);
+				ftm.subscribe(ftv);
 
-				System.out.println("creating discard sequence manager: " + discard);
+				logger.info("creating discard sequence manager: " + discard);
 				if(discard) {
 					pm.setDiscardSequenceManager(new DiscardSequenceManager(bmm));
 				}
 				
-				System.out.println("starting pm");
+				logger.info("starting pm");
 				pm.start();
 				
-				System.out.println("starting AI players");
+				logger.info("starting AI players");
 				for(int i = 0; i < aiplayers.size(); i++) {
 					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm,  bmm);
 					bm.subscribe(aiplayers.get(i));
@@ -153,7 +158,7 @@ public class Game extends Observable {
 					qm.subscribe(aiplayers.get(i));
 				}
 				
-				System.out.println("finished setup");
+				logger.info("finished setup");
 				
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 				while(true) {
@@ -169,9 +174,8 @@ public class Game extends Observable {
 
 					boolean winners = pm.rankUp();
 					if(winners) {
-						//pvs.joinFinalTournament(pm.getAllWithState(Player.STATE.WINNING), Player.STATE.WINNING);
 						sm = gsm.createStoryManager(GameOverStoryCard.GAMEOVER);
-						//sm.start(actions, pm, bm);
+						sm.start(pm, bmm);
 						break;
 					}
 
@@ -200,9 +204,9 @@ public class Game extends Observable {
 	}
 
 	public boolean addPlayer(UIPlayer player) {
-		System.out.println("trying to add: " + player.getSessionID());
+		logger.info("trying to add: " + player.getSessionID());
 		if(players.size() == gameSize) {
-			System.out.println("game full not adding");
+			logger.info("game full not adding");
 			return false;
 		}
 
@@ -214,7 +218,7 @@ public class Game extends Observable {
 			startGame();
 		}
 
-		System.out.println("game not full adding player: " + player.getSessionID());
+		logger.info("game not full adding player: " + player.getSessionID());
 		return true;
 	}
 

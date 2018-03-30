@@ -16,6 +16,8 @@ import com.qotrt.messages.game.GameStartServer;
 import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
+import com.qotrt.messages.gameover.FinalTournamentNotifyServer;
+import com.qotrt.messages.gameover.GameOverServer;
 import com.qotrt.messages.hand.AddCardsServer;
 import com.qotrt.messages.hand.FaceUpDiscardServer;
 import com.qotrt.messages.hand.FaceUpServer;
@@ -68,7 +70,9 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = HandFullFinishPickingServer.class, name = "FINISHDISCARD"),
 	    @Type(value = BattlePointsServer.class, name = "BATTLEPOINTS"),
 	    @Type(value = FaceUpServer.class, name ="FACEUPCARDS"),
-	    @Type(value = FaceUpDiscardServer.class, name ="DISCARDFACEUP")
+	    @Type(value = FaceUpDiscardServer.class, name ="DISCARDFACEUP"),
+	    @Type(value = FinalTournamentNotifyServer.class, name = "JOINEDFINALTOURNAMENT"),
+	    @Type(value = GameOverServer.class, name = "GAMEOVER"),
 	    })  
 public abstract class Message {
 
@@ -119,7 +123,10 @@ public abstract class Message {
 		HANDDISCARD,
 		FINISHDISCARD, 
 		FACEUPCARDS, 
-		DISCARDFACEUP
+		DISCARDFACEUP, 
+		JOINEDFINALTOURNAMENT, 
+		GAMEOVER, 
+		FINISHFINALTOURNAMENT
 	};
 	
 //	@Override

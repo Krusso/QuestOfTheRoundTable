@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
-import com.qotrt.model.BoardModelMediator;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
+import com.qotrt.model.BoardModelMediator;
 
 public class A1 extends AbstractAI {
 

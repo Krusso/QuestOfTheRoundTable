@@ -9,7 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.cards.StoryCard;
 import com.qotrt.messages.game.MiddleCardServer;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
 
 public class BoardView extends Observer {
@@ -20,7 +20,7 @@ public class BoardView extends Observer {
 		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("middlecard");
 		Consumer<PropertyChangeEvent> func1 = x -> middleCardFlipped(mapper.convertValue(x.getNewValue(), StoryCard.class));
 		
-		events.add(new GenericPair2<>(func, func1));
+		events.add(new GenericPairTyped<>(func, func1));
 	}
 
 	private void middleCardFlipped(StoryCard s) {

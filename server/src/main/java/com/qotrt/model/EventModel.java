@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.confirmation.Confirmation;
@@ -14,21 +17,23 @@ import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Player;
 
-public class EventModel extends Observable implements Discard{
+public class EventModel extends Observable implements Discard {
 
+	final static Logger logger = LogManager.getLogger(EventModel.class);
+	
 	private Confirmation discard = new MultiShotConfirmation(null, "finishDiscard", null);
-	private Map<Player, GenericPair2<TYPE, Integer>> map = new HashMap<Player, GenericPair2<TYPE, Integer>>();
+	private Map<Player, GenericPairTyped<TYPE, Integer>> map = new HashMap<Player, GenericPairTyped<TYPE, Integer>>();
 	private Map<Player, AdventureDeck> cards = new HashMap<Player, AdventureDeck>();
 
 	public synchronized void start(ArrayList<Player> highest) {
 
 		List<Player> players = highest.stream().filter(p -> {
 			if(p.getTypeCount(TYPE.WEAPONS) >= 1) {
-				System.out.println("Player: " + p.getID() + " discarding: 1 weapon card");
-				map.put(p, new GenericPair2<TYPE, Integer>(TYPE.WEAPONS, 1));
+				logger.info("Player: " + p.getID() + " discarding: 1 weapon card");
+				map.put(p, new GenericPairTyped<TYPE, Integer>(TYPE.WEAPONS, 1));
 			} else if(p.getTypeCount(TYPE.FOES) >= 1) {
-				System.out.println("Player: " + p.getID() + " discarding: foe cards: " +  Math.min(2, p.getTypeCount(TYPE.FOES)));
-				map.put(p, new GenericPair2<TYPE, Integer>(TYPE.FOES, Math.min(2, p.getTypeCount(TYPE.FOES))));
+				logger.info("Player: " + p.getID() + " discarding: foe cards: " +  Math.min(2, p.getTypeCount(TYPE.FOES)));
+				map.put(p, new GenericPairTyped<TYPE, Integer>(TYPE.FOES, Math.min(2, p.getTypeCount(TYPE.FOES))));
 			} else {
 				return false;
 			}
@@ -48,7 +53,7 @@ public class EventModel extends Observable implements Discard{
 
 	public synchronized String playCard(Player p, int id, AdventureDeck adventureDeck) {
 		AdventureCard c = adventureDeck.findCardByID(id);
-		System.out.println("Playing card: " + id + " " + c);
+		logger.info("Playing card: " + id + " " + c);
 		if(map.get(p).key != c.getType()) {
 			return "Discard " + map.get(p).value + " cards of type " + map.get(p).key;
 		} else if(map.get(p).value == 0) {
@@ -56,7 +61,7 @@ public class EventModel extends Observable implements Discard{
 		} 
 
 		cards.get(p).addCard(adventureDeck.getCardByID(id));
-		GenericPair2<TYPE, Integer> pair = map.get(p);
+		GenericPairTyped<TYPE, Integer> pair = map.get(p);
 		pair.value = pair.value - 1;
 		map.put(p, pair);
 

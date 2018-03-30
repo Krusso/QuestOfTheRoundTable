@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.AllyCard;
 import com.qotrt.cards.AmourCard;
-import com.qotrt.cards.Card;
 import com.qotrt.cards.FoeCard;
 import com.qotrt.cards.TestCard;
 import com.qotrt.cards.WeaponCard;
-import com.qotrt.cards.AdventureCard.TYPE;
 
 public class AdventureDeck extends Deck<AdventureCard> {
 	

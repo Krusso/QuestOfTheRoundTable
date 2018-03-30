@@ -74,7 +74,7 @@ public class TestPlayerView {
 
 		AddCardsServer ads = p.take(AddCardsServer.class);
 		assertEquals(12, ads.getCards().length);
-		System.out.println("Cards: " + Arrays.toString(ads.getCards()));
+		logger.info("Cards: " + Arrays.toString(ads.getCards()));
 	}
 
 

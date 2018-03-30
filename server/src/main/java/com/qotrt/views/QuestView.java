@@ -17,7 +17,7 @@ import com.qotrt.messages.quest.QuestUpServer;
 import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
 
 public class QuestView extends Observer {
@@ -77,15 +77,15 @@ public class QuestView extends Observer {
 		Consumer<PropertyChangeEvent> funcC8 = 
 				x -> flipStage(mapper.convertValue(x.getNewValue(), GenericPair.class));
 		
-		events.add(new GenericPair2<>(funcF, funcC));
-		events.add(new GenericPair2<>(funcF1, funcC1));
-		events.add(new GenericPair2<>(funcF2, funcC2));
-		events.add(new GenericPair2<>(funcF3, funcC3));
-		events.add(new GenericPair2<>(funcF4, funcC4));
-		events.add(new GenericPair2<>(funcF5, funcC5));
-		events.add(new GenericPair2<>(funcF6, funcC6));
-		events.add(new GenericPair2<>(funcF7, funcC7));
-		events.add(new GenericPair2<>(funcF8, funcC8));
+		events.add(new GenericPairTyped<>(funcF, funcC));
+		events.add(new GenericPairTyped<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(funcF2, funcC2));
+		events.add(new GenericPairTyped<>(funcF3, funcC3));
+		events.add(new GenericPairTyped<>(funcF4, funcC4));
+		events.add(new GenericPairTyped<>(funcF5, funcC5));
+		events.add(new GenericPairTyped<>(funcF6, funcC6));
+		events.add(new GenericPairTyped<>(funcF7, funcC7));
+		events.add(new GenericPairTyped<>(funcF8, funcC8));
 
 	}
 

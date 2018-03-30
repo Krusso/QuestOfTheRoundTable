@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.FoeCard;
@@ -24,6 +27,8 @@ public class PlayerManager {
 	private DeckManager dm;
 	private RIGGED rigged;
 	private DiscardSequenceManager dsm;
+	
+	final static Logger logger = LogManager.getLogger(PlayerManager.class);
 
 	public Player[] players;
 	public PlayerManager(int numPlayers, UIPlayer[] uiPlayer, DeckManager dm, RIGGED rigged2) {
@@ -38,7 +43,7 @@ public class PlayerManager {
 	public void start() {
 		dm.setRigged(rigged);
 		for(int i = players.length; i > 0; i--) {
-			System.out.println("setting cards for: " + i);
+			logger.info("setting cards for: " + i);
 			if(rigged.equals(RIGGED.ONE) || rigged.equals(RIGGED.ONESTAGETOURNAMENT)
 					|| rigged.equals(RIGGED.TWOSTAGETOURNAMENT) || rigged.equals(RIGGED.ONEHUNDREDSTAGETOURNAMENT) || rigged.equals(RIGGED.KINGSCALLTOARMS)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
@@ -174,11 +179,11 @@ public class PlayerManager {
 				} else {
 					cards.add(dm.getAdventureCard("Battle-ax"));
 				}
-				System.out.println("stuck here2?");
+				logger.info("stuck here2?");
 				players[i - 1].addCards(cards);
-				System.out.println("stuck here?");
+				logger.info("stuck here?");
 				players[i - 1].changeShields(18);
-				System.out.println("stuck here1?");
+				logger.info("stuck here1?");
 				players[i - 1].increaseLevel();
 			} else if(rigged.equals(RIGGED.AIQUEST)) {
 				ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
@@ -271,7 +276,7 @@ public class PlayerManager {
 			} else {
 				players[i - 1].addCards(dm.getAdventureCard(12));	
 			}
-			System.out.println("finished setting up cards for: " + i);
+			logger.info("finished setting up cards for: " + i);
 		}
 	}
 
@@ -359,10 +364,10 @@ public class PlayerManager {
 
 	public void subscribe(Observer pv) {
 		for(Player p: players) {
-			System.out.println("player subscription: " + pv + " p: " + p);
+			logger.info("player subscription: " + pv + " p: " + p);
 			p.subscribe(pv);
 		}
-		System.out.println("finished setting up player subscriptions");
+		logger.info("finished setting up player subscriptions");
 	}
 
 	public Boolean iseultExists() {

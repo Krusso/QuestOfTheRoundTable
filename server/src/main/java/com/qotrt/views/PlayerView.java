@@ -15,7 +15,7 @@ import com.qotrt.messages.hand.FaceUpDiscardServer;
 import com.qotrt.messages.hand.FaceUpServer;
 import com.qotrt.messages.rank.RankServer;
 import com.qotrt.model.GenericPair;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
 
 public class PlayerView extends Observer {
@@ -38,11 +38,11 @@ public class PlayerView extends Observer {
 		Function<PropertyChangeEvent, Boolean> funcF4 = x -> x.getPropertyName().equals("flipCards");
 		Consumer<PropertyChangeEvent> funcC4 = x -> flipCards(mapper.convertValue(x.getNewValue(), Player.class));
 		
-		events.add(new GenericPair2<>(funcF, funcC));
-		events.add(new GenericPair2<>(funcF1, funcC1));
-		events.add(new GenericPair2<>(funcF2, funcC2));
-		events.add(new GenericPair2<>(funcF3, funcC3));
-		events.add(new GenericPair2<>(funcF4, funcC4));
+		events.add(new GenericPairTyped<>(funcF, funcC));
+		events.add(new GenericPairTyped<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(funcF2, funcC2));
+		events.add(new GenericPairTyped<>(funcF3, funcC3));
+		events.add(new GenericPairTyped<>(funcF4, funcC4));
 	}
 
 	private void playerIncreasedLevel(GenericPair e) {

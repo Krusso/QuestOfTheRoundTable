@@ -78,7 +78,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 	
 	public void setQuest(Quest quest, List<Player> sponsors) {
-		System.out.println("starting quest setup sponsor: " + sponsors);
+		logger.info("starting quest setup sponsor: " + sponsors);
 		stageSetup.start(sponsors, quest.getNumStages());
 		this.quest = quest;
 	}
@@ -151,9 +151,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized List<Player> playerWhoJoined() {
-		System.out.println("Getting players who joined the quest");
+		logger.info("Getting players who joined the quest");
 		List<Player> x = participate.get();
-		System.out.println("Players: " + Arrays.toString(PlayerUtil.playersToIDs(x)));
+		logger.info("Players: " + Arrays.toString(PlayerUtil.playersToIDs(x)));
 		participatents = x;
 		return x;
 	}
@@ -274,7 +274,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			return "not a playable zone currently";
 		}
 		String response = to.validToAdd(card);
-		System.out.println("attempting to move card: " + card.getName());
+		logger.info("attempting to move card: " + card.getName());
 		
 		if(card.getType() == TYPE.TESTS && questContainsTest()) {
 			response = "Cant play more than one test per quest";

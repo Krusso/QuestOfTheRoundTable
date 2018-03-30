@@ -10,7 +10,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.messages.discard.HandFullFinishPickingServer;
 import com.qotrt.messages.discard.HandFullServer;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
 
 public class DiscardView extends Observer {
@@ -29,8 +29,8 @@ public class DiscardView extends Observer {
 				x -> finishDiscard(mapper.convertValue(x.getNewValue(), Player.class));
 		
 
-		events.add(new GenericPair2<>(funcF, funcC));
-		events.add(new GenericPair2<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(funcF, funcC));
+		events.add(new GenericPairTyped<>(funcF1, funcC1));
 		
 	}
 
