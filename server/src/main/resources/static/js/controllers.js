@@ -25,6 +25,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
     $scope.joinedGame = false;
     $scope.myPlayerId;
+    $scope.inGamePlayers;
     $scope.players = [];
     $scope.stageZones = [{
         stage1: [],
@@ -151,11 +152,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
-            java_class: "GameListClient",
-
+            java_class: "GameListClient"
         };
         $scope.addMessage($scope.ep_listGames);
     };
+
     $scope.sendGameJoinClient = function (uuid) {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
@@ -209,6 +210,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $location.path('/gameboard');
             }
             if (message.messageType === "JOINGAME") {
+                $scope.inGamePlayers = [];
+                for (var i = 0; i < message.players.length; i++) {
+                    if(message.players[i] != $scope.pname) {
+                        $scope.inGamePlayers.push({name : message.players[i]});
+                    }
+                }
                 $scope.players = []; //reset the array
                 var p = message.players; //array of strings that denote the player's name
                 for (var i = 0; i < p.length; i++) {
