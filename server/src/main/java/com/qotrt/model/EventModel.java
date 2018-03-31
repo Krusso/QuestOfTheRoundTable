@@ -21,10 +21,15 @@ public class EventModel extends Observable implements Discard {
 
 	final static Logger logger = LogManager.getLogger(EventModel.class);
 	
-	private Confirmation discard = new MultiShotConfirmation(null, "finishDiscard", null);
+	private Confirmation discard;
 	private Map<Player, GenericPairTyped<TYPE, Integer>> map = new HashMap<Player, GenericPairTyped<TYPE, Integer>>();
 	private Map<Player, AdventureDeck> cards = new HashMap<Player, AdventureDeck>();
 
+	
+	public EventModel(Boolean racing) {
+		discard = new MultiShotConfirmation(null, "finishDiscard", null, racing);
+	}
+	
 	public synchronized void start(ArrayList<Player> highest) {
 
 		List<Player> players = highest.stream().filter(p -> {

@@ -111,11 +111,11 @@ public class Game extends Observable {
 						players.toArray(new UIPlayer[players.size()]), 
 						dm, 
 						rigged);
-				TournamentModel tm = new TournamentModel();
-				QuestModel qm = new QuestModel();
-				DiscardModel dmm = new DiscardModel();
-				EventModel em = new EventModel();
-				FinalTournamentModel ftm = new FinalTournamentModel();
+				TournamentModel tm = new TournamentModel(racing);
+				QuestModel qm = new QuestModel(racing);
+				DiscardModel dmm = new DiscardModel(racing);
+				EventModel em = new EventModel(racing);
+				FinalTournamentModel ftm = new FinalTournamentModel(racing);
 				bmm = new BoardModelMediator(tm, qm, bm, dmm, em, ftm);
 
 				// view creation

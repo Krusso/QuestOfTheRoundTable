@@ -24,43 +24,31 @@ import com.qotrt.util.PlayerUtil;
 public class QuestModel extends Observable implements PropertyChangeListener , CanPick{
 
 	
-	private Confirmation sponsor = new SingleShotConfirmation("questionSponsor", 
-			"acceptSponsorQuest", 
-			"declineSponsorQuest");
+	private Confirmation sponsor;
 	
 	public synchronized CountDownLatch sponsorLatch() { return sponsor.getCountDownLatch();}
 	
 	
-	private Confirmation stageSetup = new SingleShotConfirmation("questStage",
-			null,
-			null);
+	private Confirmation stageSetup;
 	
 	public synchronized CountDownLatch stageSetupLatch() { return stageSetup.getCountDownLatch(); }
 	
-	private Confirmation participate = new MultiShotConfirmation("questionQuest", 
-			"joinQuest", 
-			"declineQuest");
+	private Confirmation participate;
 	
 	public synchronized CountDownLatch participateLatch() { return participate.getCountDownLatch();}
 
-	private Confirmation cards = new MultiShotConfirmation("questionCardQuest", 
-			"cardQuest", 
-			null);
+	private Confirmation cards;
 	
 	public synchronized CountDownLatch cardsLatch() { return cards.getCountDownLatch();}
 	
-	private Confirmation discard = new SingleShotConfirmation("discardQuest",
-			null,
-			null);
+	private Confirmation discard;
 	
 	public synchronized CountDownLatch discardLatch() { return discard.getCountDownLatch();}
 	
 	private int maxBid = -1;
 	private BidCalculator bc;
 	private QuestCard card;
-	private Confirmation bid = new NeverEndingConfirmation(null, 
-			null, 
-			null);
+	private Confirmation bid;
 	
 	public synchronized CountDownLatch bidLatch() { return bid.getCountDownLatch();}
 	
@@ -68,7 +56,30 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	private Quest quest;
 	private List<AdventureCard> discardCards;
 	
-	public QuestModel() {
+	public QuestModel(boolean racing) {
+		sponsor = new SingleShotConfirmation("questionSponsor", 
+				"acceptSponsorQuest", 
+				"declineSponsorQuest", racing);
+		
+		stageSetup = new SingleShotConfirmation("questStage",
+				null,
+				null, racing);
+		
+		participate = new MultiShotConfirmation("questionQuest", 
+				"joinQuest", 
+				"declineQuest", racing);
+		
+		cards = new MultiShotConfirmation("questionCardQuest", 
+				"cardQuest", 
+				null, racing);
+		
+		discard = new SingleShotConfirmation("discardQuest",
+				null,
+				null, racing);
+		
+		bid = new NeverEndingConfirmation(null, 
+				null, 
+				null, racing);
 		sponsor.subscribe(this);
 		participate.subscribe(this);
 		cards.subscribe(this);

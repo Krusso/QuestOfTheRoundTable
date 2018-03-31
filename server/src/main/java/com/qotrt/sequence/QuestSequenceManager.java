@@ -122,7 +122,6 @@ public class QuestSequenceManager extends SequenceManager {
 		handleQuest(participants, winners);
 
 		// handle resolution of the quest
-		
 		if(winners.size() > 0) {
 			if(bm.isSetKingRecognition()) {
 				bm.setSetKingRecognition(false);

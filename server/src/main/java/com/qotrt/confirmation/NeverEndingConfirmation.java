@@ -4,8 +4,8 @@ import com.qotrt.gameplayer.Player;
 
 public class NeverEndingConfirmation extends Confirmation {
 
-	public NeverEndingConfirmation(String eventName, String acceptEventName, String declineEventName) {
-		super(eventName, acceptEventName, declineEventName);
+	public NeverEndingConfirmation(String eventName, String acceptEventName, String declineEventName, boolean racing) {
+		super(eventName, acceptEventName, declineEventName, racing);
 	}
 
 	@Override
@@ -18,6 +18,7 @@ public class NeverEndingConfirmation extends Confirmation {
 			if(acceptEventName != null) {
 				fireEvent(acceptEventName, null, player);
 			}
+			racer.nextPlayerToAsk();
 			return true;
 		} else {
 			logger.info(failure);

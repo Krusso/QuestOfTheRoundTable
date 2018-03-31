@@ -49,20 +49,20 @@ public class TestA1 {
 		pm.players[0] = p1;
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
-		AbstractAI player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(), null, null, null, null, null));
+		AbstractAI player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertEquals(true, TestA2.compare(player.playCardsForTournament(),  new String[] {}));
 		
 		p1 = new Player(0, new UIPlayer("", ""));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-		player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(), null, null, null, null, null));
+		player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertEquals(true, TestA2.compare(player.playCardsForTournament(),  new String[] {"Excalibur"}));
 		
 		p1 = new Player(0, new UIPlayer("", ""));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
-		player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(), null, null, null, null, null));
+		player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertEquals(true, TestA2.compare(player.playCardsForTournament(),  new String[] {"Excalibur"}));
 
 		p1 = new Player(0, new UIPlayer("", ""));
@@ -70,7 +70,7 @@ public class TestA1 {
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
-		player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(), null, null, null, null, null));
+		player = new A1(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertEquals(true, TestA2.compare(player.playCardsForTournament(),  new String[] {"Excalibur", "Lance"}));
 	}
 	
