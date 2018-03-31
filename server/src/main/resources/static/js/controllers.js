@@ -315,6 +315,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
     $scope.sendFinishDiscard = function () {
         console.log("hello");
+        console.log("sendfinishdiscarddddddddddd");
+        console.log($scope.currentState);
         if ($scope.currentState === $scope.GAME_STATE.HANDDISCARD) {
             $scope.message = {
                 TYPE: $scope.TYPE_GAME,
@@ -528,8 +530,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                                 break;
                             }
                             if (message.zoneTo === "DISCARD") {
-                                // $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
-                                $scope.currentState = $scope.GAME_STATE.HANDDISCARD;
+                                if ($scope.currentState !== $scope.GAME_STATE.HANDDISCARD) {
+                                    $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
+                                }
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.DISCARD;
                                 $scope.players[$scope.myPlayerId].discardPile.push($scope.tryingToPlay[i]);
                                 $scope.tryingToPlay.splice(i, 1);
