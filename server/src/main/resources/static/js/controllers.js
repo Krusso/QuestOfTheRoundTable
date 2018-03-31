@@ -158,7 +158,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
 
     $scope.sendGameJoinClient = function (uuid) {
-        $scope.myUUID = uuid;
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
