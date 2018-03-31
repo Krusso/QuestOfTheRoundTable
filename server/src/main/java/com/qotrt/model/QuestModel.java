@@ -28,32 +28,32 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			"acceptSponsorQuest", 
 			"declineSponsorQuest");
 	
-	public CountDownLatch sponsorLatch() { return sponsor.getCountDownLatch();}
+	public synchronized CountDownLatch sponsorLatch() { return sponsor.getCountDownLatch();}
 	
 	
 	private Confirmation stageSetup = new SingleShotConfirmation("questStage",
 			null,
 			null);
 	
-	public CountDownLatch stageSetupLatch() { return stageSetup.getCountDownLatch(); }
+	public synchronized CountDownLatch stageSetupLatch() { return stageSetup.getCountDownLatch(); }
 	
 	private Confirmation participate = new MultiShotConfirmation("questionQuest", 
 			"joinQuest", 
 			"declineQuest");
 	
-	public CountDownLatch participateLatch() { return participate.getCountDownLatch();}
+	public synchronized CountDownLatch participateLatch() { return participate.getCountDownLatch();}
 
 	private Confirmation cards = new MultiShotConfirmation("questionCardQuest", 
 			"cardQuest", 
 			null);
 	
-	public CountDownLatch cardsLatch() { return cards.getCountDownLatch();}
+	public synchronized CountDownLatch cardsLatch() { return cards.getCountDownLatch();}
 	
 	private Confirmation discard = new SingleShotConfirmation("discardQuest",
 			null,
 			null);
 	
-	public CountDownLatch discardLatch() { return discard.getCountDownLatch();}
+	public synchronized CountDownLatch discardLatch() { return discard.getCountDownLatch();}
 	
 	private int maxBid = -1;
 	private BidCalculator bc;
@@ -62,7 +62,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			null, 
 			null);
 	
-	public CountDownLatch bidLatch() { return bid.getCountDownLatch();}
+	public synchronized CountDownLatch bidLatch() { return bid.getCountDownLatch();}
 	
 	private List<Player> participatents = new ArrayList<Player>();
 	private Quest quest;
@@ -77,13 +77,16 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		discard.subscribe(this);
 	}
 	
-	public void setQuest(Quest quest, List<Player> sponsors) {
-		logger.info("starting quest setup sponsor: " + sponsors);
-		stageSetup.start(sponsors, quest.getNumStages());
+	public synchronized void setQuest(Quest quest, List<Player> sponsors) {
+		System.out.println("starting quest setup sponsor: " + sponsors + " quest: " + quest);
+		System.out.println("quest stages: " + quest.getNumStages());
+		System.out.println("setting quest: " + quest);
 		this.quest = quest;
+		System.out.println("quests: " + this.quest);
+		stageSetup.start(sponsors, quest.getNumStages());
 	}
 	
-	public boolean canPickCardsForStage() {
+	public synchronized boolean canPickCardsForStage() {
 		return stageSetup.can();
 	}
 	
@@ -254,7 +257,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 
-	public String attemptMove(Integer zoneFrom, Integer zoneTo, int card) {
+	public synchronized String attemptMove(Integer zoneFrom, Integer zoneTo, int card) {
 		Stage from = quest.getStage(zoneFrom);
 		Stage to = quest.getStage(zoneTo);
 		if(from == null || to == null) {
@@ -268,7 +271,8 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		return response;
 	}
 
-	public String attemptMove(Integer zoneTo, AdventureCard card) {
+	public synchronized String attemptMove(Integer zoneTo, AdventureCard card) {
+		System.out.println("Quest: " + quest);
 		Stage to = quest.getStage(zoneTo);
 		if(to == null) {
 			return "not a playable zone currently";
@@ -296,7 +300,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		return false;
 	}
 
-	public AdventureCard getCard(int card, Integer integer) {
+	public synchronized AdventureCard getCard(int card, Integer integer) {
 		return quest.getStage(integer).getCardByID(card);
 	}
 

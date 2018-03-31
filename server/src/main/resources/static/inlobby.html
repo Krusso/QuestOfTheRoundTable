@@ -3,7 +3,7 @@
         <h1 id="pname">{{pname}}</h1>
 
         <ul id="playerList">
-            <li ng-repeat="p in playerList" ng-model='playerList'>
+            <li ng-repeat="p in inGamePlayers" ng-model='inGamePlayers'>
                 <div class="player">
                     <div class="name">
                     Player : {{p.name}}
@@ -11,7 +11,5 @@
                 </div>
             </li>
         </ul>
-
-        <button class="btn bluebtn" id="refresh">REFRESH</button>
     </div>
 </div>
