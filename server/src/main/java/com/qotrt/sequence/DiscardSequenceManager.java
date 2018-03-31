@@ -34,17 +34,18 @@ public class DiscardSequenceManager extends SequenceManager {
 			}
 		}
 			
-		DiscardModel dm  = bmm.getDiscardModel();
-		dm.start(toAsk);
-		
-		logger.info("Waiting for players to discard cards");
-		
-		try {
-			dm.discard().await();
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+		if(toAsk.size() != 0) {
+			DiscardModel dm  = bmm.getDiscardModel();
+			dm.start(toAsk);
+			
+			logger.info("Waiting for players to discard cards");
+			
+			try {
+				dm.discard().await();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}	
 		}
-		
 		
 		// TODO: iseult/tristan? 
 
