@@ -22,7 +22,7 @@ public class DiscardSequenceManager extends SequenceManager {
 	}
 	
 	@Override
-	public void start(PlayerManager pm, BoardModelMediator bmm1) {
+	public void start(PlayerManager pm, BoardModelMediator bmm1, boolean racing) {
 		logger.info("Starting discard sequence manager");
 		Iterator<Player> players = pm.round();
 		ArrayList<Player> toAsk = new ArrayList<Player>();

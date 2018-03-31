@@ -54,6 +54,7 @@ public class Game extends Observable {
 	private RIGGED rigged;
 	public BoardModelMediator bmm;
 	private Boolean discard;
+	private Boolean racing;
 
 	public UUID getUUID() {
 		return this.uuid;
@@ -64,12 +65,15 @@ public class Game extends Observable {
 			int capacity, 
 			RIGGED rigged, 
 			com.qotrt.messages.game.AIPlayer[] aiPlayers2, 
-			Boolean discard) {
+			Boolean discard, 
+			Boolean racing) {
+		
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
 		this.discard = discard;
+		this.racing = racing;
 		for(com.qotrt.messages.game.AIPlayer x: aiPlayers2) {
 			logger.info("strategy: " + x.strat);
 			aiplayers.add(new AIPlayer(x.strat,this));
@@ -170,12 +174,12 @@ public class Game extends Observable {
 					
 					SequenceManager sm = gsm.createStoryManager(bm.getCard());
 					logger.info("Running: " + sm);
-					sm.start(pm, bmm);
+					sm.start(pm, bmm, racing);
 
 					boolean winners = pm.rankUp();
 					if(winners) {
 						sm = gsm.createStoryManager(GameOverStoryCard.GAMEOVER);
-						sm.start(pm, bmm);
+						sm.start(pm, bmm, racing);
 						break;
 					}
 

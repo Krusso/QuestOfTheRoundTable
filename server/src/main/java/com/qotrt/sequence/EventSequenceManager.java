@@ -19,11 +19,12 @@ public class EventSequenceManager extends SequenceManager{
 	final static Logger logger = LogManager.getLogger(EventSequenceManager.class);
 
 	@Override
-	public void start(PlayerManager pm, BoardModelMediator bmm) {
+	public void start(PlayerManager pm, BoardModelMediator bmm, boolean racing) {
 		logger.info("Event Sequence Manager starting: " + card.getName());
 		
 		card.implementation.perform(logger, pm, bmm);
 		
 		logger.info("Event Sequence Manager over");
 	}
+
 }

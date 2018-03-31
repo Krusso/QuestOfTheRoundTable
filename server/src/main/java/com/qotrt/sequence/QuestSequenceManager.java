@@ -28,6 +28,7 @@ public class QuestSequenceManager extends SequenceManager {
 	private QuestModel qm;
 	private BoardModel bm;
 	private BattlePointCalculator bc;
+	private boolean racing;
 
 	final static Logger logger = LogManager.getLogger(QuestSequenceManager.class);
 
@@ -50,7 +51,11 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// Wait for responses
 		try {
-			qm.sponsorLatch().await(60, TimeUnit.SECONDS);
+			if(racing) {
+				qm.sponsorLatch().await(60, TimeUnit.SECONDS);	
+			} else {
+				qm.sponsorLatch();
+			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -71,18 +76,23 @@ public class QuestSequenceManager extends SequenceManager {
 
 		// Wait for responses
 		try {
-			qm.participateLatch().await(60, TimeUnit.SECONDS);
+			if(racing) {
+				qm.participateLatch().await(60, TimeUnit.SECONDS);	
+			} else {
+				qm.participateLatch();
+			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
 	}
 
 	@Override
-	public void start(PlayerManager pm, BoardModelMediator bmm) {
+	public void start(PlayerManager pm, BoardModelMediator bmm, boolean racing) {
 		logger.info("Starting quest sequence: " + this.card.getName());
 		this.bc = new BattlePointCalculator(pm);
 		this.qm = bmm.getQuestModel();
 		this.bm = bmm.getBoardModel();
+		this.racing = racing;
 
 		this.pm = pm;
 
@@ -168,7 +178,11 @@ public class QuestSequenceManager extends SequenceManager {
 		
 		try {
 			logger.info("Waiting for users to finish bidding");
-			qm.bidLatch().await(60, TimeUnit.SECONDS);
+			if(racing) {
+				qm.bidLatch().await(60, TimeUnit.SECONDS);	
+			} else {
+				qm.bidLatch();
+			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -197,7 +211,11 @@ public class QuestSequenceManager extends SequenceManager {
 		qm.questionCardsStage();
 		try {
 			logger.info("Waiting for 60 seconds for users to pick their cards");
-			qm.cardsLatch().await(60, TimeUnit.SECONDS);
+			if(racing) {
+				qm.cardsLatch().await(60, TimeUnit.SECONDS);	
+			} else {
+				qm.cardsLatch();
+			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}

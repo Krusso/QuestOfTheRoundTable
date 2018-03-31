@@ -12,6 +12,7 @@ public class GameCreateClient extends Message {
 	private RIGGED rigged;
 	private AIPlayer[] ais;
 	private Boolean discard;
+	private Boolean racing;
 	
 	public GameCreateClient() {}
 	
@@ -29,6 +30,15 @@ public class GameCreateClient extends Message {
 		this.rigged = rigged;
 		this.ais = ais;
 		this.discard = discard;
+	}
+	
+	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged, AIPlayer[] ais, boolean discard, boolean racing) {
+		this.numPlayers = numPlayers;
+		this.playerName = playerName;
+		this.rigged = rigged;
+		this.ais = ais;
+		this.discard = discard;
+		this.racing = racing;
 	}
 
 	@Override
@@ -78,5 +88,13 @@ public class GameCreateClient extends Message {
 
 	public void setDiscard(Boolean discard) {
 		this.discard = discard;
+	}
+
+	public Boolean getRacing() {
+		return racing;
+	}
+
+	public void setRacing(Boolean racing) {
+		this.racing = racing;
 	}
 }

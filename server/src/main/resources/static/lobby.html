@@ -3,13 +3,15 @@
         <p id="status">{{status}}</p>
         <button class="btn menubtn" ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
         <div id="createGame">
-            <button class="btn menubtn" ng-click="sendCreateGameClient(numPlayers, RIGGED.NORAML, gName, ais)">CREATE A GAME</button>
+            <button class="btn menubtn" ng-click="sendCreateGameClient(numPlayers, rigOptions, gName, ais)">CREATE A GAME</button>
         </div>
         </br>
         <p class="createGameText">Game Name</p>
         <input class="createGameInp" ng-model="gName"></input>
         <p class="createGameText">Num Players</p>
-        <select class="createGameInp" ng-model="numPlayers" ng-options="n for n in np"></select><br><br>
+        <select class="createGameInp" ng-init="numPlayers = np[0]" ng-model="numPlayers" ng-options="n for n in np"></select><br><br>
+        <p class="createGameText">Scenario</p>
+        <select class="createGameInp" ng-init="rigOptions = riggedOptions[0]" ng-model="rigOptions" ng-options="n for n in riggedOptions"></select><br><br>
         <button class="btn" id="addAI" ng-click="addAI(numPlayers)">Add AIs + </button><br><br>
 
         <div id="ais" ng-repeat="ai in ais" ng-model="ais">
