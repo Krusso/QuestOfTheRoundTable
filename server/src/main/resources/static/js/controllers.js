@@ -13,6 +13,22 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.loginToast = "";
     $scope.pname = ""; // hacky workaround but will do for now
     $scope.np = [2, 3, 4];
+    $scope.riggedOptions = ["ONE", 
+		"TWO", 
+		"THREE", 
+		"FOUR", 
+		"NORMAL", 
+		"LONG", 
+		"AITOURNAMENT", 
+		"AIQUEST", 
+		"AIQUEST1", 
+		"AIQUEST2", 
+		"GAMEEND",
+		"ONESTAGETOURNAMENT",
+		"TWOSTAGETOURNAMENT",
+		"ONEHUNDREDSTAGETOURNAMENT", 
+		"KINGSCALLTOARMS", 
+		"PROSPERITY"];
     $scope.ais = [];
     $scope.strats = [1, 2, 3];
 
@@ -76,17 +92,22 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         FINISHPICKTOURNAMENT: 14
     });
     $scope.RIGGED = Object.freeze({
-        ONE: 0,
-        TWO: 1,
-        THREE: 2,
-        FOUR: 3,
-        NORMAL: 4,
-        LONG: 5,
-        AITOURNAMENT: 6,
-        AIQUEST: 7,
-        AIQUEST1: 8,
-        AIQUEST2: 9,
-        GAMEEND: 10
+		ONE: 0, 
+		TWO: 1, 
+		THREE: 2, 
+		FOUR: 3, 
+		NORMAL: 4, 
+		LONG: 5, 
+		AITOURNAMENT: 6, 
+		AIQUEST: 7, 
+		AIQUEST1: 8, 
+		AIQUEST2: 9, 
+		GAMEEND: 10,
+		ONESTAGETOURNAMENT: 11,
+		TWOSTAGETOURNAMENT: 12,
+		ONEHUNDREDSTAGETOURNAMENT: 13, 
+		KINGSCALLTOARMS: 14, 
+		PROSPERITY: 15
     });
     $scope.ZONE = Object.freeze({
         FACEDOWN: 0,
@@ -133,12 +154,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
 
         console.log($scope.pname);
-
+		console.log($scope.RIGGED[rigType]);
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
             numPlayers: numP,
-            rigged: $scope.RIGGED.NORMAL,
+            rigged: $scope.RIGGED[rigType],
             playerName: $scope.pname,
             gameName: gName,
             ais: ais,

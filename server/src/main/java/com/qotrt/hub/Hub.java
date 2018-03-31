@@ -41,8 +41,8 @@ public class Hub {
 		return null;
 	}
 
-	public synchronized UUID addGame(String gameName, int numPlayers, RIGGED rigged, AIPlayer[] aiPlayers, Boolean discard) {
-		Game game = new Game(messagingTemplate, gameName, numPlayers, rigged, aiPlayers, discard);
+	public synchronized UUID addGame(String gameName, int numPlayers, RIGGED rigged, AIPlayer[] aiPlayers, Boolean discard, Boolean racing) {
+		Game game = new Game(messagingTemplate, gameName, numPlayers, rigged, aiPlayers, discard, racing);
 		games.add(game);
 		logger.info("added game");
 		logger.info("games size: " + games.size());
