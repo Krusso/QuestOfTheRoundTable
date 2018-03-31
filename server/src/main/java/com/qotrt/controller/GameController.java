@@ -17,7 +17,6 @@ import com.qotrt.hub.Hub;
 import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.GameJoinClient;
 import com.qotrt.messages.game.GameListClient;
-import com.qotrt.messages.game.PlayerListClient;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.util.WebSocketUtil;
