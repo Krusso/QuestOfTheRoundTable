@@ -1,6 +1,7 @@
 package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -13,12 +14,13 @@ import com.qotrt.messages.tournament.TournamentPickCardsServer;
 import com.qotrt.messages.tournament.TournamentWinServer;
 import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 import com.qotrt.model.GenericPair;
-import com.qotrt.model.GenericPair2;
+import com.qotrt.model.GenericPairTyped;
+import com.qotrt.model.UIPlayer;
 
 public class TournamentView extends Observer {
 
-	public TournamentView(SimpMessagingTemplate messagingTemplate) {
-		super(messagingTemplate);
+	public TournamentView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
+		super(messagingTemplate, players);
 		
 		Function<PropertyChangeEvent, Boolean> funcF = 
 				x -> x.getPropertyName().equals("questiontournament");
@@ -44,11 +46,11 @@ public class TournamentView extends Observer {
 		Consumer<PropertyChangeEvent> funcC4 = x -> questionCardTournament(mapper.convertValue(x.getNewValue(), int[].class));
 
 		
-		events.add(new GenericPair2<>(funcF, funcC));
-		events.add(new GenericPair2<>(funcF1, funcC1));
-		events.add(new GenericPair2<>(funcF2, funcC2));
-		events.add(new GenericPair2<>(funcF3, funcC3));
-		events.add(new GenericPair2<>(funcF4, funcC4));
+		events.add(new GenericPairTyped<>(funcF, funcC));
+		events.add(new GenericPairTyped<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(funcF2, funcC2));
+		events.add(new GenericPairTyped<>(funcF3, funcC3));
+		events.add(new GenericPairTyped<>(funcF4, funcC4));
 		
 	}
 	

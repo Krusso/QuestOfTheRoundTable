@@ -58,9 +58,9 @@ public class TournamentModel extends Observable implements PropertyChangeListene
 	}
 
 	public synchronized List<Player> playersWhoJoined(){
-		System.out.println("Getting players who joined the tournament");
+		logger.info("Getting players who joined the tournament");
 		List<Player> x = join.get();
-		System.out.println("Players: " + x.stream().map(i -> i.getID()).collect(Collectors.toList()));
+		logger.info("Players: " + x.stream().map(i -> i.getID()).collect(Collectors.toList()));
 		return x;
 	}
 

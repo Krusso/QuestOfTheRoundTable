@@ -13,8 +13,8 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.AllyCard;
 import com.qotrt.cards.AmourCard;
 import com.qotrt.cards.QuestCard;
-import com.qotrt.model.UIPlayer;
 import com.qotrt.model.RiggedModel.RIGGED;
+import com.qotrt.model.UIPlayer;
 
 public class TestBidCalculator {
 

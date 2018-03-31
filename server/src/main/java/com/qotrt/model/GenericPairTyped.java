@@ -1,12 +1,12 @@
 package com.qotrt.model;
 
-public class GenericPair2<T,E> {
+public class GenericPairTyped<T,E> {
 	public T key;
 	public E value;
 	
-	public GenericPair2() {};
+	public GenericPairTyped() {};
 	
-	public GenericPair2(T key, E value) {
+	public GenericPairTyped(T key, E value) {
 		this.key = key;
 		this.value = value;
 	}

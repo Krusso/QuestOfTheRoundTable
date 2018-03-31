@@ -15,12 +15,14 @@ import com.qotrt.model.DiscardModel;
 public class DiscardSequenceManager extends SequenceManager {
 	
 	final static Logger logger = LogManager.getLogger(DiscardSequenceManager.class);
-	
+	private BoardModelMediator bmm;
 
-	public DiscardSequenceManager() {}
+	public DiscardSequenceManager(BoardModelMediator bmm) {
+		this.bmm = bmm;
+	}
 	
 	@Override
-	public void start(PlayerManager pm, BoardModelMediator bmm) {
+	public void start(PlayerManager pm, BoardModelMediator bmm1) {
 		logger.info("Starting discard sequence manager");
 		Iterator<Player> players = pm.round();
 		ArrayList<Player> toAsk = new ArrayList<Player>();
@@ -45,6 +47,8 @@ public class DiscardSequenceManager extends SequenceManager {
 		
 		
 		// TODO: iseult/tristan? 
+
+		pm.flipCards(toAsk.iterator());
 //		HandFullClient x = actions.take(HandFullClient.class, MESSAGETYPES.DISCARDHANDFULL);
 //		Player p = pm.players[x.player];
 //		for(String s: x.discard) {

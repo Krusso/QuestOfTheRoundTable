@@ -2,11 +2,16 @@ package com.qotrt.sequence;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.deck.AdventureDeck;
 
 public class Stage {
+	
+	final static Logger logger = LogManager.getLogger(Stage.class);
 	
 	private AdventureDeck cards;
 	
@@ -35,7 +40,7 @@ public class Stage {
 	}
 	
 	public String validToAdd(AdventureCard c) {
-		System.out.println("checking if card: " + c.getName() + " is valid to play in this stage");
+		logger.info("checking if card: " + c.getName() + " is valid to play in this stage");
 		return c.playForStage(cards);
 	}
 

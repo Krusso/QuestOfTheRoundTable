@@ -14,8 +14,8 @@ import org.junit.Test;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
-import com.qotrt.model.UIPlayer;
 import com.qotrt.model.RiggedModel.RIGGED;
+import com.qotrt.model.UIPlayer;
 
 public class TestAdventureDeck {
 

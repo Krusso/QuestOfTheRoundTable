@@ -1,6 +1,5 @@
 package com.qotrt.cards;
 
-import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.deck.AdventureDeck;
 
 public class TestCard extends AdventureCard {

@@ -54,7 +54,7 @@ public class TestPlayerView {
 			public void run() {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
-				p.sendMessage("/app/game.createGame", new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}));
+				p.sendMessage("/app/game.createGame", new GameCreateClient(2, "hello", RIGGED.AITOURNAMENT, new AIPlayer[] {}, false));
 			}
 		};
 
@@ -74,7 +74,7 @@ public class TestPlayerView {
 
 		AddCardsServer ads = p.take(AddCardsServer.class);
 		assertEquals(12, ads.getCards().length);
-		System.out.println("Cards: " + Arrays.toString(ads.getCards()));
+		logger.info("Cards: " + Arrays.toString(ads.getCards()));
 	}
 
 
