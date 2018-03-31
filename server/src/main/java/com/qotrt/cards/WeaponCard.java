@@ -11,20 +11,20 @@ public class WeaponCard extends AdventureCard{
 	@Override
 	public String playForStage(AdventureDeck stage) {
 		if(stage.findCardByName(this.getName()) != null) {
-			System.out.println("cant play duplicate weapon cards");
+			logger.info("cant play duplicate weapon cards");
 			return "Cant play duplicate weapons";
 		}
-		System.out.println("can play this card");
+		logger.info("can play this card");
 		return "";
 	}
 
 	@Override
 	public String playFaceDown(AdventureDeck faceDownDeck, AdventureDeck faceUpDeck) {
 		if(faceDownDeck.findCardByName(this.getName()) != null) {
-			System.out.println("cant play duplicate weapon cards");
+			logger.info("cant play duplicate weapon cards");
 			return "Cant play duplicate weapons";
 		}
-		System.out.println("can play this card");
+		logger.info("can play this card");
 		return "";
 	}
 	

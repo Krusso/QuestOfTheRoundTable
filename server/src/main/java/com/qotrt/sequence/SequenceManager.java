@@ -11,5 +11,6 @@ public abstract class SequenceManager {
 
 	final static Logger logger = LogManager.getLogger(SequenceManager.class);
 	
-	public abstract void start(PlayerManager pm, BoardModelMediator bmm);
+	public abstract void start(PlayerManager pm, BoardModelMediator bmm, boolean racing);
+
 }

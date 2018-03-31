@@ -1,5 +1,7 @@
 package com.qotrt.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -22,6 +24,8 @@ public class QuestController {
 	
 	@Autowired
 	private Hub hub;
+	
+	final static Logger logger = LogManager.getLogger(QuestController.class);
 
 	@MessageMapping("/game.sponsorQuest")
 	public void sponsorQuest(SimpMessageHeaderAccessor headerAccessor, 
@@ -29,7 +33,7 @@ public class QuestController {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		
-		System.out.println("sponsor quest: " + chatMessage.player);
+		logger.info("sponsor quest: " + chatMessage.player);
 		if(chatMessage.sponser) {
 			game.bmm.getQuestModel().acceptSponsor(player);
 		} else {
@@ -54,7 +58,7 @@ public class QuestController {
 			@Payload QuestPickCardsClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
-		System.out.println("finish selecting cards: " + chatMessage.player);
+		logger.info("finish selecting cards: " + chatMessage.player);
 		game.bmm.getQuestModel().finishSelectingCards(player);
 	}
 	
@@ -63,7 +67,7 @@ public class QuestController {
 			@Payload QuestPickStagesClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
-		System.out.println("finish selecting cards: " + chatMessage.player);
+		logger.info("finish selecting cards: " + chatMessage.player);
 		game.bmm.getQuestModel().finishSelectingStages(player);
 	}
 	
@@ -72,7 +76,7 @@ public class QuestController {
 			@Payload QuestDiscardCardsClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
-		System.out.println("finish discard cards: " + chatMessage.player);
+		logger.info("finish discard cards: " + chatMessage.player);
 		game.bmm.getQuestModel().finishDiscard(player);
 	}
 	

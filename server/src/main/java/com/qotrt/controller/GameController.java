@@ -3,6 +3,8 @@ package com.qotrt.controller;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -24,6 +26,8 @@ import com.qotrt.util.WebSocketUtil;
 @Controller
 public class GameController {
 
+	final static Logger logger = LogManager.getLogger(GameController.class);
+	
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 
@@ -32,22 +36,37 @@ public class GameController {
 
 	@MessageMapping("/game.createGame")
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
-		UUID uuid = hub.addGame(chatMessage.getGameName(), chatMessage.getNumPlayers(), chatMessage.getRigged(), chatMessage.getAis());
+		logger.info("Discard: " + chatMessage.getDiscard());
+		if(null == chatMessage.getDiscard()) {
+			chatMessage.setDiscard(true);
+		}
+		if(null == chatMessage.getRacing()) {
+			chatMessage.setRacing(true);
+		}
+		
+		UUID uuid = hub.addGame(chatMessage.getGameName(), 
+				chatMessage.getNumPlayers(),
+				chatMessage.getRigged(), 
+				chatMessage.getAis(),
+				chatMessage.getDiscard(),
+				chatMessage.getRacing());
+		
 		String sessionID = headerAccessor.getSessionId();
-		System.out.println("s is: " + sessionID);
+		logger.info("s is: " + sessionID);
+		logger.info("Rigged: " + chatMessage.getRigged());
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());
 		this.joinGame(headerAccessor, gjc);
-		System.out.println("created game");
+		logger.info("created game");
 
 	}
 
 	@MessageMapping("/game.listGames")
 	public void listGames(SimpMessageHeaderAccessor headerAccessor, @Payload GameListClient chatMessage) {
-		System.out.println("listing games");
+		logger.info("listing games");
 		ArrayList<Game> games = hub.listGames();
-		System.out.println("games");
+		logger.info("games");
 		GameListServer gls = new GameListServer();
 		gls.setGamesWithGameList(games);
 		messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), 
@@ -58,22 +77,22 @@ public class GameController {
 
 	@MessageMapping("/game.joinGame")
 	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {
-		System.out.println("joining game");
+		logger.info("joining game");
 		String sessionID = headerAccessor.getSessionId();
 		UIPlayer player = new UIPlayer(sessionID, chatMessage.getPlayerName());
-		System.out.println("s is: " + sessionID);
+		logger.info("s is: " + sessionID);
 		hub.addPlayer(player, chatMessage.getUuid());
 	}
 
 	@MessageExceptionHandler(Exception.class)
 	public void handleException(Exception ex) {
-		System.out.println("Got exception: " + ex.getMessage() + " " + ex);
+		logger.info("Got exception: " + ex.getMessage() + " " + ex);
 		ex.printStackTrace();
 	}
 	
 	@ExceptionHandler(Exception.class)
 	public void handleError(Exception ex) {
-		System.out.println("Got exception: " + ex.getMessage() + " " + ex);
+		logger.info("Got exception: " + ex.getMessage() + " " + ex);
 		ex.printStackTrace();
 	  }
 }

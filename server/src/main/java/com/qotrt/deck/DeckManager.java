@@ -13,6 +13,7 @@ import com.qotrt.cards.EventCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.cards.events.KingsCallToArms;
+import com.qotrt.cards.events.ProsperityThroughoutTheRealm;
 import com.qotrt.model.RiggedModel.RIGGED;
 
 public class DeckManager {
@@ -34,6 +35,12 @@ public class DeckManager {
 	public ArrayList<StoryCard> getStoryCard(int n) {
 		if(storyDeck.size() - n <= 0) {
 			storyDeck.reshuffle();
+		}
+		
+		if(rigged.equals(RIGGED.PROSPERITY)) {
+			ArrayList<StoryCard> toReturn = new ArrayList<StoryCard>();
+			toReturn.add(new EventCard("Prosperity Throughout the Realm", new ProsperityThroughoutTheRealm()));
+			return toReturn;
 		}
 		
 		if(rigged.equals(RIGGED.ONESTAGETOURNAMENT)) {

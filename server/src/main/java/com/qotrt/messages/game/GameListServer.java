@@ -20,14 +20,18 @@ public class GameListServer extends Message  {
 	}
 	
 	public void setGamesWithGameList(ArrayList<Game> gamelist) {
-		games = new GameDisplay[gamelist.size()];
+		ArrayList<GameDisplay> gameTemp = new ArrayList<GameDisplay>();
 		for(int i = 0; i < gamelist.size(); i++) {
-			games[i] = new GameDisplay(gamelist.get(i).getUUID(),
-					gamelist.get(i).getPlayerCount(),
-					gamelist.get(i).getGameName(),
-					gamelist.get(i).getPlayerCapacity(),
-					gamelist.get(i).getAICount());
+			if(gamelist.get(i).getPlayerCount() + gamelist.get(i).getAICount() < gamelist.get(i).getPlayerCapacity()) {
+				gameTemp.add(new GameDisplay(gamelist.get(i).getUUID(),
+											 gamelist.get(i).getPlayerCount(),
+											 gamelist.get(i).getGameName(),
+											 gamelist.get(i).getPlayerCapacity(),
+											 gamelist.get(i).getAICount()));
+			}
 		}
+		games = new GameDisplay[gameTemp.size()];
+		games = gameTemp.toArray(games);
 	}
 
 	@Override

@@ -11,15 +11,10 @@ public class GameCreateClient extends Message {
 	private String gameName;
 	private RIGGED rigged;
 	private AIPlayer[] ais;
+	private Boolean discard;
+	private Boolean racing;
 	
 	public GameCreateClient() {}
-
-	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged, AIPlayer[] ais) {
-		this.numPlayers = numPlayers;
-		this.playerName = playerName;
-		this.rigged = rigged;
-		this.ais = ais;
-	}
 	
 	public GameCreateClient(int numPlayers, String playerName, String gameName, RIGGED rigged, AIPlayer[] ais) {
 		this.numPlayers = numPlayers;
@@ -27,6 +22,23 @@ public class GameCreateClient extends Message {
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.ais = ais;
+	}
+
+	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged, AIPlayer[] ais, boolean discard) {
+		this.numPlayers = numPlayers;
+		this.playerName = playerName;
+		this.rigged = rigged;
+		this.ais = ais;
+		this.discard = discard;
+	}
+	
+	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged, AIPlayer[] ais, boolean discard, boolean racing) {
+		this.numPlayers = numPlayers;
+		this.playerName = playerName;
+		this.rigged = rigged;
+		this.ais = ais;
+		this.discard = discard;
+		this.racing = racing;
 	}
 
 	@Override
@@ -68,5 +80,21 @@ public class GameCreateClient extends Message {
 
 	public AIPlayer[] getAis() {
 		return ais;
+	}
+
+	public Boolean getDiscard() {
+		return this.discard;
+	}
+
+	public void setDiscard(Boolean discard) {
+		this.discard = discard;
+	}
+
+	public Boolean getRacing() {
+		return racing;
+	}
+
+	public void setRacing(Boolean racing) {
+		this.racing = racing;
 	}
 }

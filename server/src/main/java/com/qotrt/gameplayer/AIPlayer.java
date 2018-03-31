@@ -4,6 +4,9 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.game.Game;
@@ -13,6 +16,8 @@ import com.qotrt.views.Observer;
 
 public class AIPlayer extends Observer {
 
+	final static Logger logger = LogManager.getLogger(AIPlayer.class);
+	
 	private int strat;
 	private AbstractAI ai;
 	private Game game;
@@ -24,7 +29,7 @@ public class AIPlayer extends Observer {
 	}
 
 	public void startAIPlayer(Player player, PlayerManager pm, BoardModelMediator bmm) {
-		System.out.println("Player: " + player.getID() + " strat: " + strat);
+		logger.info("Player: " + player.getID() + " strat: " + strat);
 		this.player = player;
 		if(strat == 1) {
 			ai = new A1(player, pm, bmm);
@@ -37,7 +42,7 @@ public class AIPlayer extends Observer {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		System.out.println("Player: " + player.getID() + " strat: " + strat + " got event: " + evt.getPropertyName());
+		logger.info("Player: " + player.getID() + " strat: " + strat + " got event: " + evt.getPropertyName());
 		
 		if(evt.getPropertyName().equals("questiontournament")) {
 			if(ai.doIParticipateInTournament()) {

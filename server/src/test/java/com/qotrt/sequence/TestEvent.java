@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +34,8 @@ import com.qotrt.views.PlayerView;
 
 public class TestEvent {
 
+	final static Logger logger = LogManager.getLogger(TestEvent.class);
+	
 	@Test
 	public void testKingsCallToArms() throws InterruptedException {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Call to Arms", new KingsCallToArms()));
@@ -53,8 +57,8 @@ public class TestEvent {
 		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm);	} };
 		new Thread(thread2).start();
 		Thread.sleep(500);
-		System.out.println(em.playCard(pm.players[0], 170, pm.players[0].hand));
-		System.out.println(em.finishDiscarding(pm.players[0]));
+		logger.info(em.playCard(pm.players[0], 170, pm.players[0].hand));
+		logger.info(em.finishDiscarding(pm.players[0]));
 		pm.round().forEachRemaining(i -> {
 			if(i.getID() == 0) {
 				assertEquals(11, i.hand.getDeck().size());
@@ -74,9 +78,9 @@ public class TestEvent {
 		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm);	} };
 		new Thread(thread2).start();
 		Thread.sleep(500);
-		System.out.println(em.playCard(pm.players[0], 165, pm.players[0].hand));
-		System.out.println(em.playCard(pm.players[0], 166, pm.players[0].hand));
-		System.out.println(em.finishDiscarding(pm.players[0]));
+		logger.info(em.playCard(pm.players[0], 165, pm.players[0].hand));
+		logger.info(em.playCard(pm.players[0], 166, pm.players[0].hand));
+		logger.info(em.finishDiscarding(pm.players[0]));
 		Thread.sleep(500);
 		pm.round().forEachRemaining(i -> {
 			if(i.getID() == 0) {
@@ -356,7 +360,7 @@ public class TestEvent {
 		pm = new PlayerManager(2, new UIPlayer[] {new UIPlayer("", ""), new UIPlayer("", "")}, dm, RIGGED.ONE);
 		bm = new BoardModel();
 		em = new EventModel();
-		bmm = new BoardModelMediator(null, null, bm, null, em);
+		bmm = new BoardModelMediator(null, null, bm, null, em, null);
 		pm.start();
 		pm.nextTurn();
 	}

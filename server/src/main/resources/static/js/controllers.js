@@ -14,6 +14,22 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.loginToast = "";
     $scope.pname = ""; // hacky workaround but will do for now
     $scope.np = [2, 3, 4];
+    $scope.riggedOptions = ["ONE",
+		"TWO",
+		"THREE",
+		"FOUR",
+		"NORMAL",
+		"LONG",
+		"AITOURNAMENT",
+		"AIQUEST",
+		"AIQUEST1",
+		"AIQUEST2",
+		"GAMEEND",
+		"ONESTAGETOURNAMENT",
+		"TWOSTAGETOURNAMENT",
+		"ONEHUNDREDSTAGETOURNAMENT",
+		"KINGSCALLTOARMS",
+		"PROSPERITY"];
     $scope.ais = [];
     $scope.strats = [1, 2, 3];
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
@@ -26,6 +42,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.toast = "Just Chilling";
     $scope.joinedGame = false;
     $scope.myPlayerId = 0;
+    $scope.inGamePlayers;
     $scope.players = [];
     $scope.stageZones = {
         stage1: [],
@@ -73,24 +90,17 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         JOINGAME: 1,
         JOINTOURNAMENT: 2,
         PICKTOURNAMENT: 3,
-        WINTOURNAMENT: 4,
-        SHIELDCOUNT: 5,
-        RANKUPDATE: 6,
-        ADDCARDS: 7,
-        FACEDOWNCARD: 8,
-        LISTSERVER: 9,
-        PLAYCARD: 10,
-        SHOWMIDDLECARD: 11,
-        JOINEDTOURNAMENT: 12,
-        FINISHPICKTOURNAMENT: 13,
-        SPONSERQUEST: 14,
-        JOINQUEST: 15,
-        PICKSTAGES: 16,
-        PICKQUEST: 17,
-        WINQUEST: 18,
-        BIDQUEST: 19,
-        DISCARDQUEST: 20,
-        UPQUEST: 21
+        TIETOURNAMENT: 4,
+        WINTOURNAMENT: 5,
+        SHIELDCOUNT: 6,
+        RANKUPDATE: 7,
+        ADDCARDS: 8,
+        FACEDOWNCARD: 9,
+        LISTSERVER: 10,
+        PLAYCARD: 11,
+        SHOWMIDDLECARD: 12,
+        JOINEDTOURNAMENT: 13,
+        FINISHPICKTOURNAMENT: 14
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -103,7 +113,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         AIQUEST: 7,
         AIQUEST1: 8,
         AIQUEST2: 9,
-        GAMEEND: 10
+        GAMEEND: 10,
+        ONESTAGETOURNAMENT: 11,
+        TWOSTAGETOURNAMENT: 12,
+        ONEHUNDREDSTAGETOURNAMENT: 13,
+        KINGSCALLTOARMS: 14,
+        PROSPERITY: 15
     };
     $scope.ZONE = {
         FACEDOWN: 0,
@@ -124,7 +139,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         PICKSTAGES: 3,
         PICKQUEST: 4,
         BIDQUEST: 5,
-        DISCARDQUEST: 6
+        DISCARDQUEST: 6,
+        JOINTOURNAMENT: 20,
+        PICKTOURNAMENT: 21,
+        HANDDISCARD: 22
     };
 
 
@@ -170,12 +188,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
 
         console.log($scope.pname);
-
+        console.log($scope.RIGGED[rigType]);
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
             numPlayers: numP,
-            rigged: $scope.RIGGED.NORMAL,
+            rigged: $scope.RIGGED[rigType],
             playerName: $scope.pname,
             gameName: gName,
             ais: ais,
@@ -190,10 +208,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
             java_class: "GameListClient"
-
         };
         $scope.addMessage($scope.ep_listGames);
     };
+
     $scope.sendGameJoinClient = function (uuid) {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
@@ -320,6 +338,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "JOINGAME") {
+                $scope.inGamePlayers = [];
+                for (var i = 0; i < message.players.length; i++) {
+                    if (message.players[i] != $scope.pname) {
+                        $scope.inGamePlayers.push({
+                            name: message.players[i]
+                        });
+                    }
+                }
                 $scope.players = []; //reset the array
                 var p = message.players; //array of strings that denote the player's name
                 for (var i = 0; i < p.length; i++) {

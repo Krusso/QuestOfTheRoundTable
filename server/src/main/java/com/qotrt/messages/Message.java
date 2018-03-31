@@ -4,16 +4,23 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.qotrt.messages.discard.HandFullFinishPickingServer;
+import com.qotrt.messages.discard.HandFullServer;
 import com.qotrt.messages.events.EventDiscardCardsServer;
 import com.qotrt.messages.events.EventDiscardFinishPickingServer;
 import com.qotrt.messages.events.EventDiscardOverServer;
+import com.qotrt.messages.game.BattlePointsServer;
 import com.qotrt.messages.game.GameJoinServer;
 import com.qotrt.messages.game.GameListServer;
 import com.qotrt.messages.game.GameStartServer;
 import com.qotrt.messages.game.MiddleCardServer;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.ShieldCountServer;
+import com.qotrt.messages.gameover.FinalTournamentNotifyServer;
+import com.qotrt.messages.gameover.GameOverServer;
 import com.qotrt.messages.hand.AddCardsServer;
+import com.qotrt.messages.hand.FaceUpDiscardServer;
+import com.qotrt.messages.hand.FaceUpServer;
 import com.qotrt.messages.quest.QuestBidServer;
 import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinServer;
@@ -59,6 +66,13 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = EventDiscardCardsServer.class, name="EVENTDISCARD"),
 	    @Type(value = EventDiscardFinishPickingServer.class, name="FINISHPICKEVENT"),
 	    @Type(value = EventDiscardOverServer.class, name = "EVENTDISCARDOVER"),
+	    @Type(value = HandFullServer.class, name = "HANDDISCARD"),
+	    @Type(value = HandFullFinishPickingServer.class, name = "FINISHDISCARD"),
+	    @Type(value = BattlePointsServer.class, name = "BATTLEPOINTS"),
+	    @Type(value = FaceUpServer.class, name ="FACEUPCARDS"),
+	    @Type(value = FaceUpDiscardServer.class, name ="DISCARDFACEUP"),
+	    @Type(value = FinalTournamentNotifyServer.class, name = "JOINEDFINALTOURNAMENT"),
+	    @Type(value = GameOverServer.class, name = "GAMEOVER"),
 	    })  
 public abstract class Message {
 
@@ -105,7 +119,14 @@ public abstract class Message {
 		BATTLEPOINTS, 
 		EVENTDISCARD, 
 		FINISHPICKEVENT, 
-		EVENTDISCARDOVER
+		EVENTDISCARDOVER,
+		HANDDISCARD,
+		FINISHDISCARD, 
+		FACEUPCARDS, 
+		DISCARDFACEUP, 
+		JOINEDFINALTOURNAMENT, 
+		GAMEOVER, 
+		FINISHFINALTOURNAMENT
 	};
 	
 //	@Override

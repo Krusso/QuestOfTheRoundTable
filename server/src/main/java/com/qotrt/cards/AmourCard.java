@@ -1,7 +1,5 @@
 package com.qotrt.cards;
 
-import java.net.URL;
-
 import com.qotrt.deck.AdventureDeck;
 
 public class AmourCard extends AdventureCard {

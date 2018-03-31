@@ -15,7 +15,6 @@ import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
-import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.gameplayer.Rank.RANKS;
