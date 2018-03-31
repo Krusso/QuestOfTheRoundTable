@@ -344,12 +344,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 java_class: "HandFullFinishPickingClient"
             };
             $scope.addMessage($scope.ep_finishSelectingDiscardHand);
-        } else {
+        } else if ($scope.currentState === $scope.GAME_STATE.DISCARDQUEST) {
             $scope.message = {
                 TYPE: $scope.TYPE_GAME,
                 messageType: $scope.MESSAGETYPES.DISCARDQUEST,
                 java_class: "QuestDiscardCardsClient"
             };
+            console.log("quest bid discarding");
             $scope.addMessage($scope.ep_discardFinish);
         }
     }
