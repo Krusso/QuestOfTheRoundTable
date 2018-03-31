@@ -440,6 +440,23 @@ height: 8vw;
     background-repeat: no-repeat;
 }
 
+.discardPile .card1 {
+    width: 4vw;
+    height: 5.2vw;
+    float: left;
+}
+
+.discardPile .card1:hover {
+    margin-top: -1vw;
+    margin-left: -1vw;
+    width: 10vw;
+    height: 13vw;
+    animation-name: cardhover;
+    animation-duration: 0.25s;
+    z-index: 1000;
+}
+
+
 .brown-button {
     width: 8vw;
     height: 2.1vw;
