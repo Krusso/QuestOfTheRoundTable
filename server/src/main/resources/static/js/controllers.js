@@ -63,6 +63,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.tryingToPlay = [];
     $scope.numStages = 0;
 
+
     /*=========================================   *
      *            Controller Variables: Stage      *
      *=========================================== */
@@ -401,6 +402,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         joinedTourn: false,
                         discardPile: [],
                         needToDiscard: 0,
+                        revealStage: [false, false, false, false, false]
                     };
                     console.log("playerInfo");
                     console.log(playerInfo);
@@ -558,7 +560,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     console.log($scope.playerZoneToListMap['STAGE1']);
                     var fromZone;
                     var toZone;
-                    var cardToMove
+                    var cardToMove;
                     //get the reference to the from/to zones for which we are moving cards to
                     if (message.zoneFrom.includes("STAGE")) {
                         fromZone = $scope.playerZoneToListMap[message.zoneFrom];
