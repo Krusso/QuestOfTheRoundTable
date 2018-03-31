@@ -50,11 +50,5 @@ public class Hub {
 	public synchronized ArrayList<Game> listGames() {
 		return games;
 	}
-	
-	public synchronized ArrayList listPlayers(String sessionId) {
-		Game game = getGameBySessionID(sessionId);
-		ArrayList p = game.getPlayers();
-		return p;
-	}
 
 }

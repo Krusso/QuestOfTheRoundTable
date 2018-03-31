@@ -56,16 +56,6 @@ public class GameController {
 				gls,
 				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));
 	}
-	
-	@MessageMapping("/game.listPlayers")
-	public void listPlayers(SimpMessageHeaderAccessor headerAccessor, @Payload PlayerListClient chatMessage) {
-		System.out.println("listing players");
-		ArrayList players = hub.listPlayers(headerAccessor.getSessionId());
-		messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), 
-				"/queue/response",
-				players,
-				WebSocketUtil.createHeaders(headerAccessor.getSessionId()));		
-	}
 
 	@MessageMapping("/game.joinGame")
 	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {

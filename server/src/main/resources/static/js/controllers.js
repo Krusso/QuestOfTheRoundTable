@@ -25,7 +25,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
      *=========================================== */
     $scope.joinedGame = false;
     $scope.myPlayerId;
-    $scope.myUUID;
+    $scope.inGamePlayers;
     $scope.players = [];
     $scope.stageZones = [{
         stage1: [],
@@ -105,7 +105,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     //Specify all endpoints
     $scope.ep_joinGame = "/app/game.joinGame";
     $scope.ep_listGames = "/app/game.listGames";
-    $scope.ep_listPlayers = "/app/game.listPlayers";
     $scope.ep_createGame = "/app/game.createGame";
     $scope.ep_playCardQuestSetup = "/app//game.playCardQuestSetup";
 
@@ -157,17 +156,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         };
         $scope.addMessage($scope.ep_listGames);
     };
-
-    $scope.sendListPlayersClient = function () {
-        console.log("listing players");
-        $scope.message = {
-            TYPE: $scope.TYPE_GAME,
-            // messageType: $scope.MESSAGETYPES.JOINGAME,
-            java_class: "PlayerListClient"
-
-        };
-        $scope.addMessage($scope.ep_listPlayers);        
-    }
 
     $scope.sendGameJoinClient = function (uuid) {
         $scope.myUUID = uuid;
@@ -223,6 +211,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $location.path('/gameboard');
             }
             if (message.messageType === "JOINGAME") {
+                $scope.inGamePlayers = [];
+                for (var i = 0; i < message.players.length; i++) {
+                    if(message.players[i] != $scope.pname) {
+                        $scope.inGamePlayers.push({name : message.players[i]});
+                    }
+                }
                 $scope.players = []; //reset the array
                 var p = message.players; //array of strings that denote the player's name
                 for (var i = 0; i < p.length; i++) {
