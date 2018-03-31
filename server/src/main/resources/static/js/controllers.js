@@ -556,9 +556,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                                 break;
                             }
                             if (message.zoneTo === "DISCARD") {
-                                if ($scope.currentState !== $scope.GAME_STATE.HANDDISCARD) {
-                                    $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
-                                }
+                                //                                if ($scope.currentState !== $scope.GAME_STATE.HANDDISCARD) {
+                                //                                    $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
+                                //                                }
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.DISCARD;
                                 $scope.players[$scope.myPlayerId].discardPile.push($scope.tryingToPlay[i]);
                                 $scope.tryingToPlay.splice(i, 1);
@@ -1240,7 +1240,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.showDoneSettingUp = function () {
         // console.log("Checking display");
         // console.log("player: " + $scope.myPlayerId + " is sponsoring? " + $scope.players[$scope.myPlayerId].isSponsoring);
-        console.log("current state: " + $scope.currentState);
+        //        console.log("current state: " + $scope.currentState);
         return $scope.players[$scope.myPlayerId].isSponsoring && $scope.currentState == $scope.GAME_STATE.PICKSTAGES;
     }
     //only show the bid slider if the player is in a quest and the state is GAME_STATE.BIDQUEST
@@ -1259,7 +1259,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
     $scope.showDiscardButton = function () {
         // console.log("checking dispaly for discardButton");
-        console.log("cards to discard: " + $scope.players[$scope.myPlayerId].needToDiscard);
+        //        console.log("cards to discard: " + $scope.players[$scope.myPlayerId].needToDiscard);
         console.log($scope.players[$scope.myPlayerId].needToDiscard > 0)
         //        console.log($scope.currentState = GAME_STATE.DISCARDQUEST);
         return $scope.currentState == $scope.GAME_STATE.HANDDISCARD || $scope.currentState == $scope.GAME_STATE.DISCARDQUEST && $scope.players[$scope.myPlayerId].needToDiscard > 0;
