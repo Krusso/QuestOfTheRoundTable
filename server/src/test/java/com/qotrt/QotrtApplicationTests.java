@@ -1,7 +1,6 @@
 package com.qotrt;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
@@ -24,7 +23,6 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -77,12 +75,12 @@ public class QotrtApplicationTests {
 		Thread.sleep(1000);
 		Message message1;
 		while((message1 = messages.poll(1, SECONDS)) != null) {
-			System.out.println(message1);
+			logger.info(message1);
 		}
 	}
 	
 	public void connect(String username) throws InterruptedException, ExecutionException, TimeoutException {
-		System.out.println("starting");
+		logger.info("starting");
 		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
@@ -96,11 +94,11 @@ public class QotrtApplicationTests {
 //					@Override
 //					public Type getPayloadType(StompHeaders headers) {
 //						logger.info("Wow?");
-//						System.out.println(headers.getDestination());
-//						System.out.println(headers.getId());
-//						System.out.println(headers.getSession());
-//						System.out.println(headers.get("simpSessionId"));
-//						System.out.println(headers.get("hello"));
+//						logger.info(headers.getDestination());
+//						logger.info(headers.getId());
+//						logger.info(headers.getSession());
+//						logger.info(headers.get("simpSessionId"));
+//						logger.info(headers.get("hello"));
 //						return GameJoinServer.class;
 //					}
 //
@@ -108,13 +106,13 @@ public class QotrtApplicationTests {
 //					public void handleFrame(StompHeaders headers, Object payload) {
 //						//String json = ((String) payload);
 //						logger.debug("Got " + payload);
-//						System.out.println("payload: " + payload);
+//						logger.info("payload: " + payload);
 //						//assertEquals(0, -1);
 ////						try {
 ////							
 ////						}
 ////						catch (Throwable t) {
-////							//System.out.println("failure");
+////							//logger.info("failure");
 ////						}
 //					}
 //				});
@@ -162,20 +160,20 @@ public class QotrtApplicationTests {
 	private class CreateGameStompFrameHandler implements StompFrameHandler {
 		@Override
 		public Type getPayloadType(StompHeaders stompHeaders) {
-			System.out.println("recieved anything?");
-			System.out.println(stompHeaders.getDestination());
-			System.out.println(stompHeaders.getId());
-			System.out.println(stompHeaders.getSession());
-			System.out.println(stompHeaders.get("simpSessionId"));
-			System.out.println(stompHeaders.get("hello"));
+			logger.info("recieved anything?");
+			logger.info(stompHeaders.getDestination());
+			logger.info(stompHeaders.getId());
+			logger.info(stompHeaders.getSession());
+			logger.info(stompHeaders.get("simpSessionId"));
+			logger.info(stompHeaders.get("hello"));
 			return Object.class;
 		}
 
 		@Override
 		public void handleFrame(StompHeaders stompHeaders, Object o) {
-			System.out.println("here");
-			System.out.println("payload: " + o);
-			//System.out.println("handled?: " + Arrays.toString(((GameJoinServer) o).players));
+			logger.info("here");
+			logger.info("payload: " + o);
+			//logger.info("handled?: " + Arrays.toString(((GameJoinServer) o).players));
 			//messages.add((GameJoinServer) o);
 		}
 	}

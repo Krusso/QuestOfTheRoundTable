@@ -97,9 +97,11 @@
                 </div>
             </div>
             <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">
+
                 <div class="discardPile"></div>
+
                 <!--                Only show discard button if player needs to discard cards-->
-                <button class="brown-button" ng-show="currentState = GAME_STATE.DISCARDQUEST && players[myPlayerId].cardsToDiscard>0">Discard</button>
+                <button class="brown-button" ng-show="currentState = GAME_STATE.HANDDISCARD || currentState == GAME_STATE.DISCARDQUEST && players[myPlayerId].cardsToDiscard>0">Discard</button>
 
             </div>
         </div>

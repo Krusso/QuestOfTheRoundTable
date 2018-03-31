@@ -44,7 +44,7 @@ public class Quest {
 		}
 		
 		for(Stage stage: quest) {
-			System.out.println("stage: " + Arrays.toString(stage.getStageCards().stream().
+			logger.info("stage: " + Arrays.toString(stage.getStageCards().stream().
 					map(i -> i.getName()).toArray(String[]::new)));
 		}
 		currentStage = 0;

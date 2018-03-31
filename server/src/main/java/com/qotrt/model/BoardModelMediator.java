@@ -5,11 +5,22 @@ public class BoardModelMediator {
 	private TournamentModel tm;
 	private QuestModel qm;
 	private BoardModel bm;
+	private DiscardModel dm;
+	private EventModel em;
+	private FinalTournamentModel ftm;
 
-	public BoardModelMediator(TournamentModel tm, QuestModel qm, BoardModel bm) {
+	public BoardModelMediator(TournamentModel tm, 
+			QuestModel qm, 
+			BoardModel bm, 
+			DiscardModel dm, 
+			EventModel em, 
+			FinalTournamentModel ftm) {
 		this.tm = tm;
 		this.qm = qm;
 		this.bm = bm;
+		this.dm = dm;
+		this.em = em;
+		this.ftm = ftm;
 	}
 	
 	public TournamentModel getTournamentModel() {
@@ -22,6 +33,18 @@ public class BoardModelMediator {
 
 	public BoardModel getBoardModel() {
 		return this.bm;
+	}
+
+	public DiscardModel getDiscardModel() {
+		return this.dm;
+	}
+
+	public EventModel getEventModel() {
+		return em;
+	}
+
+	public FinalTournamentModel getFinalTournamentModel() {
+		return ftm;
 	}
 
 }

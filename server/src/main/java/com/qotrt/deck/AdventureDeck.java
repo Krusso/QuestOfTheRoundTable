@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.AllyCard;
 import com.qotrt.cards.AmourCard;
-import com.qotrt.cards.Card;
 import com.qotrt.cards.FoeCard;
 import com.qotrt.cards.TestCard;
 import com.qotrt.cards.WeaponCard;
-import com.qotrt.cards.AdventureCard.TYPE;
 
 public class AdventureDeck extends Deck<AdventureCard> {
 	
@@ -69,8 +68,8 @@ public class AdventureDeck extends Deck<AdventureCard> {
 		return deck.stream().mapToInt(i -> i.getBattlePoints()).sum();
 	}
 
-	public List<Card> discardType(TYPE type) {
-		List<Card> removed = new ArrayList<Card>();
+	public List<AdventureCard> discardType(TYPE type) {
+		List<AdventureCard> removed = new ArrayList<AdventureCard>();
 		deck.removeIf(i -> {
 			if(i.getType() != type) {
 				return false;

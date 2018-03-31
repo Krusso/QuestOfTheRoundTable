@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -30,16 +32,17 @@ import com.qotrt.messages.game.GameListServer;
 
 public class PlayerTestCreator {
 
+	final static Logger logger = LogManager.getLogger(PlayerTestCreator.class);
+	
 	protected LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
 	private StompSession stompSession;
 
 	public StompSession connect(String WEBSOCKET_URI) {
-		System.out.println("starting");
+		logger.info("starting");
 		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-		//stompClient.setMessageConverter(new StringMessageConverter());
 
-		System.out.println("connecting to: " + WEBSOCKET_URI);
+		logger.info("connecting to: " + WEBSOCKET_URI);
 		try {
 			stompSession = stompClient.connect(WEBSOCKET_URI, 
 					new StompSessionHandlerAdapter() {}).get(1, SECONDS);
@@ -71,15 +74,15 @@ public class PlayerTestCreator {
 			@Override
 			public void handleFrame(StompHeaders headers, Object payload) {
 				//String json = new String((byte[]) payload);
-				System.out.println("payload: " + payload);
+				logger.info("payload: " + payload);
 				messages.add((Message)payload);
 			}
 		});
 	}
 
 	public void sendMessage(String destination, Object e) {
-		System.out.println("sending: " + e);
-		System.out.println("to: " + destination);
+		logger.info("sending: " + e);
+		logger.info("to: " + destination);
 		stompSession.send(destination, e);
 	}
 
@@ -88,16 +91,16 @@ public class PlayerTestCreator {
 		Message message1;
 		try {
 			while((message1 = messages.poll(20, SECONDS)) != null) {
-				System.out.println("checking type of: " + message1);
-				System.out.println("type match: " + ca.isInstance(message1));
+				logger.info("checking type of: " + message1);
+				logger.info("type match: " + ca.isInstance(message1));
 				ObjectMapper mapper = new ObjectMapper();
 				try {
-					System.out.println("returning: " + mapper.convertValue(message1, ca));
+					logger.info("returning: " + mapper.convertValue(message1, ca));
 					return mapper.convertValue(message1, ca);
 				} catch(IllegalArgumentException e) {
-					System.out.println("-------");
-					System.out.println(e.getMessage());
-					System.out.println(message1);
+					logger.info("-------");
+					logger.info(e.getMessage());
+					logger.info(message1);
 				}
 			}
 		} catch (InterruptedException e) {
@@ -105,14 +108,14 @@ public class PlayerTestCreator {
 			e.printStackTrace();
 		}
 
-		System.out.println("couldnt find: " + ca);
+		logger.info("couldnt find: " + ca);
 		return null;
 	}
 	
 	public <T extends Message> T take(Class<T> ca, int player) {
 		while(true) {
 			T tads = take(ca);
-			System.out.println("tads: " + tads);
+			logger.info("tads: " + tads);
 			if(tads.player == player) { return tads; }
 		}
 	}
@@ -128,7 +131,7 @@ public class PlayerTestCreator {
 			Object objectToSend) {
 		while(true) {
 			T tads = take(class1);
-			System.out.println("tads: " + tads);
+			logger.info("tads: " + tads);
 			if(tads.player == player) { break; }
 		}
 

@@ -215,7 +215,7 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 		Object payload = message.getPayload();
 		Class<?> view = getSerializationView(conversionHint);
 		// Note: in the view case, calling withType instead of forType for compatibility with Jackson <2.5
-		System.out.println("raw json received: " + new String((byte[]) payload));
+		logger.info("raw json received: " + new String((byte[]) payload));
 		try {
 			if (payload instanceof byte[]) {
 				if (view != null) {
@@ -235,7 +235,7 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 			}
 		}
 		catch (IOException ex) {
-			System.out.println("exception in parsing json: " + ex.getMessage());
+			logger.info("exception in parsing json: " + ex.getMessage());
 			throw new MessageConversionException(message, "Could not read JSON: " + ex.getMessage(), ex);
 		}
 	}

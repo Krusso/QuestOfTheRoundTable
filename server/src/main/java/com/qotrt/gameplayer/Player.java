@@ -35,6 +35,7 @@ public class Player extends Observable {
 		this.rank = Rank.RANKS.SQUIRE;
 		this.hand = new AdventureDeck();
 		this.faceDown = new AdventureDeck();
+		logger.info("faceDown is: " + faceDown);
 		this.faceUp = new AdventureDeck();
 		this.ID = id;
 		this.shields = 0;
@@ -73,12 +74,13 @@ public class Player extends Observable {
 
 		logger.info("Player id: " + ID + " current rank: " + rank + " current shields: " + shields);
 		fireEvent("increaseLevel", null, new GenericPair(rank, ID));
+		fireEvent("battlePoints", null, this);
 		increaseLevel();
 	}
 
 	public void addCards(ArrayList<AdventureCard> cards) {
 		for(AdventureCard card: cards) {
-			logger.info("Player id: " + ID + " adding card " + card.getName());
+			logger.info("Player id: " + ID + " adding card " + card.getName() + " card id: " + card.id);
 			hand.addCard(card, 1);
 		}
 
@@ -112,11 +114,13 @@ public class Player extends Observable {
 
 	public void setBackToHandFromFaceDown(int card) {
 		faceUp.addCard(faceDown.getCardByID(card));
+		fireEvent("battlePoints", null, this);
 	}
 	
 	public void setFaceDown(AdventureCard card) {
 		logger.info("Player id: " + ID + " setting face down: " + card);
 		faceDown.addCard(card);
+		fireEvent("battlePoints", null, this);
 	}
 
 	public RANKS getRank() {
@@ -135,6 +139,8 @@ public class Player extends Observable {
 		});
 		if(tristan && iseult) { logger.info("Have both iseult and tristant"); }
 		logger.info("Face up deck: " + faceUp.getDeck());
+		fireEvent("battlePoints", null, this);
+		fireEvent("flipCards", null, this);
 	}
 
 	public final AdventureDeck getFaceUp() {
@@ -142,7 +148,7 @@ public class Player extends Observable {
 	}
 
 	public void discardType(TYPE type) {
-		List<Card> removedCards = faceUp.discardType(type);
+		List<AdventureCard> removedCards = faceUp.discardType(type);
 		removedCards.forEach(i -> {
 			if(i.getName().equals("Sir Tristan")) {
 				tristan = false;
@@ -152,7 +158,10 @@ public class Player extends Observable {
 		});
 		logger.info("Player id: " + ID + " discarded type: " + type);
 		logger.info("Player id: " + ID + " discarded cards: " + Arrays.toString(removedCards.stream().map(i -> i.getName()).toArray(String[]::new)));
-		fireEvent("discardType", null, new GenericPair(removedCards, ID));
+		fireEvent("discardType", null, 
+				new GenericPair(removedCards.stream().
+						map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new), 
+						ID));
 	}
 
 	public int getShields() {

@@ -171,6 +171,13 @@ h2 {
     width: 35px;
 }
 
+#playerList {
+    list-style-type: none;
+    font-size: 30px;
+    font-family: Bookman;
+    color: white;
+}
+
 #inlobby {
     position: relative;
     width: 50%;
@@ -195,10 +202,14 @@ h2 {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
-.game {
+.game, .player {
     background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
     border: 1px solid black;
+}
+
+.player{
+    margin-right: 10px;
 }
 
 .info {
@@ -249,6 +260,7 @@ h2 {
 
 #pname {
     text-align: left;
+    padding-right: 10%;
 }
 
 #refresh {
@@ -258,8 +270,6 @@ h2 {
     left: 40%;
     text-align: center;
 }
-
-
 
 .box {
 

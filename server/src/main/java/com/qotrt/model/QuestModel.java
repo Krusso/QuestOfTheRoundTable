@@ -154,9 +154,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized List<Player> playerWhoJoined() {
-		System.out.println("Getting players who joined the quest");
+		logger.info("Getting players who joined the quest");
 		List<Player> x = participate.get();
-		System.out.println("Players: " + Arrays.toString(PlayerUtil.playersToIDs(x)));
+		logger.info("Players: " + Arrays.toString(PlayerUtil.playersToIDs(x)));
 		participatents = x;
 		return x;
 	}
@@ -245,6 +245,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized AdventureCard getDiscardCard(int id) {
 		for(AdventureCard c: discardCards) {
 			if(c.id == id) {
+				discardCards.remove(c);
 				return c;
 			}
 		}
@@ -259,6 +260,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized String attemptMove(Integer zoneFrom, Integer zoneTo, int card) {
 		Stage from = quest.getStage(zoneFrom);
 		Stage to = quest.getStage(zoneTo);
+		if(from == null || to == null) {
+			return "not a playable zone currently";
+		}
 		String response = to.validToAdd(from.findCardByID(card));
 		if(response.equals("")) {
 			to.addCard(from.getCardByID(card));
@@ -270,8 +274,11 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized String attemptMove(Integer zoneTo, AdventureCard card) {
 		System.out.println("Quest: " + quest);
 		Stage to = quest.getStage(zoneTo);
+		if(to == null) {
+			return "not a playable zone currently";
+		}
 		String response = to.validToAdd(card);
-		System.out.println("attempting to move card: " + card.getName());
+		logger.info("attempting to move card: " + card.getName());
 		
 		if(card.getType() == TYPE.TESTS && questContainsTest()) {
 			response = "Cant play more than one test per quest";
@@ -295,5 +302,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 
 	public synchronized AdventureCard getCard(int card, Integer integer) {
 		return quest.getStage(integer).getCardByID(card);
+	}
+
+	public synchronized Quest getQuest() {
+		return quest;
 	}
 }

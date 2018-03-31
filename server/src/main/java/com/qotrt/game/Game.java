@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.google.common.eventbus.EventBus;
 import com.qotrt.cards.GameOverStoryCard;
 import com.qotrt.cards.StoryCard;
 import com.qotrt.deck.DeckManager;
@@ -17,20 +16,28 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.BoardModel;
 import com.qotrt.model.BoardModelMediator;
+import com.qotrt.model.DiscardModel;
+import com.qotrt.model.EventModel;
+import com.qotrt.model.FinalTournamentModel;
 import com.qotrt.model.Observable;
 import com.qotrt.model.QuestModel;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
+import com.qotrt.sequence.DiscardSequenceManager;
 import com.qotrt.sequence.GameSequenceSimpleFactory;
 import com.qotrt.sequence.SequenceManager;
 import com.qotrt.util.WebSocketUtil;
+import com.qotrt.views.BattlePointsView;
 import com.qotrt.views.BoardView;
+import com.qotrt.views.DiscardView;
+import com.qotrt.views.EventView;
+import com.qotrt.views.FinalTournamentView;
 import com.qotrt.views.HubView;
+import com.qotrt.views.Observer;
 import com.qotrt.views.PlayerView;
 import com.qotrt.views.QuestView;
 import com.qotrt.views.TournamentView;
-import com.qotrt.views.Observer;
 
 public class Game extends Observable {
 
@@ -46,18 +53,25 @@ public class Game extends Observable {
 	private HubView hv;
 	private RIGGED rigged;
 	public BoardModelMediator bmm;
+	private Boolean discard;
 
 	public UUID getUUID() {
 		return this.uuid;
 	}
 
-	public Game(SimpMessagingTemplate messagingTemplate, String gameName, int capacity, RIGGED rigged, com.qotrt.messages.game.AIPlayer[] aiPlayers2) {
+	public Game(SimpMessagingTemplate messagingTemplate, 
+			String gameName, 
+			int capacity, 
+			RIGGED rigged, 
+			com.qotrt.messages.game.AIPlayer[] aiPlayers2, 
+			Boolean discard) {
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
 		this.gameSize = capacity;
+		this.discard = discard;
 		for(com.qotrt.messages.game.AIPlayer x: aiPlayers2) {
-			System.out.println("strategy: " + x.strat);
+			logger.info("strategy: " + x.strat);
 			aiplayers.add(new AIPlayer(x.strat,this));
 		}
 		logger.info("messaging template: " + this.messagingTemplate);
@@ -80,15 +94,14 @@ public class Game extends Observable {
 			public void run() {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
-				EventBus eventBus = new EventBus();
 
 				for(int i = 0; i < aiplayers.size(); i++) {
 					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
 				}
 				
 				// model creation
-				System.out.println("creating models");
-				BoardModel bm = new BoardModel(eventBus);
+				logger.info("creating models");
+				BoardModel bm = new BoardModel();
 				DeckManager dm = new DeckManager();
 				pm = new PlayerManager(gameSize, 
 						players.toArray(new UIPlayer[players.size()]), 
@@ -96,52 +109,56 @@ public class Game extends Observable {
 						rigged);
 				TournamentModel tm = new TournamentModel();
 				QuestModel qm = new QuestModel();
-				bmm = new BoardModelMediator(tm, qm, bm);
+				DiscardModel dmm = new DiscardModel();
+				EventModel em = new EventModel();
+				FinalTournamentModel ftm = new FinalTournamentModel();
+				bmm = new BoardModelMediator(tm, qm, bm, dmm, em, ftm);
 
 				// view creation
-				System.out.println("creating views");
-				Observer pv = new PlayerView(messagingTemplate);
-				Observer bv = new BoardView(messagingTemplate);
-				Observer tv = new TournamentView(messagingTemplate);
-				Observer qv = new QuestView(messagingTemplate);
-				
-				// adding websocket session ids to each view 
-				System.out.println("setting up subscriptions");
-				players.forEach(i -> { 
-					System.out.println("setting up player subscriptions");
-					pv.addWebSocket(i);
-					bv.addWebSocket(i);
-					tv.addWebSocket(i);
-					qv.addWebSocket(i);
-				});
+				logger.info("creating views");
+				Observer pv = new PlayerView(messagingTemplate, players);
+				Observer bv = new BoardView(messagingTemplate, players);
+				Observer tv = new TournamentView(messagingTemplate, players);
+				Observer qv = new QuestView(messagingTemplate, players);
+				Observer bpv = new BattlePointsView(messagingTemplate, pm, players);
+				Observer ev = new EventView(messagingTemplate, players);
+				Observer dv = new DiscardView(messagingTemplate, players);
+				Observer ftv = new FinalTournamentView(messagingTemplate, players);
 
-				System.out.println("setting up model subscriptions");
+				logger.info("setting up model subscriptions");
 				// subscriptions
-				System.out.println("setting up pm subscription");
+				logger.info("setting up pm subscription");
 				pm.subscribe(pv);
-				System.out.println("setting up bm subscription");
+				pm.subscribe(bpv);
+				logger.info("setting up bm subscription");
 				bm.subscribe(bv);
-				System.out.println("setting up tm subscription");
+				bm.subscribe(bpv);
+				logger.info("setting up tm subscription");
 				tm.subscribe(tv);
-				System.out.println("setting up qm subscription");
+				logger.info("setting up qm subscription");
 				qm.subscribe(qv);
+				qm.subscribe(bpv);
+				dmm.subscribe(dv);
+				em.subscribe(ev);
+				ftm.subscribe(ftv);
 
-				// TODO: use this
-				// eventBus.register(bv);
-				// eventBus.post(new GenericPair2<Integer, Integer>(1, 1));
-				// eventBus.post(new GenericPair2<Integer, String>(1, "123"));
-				System.out.println("starting pm");
+				logger.info("creating discard sequence manager: " + discard);
+				if(discard) {
+					pm.setDiscardSequenceManager(new DiscardSequenceManager(bmm));
+				}
+				
+				logger.info("starting pm");
 				pm.start();
 				
-				System.out.println("starting AI players");
+				logger.info("starting AI players");
 				for(int i = 0; i < aiplayers.size(); i++) {
-					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm);
+					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm,  bmm);
 					bm.subscribe(aiplayers.get(i));
 					tm.subscribe(aiplayers.get(i));
 					qm.subscribe(aiplayers.get(i));
 				}
 				
-				System.out.println("finished setup");
+				logger.info("finished setup");
 				
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 				while(true) {
@@ -157,9 +174,8 @@ public class Game extends Observable {
 
 					boolean winners = pm.rankUp();
 					if(winners) {
-						//pvs.joinFinalTournament(pm.getAllWithState(Player.STATE.WINNING), Player.STATE.WINNING);
 						sm = gsm.createStoryManager(GameOverStoryCard.GAMEOVER);
-						//sm.start(actions, pm, bm);
+						sm.start(pm, bmm);
 						break;
 					}
 
@@ -168,7 +184,6 @@ public class Game extends Observable {
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -189,9 +204,9 @@ public class Game extends Observable {
 	}
 
 	public boolean addPlayer(UIPlayer player) {
-		System.out.println("trying to add: " + player.getSessionID());
+		logger.info("trying to add: " + player.getSessionID());
 		if(players.size() == gameSize) {
-			System.out.println("game full not adding");
+			logger.info("game full not adding");
 			return false;
 		}
 
@@ -203,7 +218,7 @@ public class Game extends Observable {
 			startGame();
 		}
 
-		System.out.println("game not full adding player: " + player.getSessionID());
+		logger.info("game not full adding player: " + player.getSessionID());
 		return true;
 	}
 

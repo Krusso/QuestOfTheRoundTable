@@ -10,9 +10,9 @@ public class NeverEndingConfirmation extends Confirmation {
 
 	@Override
 	public boolean accept(Player player, String attempt, String success, String failure) {
-		System.out.println(attempt);
+		logger.info(attempt);
 		if(backingInt > 0) {
-			System.out.println(success);
+			logger.info(success);
 			accepted.clear();
 			accepted.add(player);
 			if(acceptEventName != null) {
@@ -20,7 +20,7 @@ public class NeverEndingConfirmation extends Confirmation {
 			}
 			return true;
 		} else {
-			System.out.println(failure);
+			logger.info(failure);
 			return false;
 		}
 	}

@@ -2,6 +2,8 @@ package com.qotrt.controller;
 
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -9,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
@@ -16,15 +19,96 @@ import com.qotrt.messages.game.PlayCardClient;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.model.CanPick;
+import com.qotrt.model.Discard;
+import com.qotrt.model.DiscardModel;
+import com.qotrt.model.EventModel;
 
 
 @Controller
 public class PlayCardController {
 
+	final static Logger logger = LogManager.getLogger(PlayCardController.class);
+	
 	@Autowired
 	private Hub hub;
 
-	@MessageMapping("/game.discard")
+	private String discardCard(Game game, Player player, Discard dm, PlayCardClient chatMessage) {
+		String response = "";
+
+		if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.DISCARD) && 
+				chatMessage.zoneFrom.equals(ZONE.HAND)) {
+			response = dm.playCard(player, chatMessage.card, player.hand);
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.DISCARD) && 
+				chatMessage.zoneFrom.equals(ZONE.FACEDOWN)) {
+			response = dm.playCard(player, chatMessage.card, player.getFaceDownDeck());
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.HAND) && 
+				chatMessage.zoneFrom.equals(ZONE.DISCARD)) {
+			player.hand.addCard(dm.getCard(player, chatMessage.card));
+		} else if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.HAND) && 
+				chatMessage.zoneFrom.equals(ZONE.FACEDOWN)) {
+			player.hand.addCard(player.getFaceDownDeck().getCardByID(chatMessage.card));
+		} else {
+			response = "not a playable zone currently";
+		}
+
+		return response;
+	}
+
+	@MessageMapping("/game.discardFullHand")
+	public void discardFull(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload PlayCardClient chatMessage) {
+
+
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		logger.info("face down deck is: " + player.getFaceDownDeck());
+		DiscardModel dm = game.bmm.getDiscardModel();
+		String response = discardCard(game, player, dm, chatMessage);
+		if(dm.can() && 
+				chatMessage.zoneTo.equals(ZONE.FACEDOWN) && 
+				(chatMessage.zoneFrom.equals(ZONE.DISCARD) || chatMessage.zoneFrom.equals(ZONE.HAND))) {
+
+			AdventureCard c = dm.findCard(player, chatMessage.card);
+			if(c == null) {
+				c = player.hand.findCardByID(chatMessage.card);
+			}
+			
+			logger.info("face down deck is: " + player.getFaceDownDeck());
+			response = c.playFaceDown(player.getFaceDownDeck(), player.getFaceUp());
+			if(response.equals("") && (c.getType().equals(TYPE.AMOUR) || c.getType().equals(TYPE.ALLIES))) {
+				if(chatMessage.zoneFrom.equals(ZONE.DISCARD)) {
+					player.getFaceDownDeck().addCard(dm.getCard(player, chatMessage.card));
+				} else {
+					player.getFaceDownDeck().addCard(player.hand.getCardByID(chatMessage.card));
+				}
+			} else {
+				response = "can only play amour or allies face down during discarding";
+			}
+
+		} 
+
+		logger.info("face down deck is: " + player.getFaceDownDeck());
+		checkValidityAndSend(game, player, chatMessage, response);
+	}
+
+	@MessageMapping("/game.discardEvent")
+	public void discardEvent(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload PlayCardClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		EventModel em = game.bmm.getEventModel();
+
+		String response = discardCard(game, player, em, chatMessage);
+
+
+		checkValidityAndSend(game, player, chatMessage, response);
+	}
+
+	@MessageMapping("/game.discardBid")
 	public void discard(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
@@ -58,10 +142,14 @@ public class PlayCardController {
 		map.put(ZONE.STAGE5, 4);
 
 		String response = "";
-		System.out.println("attempting to play card: " + chatMessage.card + " to zone: " + chatMessage.zoneTo + " from zone: " + chatMessage.zoneFrom);
-		if(map.containsKey(chatMessage.zoneFrom) && map.containsKey(chatMessage.zoneTo) && game.bmm.getQuestModel().canPickCardsForStage()){
+		logger.info("attempting to play card: " + chatMessage.card + " to zone: " + chatMessage.zoneTo + " from zone: " + chatMessage.zoneFrom);
+		if(map.containsKey(chatMessage.zoneFrom) && 
+				map.containsKey(chatMessage.zoneTo) && 
+				game.bmm.getQuestModel().canPickCardsForStage()){
 			response = game.bmm.getQuestModel().attemptMove(map.get(chatMessage.zoneFrom), map.get(chatMessage.zoneTo), chatMessage.card);
-		} else if(chatMessage.zoneFrom.equals(ZONE.HAND) && map.containsKey(chatMessage.zoneTo) && game.bmm.getQuestModel().canPickCardsForStage()){
+		} else if(chatMessage.zoneFrom.equals(ZONE.HAND) && 
+				map.containsKey(chatMessage.zoneTo) && 
+				game.bmm.getQuestModel().canPickCardsForStage()){
 			response = game.bmm.getQuestModel().attemptMove(map.get(chatMessage.zoneTo), player.findCardByID(chatMessage.card));
 			// ie valid move
 			if(response.equals("")) {
@@ -84,6 +172,14 @@ public class PlayCardController {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		playCard(game, player, game.bmm.getQuestModel(), chatMessage);
+	}
+	
+	@MessageMapping("/game.playForFinalTournament")
+	public void playForFinalTournament(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload PlayCardClient chatMessage) {
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		playCard(game, player, game.bmm.getFinalTournamentModel(), chatMessage);
 	}
 
 	@MessageMapping("/game.playCardTournament")
@@ -145,10 +241,10 @@ public class PlayCardController {
 
 	private String verifyFaceDownCard(Player player, int card) {
 		AdventureCard c = player.findCardByID(card);
-		System.out.println("player: " + player.getID());
-		System.out.println("card id: " + card);
-		System.out.println("card: " + c);
-		System.out.println("Player: " + player.getID() + " trying to play: " + c.getName() + " id: " + card);
+		logger.info("player: " + player.getID());
+		logger.info("card id: " + card);
+		logger.info("card: " + c);
+		logger.info("Player: " + player.getID() + " trying to play: " + c.getName() + " id: " + card);
 		return c.playFaceDown(player.getFaceDownDeck(), player.getFaceUp());
 	}
 }

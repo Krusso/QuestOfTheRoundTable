@@ -26,6 +26,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.toast = "Just Chilling";
     $scope.joinedGame = false;
     $scope.myPlayerId = 0;
+    $scope.inGamePlayers;
     $scope.players = [];
     $scope.stageZones = {
         stage1: [],
@@ -126,7 +127,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         BIDQUEST: 5,
         DISCARDQUEST: 6,
         JOINTOURNAMENT: 20,
-        PICKTOURNAMENT: 21
+        PICKTOURNAMENT: 21,
+        HANDDISCARD: 22
     };
 
 
@@ -194,10 +196,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.JOINGAME,
             java_class: "GameListClient"
-
         };
         $scope.addMessage($scope.ep_listGames);
     };
+
     $scope.sendGameJoinClient = function (uuid) {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
@@ -340,6 +342,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "JOINGAME") {
+                $scope.inGamePlayers = [];
+                for (var i = 0; i < message.players.length; i++) {
+                    if(message.players[i] != $scope.pname) {
+                        $scope.inGamePlayers.push({name : message.players[i]});
+                    }
+                }
                 $scope.players = []; //reset the array
                 var p = message.players; //array of strings that denote the player's name
                 for (var i = 0; i < p.length; i++) {
@@ -373,7 +381,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 for (var i = 0; i < message.cards.length; i++) {
                     message.cards[i].zone = $scope.ZONE.HAND;
                     $scope.players[playerNum].hand.push(message.cards[i]);
-                    console.log("Adding card" + message.cards[i].key + " " + message.cards[i].value);
+                    console.log("Adding card: " + message.cards[i].key + " " + message.cards[i].value);
                 }
                 console.log($scope.playerZoneToListMap);
             }
@@ -386,14 +394,17 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.toast = "Join Tournament ?";
             }
 
-            if (message.messageType === "PICKTOURNAMENT") {
-                $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
+            if (message.messageType === "JOINEDTOURNAMENT") {
                 $scope.players[message.player].joinedTourn = true;
-                console.log("Player sponsoring? : " + $scope.players[message.player].joinedTourn);
-                $scope.toast = "Select cards to use in tournament";
+                console.log("Player joined tourn? : " + $scope.players[message.player].joinedTourn);
             }
 
-            if (message.messageType === "FACEDOWN") {
+            if (message.messageType === "HANDDISCARD") {
+                $scope.currentState = $scope.GAME_STATE.HANDDISCARD;
+                $scope.toast = "Hand too full, select cards to discard";
+            }
+
+            if (message.messageType === "PICKTOURNAMENT") {
                 //
             }
 
@@ -1097,6 +1108,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
                     $scope.tryingToPlay.push(e);
+                    console.log($scope.tryingToPlay);
                     console.log("hand| added" + e.toString() + "to trying To Play");
                 }
                 return ui.draggable.scope().card.value !== e.value;
@@ -1139,8 +1151,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
     //Only show the done setting up button if the player is sponsoring and the state is picking stages
     $scope.showDoneSettingUp = function() {
-        console.log("Checking display");
-        console.log("player: " + $scope.myPlayerId + " is sponsoring? " + $scope.players[$scope.myPlayerId].isSponsoring);
+        // console.log("Checking display");
+        // console.log("player: " + $scope.myPlayerId + " is sponsoring? " + $scope.players[$scope.myPlayerId].isSponsoring);
         console.log("current state: " + $scope.currentState);
         return $scope.players[$scope.myPlayerId].isSponsoring && $scope.currentState ==$scope.GAME_STATE.PICKSTAGES;
     }    

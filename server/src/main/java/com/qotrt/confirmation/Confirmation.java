@@ -5,12 +5,18 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.qotrt.gameplayer.Player;
-import com.qotrt.util.PlayerUtil;
 import com.qotrt.model.GenericPair;
 import com.qotrt.model.Observable;
+import com.qotrt.util.PlayerUtil;
 
 public abstract class Confirmation extends Observable {
+	
+	final static Logger logger = LogManager.getLogger(Confirmation.class);
+	
 	protected CountDownLatch cdl = new CountDownLatch(1);
 	protected String eventName;
 	protected String acceptEventName;
@@ -48,17 +54,17 @@ public abstract class Confirmation extends Observable {
 	public abstract boolean accept(Player player, String attempt, String success, String failure);
 
 	public void decline(Player player, String attempt, String success, String failure) {
-		System.out.println(attempt);
+		logger.info(attempt);
 		if(backingInt > 0) {
 			toAsk.remove(player);
 			backingInt--;
-			System.out.println(success);
+			logger.info(success);
 			if(declineEventName != null) {
 				fireEvent(declineEventName, null, player);
 			}
 			checkIfCanOpenLatch(cdl, backingInt);
 		} else {
-			System.out.println(failure);
+			logger.info(failure);
 		}
 	}
 	
