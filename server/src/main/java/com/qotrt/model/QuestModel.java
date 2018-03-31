@@ -23,6 +23,7 @@ import com.qotrt.util.PlayerUtil;
 
 public class QuestModel extends Observable implements PropertyChangeListener , CanPick{
 
+	private int toDiscard;
 	
 	private Confirmation sponsor = new SingleShotConfirmation("questionSponsor", 
 			"acceptSponsorQuest", 
@@ -50,7 +51,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	public synchronized CountDownLatch cardsLatch() { return cards.getCountDownLatch();}
 	
 	private Confirmation discard = new SingleShotConfirmation("discardQuest",
-			null,
+			"discardQuestFinish",
 			null);
 	
 	public synchronized CountDownLatch discardLatch() { return discard.getCountDownLatch();}
@@ -90,8 +91,13 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		return stageSetup.can();
 	}
 	
-	public synchronized void finishSelectingStages(Player player) {
-		stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
+	public synchronized boolean finishSelectingStages(Player player) {
+		for(int i = 0; i < quest.getNumStages(); i++) {
+			if(!(quest.getStage(i).isFoeStage() || quest.getStage(i).isTestStage())) {
+				return false;
+			}
+		}
+		return stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
 				"player: " + player + " finished selecting cards", 
 				"player: " + player + " finish selecting cards too late");
 	}
@@ -229,13 +235,18 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 
 	public synchronized void discardCards(List<Player> bidWinner, int toDiscard) {
 		discard.start(bidWinner, toDiscard);
+		this.toDiscard = toDiscard;
 		discardCards = new ArrayList<AdventureCard>();
 	}
 	
-	public synchronized void finishDiscard(Player player) {
+	public synchronized String finishDiscard(Player player) {
+		if(toDiscard != discardCards.size()) {
+			return "Need to discard: " + (toDiscard - discardCards.size()) + " more cards";
+		}
 		discard.accept(player, "player: " + player + " attempted to finish discard", 
 				"player: " + player + " finished discard", 
 				"player: " + player + " finish discard too late");
+		return "";
 	}
 	
 	public synchronized void addDiscard(AdventureCard c) {

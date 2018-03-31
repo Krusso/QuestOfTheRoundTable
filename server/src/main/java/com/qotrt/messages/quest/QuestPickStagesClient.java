@@ -1,19 +1,6 @@
 package com.qotrt.messages.quest;
 
-import com.qotrt.messages.Message;
-
-//from Client
-public class QuestPickStagesClient extends Message {
+//from Client doesnt implement
+public class QuestPickStagesClient {
 	
-	public QuestPickStagesClient() {}
-	
-	public QuestPickStagesClient(int player) {
-		super(player);
-	}
-	
-	@Override
-	public void setMessage() {
-		this.messageType = MESSAGETYPES.PICKSTAGES;
-	}
-
 }
