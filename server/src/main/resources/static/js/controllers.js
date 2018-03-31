@@ -109,7 +109,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         BIDQUEST: 19,
         DISCARDQUEST: 20,
         UPQUEST: 21,
-        PLAYCARD: 22
+        PLAYCARD: 22,
+        HANDDISCARD: 23
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -176,6 +177,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_discardFullHand = "/app/game.discardFullHand";
     $scope.ep_discardBid = "/app/game.discardBid";
     $scope.ep_discardFinish = "/app/game.finishDiscard";
+    $scope.ep_finishSelectingDiscardHand = "/app/game.finishSelectingDiscardHand";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -335,12 +337,21 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
     $scope.sendFinishDiscard = function () {
         console.log("hello");
-        $scope.message = {
-            TYPE: $scope.TYPE_GAME,
-            messageType: $scope.MESSAGETYPES.DISCARDQUEST,
-            java_class: "QuestDiscardCardsClient",
-        };
-        $scope.addMessage($scope.ep_discardFinish);
+        if ($scope.currentState === $scope.GAME_STATE.HANDDISCARD) {
+            $scope.message = {
+                TYPE: $scope.TYPE_GAME,
+                messageType: $scope.MESSAGETYPES.FINISHDISCARD,
+                java_class: "HandFullFinishPickingClient"
+            };
+            $scope.addMessage($scope.ep_finishSelectingDiscardHand);
+        } else {
+            $scope.message = {
+                TYPE: $scope.TYPE_GAME,
+                messageType: $scope.MESSAGETYPES.DISCARDQUEST,
+                java_class: "QuestDiscardCardsClient"
+            };
+            $scope.addMessage($scope.ep_discardFinish);
+        }
     }
 
     /***************************************************************/
@@ -446,7 +457,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[i].joinedQuest = false;
                     $scope.players[i].discardPile.length = 0;
                 }
-                console.log(players);
+                // console.log(players);
 
             }
             if (message.messageType === "JOINTOURNAMENT") {
@@ -542,7 +553,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                                 break;
                             }
                             if (message.zoneTo === "DISCARD") {
-                                $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
+                                // $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
+                                $scope.currentState = $scope.GAME_STATE.HANDDISCARD;
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.DISCARD;
                                 $scope.players[$scope.myPlayerId].discardPile.push($scope.tryingToPlay[i]);
                                 $scope.tryingToPlay.splice(i, 1);
@@ -645,6 +657,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 if (message.player == $scope.myPlayerId) {
                     $scope.players[$scope.myPlayerId].needToDiscard = message.toDiscard; //every player only needs to know how many cards they need to discard themselves (not other players) 
                     $scope.toast = "Hand too full, select " + $scope.players[$scope.myPlayerId].needToDiscard + " cards to discard";
+                }
+            }
+            if (message.messageType === "FINISHDISCARD") {
+                if (message.player == $scope.myPlayerId) {
+                    $scope.players[$scope.myPlayerId].discardPile.length = 0;
+                    $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
+                    $scope.toast = "Select cards for tournament";
                 }
             }
 
