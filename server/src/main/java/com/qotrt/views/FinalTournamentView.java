@@ -7,9 +7,8 @@ import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import com.qotrt.messages.tournament.TournamentPickCardsServer;
-import com.qotrt.messages.tournament.TournamentWinServer;
-import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
+import com.qotrt.messages.gameover.FinalTournamentNotifyServer;
+import com.qotrt.messages.gameover.GameOverServer;
 import com.qotrt.model.GenericPair;
 import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
@@ -25,7 +24,7 @@ public class FinalTournamentView extends Observer {
 
 		Function<PropertyChangeEvent, Boolean> funcF3 = x -> x.getPropertyName().equals("gamewinners");
 
-		Consumer<PropertyChangeEvent> funcC3 = x -> setWinners(mapper.convertValue(x.getNewValue(), GenericPair.class));
+		Consumer<PropertyChangeEvent> funcC3 = x -> setWinners(mapper.convertValue(x.getNewValue(), int[].class));
 
 
 
@@ -38,13 +37,11 @@ public class FinalTournamentView extends Observer {
 		handleEvent(evt);
 	}
 
-	private void setWinners(GenericPair e) {
-		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (WINTYPES) e.value));
+	private void setWinners(int[] players) {
+		sendMessage("/queue/response", new GameOverServer(players));
 	}
 
 	private void questionCardTournament(int[] players) {
-		for(int i: players) {
-			sendMessage("/queue/response", new TournamentPickCardsServer(i, players));	
-		}
+		sendMessage("/queue/response", new FinalTournamentNotifyServer(players));
 	}
 }

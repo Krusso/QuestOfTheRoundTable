@@ -8,6 +8,8 @@ public class GameOverServer extends Message {
 
 	public int[] players;
 	
+	public GameOverServer() {}
+	
 	public GameOverServer(int[] players) {
 		super();
 		this.players = players;

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
-import com.qotrt.messages.tournament.TournamentFinishPickingClient;
+import com.qotrt.messages.gameover.FinalTournamentFinishPickingClient;
 
 
 @Controller
@@ -24,7 +24,7 @@ public class FinalTournamentController {
 	
 	@MessageMapping("/game.finishSelectingFinalTournament")	
 	public void finishSelectingFinalTournament(SimpMessageHeaderAccessor headerAccessor, 
-			@Payload TournamentFinishPickingClient chatMessage) {
+			@Payload FinalTournamentFinishPickingClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		logger.info("finish selecting cards: " + chatMessage.player);

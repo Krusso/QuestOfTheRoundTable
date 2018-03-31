@@ -32,6 +32,7 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 			ftm.setWinners(participants);
 			logger.info("Winners:" + participants);
 		} else {
+			logger.info("Starting to question for cards");
 			ftm.questionCards(participants);
 
 			try {
@@ -41,6 +42,7 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 			}
 
 			ftm.finishPicking();
+			logger.info("Finished questioning for cards");
 
 			Iterator<Player> players = participants.iterator();
 			pm.flipCards(players);
