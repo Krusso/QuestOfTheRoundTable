@@ -13,7 +13,7 @@ public class FinishPickingStagesClient extends Message {
 	
 	@Override
 	public void setMessage() {
-		this.messageType = MESSAGETYPES.FINISHBIDDISCARD;
+		this.messageType = MESSAGETYPES.FINISHSTAGESETUP;
 	}
 
 }
