@@ -117,7 +117,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         JOINEDFINALTOURNAMENT: 27,
         GAMEOVER: 28,
         FINISHFINALTOURNAMENT: 29,
-        FINISHBIDDISCARD: 30
+        FINISHBIDDISCARD: 30,
+        FINISHSTAGESETUP: 31
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -319,7 +320,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.sendQuestPickStagesClient = function () {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
-            messageType: $scope.MESSAGETYPES.FINISHBIDDISCARD,
+            messageType: $scope.MESSAGETYPES.FINISHSTAGESETUP,
             java_class: "FinishPickingStagesClient"
         };
         $scope.addMessage($scope.ep_finishSelectingQuestStages);
@@ -691,6 +692,24 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[$scope.myPlayerId].discardPile.length = 0;
                     $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
                     $scope.toast = "Select cards for tournament";
+                }
+            }
+            //move cards from facedown to faceup for player
+            if (message.messageType === "FACEUPCARDS") {
+                for (var i = 0; i < $scope.players[message.player].faceDown.length; i++) {
+                    $scope.players[message.player].faceUp.push($scope.players[message.player].faceDown[i]);
+                }
+                $scope.players[message.player].faceDown.length = 0;
+            }
+            if (message.messageType === "DISCARDFACEUP") {
+                //remove cards from faceup
+                for (var j = 0; j < message.cards.length; j++) {
+                    for (var i = 0; i < $scope.players[message.player].faceUp.length; i++) {
+                        if (message.cards[j].value == $scope.players[message.player].faceUp[i].value) {
+                            console.log("Removing " + $scope.players[message.player].faceUp[i].key + " from faceup");
+                            $scope.players[message.player].faceUp.splice(i, 1);
+                        }
+                    }
                 }
             }
 
