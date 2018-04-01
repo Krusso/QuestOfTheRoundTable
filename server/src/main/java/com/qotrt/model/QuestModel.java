@@ -97,15 +97,18 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		BattlePointCalculator bpc = new BattlePointCalculator(null);
 		for(int i = 0; i < quest.getNumStages(); i++) {
 			if(!(quest.getStage(i).isFoeStage() || quest.getStage(i).isTestStage())) {
+				logger.info("is foe: " + quest.getStage(i).isFoeStage());
+				logger.info("is test: " + quest.getStage(i).isTestStage());
 				return false;
 			}
 			if(quest.getStage(i).isFoeStage()) {
 				if(bpc.calculateStage(quest.getStage(i).getStageCards(), 
-						quest.getQuestCard()) > min){
-					min = bpc.calculateStage(quest.getStage(i).getStageCards(), 
-							quest.getQuestCard());
+						quest.getQuestCard()) <= min){
 					return false;
 				}
+
+				min = bpc.calculateStage(quest.getStage(i).getStageCards(), 
+						quest.getQuestCard());
 			}
 		}
 		return stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
