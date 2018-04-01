@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.calculator.BidCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
@@ -92,9 +93,19 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 	
 	public synchronized boolean finishSelectingStages(Player player) {
+		int min = Integer.MIN_VALUE;
+		BattlePointCalculator bpc = new BattlePointCalculator(null);
 		for(int i = 0; i < quest.getNumStages(); i++) {
 			if(!(quest.getStage(i).isFoeStage() || quest.getStage(i).isTestStage())) {
 				return false;
+			}
+			if(quest.getStage(i).isFoeStage()) {
+				if(bpc.calculateStage(quest.getStage(i).getStageCards(), 
+						quest.getQuestCard()) > min){
+					min = bpc.calculateStage(quest.getStage(i).getStageCards(), 
+							quest.getQuestCard());
+					return false;
+				}
 			}
 		}
 		return stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
