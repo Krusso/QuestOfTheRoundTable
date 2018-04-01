@@ -388,7 +388,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 for (var i = 0; i < $scope.players.length; i++) {
                     $scope.playerZoneToListMap['HAND' + i] = $scope.players[i].hand;
                     $scope.playerZoneToListMap['FACEUP' + i] = $scope.players[i].faceUp;
-                    $scope.playerZoneToListMap['FACEDOWN' + i] = $scope.players[i].faceDown;
+                    $scope.playerZoneToListMap['FACEDOWN' + i] = $scope.players[i].faceDown;;
+                    $scope.playerZoneToListMap['DISCARD' + i] = $scope.players[i].discardPile;
                 }
             }
             if (message.messageType === "JOINGAME") {
@@ -459,6 +460,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[i].isSponsoring = false;
                     $scope.players[i].joinedQuest = false;
                     $scope.players[i].discardPile.length = 0;
+                    $scope.players[i].revealStage = [false, false, false, false, false];
                 }
                 // console.log(players);
 
@@ -617,6 +619,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             //TODO:: show the stage card
             if (message.messageType === "UPQUEST") {
+                for (var i = 0; i < $scope.players.length; i++) {
+                    //upquest really only matters to players who are not sponsoring (cause of the way i coded it)
+                    if (!$scope.players[i].isSponsoring) {
+                        $scope.players[i].revealStage[message.stage] = true;
+                    }
+                }
 
             }
             if (message.messageType === "WINQUEST") {
@@ -624,8 +632,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     if (!message.players.includes(i)) {
                         $scope.players[i].joinedQuest = false;
                     }
+
                 }
-                $scope.toast = "Players " + message.players.toString() + " passed the stage";
+                if (message.players.length != 0) {
+
+                    $scope.toast = "Players " + message.players.toString() + " passed the stage";
+                } else {
+
+                    $scope.toast = "No players has passed the stage";
+                }
                 console.log($scope.players);
                 if (message.type === "WON") {
                     $scope.toast = "Players " + message.players.toString() + " won the quest!";
@@ -633,6 +648,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 if (message.type === "NOSPONSOR") {
                     $scope.toast = "No players sponsored the quest";
                 }
+                $scope.players[$scope.myPlayerId].discardPile.length = 0;
             }
             if (message.messageType === "BIDQUEST") {
                 $scope.currentState = $scope.GAME_STATE.BIDQUEST;
@@ -1218,7 +1234,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     //returns true/false if it should show the accept/decline
     $scope.showAcceptDecline = function () {
         // console.log("checking showAcceptDecline");
-        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
+        //        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
         return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT || $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
     }
 
@@ -1260,9 +1276,20 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.showDiscardButton = function () {
         // console.log("checking dispaly for discardButton");
         //        console.log("cards to discard: " + $scope.players[$scope.myPlayerId].needToDiscard);
-        console.log($scope.players[$scope.myPlayerId].needToDiscard > 0)
+        //        console.log($scope.players[$scope.myPlayerId].needToDiscard > 0)
         //        console.log($scope.currentState = GAME_STATE.DISCARDQUEST);
         return $scope.currentState == $scope.GAME_STATE.HANDDISCARD || $scope.currentState == $scope.GAME_STATE.DISCARDQUEST && $scope.players[$scope.myPlayerId].needToDiscard > 0;
+    }
+    //show stage as hidden to players who are not sponsoring and has not been upquested
+    $scope.showHiddenStage = function (stageNum) {
+        console.log("Show hidden?" + !$scope.players[$scope.myPlayerId].isSponsoring && $scope.players[$scope.myPlayerId].revealStage[stageNum]);
+        return !$scope.players[$scope.myPlayerId].isSponsoring && ($scope.players[$scope.myPlayerId].revealStage[stageNum] == false);
+    }
+    $scope.showStage = function (stageNum) {
+        console.log("sponsoring: " + !$scope.players[$scope.myPlayerId].isSponsoring);
+        console.log("reveal?: " + $scope.players[$scope.myPlayerId].revealStage[stageNum]);
+        console.log("Show hidden?" + !$scope.players[$scope.myPlayerId].isSponsoring && $scope.players[$scope.myPlayerId].revealStage[stageNum]);
+        return !$scope.players[$scope.myPlayerId].isSponsoring && ($scope.players[$scope.myPlayerId].revealStage[stageNum] == true);
     }
 
 });
