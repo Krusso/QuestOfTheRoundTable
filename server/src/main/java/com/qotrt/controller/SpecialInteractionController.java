@@ -13,8 +13,10 @@ import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
 import com.qotrt.messages.special.MerlinClient;
+import com.qotrt.messages.special.MerlinServer;
 import com.qotrt.messages.special.MordredClient;
 import com.qotrt.messages.special.MordredServer;
+import com.qotrt.model.GenericPair;
 
 
 @Controller
@@ -59,8 +61,12 @@ public class SpecialInteractionController {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		
-		if(game.bmm.getQuestModel().merlinCan()) {
-			
+		GenericPair[] e = game.bmm.getQuestModel().merlinCan();
+		
+		if(e != null) {
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), e, ""));
+		} else {
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), new GenericPair[] {}, ""));
 		}
 		
 	}

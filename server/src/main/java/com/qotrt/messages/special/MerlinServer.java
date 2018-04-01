@@ -6,15 +6,13 @@ import com.qotrt.model.GenericPair;
 // from server
 public class MerlinServer extends Message {
 
-	public int card;
 	public GenericPair[] cards;
 	public String response;
 	
 	public MerlinServer() {}
 	
-	public MerlinServer(int player, int card, GenericPair[] cards, String response) {
+	public MerlinServer(int player, GenericPair[] cards, String response) {
 		super(player);
-		this.card = card;
 		this.cards = cards;
 		this.response = response;
 	}
