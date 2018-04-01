@@ -494,8 +494,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
 
             if (message.messageType === "PICKTOURNAMENT") {
-                $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
-                $scope.toast = "Select cards for tournament";
+                if($scope.players[message.player].joinedTourn){
+                    $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
+                    $scope.toast = "Select cards for tournament";                    
+                }
             }
 
             if (message.messageType === "SPONSERQUEST") {
