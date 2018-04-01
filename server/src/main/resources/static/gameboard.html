@@ -27,16 +27,17 @@
                 <div class="opponentHandZone">
                     <div class="displayContainer" ng-model="player.shieldIcon"></div>
                     <div class="cardZones">
-                        <div class="opponentHand" ng-model="player.hand">
+<!--                         <div class="opponentHand" ng-model="player.hand">
                             <div ng-repeat="card in player.hand">
                                 <div c1 class="card1" card1="{{card.key}}"></div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="opponentFaceUp">
-                            <!--                        <div class="card"></div>-->
+                            <div ng-repeat="card in player.faceUp">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
+                            </div>                          
                         </div>
-                        <div class="opponentFaceDown">
-                            <!--                        <div class="card"></div>-->
+                        <div class="opponentFaceDown">                         
                         </div>
                     </div>
                 </div>
@@ -91,6 +92,7 @@
                 </div>
 
                 <div class="buttonContainer">
+                    <button class="brown-button" ng-click="sendTournamentPickCardsClient()" ng-show="showDonePickingTournamentCards()">Done Picking Cards</button>
                     <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDoneSettingUp()">Done Setting Up</button>
                     <button class="brown-button" ng-click="sendQuestPickCardsClient()" ng-show="showDonePickingQuestCards()">Done Picking Cards</button>
                     <button class="brown-button" ng-click="sendQuestBidClient()" ng-show="showBidButton()">Bid {{bidSlider.value}}</button>
