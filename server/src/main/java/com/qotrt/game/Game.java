@@ -83,6 +83,10 @@ public class Game extends Observable {
 		subscribe(hv);
 	}
 
+	public Player[] getPlayers() {
+		return pm.players;
+	}
+	
 	public Player getPlayerBySessionID(String sessionID) {
 		for(Player player: pm.players) {
 			if(player.compareSessionID(sessionID)) {
