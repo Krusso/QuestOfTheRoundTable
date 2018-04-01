@@ -11,11 +11,13 @@ import org.springframework.stereotype.Controller;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
+import com.qotrt.messages.quest.BidDiscardFinishPickingClient;
+import com.qotrt.messages.quest.BidDiscardFinishPickingServer;
+import com.qotrt.messages.quest.FinishPickingStagesClient;
+import com.qotrt.messages.quest.FinishPickingStagesServer;
 import com.qotrt.messages.quest.QuestBidClient;
-import com.qotrt.messages.quest.QuestDiscardCardsClient;
 import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestPickCardsClient;
-import com.qotrt.messages.quest.QuestPickStagesClient;
 import com.qotrt.messages.quest.QuestSponsorClient;
 
 
@@ -64,20 +66,28 @@ public class QuestController {
 	
 	@MessageMapping("/game.finishSelectingQuestStages")
 	public void finishSelectingQuestStages(SimpMessageHeaderAccessor headerAccessor, 
-			@Payload QuestPickStagesClient chatMessage) {
+			@Payload FinishPickingStagesClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		logger.info("finish selecting cards: " + chatMessage.player);
-		game.bmm.getQuestModel().finishSelectingStages(player);
+		if(game.bmm.getQuestModel().finishSelectingStages(player)) {
+			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), true, ""));
+		} else {
+			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), false, "each stages needs 1 test or 1 foe card"));
+		}
 	}
 	
 	@MessageMapping("/game.finishDiscard")
 	public void finishDiscard(SimpMessageHeaderAccessor headerAccessor, 
-			@Payload QuestDiscardCardsClient chatMessage) {
+			@Payload BidDiscardFinishPickingClient chatMessage) {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		logger.info("finish discard cards: " + chatMessage.player);
-		game.bmm.getQuestModel().finishDiscard(player);
+		String response = game.bmm.getQuestModel().finishDiscard(player);
+		logger.info("response to trying to finish: " + response);
+		if(!response.equals("")) {
+			game.sendMessageToAllPlayers("/queue/response", new BidDiscardFinishPickingServer(player.getID(), false, response));
+		}
 	}
 	
 	@MessageMapping("/game.joinQuest")	
