@@ -160,7 +160,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         DISCARDQUEST: 6,
         JOINTOURNAMENT: 20,
         PICKTOURNAMENT: 21,
-        HANDDISCARD: 22
+        HANDDISCARD: 22,
+        WINTOURNAMENT: 23
     };
 
 
@@ -703,6 +704,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "WINTOURNAMENT") {
                 $scope.toast = "Player "+message.player+" won the tournament";
+                $scope.currentState = $scope.GAME_STATE.WINTOURNAMENT;
             }  
             //move cards from facedown to faceup for player
             if (message.messageType === "FACEUPCARDS") {
@@ -1327,9 +1329,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         return !$scope.players[$scope.myPlayerId].isSponsoring && ($scope.players[$scope.myPlayerId].revealStage[stageNum] == false);
     }
     $scope.showStage = function (stageNum) {
-        console.log("sponsoring: " + !$scope.players[$scope.myPlayerId].isSponsoring);
-        console.log("reveal?: " + $scope.players[$scope.myPlayerId].revealStage[stageNum]);
-        console.log("Show hidden?" + !$scope.players[$scope.myPlayerId].isSponsoring && $scope.players[$scope.myPlayerId].revealStage[stageNum]);
+        // console.log("sponsoring: " + !$scope.players[$scope.myPlayerId].isSponsoring);
+        // console.log("reveal?: " + $scope.players[$scope.myPlayerId].revealStage[stageNum]);
+        // console.log("Show hidden?" + !$scope.players[$scope.myPlayerId].isSponsoring && $scope.players[$scope.myPlayerId].revealStage[stageNum]);
         return !$scope.players[$scope.myPlayerId].isSponsoring && ($scope.players[$scope.myPlayerId].revealStage[stageNum] == true);
     }
 
