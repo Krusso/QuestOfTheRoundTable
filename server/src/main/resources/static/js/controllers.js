@@ -110,7 +110,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         DISCARDQUEST: 20,
         UPQUEST: 21,
         PLAYCARD: 22,
-        HANDDISCARD: 23
+        HANDDISCARD: 23,
+        FINISHDISCARD: 24,
+        FACEUPCARDS: 25,
+        DISCARDFACEUP: 26,
+        JOINEDFINALTOURNAMENT: 27,
+        GAMEOVER: 28,
+        FINISHFINALTOURNAMENT: 29,
+        FINISHBIDDISCARD: 30
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -312,8 +319,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.sendQuestPickStagesClient = function () {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
-            messageType: $scope.MESSAGETYPES.PICKSTAGES,
-            java_class: "QuestPickStagesClient"
+            messageType: $scope.MESSAGETYPES.FINISHBIDDISCARD,
+            java_class: "FinishPickingStagesClient"
         };
         $scope.addMessage($scope.ep_finishSelectingQuestStages);
     };
@@ -349,7 +356,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         } else if ($scope.currentState === $scope.GAME_STATE.DISCARDQUEST) {
             $scope.message = {
                 TYPE: $scope.TYPE_GAME,
-                messageType: $scope.MESSAGETYPES.DISCARDQUEST,
+                messageType: $scope.MESSAGETYPES.FINISHBIDDISCARD,
                 java_class: "QuestDiscardCardsClient"
             };
             console.log("quest bid discarding");
