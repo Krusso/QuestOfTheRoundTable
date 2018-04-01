@@ -1,1 +1,3 @@
 /target/
+/application.log*
+/application.log.2018-03-30.0.gz

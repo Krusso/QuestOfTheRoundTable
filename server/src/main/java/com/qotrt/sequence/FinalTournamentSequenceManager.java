@@ -15,7 +15,7 @@ import com.qotrt.model.FinalTournamentModel;
 public class FinalTournamentSequenceManager extends SequenceManager {
 
 	@Override
-	public void start(PlayerManager pm, BoardModelMediator bmm) {
+	public void start(PlayerManager pm, BoardModelMediator bmm, boolean racing) {
 		logger.info("Starting final tournament sequence manager");
 
 		FinalTournamentModel ftm = bmm.getFinalTournamentModel();
@@ -36,7 +36,11 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 			ftm.questionCards(participants);
 
 			try {
-				ftm.questionCards().await(60, TimeUnit.SECONDS);
+				if(racing) {
+					ftm.questionCards().await(60, TimeUnit.SECONDS);	
+				} else {
+					ftm.questionCards();
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

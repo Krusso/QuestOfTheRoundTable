@@ -28,7 +28,7 @@ public class TournamentSequenceManager extends SequenceManager {
 	}
 	
 	@Override
-	public void start(PlayerManager pm, BoardModelMediator bmm) {
+	public void start(PlayerManager pm, BoardModelMediator bmm, boolean racing) {
 		logger.info("Starting tournament sequence manager: " + this.card.getName());
 		// Finding all players who want to join tournament
 		Iterator<Player> players = pm.round();
@@ -37,7 +37,11 @@ public class TournamentSequenceManager extends SequenceManager {
 		
 		// Wait for responses
 		try {
-			tm.join().await(60, TimeUnit.SECONDS);
+			if(racing) {
+				tm.join().await(60, TimeUnit.SECONDS);	
+			} else {
+				tm.join();
+			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -64,7 +68,11 @@ public class TournamentSequenceManager extends SequenceManager {
 		tm.questionCards(participants);
 		try {
 			logger.info("Waiting for 60 seconds for users to pick their cards");
-			tm.questionCards().await(60, TimeUnit.SECONDS);
+			if(racing) {
+				tm.questionCards().await(60, TimeUnit.SECONDS);	
+			} else {
+				tm.questionCards();
+			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -76,8 +84,13 @@ public class TournamentSequenceManager extends SequenceManager {
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
 		players = participants.iterator();
-		// TODO: add flip card message to let players see result of the tournament
 		pm.flipCards(players);
+		// sleep 5 seconds so that users can see who won or lost
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		logger.info("Flipping cards");
 
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
@@ -93,7 +106,11 @@ public class TournamentSequenceManager extends SequenceManager {
 			tm.questionCards(winners);
 			// Wait for responses
 			try {
-				tm.questionCards().await(60, TimeUnit.SECONDS);
+				if(racing) {
+					tm.questionCards().await(60, TimeUnit.SECONDS);	
+				} else {
+					tm.questionCards();
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -103,7 +120,13 @@ public class TournamentSequenceManager extends SequenceManager {
 
 			players = winners.iterator();
 			pm.flipCards(players);
-
+			// sleep 5 seconds so that users can see who won or lost
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			
 			winners = bpc.calculateHighest(winners, null);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);

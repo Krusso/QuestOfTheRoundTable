@@ -34,6 +34,10 @@ public class Quest {
 		}
 		this.qm = qm;
 	}
+	
+	public QuestCard getQuestCard() {
+		return questCard;
+	}
 
 	// verification for quest stages will be done on client side
 	public void setUpQuest() {

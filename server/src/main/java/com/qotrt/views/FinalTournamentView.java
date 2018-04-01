@@ -9,7 +9,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.messages.gameover.FinalTournamentNotifyServer;
 import com.qotrt.messages.gameover.GameOverServer;
-import com.qotrt.model.GenericPair;
 import com.qotrt.model.GenericPairTyped;
 import com.qotrt.model.UIPlayer;
 
@@ -21,12 +20,8 @@ public class FinalTournamentView extends Observer {
 		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("questionFinalTournament");
 		Consumer<PropertyChangeEvent> funcC = x -> questionCardTournament(mapper.convertValue(x.getNewValue(), int[].class));
 
-
 		Function<PropertyChangeEvent, Boolean> funcF3 = x -> x.getPropertyName().equals("gamewinners");
-
 		Consumer<PropertyChangeEvent> funcC3 = x -> setWinners(mapper.convertValue(x.getNewValue(), int[].class));
-
-
 
 		events.add(new GenericPairTyped<>(funcF, funcC));
 		events.add(new GenericPairTyped<>(funcF3, funcC3));

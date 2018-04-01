@@ -38,18 +38,22 @@ public class GameController {
 	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
 		logger.info("Discard: " + chatMessage.getDiscard());
 		if(null == chatMessage.getDiscard()) {
-			logger.info("defaulting discard to true");
 			chatMessage.setDiscard(true);
-			logger.info("Discard: " + chatMessage.getDiscard());
 		}
+		if(null == chatMessage.getRacing()) {
+			chatMessage.setRacing(true);
+		}
+		
 		UUID uuid = hub.addGame(chatMessage.getGameName(), 
 				chatMessage.getNumPlayers(),
 				chatMessage.getRigged(), 
 				chatMessage.getAis(),
-				chatMessage.getDiscard());
+				chatMessage.getDiscard(),
+				chatMessage.getRacing());
 		
 		String sessionID = headerAccessor.getSessionId();
 		logger.info("s is: " + sessionID);
+		logger.info("Rigged: " + chatMessage.getRigged());
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());

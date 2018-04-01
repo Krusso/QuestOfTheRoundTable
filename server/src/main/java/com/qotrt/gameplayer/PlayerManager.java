@@ -57,7 +57,7 @@ public class PlayerManager {
 		players.forEach(player -> {
 			player.addCards(dm.getAdventureCard(cards));
 		});
-		if(dsm != null) dsm.start(this, null);;
+		if(dsm != null) dsm.start(this, null, false);
 	}
 	
 	public void setPlayer(Player playerFind) {
