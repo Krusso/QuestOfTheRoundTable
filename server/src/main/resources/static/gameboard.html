@@ -1,5 +1,5 @@
-<!--
 <!DOCTYPE html>
+<!--
 <html ng-app="gameApp">
 
 <head>
@@ -18,6 +18,7 @@
 
 <body>
 -->
+
 <div id="container">
     <div id="gameboard">
         <!--    OPPONENT HAND ZONES        -->
@@ -26,17 +27,21 @@
                 <div class="opponentHandZone">
                     <div class="displayContainer" ng-model="player.shieldIcon"></div>
                     <div class="cardZones">
-                        <div class="opponentHand" ng-model="player.hand">
+<!--                         <div class="opponentHand" ng-model="player.hand">
                             <div ng-repeat="card in player.hand">
-                                <div card-img="{{card.key}}">
-                                </div>
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
+                        </div> -->
+                        <div class="opponentFaceUp">
+                            <div ng-repeat="card in player.faceUp">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
                             </div>
                         </div>
-                        <div class="opponentFaceUp">
-                            <!--                        <div class="card"></div>-->
-                        </div>
+
                         <div class="opponentFaceDown">
-                            <!--                        <div class="card"></div>-->
+                            <div ng-repeat="card in player.faceDown">
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -44,37 +49,130 @@
         </div>
 
         <!--    MIDDLE SECTION (Middle card/Stage cards/ discard pile/buttons)        -->
+        <div class="toastContainer">
+            <h2 ng-model="toast">{{toast}}</h2>
+        </div>
         <div class="middleContainer">
             <div class="middlecardContainer">
                 <div c1 class="card1" card1="{{middleCard}}"></div>
-                <div class="accept-decline-container">
-                    <button class="btn-accept" ng-click="sendAccept()">Y</button>
-                    <button class="btn-decline" ng-click="sendDecline()">N</button>
+                <div class="accept-decline-container" ng-show="showAcceptDecline()">
+                    <button class="btn-accept" ng-click="sendStoryResponse('true')">Y</button>
+                    <button class="btn-decline" ng-click="sendStoryResponse('false')">N</button>
                 </div>
             </div>
             <div class="stageZone">
 
                 <div class="stageContainer">
-                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback'}"></div>
-                    <div class="stage"></div>
-                    <div class="stage"></div>
-                    <div class="stage"></div>
-                    <div class="stage"></div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s1'}" ng-hide="numStages<1">
+                        <!--                        Only revealed to sponsorer-->
+                        <div ng-show="players[myPlayerId].isSponsoring == true">
+                            <div ng-repeat="card in stageZones.stage1" ng-model="stageZones.stage1">
+                                <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                            </div>
+                        </div>
+                        <!--                        These are revelaed to other players-->
+                        <div ng-show="showHiddenStage(0)">
+                            <div ng-repeat="card in stageZones.stage1" ng-model="stageZones.stage1">
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
+                        </div>
+                        <div ng-show="showStage(0)">
+                            <div ng-repeat="card in stageZones.stage1" ng-model="stageZones.stage1">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s2'}" ng-hide="numStages<2">
+                        <div ng-show="players[myPlayerId].isSponsoring == true">
+                            <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
+                                <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                            </div>
+                        </div>
+                        <div ng-show="showHiddenStage(1)">
+                            <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
+                        </div>
+                        <div ng-show="showStage(1)">
+                            <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s3'}" ng-hide="numStages<3">
+                        <div ng-show="players[myPlayerId].isSponsoring == true">
+                            <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
+                                <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                            </div>
+                        </div>
+                        <div ng-show="showHiddenStage(2)">
+                            <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
+                        </div>
+                        <div ng-show="showStage(2)">
+                            <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s4'}" ng-hide="numStages<4">
+                        <div ng-show="players[myPlayerId].isSponsoring == true">
+                            <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
+                                <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                            </div>
+                        </div>
+                        <div ng-show="showHiddenStage(3)">
+                            <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
+                        </div>
+                        <div ng-show="showStage(3)">
+                            <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s5'}" ng-hide="numStages<5">
+                        <div ng-show="players[myPlayerId].isSponsoring == true">
+                            <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
+                                <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                            </div>
+                        </div>
+                        <div ng-show="showHiddenStage(4)">
+                            <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
+                                <div c1 class="card1" card1="Adventure Back"></div>
+                            </div>
+                        </div>
+                        <div ng-show="showStage(4)">
+                            <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
+                                <div c1 class="card1" card1="{{card.key}}"></div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="slidecontainer">
-                    <rzslider rz-slider-model="bidSlider.value" rz-slider-options="bidSlider.options"></rzslider>
-                    <p>{{bidSlider.value}}</p>
+                    <!--                    ng-show="players[myPlayerId].joinedQuest == true &&  currentState == GAME_STATE.BIDQUEST"-->
+                    <rzslider rz-slider-model="bidSlider.value" rz-slider-options="bidSlider.options" ng-show="showBidSlider()"></rzslider>
                 </div>
 
                 <div class="buttonContainer">
-                    <button class="brown-button">Continue</button>
-                    <button class="brown-button">End Turn</button>
+                    <button class="brown-button" ng-click="sendTournamentPickCardsClient()" ng-show="showDonePickingTournamentCards()">Done Picking Cards</button>
+                    <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDoneSettingUp()">Done Setting Up</button>
+                    <button class="brown-button" ng-click="sendQuestPickCardsClient()" ng-show="showDonePickingQuestCards()">Done Picking Cards</button>
+                    <button class="brown-button" ng-click="sendQuestBidClient()" ng-show="showBidButton()">Bid {{bidSlider.value}}</button>
+                    <!--                    <button class="brown-button">End Turn</button>-->
                 </div>
             </div>
-            <div class="discardContainer">
-                <div class="discardPile"></div>
-                <button class="brown-button">Discard</button>
+            <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">
+                <div class="discardPile">
+                    <div ng-repeat="card in players[myPlayerId].discardPile" ng-model="players[myPlayerId].discardPile">
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                    </div>
+                </div>
+                <!--                Only show discard button if player needs to discard cards-->
+                <button class="brown-button" ng-show="showDiscardButton()" ng-click="sendFinishDiscard()">Discard</button>
 
             </div>
         </div>
@@ -85,7 +183,9 @@
             <div class="displayContainer">
                 <div class="rankCardContainer">
                     <!--  RANK CARD IMAGE GOES HERE  -->
-                    <div>
+
+                    <div ng-model="myPlayerId">
+                        <h1>{{myPlayerId}}</h1>
                     </div>
                 </div>
                 <div class="shieldBpContainer">
@@ -98,8 +198,16 @@
                 </div>
             </div>
             <div class="cardZones">
-                <div class="playerFaceUp"></div>
-                <div class="playerFaceDown"></div>
+                <div class="playerFaceUp">
+                    <div ng-repeat="card in players[myPlayerId].faceUp" ng-model="players[myPlayerId].faceUp">
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                    </div>
+                </div>
+                <div class="playerFaceDown btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_myfd'}">
+                    <div ng-repeat="card in players[myPlayerId].faceDown" ng-model="players[myPlayerId].faceDown">
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                    </div>
+                </div>
                 <div class="playerHand">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
                         <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
@@ -114,7 +222,6 @@
         </div>
     </div>
 </div>
-</div>
 <!--
 <script src="js/card.js">
 </script>
@@ -127,4 +234,5 @@
 
 </body>
 
-</html>-->
+</html>
+-->

@@ -62,7 +62,6 @@ public class PlayCardController {
 	public void discardFull(SimpMessageHeaderAccessor headerAccessor, 
 			@Payload PlayCardClient chatMessage) {
 
-
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		logger.info("face down deck is: " + player.getFaceDownDeck());

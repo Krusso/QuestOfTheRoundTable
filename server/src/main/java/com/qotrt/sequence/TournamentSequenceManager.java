@@ -84,8 +84,13 @@ public class TournamentSequenceManager extends SequenceManager {
 		// all players have decided on what cards to play
 		// calculate highest bp and decide winner
 		players = participants.iterator();
-		// TODO: add flip card message to let players see result of the tournament
 		pm.flipCards(players);
+		// sleep 5 seconds so that users can see who won or lost
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		logger.info("Flipping cards");
 
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
@@ -115,7 +120,13 @@ public class TournamentSequenceManager extends SequenceManager {
 
 			players = winners.iterator();
 			pm.flipCards(players);
-
+			// sleep 5 seconds so that users can see who won or lost
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			
 			winners = bpc.calculateHighest(winners, null);
 			pm.changeShields(winners, card.getShields() + participants.size());
 			pm.discardCards(participants);

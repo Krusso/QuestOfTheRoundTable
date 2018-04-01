@@ -26,6 +26,8 @@ import com.qotrt.messages.game.GameCreateClient;
 import com.qotrt.messages.game.PlayCardClient;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.messages.game.PlayCardServer;
+import com.qotrt.messages.quest.BidDiscardFinishPickingClient;
+import com.qotrt.messages.quest.FinishPickingStagesClient;
 import com.qotrt.messages.quest.QuestBidClient;
 import com.qotrt.messages.quest.QuestBidServer;
 import com.qotrt.messages.quest.QuestDiscardCardsClient;
@@ -34,7 +36,7 @@ import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsClient;
 import com.qotrt.messages.quest.QuestPickCardsServer;
-import com.qotrt.messages.quest.QuestPickStagesClient;
+import com.qotrt.messages.quest.FinishPickingStagesClient;
 import com.qotrt.messages.quest.QuestPickStagesServer;
 import com.qotrt.messages.quest.QuestSponsorClient;
 import com.qotrt.messages.quest.QuestSponsorServer;
@@ -111,7 +113,7 @@ public class TestQuest {
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
 		
-		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		p.sendMessage("/app/game.finishSelectingQuestStages", new FinishPickingStagesClient(1));
 		
 		QuestDiscardCardsServer qdcs = p.take(QuestDiscardCardsServer.class);
 		assertEquals(0, qdcs.player);
@@ -140,7 +142,7 @@ public class TestQuest {
 							"/app/game.discardBid", new PlayCardClient(0, 171, ZONE.HAND, ZONE.DISCARD));
 					p.sendMessage("/app/game.discardBid", new PlayCardClient(0, 172, ZONE.HAND, ZONE.DISCARD));
 					p.sendMessage("/app/game.discardBid", new PlayCardClient(0, 173, ZONE.HAND, ZONE.DISCARD));
-					p.sendMessage("/app/game.finishDiscard", new QuestDiscardCardsClient(0));
+					p.sendMessage("/app/game.finishDiscard", new BidDiscardFinishPickingClient(0));
 			}
 		};
 		
@@ -174,7 +176,7 @@ public class TestQuest {
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
 		
-		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		p.sendMessage("/app/game.finishSelectingQuestStages", new FinishPickingStagesClient(1));
 		
 		QuestWinServer qws = p.take(QuestWinServer.class);
 		assertEquals(WINTYPES.PASSSTAGE, qws.type);
@@ -239,7 +241,7 @@ public class TestQuest {
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
 		
-		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		p.sendMessage("/app/game.finishSelectingQuestStages", new FinishPickingStagesClient(1));
 		
 		QuestDiscardCardsServer qdcs = p.take(QuestDiscardCardsServer.class);
 		assertEquals(0, qdcs.player);
@@ -277,7 +279,7 @@ public class TestQuest {
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
 		
-		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		p.sendMessage("/app/game.finishSelectingQuestStages", new FinishPickingStagesClient(1));
 		
 		QuestWinServer qws = p.take(QuestWinServer.class);
 		assertEquals(WINTYPES.PASSSTAGE, qws.type);
@@ -339,7 +341,7 @@ public class TestQuest {
 		assertNotEquals("", pcs.response);
 		assertEquals(ZONE.HAND, pcs.zoneTo);
 		
-		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		p.sendMessage("/app/game.finishSelectingQuestStages", new FinishPickingStagesClient(1));
 		
 		QuestWinServer qws = p.take(QuestWinServer.class);
 		assertEquals(WINTYPES.PASSSTAGE, qws.type);
@@ -375,16 +377,16 @@ public class TestQuest {
 		p.waitForThenSend(QuestSponsorServer.class, 1,
 				"/app/game.sponsorQuest", new QuestSponsorClient(1, true));
 		p.waitForThenSend(QuestPickStagesServer.class, 1, "/app/game.playCardQuestSetup",
-				new PlayCardClient(1, 153, ZONE.HAND, ZONE.STAGE1));
+				new PlayCardClient(1, 134, ZONE.HAND, ZONE.STAGE1));
 		PlayCardServer pcs = p.take(PlayCardServer.class);
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
-		p.sendMessage("/app/game.playCardQuestSetup", new PlayCardClient(1, 155, ZONE.HAND, ZONE.STAGE1));
+		p.sendMessage("/app/game.playCardQuestSetup", new PlayCardClient(1, 131, ZONE.HAND, ZONE.STAGE1));
 		pcs = p.take(PlayCardServer.class);
 		assertNotEquals("", pcs.response);
 		assertEquals(ZONE.HAND, pcs.zoneTo);
 		
-		p.sendMessage("/app/game.finishSelectingQuestStages", new QuestPickStagesClient(1));
+		p.sendMessage("/app/game.finishSelectingQuestStages", new FinishPickingStagesClient(1));
 		
 		QuestWinServer qws = p.take(QuestWinServer.class);
 		assertEquals(WINTYPES.NOJOIN, qws.type);

@@ -7,6 +7,8 @@ import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import com.qotrt.gameplayer.Player;
+import com.qotrt.messages.quest.BidDiscardFinishPickingServer;
 import com.qotrt.messages.quest.QuestBidServer;
 import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinServer;
@@ -76,7 +78,13 @@ public class QuestView extends Observer {
 						
 		Consumer<PropertyChangeEvent> funcC8 = 
 				x -> flipStage(mapper.convertValue(x.getNewValue(), GenericPair.class));
-		
+				
+		Function<PropertyChangeEvent, Boolean> funcF9 = 
+						x -> x.getPropertyName().equals("discardQuestFinish");
+						
+		Consumer<PropertyChangeEvent> funcC9 = 
+				x -> finishDiscard(mapper.convertValue(x.getNewValue(), Player.class));		
+				
 		events.add(new GenericPairTyped<>(funcF, funcC));
 		events.add(new GenericPairTyped<>(funcF1, funcC1));
 		events.add(new GenericPairTyped<>(funcF2, funcC2));
@@ -86,9 +94,14 @@ public class QuestView extends Observer {
 		events.add(new GenericPairTyped<>(funcF6, funcC6));
 		events.add(new GenericPairTyped<>(funcF7, funcC7));
 		events.add(new GenericPairTyped<>(funcF8, funcC8));
+		events.add(new GenericPairTyped<>(funcF9, funcC9));
 
 	}
 
+	private void finishDiscard(Player p) {
+		sendMessage("/queue/response", new BidDiscardFinishPickingServer(p.getID(), true, ""));
+	}
+	
 	public void propertyChange(PropertyChangeEvent evt) {
 		handleEvent(evt);
 	}

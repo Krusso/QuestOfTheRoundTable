@@ -223,6 +223,15 @@ public class QuestSequenceManager extends SequenceManager {
 		qm.flipStage();
 
 		quest.battleFoe(winners, pm);
+		
+		pm.flipCards(participants.iterator());
+		// sleep 5 seconds so that users can see who won or lost
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
 		pm.discardWeapons(participants);
 	}
 }
