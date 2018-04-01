@@ -1,23 +1,21 @@
 package com.qotrt.messages.special;
 
 import com.qotrt.messages.Message;
-import com.qotrt.messages.game.PlayCardClient.ZONE;
+import com.qotrt.model.GenericPair;
 
 // from server
 public class MerlinServer extends Message {
 
 	public int card;
-	public ZONE zoneTo;
-	public ZONE zoneFrom;
+	public GenericPair[] cards;
 	public String response;
 	
 	public MerlinServer() {}
 	
-	public MerlinServer(int player, int card, ZONE zoneFrom, ZONE zoneTo, String response) {
+	public MerlinServer(int player, int card, GenericPair[] cards, String response) {
 		super(player);
 		this.card = card;
-		this.zoneFrom = zoneFrom;
-		this.zoneTo = zoneTo;
+		this.cards = cards;
 		this.response = response;
 	}
 	
