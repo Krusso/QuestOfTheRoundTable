@@ -712,6 +712,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
                 }
             }
+            if (message.messageType === "FINISHSTAGESETUP") {
+                if (message.player == $scope.myPlayerId && message.success == false) {
+                    $scope.toast = message.response;
+                }
+            }
 
             console.log("done parsing");
             $scope.$apply();
