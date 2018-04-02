@@ -13,6 +13,7 @@ public class GameCreateClient extends Message {
 	private AIPlayer[] ais;
 	private Boolean discard;
 	private Boolean racing;
+	private int shieldNumber;
 	
 	public GameCreateClient() {}
 	
@@ -38,6 +39,15 @@ public class GameCreateClient extends Message {
 		this.rigged = rigged;
 		this.ais = ais;
 		this.discard = discard;
+		this.racing = racing;
+	}
+	
+	public GameCreateClient(int numPlayers, String playerName, RIGGED rigged, AIPlayer[] ais,int shieldNumber, boolean racing) {
+		this.numPlayers = numPlayers;
+		this.playerName = playerName;
+		this.rigged = rigged;
+		this.ais = ais;
+		this.shieldNumber = shieldNumber;
 		this.racing = racing;
 	}
 
@@ -96,5 +106,13 @@ public class GameCreateClient extends Message {
 
 	public void setRacing(Boolean racing) {
 		this.racing = racing;
+	}
+
+	public Integer getShieldNumber() {
+		return shieldNumber;
+	}
+
+	public void setShieldNumber(Integer shieldNumber) {
+		this.shieldNumber = shieldNumber;
 	}
 }

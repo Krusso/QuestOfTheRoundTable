@@ -103,8 +103,9 @@ public class Game extends Observable {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
 
+			
 				for(int i = 0; i < aiplayers.size(); i++) {
-					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
+					players.add(new UIPlayer("none-matching-session-id", "ai player " + i, 1));
 				}
 				
 				// model creation
@@ -187,7 +188,7 @@ public class Game extends Observable {
 						break;
 					}
 
-					logger.info("Waiting for player to continue to next turn");
+					logger.info("Waiting a bit then proceeding to next turn");
 					// wait for a bit of time then proceed with next turn
 					try {
 						Thread.sleep(10000);

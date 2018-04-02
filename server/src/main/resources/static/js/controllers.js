@@ -34,7 +34,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.strats = [1, 2, 3];
     $scope.currentDrag; //card id of the currently dragged card, null otherwise.
     $scope.cardId = 0;
-
+	$scope.shieldNumber = 1;
     $scope.serverList = [];
     /*=========================================   *
      *        Controller Variables: GameData    *
@@ -197,7 +197,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
 
     /* MESSAGING FUNCTIONS THAT SHOULD BE USED IN THE HTML */
-    $scope.sendCreateGameClient = function (np, rigType, gName, ais) {
+    $scope.sendCreateGameClient = function (np, rigType, gName, ais, race) {
         var numP = parseInt(np, 10);
         if (!numP) {
             $scope.showStatus("Select Num Players");
@@ -211,7 +211,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.showStatus("Enter a name for your game");
             return;
         }
-
+        console.log("race: " + race);
+		if(race != false && race != true){
+			$scope.showStatus("Enter mode");
+			return;
+		}
         console.log($scope.pname);
         console.log($scope.RIGGED[rigType]);
         $scope.message = {
@@ -222,6 +226,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             playerName: $scope.pname,
             gameName: gName,
             ais: ais,
+            shieldNumber: $scope.shieldNumber,
+            racing: race,
             java_class: "GameCreateClient"
         };
         $scope.addMessage($scope.ep_createGame);
@@ -243,6 +249,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             messageType: $scope.MESSAGETYPES.JOINGAME,
             uuid: uuid,
             playerName: $scope.pname,
+            shieldNumber: $scope.shieldNumber,
             java_class: "GameJoinClient"
         };
         $scope.addMessage($scope.ep_joinGame);
@@ -415,7 +422,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 for (var i = 0; i < message.players.length; i++) {
                     if (message.players[i] != $scope.pname) {
                         $scope.inGamePlayers.push({
-                            name: message.players[i]
+                            name: message.players[i].key,
+                            shield: message.players[i].value
                         });
                     }
                 }
@@ -423,7 +431,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 var p = message.players; //array of strings that denote the player's name
                 for (var i = 0; i < p.length; i++) {
                     var playerInfo = {
-                        name: p[i],
+                        name: p[i].key,
+                        shield: p[i].value,
                         id: i,
                         hand: [],
                         faceUp: [],
@@ -795,7 +804,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
     }
 
-    $scope.selectShield = function (num) {}
+    $scope.selectShield = function (num) {
+    	$scope.shieldNumber = num;
+    	console.log("Shield number: " + $scope.shieldNumber);
+    }
 
     /*=========================================   *
      *             Dragging Functions             *

@@ -35,15 +35,19 @@ public class GameController {
 	private Hub hub;
 
 	@MessageMapping("/game.createGame")
-	public void createGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameCreateClient chatMessage) {
+	public void createGame(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload GameCreateClient chatMessage) {
 		logger.info("Discard: " + chatMessage.getDiscard());
+		logger.info("Racing: " + chatMessage.getRacing());
 		if(null == chatMessage.getDiscard()) {
 			chatMessage.setDiscard(true);
 		}
 		if(null == chatMessage.getRacing()) {
 			chatMessage.setRacing(true);
 		}
-		
+		if(null == chatMessage.getShieldNumber()){
+			chatMessage.setShieldNumber(1);
+		}
 		UUID uuid = hub.addGame(chatMessage.getGameName(), 
 				chatMessage.getNumPlayers(),
 				chatMessage.getRigged(), 
@@ -57,6 +61,7 @@ public class GameController {
 		GameJoinClient gjc = new GameJoinClient();
 		gjc.setUuid(uuid);
 		gjc.setPlayerName(chatMessage.getPlayerName());
+		gjc.setShieldNumber(chatMessage.getShieldNumber());
 		this.joinGame(headerAccessor, gjc);
 		logger.info("created game");
 
@@ -76,10 +81,12 @@ public class GameController {
 	}
 
 	@MessageMapping("/game.joinGame")
-	public void joinGame(SimpMessageHeaderAccessor headerAccessor, @Payload GameJoinClient chatMessage) {
+	public void joinGame(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload GameJoinClient chatMessage) {
 		logger.info("joining game");
 		String sessionID = headerAccessor.getSessionId();
-		UIPlayer player = new UIPlayer(sessionID, chatMessage.getPlayerName());
+		UIPlayer player = new UIPlayer(sessionID, 
+				chatMessage.getPlayerName(), chatMessage.getShieldNumber());
 		logger.info("s is: " + sessionID);
 		hub.addPlayer(player, chatMessage.getUuid());
 	}
