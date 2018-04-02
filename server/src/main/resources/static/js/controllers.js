@@ -62,7 +62,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
     $scope.numStages = 0;
-
+    $scope.mordred = -1;
+    $scope.merlin = -1;
 
     /*=========================================   *
      *            Controller Variables: Stage      *
@@ -118,7 +119,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         GAMEOVER: 28,
         FINISHFINALTOURNAMENT: 29,
         FINISHBIDDISCARD: 30,
-        FINISHSTAGESETUP: 31
+        FINISHSTAGESETUP: 31,
+        MORDRED: 32,
+        MERLIN: 33
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -187,6 +190,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_discardBid = "/app/game.discardBid";
     $scope.ep_discardFinish = "/app/game.finishDiscard";
     $scope.ep_finishSelectingDiscardHand = "/app/game.finishSelectingDiscardHand";
+    $scope.ep_mordred = "/app/game.playMordred";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -380,7 +384,18 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log("quest bid discarding");
             $scope.addMessage($scope.ep_discardFinish);
         }
-    }
+    };
+    $scope.sendMordred = function (i) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.MORDRED,
+            java_class: "MordredClient",
+            mordred: $scope.mordred,
+            opponent: i,
+            player: $scope.myPlayerId
+        };
+        $scope.addMessage($scope.ep_mordred);
+    };
 
     /***************************************************************/
     function sleep(ms) {
@@ -1466,6 +1481,27 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         return !$scope.players[$scope.myPlayerId].isSponsoring && ($scope.players[$scope.myPlayerId].revealStage[stageNum] == true);
     }
 
+    $scope.showSpecialInteractions = function () {
+        return $scope.mordred != -1 || $scope.merlin != -1;
+    }
+
+    $scope.mordredFunction = function ($event, card) {
+        console.log("mordred");
+        console.log($event);
+        console.log(card);
+        if (card.key === "Mordred") {
+            // -1 = false otherwise its the ID of mordred
+            if ($scope.mordred != -1) {
+                $scope.mordred = -1;
+            } else {
+                $scope.mordred = card.value;
+                $scope.toast = "Click on opponent ally to kill or click Mordred again";
+            }
+        } else if ($scope.mordred != -1) {
+            $scope.sendMordred(card.value);
+        }
+    }
+
     $scope.setDragOff = function () {
         $scope.players[$scope.myPlayerId].faceDown.forEach(function (value, key) {
             console.log("key: " + key + " value: " + value);
@@ -1486,12 +1522,4 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             list[key].drag = true;
         });
     }
-
-    //    $scope.getRank = function (id) {
-    //        var r = $scope.players[$scope.myPlayerId].rank;
-    //        if (r != null) {
-    //            r = r.charAt(0) + r.substring(1).toLowerCase();
-    //        }
-    //        return r;
-    //    }
 });
