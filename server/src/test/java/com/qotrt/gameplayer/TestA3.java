@@ -31,9 +31,9 @@ public class TestA3 {
 	@Test
 	public void doIParticipateInTournament() {
 		PlayerManager pm = new PlayerManager(2, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
-		Player p2 = new Player(0, new UIPlayer("", ""));
-		AbstractAI player = new A3(new Player(0, new UIPlayer("", "")), pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
+		Player p2 = new Player(0, new UIPlayer("", "",1));
+		AbstractAI player = new A3(new Player(0, new UIPlayer("", "",1)), pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		pm.players[0] = p1;
 		pm.players[1] = p2;
 		//what a great test good job me
@@ -47,8 +47,8 @@ public class TestA3 {
 	@Test
 	public void playCardsForTournament() {
 		PlayerManager pm = new PlayerManager(2, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
-		Player p2 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
+		Player p2 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		pm.players[1] = p2;
 		pm.nextTurn();
@@ -64,7 +64,7 @@ public class TestA3 {
 		AbstractAI player = new A3(p1, pm, new BoardModelMediator(tm, null, null, null, null, null));
 		assertTrue(compare(player.playCardsForTournament(),  new String[] {"Excalibur", "Lance"}));
 		
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -73,7 +73,7 @@ public class TestA3 {
 		player = new A3(p1, pm, new BoardModelMediator(tm, null, null, null, null, null));
 		assertTrue(compare(player.playCardsForTournament(),  new String[] {"Excalibur", "Lance", "Sword", "Dagger", "Battle-ax"}));
 		
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Boar",5,15, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Boar",5,15, TYPE.FOES));
@@ -87,7 +87,7 @@ public class TestA3 {
 	public void doISponserAQuest() {
 		logger.info("Testing 1");
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		
 		pm.nextTurn();
 		pm.players[0] = p1;
@@ -97,7 +97,7 @@ public class TestA3 {
 		assertEquals(null, player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})));
 		
 		logger.info("Testing 2");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		p1.hand.addCard(new FoeCard("Mordred",30, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Green Knight",25,40, TYPE.FOES));
@@ -105,7 +105,7 @@ public class TestA3 {
 		assertEquals(null, player.doISponsorAQuest(new QuestCard("Repel the Saxon Raiders",2,new String[] {"Saxons", "Saxon Knight"})));
 		
 		logger.info("Testing 3");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Saxon Knight",15,25, TYPE.FOES));
@@ -116,7 +116,7 @@ public class TestA3 {
 				new String[][] {{"Thieves"}, {"Dragon"}}));
 		
 		logger.info("Testing 4");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
@@ -128,7 +128,7 @@ public class TestA3 {
 				new String[][] {{"Thieves"}, {"Dragon"}}));
 		
 		logger.info("Testing 5");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new AllyCard("Sir Galahad",15, TYPE.ALLIES));
@@ -144,8 +144,8 @@ public class TestA3 {
 	@Test
 	public void doIParticipateInQuest() {
 		PlayerManager pm = new PlayerManager(2, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
-		Player p2 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
+		Player p2 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		pm.players[1] = p2;
 		pm.nextTurn();
@@ -178,8 +178,8 @@ public class TestA3 {
 	@Test
 	public void playCardsForFoeQuest() {
 		PlayerManager pm = new PlayerManager(2, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
-		Player p2 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
+		Player p2 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		pm.players[1] = p2;
 		pm.nextTurn();
@@ -202,7 +202,7 @@ public class TestA3 {
 				new String[] {}));
 		
 		logger.info("Testing 2");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		tm.getQuest().getStage(0).addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
@@ -211,7 +211,7 @@ public class TestA3 {
 				new String[] {"Excalibur"}));
 		
 		logger.info("Testing 3");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		tm.getQuest().getStage(0).addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		tm.getQuest().getStage(0).addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -228,7 +228,7 @@ public class TestA3 {
 	public void nextBid() {
 		logger.info("Testing 1");
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		
 		pm.players[0] = p1;
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -237,28 +237,28 @@ public class TestA3 {
 		assertTrue(-1 == player.nextBid(Integer.MAX_VALUE));
 		
 		logger.info("Testing 2");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertTrue(-1 == player.nextBid(1));
 		
 		logger.info("Testing 3");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Giant",40, TYPE.FOES));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertTrue(-1 == player.nextBid(1));
 		
 		logger.info("Testing 4");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
 		assertTrue(2 == player.nextBid(0));
 		
 		logger.info("Testing 5");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
@@ -266,7 +266,7 @@ public class TestA3 {
 		assertTrue(1 == player.nextBid(0));
 		
 		logger.info("Testing 6");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
@@ -276,7 +276,7 @@ public class TestA3 {
 		assertTrue(3 == player.nextBid(0));
 		
 		logger.info("Testing 7");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS));
@@ -294,7 +294,7 @@ public class TestA3 {
 	public void discardAfterWinningTest() {
 		logger.info("Testing 1");
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		
 		pm.players[0] = p1;
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -304,7 +304,7 @@ public class TestA3 {
 		assertTrue(compare(player.discardAfterWinningTest(), new String[] {}));
 		
 		logger.info("Testing 2");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
@@ -312,7 +312,7 @@ public class TestA3 {
 		assertTrue(compare(player.discardAfterWinningTest(), new String[] {}));
 		
 		logger.info("Testing 3");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Giant",40, TYPE.FOES));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
@@ -320,7 +320,7 @@ public class TestA3 {
 		assertTrue(compare(player.discardAfterWinningTest(), new String[] {}));
 		
 		logger.info("Testing 4");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
@@ -328,7 +328,7 @@ public class TestA3 {
 		assertTrue(compare(player.discardAfterWinningTest(), new String[] {"Thieves", "Thieves"}));
 		
 		logger.info("Testing 5");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		player = new A3(p1, pm, new BoardModelMediator(new TournamentModel(false), null, null, null, null, null));
@@ -336,7 +336,7 @@ public class TestA3 {
 		assertTrue(compare(player.discardAfterWinningTest(), new String[] {"Dragon"}));
 		
 		logger.info("Testing 6");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
@@ -346,7 +346,7 @@ public class TestA3 {
 		assertTrue(compare(player.discardAfterWinningTest(), new String[] {"Dragon", "Dragon", "Dragon"}));
 		
 		logger.info("Testing 7");
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Dragon",50,70, TYPE.FOES));
 		p1.hand.addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS));

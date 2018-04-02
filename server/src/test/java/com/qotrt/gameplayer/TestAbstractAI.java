@@ -23,7 +23,7 @@ public class TestAbstractAI {
 	@Test
 	public void testDiscardWhenHandFull() {
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		
 		pm.players[0] = p1;
 		
@@ -48,7 +48,7 @@ public class TestAbstractAI {
 	@Test
 	public void testDiscardKingsCalltoArmsWeaponsFoes() {
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		
 		pm.players[0] = p1;
 		
@@ -72,7 +72,7 @@ public class TestAbstractAI {
 	@Test
 	public void testDiscardKingsCalltoArmsWeaponFoes1() {
 		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		
 		pm.players[0] = p1;
 		

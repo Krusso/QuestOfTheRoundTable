@@ -24,7 +24,7 @@ public class TestAdventureDeck {
 	@Test
 	public void test250Cards() {
 		DeckManager dm = new DeckManager();
-		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {new UIPlayer("","")}, dm, RIGGED.ONE);
+		PlayerManager pm = new PlayerManager(1, new UIPlayer[] {new UIPlayer("","",1)}, dm, RIGGED.ONE);
 		List<Player> players = Arrays.asList(pm.players);
 		pm.drawCards(players, 125);
 

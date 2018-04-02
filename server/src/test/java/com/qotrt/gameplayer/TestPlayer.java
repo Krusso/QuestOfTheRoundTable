@@ -18,7 +18,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testTristantIseultBoost() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
@@ -31,7 +31,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testHand() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
@@ -43,7 +43,7 @@ public class TestPlayer {
 
 	@Test
 	public void testIncreaseLevel() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		assertTrue(p1.getShields() == 0);
 		assertTrue(p1.getRank() == Rank.RANKS.SQUIRE);
 		p1.changeShields(7);
@@ -71,7 +71,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testDiscardWeapons() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
@@ -88,7 +88,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testDiscardAmours() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
@@ -106,7 +106,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testDiscardAllies() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
@@ -124,7 +124,7 @@ public class TestPlayer {
 	
 	@Test
 	public void testCount() {
-		Player p1 = new Player(0, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
 		ArrayList<AdventureCard> cards = new ArrayList<AdventureCard>();
 		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));

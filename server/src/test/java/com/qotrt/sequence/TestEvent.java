@@ -357,7 +357,7 @@ public class TestEvent {
 	public void before() {
 		output = new LinkedBlockingQueue<String>();
 		dm = new DeckManager();
-		pm = new PlayerManager(2, new UIPlayer[] {new UIPlayer("", ""), new UIPlayer("", "")}, dm, RIGGED.ONE);
+		pm = new PlayerManager(2, new UIPlayer[] {new UIPlayer("","",1), new UIPlayer("","",1)}, dm, RIGGED.ONE);
 		bm = new BoardModel();
 		em = new EventModel(false);
 		bmm = new BoardModelMediator(null, null, bm, null, em, null);
