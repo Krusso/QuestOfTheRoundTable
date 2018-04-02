@@ -20,13 +20,20 @@
 -->
 
 <div id="container">
-	<div id="opaquelayer" ng-show="showSpecialInteractions()"></div>
+    <div id="opaquelayer" ng-show="showSpecialInteractions()"></div>
     <div id="gameboard">
         <!--    OPPONENT HAND ZONES        -->
         <div class="opponentHandsContainer">
             <div ng-repeat="player in players" ng-hide="$index == myPlayerId">
                 <div class="opponentHandZone">
-                    <div class="displayContainer" ng-model="player.shieldIcon"></div>
+                    <div class="displayContainer" ng-model="player.shieldIcon">
+                        <div c1 class="card1" card1="{{player.rank}}">
+                            <!--  RANK CARD IMAGE GOES HERE  -->
+                        </div>
+                        <div c1 class="card1" card1="S{{player.shield}}">
+                            <h2><br/>Shields<br/>{{player.shieldCount}}</h2>
+                        </div>
+                    </div>
                     <div class="cardZones">
                         <div class="opponentHand" ng-model="player.hand">
                             <div ng-repeat="card in player.hand">
@@ -191,11 +198,10 @@
                 </div>
                 <div class="shieldBpContainer">
                     <!--   BP VALUE GOES HERE       -->
-                    <div>
-                        <h2>{{players[myPlayerId].battlePoints}}</h2>
-                    </div>
+                    <h2>Current BP<br/>{{players[myPlayerId].battlePoints}}</h2>
                     <!--  SHIELD IMAGE GOES HERE    -->
-                    <div>
+                    <div c1 class="card1" card1="S{{players[myPlayerId].shield}}">
+                        <h2><br/>Shields<br/>{{players[myPlayerId].shieldCount}}</h2>
                     </div>
                 </div>
             </div>

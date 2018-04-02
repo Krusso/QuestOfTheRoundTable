@@ -448,6 +448,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     var playerInfo = {
                         name: p[i].key,
                         shield: p[i].value,
+                        shieldCount: 0,
                         id: i,
                         hand: [],
                         faceUp: [],
