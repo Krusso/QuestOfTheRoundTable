@@ -85,6 +85,15 @@
     float: left;
 }
 
+.displayContainer .card1 {
+    position: relative;
+    width: 60%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+}
+
 .displayContainer .shieldBpContainer {
     position: relative;
     width: 40%;

@@ -27,11 +27,11 @@
                 <div class="opponentHandZone">
                     <div class="displayContainer" ng-model="player.shieldIcon"></div>
                     <div class="cardZones">
-<!--                         <div class="opponentHand" ng-model="player.hand">
+                        <div class="opponentHand" ng-model="player.hand">
                             <div ng-repeat="card in player.hand">
                                 <div c1 class="card1" card1="Adventure Back"></div>
                             </div>
-                        </div> -->
+                        </div>
                         <div class="opponentFaceUp">
                             <div ng-repeat="card in player.faceUp">
                                 <div c1 class="card1" card1="{{card.key}}"></div>
@@ -181,7 +181,7 @@
         <div class="playerZone">
 
             <div class="displayContainer">
-                <div class="rankCardContainer">
+                <div c1 class="card1" card1="{{players[myPlayerId].rank}}">
                     <!--  RANK CARD IMAGE GOES HERE  -->
 
                     <div ng-model="myPlayerId">
@@ -191,6 +191,7 @@
                 <div class="shieldBpContainer">
                     <!--   BP VALUE GOES HERE       -->
                     <div>
+                        <h2>{{players[myPlayerId].battlePoints}}</h2>
                     </div>
                     <!--  SHIELD IMAGE GOES HERE    -->
                     <div>
@@ -208,7 +209,7 @@
                         <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
-                <div class="playerHand">
+                <div class="playerHand btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_hand'}">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
                         <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
