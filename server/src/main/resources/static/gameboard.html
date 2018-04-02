@@ -168,7 +168,7 @@
             <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">
                 <div class="discardPile">
                     <div ng-repeat="card in players[myPlayerId].discardPile" ng-model="players[myPlayerId].discardPile">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <!--                Only show discard button if player needs to discard cards-->
@@ -200,17 +200,17 @@
             <div class="cardZones">
                 <div class="playerFaceUp">
                     <div ng-repeat="card in players[myPlayerId].faceUp" ng-model="players[myPlayerId].faceUp">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="false" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <div class="playerFaceDown btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_myfd'}">
                     <div ng-repeat="card in players[myPlayerId].faceDown" ng-model="players[myPlayerId].faceDown">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <div class="playerHand">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <!--

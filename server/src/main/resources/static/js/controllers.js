@@ -413,7 +413,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 for (var i = 0; i < $scope.players.length; i++) {
                     $scope.playerZoneToListMap['HAND' + i] = $scope.players[i].hand;
                     $scope.playerZoneToListMap['FACEUP' + i] = $scope.players[i].faceUp;
-                    $scope.playerZoneToListMap['FACEDOWN' + i] = $scope.players[i].faceDown;;
+                    $scope.playerZoneToListMap['FACEDOWN' + i] = $scope.players[i].faceDown;
                     $scope.playerZoneToListMap['DISCARD' + i] = $scope.players[i].discardPile;
                 }
             }
@@ -461,6 +461,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
                 for (var i = 0; i < message.cards.length; i++) {
                     message.cards[i].zone = $scope.ZONE.HAND;
+                    if(i === $scope.myPlayerId){
+                    	message.cards[i].drag = true;
+                    } else {
+                    	message.cards[i].drag = false;
+                    }
                     $scope.players[playerNum].hand.push(message.cards[i]);
                     console.log("Adding card: " + message.cards[i].key + " " + message.cards[i].value);
                 }
@@ -1292,11 +1297,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.showAcceptDecline = function () {
         // console.log("checking showAcceptDecline");
         //        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
+        $scope.setDragOff();
         return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT || $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
     }
 
     $scope.showDonePickingTournamentCards = function () {
         if ($scope.currentState == $scope.GAME_STATE.PICKTOURNAMENT && $scope.players[$scope.myPlayerId].joinedTourn) {
+        	$scope.setDragOn($scope.players[$scope.myPlayerId].hand);
             return true;
         }
         return false;
@@ -1335,6 +1342,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         //        console.log("cards to discard: " + $scope.players[$scope.myPlayerId].needToDiscard);
         //        console.log($scope.players[$scope.myPlayerId].needToDiscard > 0)
         //        console.log($scope.currentState = GAME_STATE.DISCARDQUEST);
+        if($scope.currentState == $scope.GAME_STATE.HANDDISCARD || $scope.currentState == $scope.GAME_STATE.DISCARDQUEST && $scope.players[$scope.myPlayerId].needToDiscard > 0){
+        	$scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+        	$scope.setDragOn($scope.players[$scope.myPlayerId].faceDown);
+        	$scope.setDragOn($scope.players[$scope.myPlayerId].discardPile);
+        } 
+                	console.log("show discard: "  + ($scope.currentState == $scope.GAME_STATE.HANDDISCARD || $scope.currentState == $scope.GAME_STATE.DISCARDQUEST && $scope.players[$scope.myPlayerId].needToDiscard > 0));
         return $scope.currentState == $scope.GAME_STATE.HANDDISCARD || $scope.currentState == $scope.GAME_STATE.DISCARDQUEST && $scope.players[$scope.myPlayerId].needToDiscard > 0;
     }
     //show stage as hidden to players who are not sponsoring and has not been upquested
@@ -1349,4 +1362,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         return !$scope.players[$scope.myPlayerId].isSponsoring && ($scope.players[$scope.myPlayerId].revealStage[stageNum] == true);
     }
 
+	$scope.setDragOff = function(){
+		$scope.players[$scope.myPlayerId].faceDown.forEach(function(value, key) { console.log("key: " + key + " value: " + value); $scope.players[$scope.myPlayerId].faceDown[key].drag = false; });
+		$scope.players[$scope.myPlayerId].hand.forEach(function(value, key) { console.log("key: " + key + " value: " + value); console.log($scope.players[$scope.myPlayerId].hand); $scope.players[$scope.myPlayerId].hand[key].drag = false; });
+		$scope.players[$scope.myPlayerId].discardPile.forEach(function(value, key) { $scope.players[$scope.myPlayerId].discardPile[key].drag = false; });
+	}
+	
+	$scope.setDragOn = function(list){
+		list.forEach(function(value, key) { list[key].drag = true; });
+	}
 });

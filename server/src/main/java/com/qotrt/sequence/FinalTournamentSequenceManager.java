@@ -39,7 +39,7 @@ public class FinalTournamentSequenceManager extends SequenceManager {
 				if(racing) {
 					ftm.questionCards().await(60, TimeUnit.SECONDS);	
 				} else {
-					ftm.questionCards();
+					ftm.questionCards().await();
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
