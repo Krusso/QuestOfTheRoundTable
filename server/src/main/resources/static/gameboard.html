@@ -20,6 +20,7 @@
 -->
 
 <div id="container">
+	<div id="opaquelayer" ng-show="showSpecialInteractions()"></div>
     <div id="gameboard">
         <!--    OPPONENT HAND ZONES        -->
         <div class="opponentHandsContainer">
@@ -34,7 +35,7 @@
                         </div> -->
                         <div class="opponentFaceUp">
                             <div ng-repeat="card in player.faceUp">
-                                <div c1 class="card1" card1="{{card.key}}"></div>
+                                <div c1 class="card1 mordredCards" card1="{{card.key}}"></div>
                             </div>
                         </div>
 
@@ -210,7 +211,7 @@
                 </div>
                 <div class="playerHand">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1 mordredCards" ng-click="mordredFunction($event, card)" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <!--
