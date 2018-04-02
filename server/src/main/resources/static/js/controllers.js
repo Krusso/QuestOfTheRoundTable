@@ -781,6 +781,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         }
                     }
 				}
+				$scope.mordred = -1;
 			}
 
             console.log("done parsing");
