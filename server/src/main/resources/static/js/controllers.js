@@ -727,9 +727,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 if (message.player == $scope.myPlayerId) {
                     $scope.players[$scope.myPlayerId].needToDiscard = message.toDiscard; //every player only needs to know how many cards they need to discard themselves (not other players) 
                     $scope.toast = "Hand too full, select " + $scope.players[$scope.myPlayerId].needToDiscard + " cards to discard";
-                } else {
-                    $scope.toast = "A Player's hand is too full. Waiting for them to finish discarding";
                 }
+                //                else {
+                //                    $scope.toast = "A Player's hand is too full. Waiting for them to finish discarding";
+                //                }
             }
             if (message.messageType === "FINISHDISCARD") {
                 if (message.player == $scope.myPlayerId) {
@@ -768,6 +769,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[message.player].battlePoints = message.battlePoints;
                     console.log("player " + message.player + " bpc:" + $scope.players[message.player].battlePoints);
                 }
+            }
+            if (message.messageType === "SHIELDCOUNT") {
+                $scope.players[message.player].shieldCount = message.shields;
+                console.log("Player " + message.player + " has " + $scope.players[message.player].shieldCount + " shields");
             }
 
             console.log("done parsing");
