@@ -761,6 +761,28 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
 
+
+			if(message.messageType === "MORDRED"){
+				if(message.otherPlayer == -1 && message.player == $scope.myPlayerId){
+					$scope.toast = message.response;
+				} else if(message.otherPlayer != -1){
+					//remove ally 
+					for (var i = 0; i < $scope.players[message.otherPlayer].faceUp.length; i++) {
+                        if (message.opponent == $scope.players[message.otherPlayer].faceUp[i].value) {
+                            console.log("Removing " + $scope.players[message.otherPlayer].faceUp[i].key + " from faceup");
+                            $scope.players[message.otherPlayer].faceUp.splice(i, 1);
+                        }
+                    }
+                    //remove mordred 
+					for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
+                        if (message.mordred == $scope.players[message.player].hand[i].value) {
+                            console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
+                            $scope.players[message.player].faceUp.splice(i, 1);
+                        }
+                    }
+				}
+			}
+
             console.log("done parsing");
             $scope.$apply();
         });
