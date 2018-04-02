@@ -25,6 +25,7 @@ import com.qotrt.util.PlayerUtil;
 public class QuestModel extends Observable implements PropertyChangeListener , CanPick{
 
 	private int toDiscard;
+	private int merlinUses = 0;
 	
 	private Confirmation sponsor;
 	
@@ -91,11 +92,11 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 	
 	public synchronized void setQuest(Quest quest, List<Player> sponsors) {
-		System.out.println("starting quest setup sponsor: " + sponsors + " quest: " + quest);
-		System.out.println("quest stages: " + quest.getNumStages());
-		System.out.println("setting quest: " + quest);
+		logger.info("starting quest setup sponsor: " + sponsors + " quest: " + quest);
+		logger.info("quest stages: " + quest.getNumStages());
+		logger.info("setting quest: " + quest);
 		this.quest = quest;
-		System.out.println("quests: " + this.quest);
+		logger.info("quests: " + this.quest);
 		stageSetup.start(sponsors, quest.getNumStages());
 	}
 	
@@ -122,6 +123,8 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 						quest.getQuestCard());
 			}
 		}
+		
+		merlinUses = 1;
 		return stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
 				"player: " + player + " finished selecting cards", 
 				"player: " + player + " finish selecting cards too late");
@@ -308,7 +311,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized String attemptMove(Integer zoneTo, AdventureCard card) {
-		System.out.println("Quest: " + quest);
+		logger.info("Quest: " + quest);
 		Stage to = quest.getStage(zoneTo);
 		if(to == null) {
 			return "not a playable zone currently";
@@ -342,5 +345,15 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 
 	public synchronized Quest getQuest() {
 		return quest;
+	}
+
+	public GenericPair[] merlinCan(int stage) {
+		if((cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
+			merlinUses -= 1;
+			return quest.getStage(stage).getStageCards().
+					stream().map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new);
+		}
+		
+		return null;
 	}
 }

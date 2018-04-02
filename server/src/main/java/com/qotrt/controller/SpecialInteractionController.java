@@ -61,12 +61,12 @@ public class SpecialInteractionController {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		
-		GenericPair[] e = game.bmm.getQuestModel().merlinCan();
+		GenericPair[] e = game.bmm.getQuestModel().merlinCan(chatMessage.stage);
 		
 		if(e != null) {
 			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), e, ""));
 		} else {
-			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), new GenericPair[] {}, ""));
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), new GenericPair[] {}, "Can only use merlin once per quest"));
 		}
 		
 	}
