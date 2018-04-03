@@ -15,10 +15,11 @@ import com.qotrt.gameplayer.Player;
 
 public class DiscardModel extends Observable implements PropertyChangeListener, Discard {
 
-	private Confirmation discard = new MultiShotConfirmation(null, "finishHandDiscard", null);
+	private Confirmation discard;
 	private Map<Player, AdventureDeck> cards = new HashMap<Player, AdventureDeck>();
 
-	public DiscardModel() {
+	public DiscardModel(boolean racing) {
+		discard = new MultiShotConfirmation(null, "finishHandDiscard", null, racing);
 		discard.subscribe(this);
 	} 
 	

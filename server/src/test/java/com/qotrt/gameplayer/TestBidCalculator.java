@@ -25,7 +25,7 @@ public class TestBidCalculator {
 	@Before
 	public void before() {
 		pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();
 	}

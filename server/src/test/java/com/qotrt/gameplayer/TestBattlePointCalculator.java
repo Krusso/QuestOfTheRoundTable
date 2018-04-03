@@ -23,7 +23,7 @@ public class TestBattlePointCalculator {
 	@Before
 	public void before() {
 		pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
-		p1 = new Player(0, new UIPlayer("", ""));
+		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();
 		pm.nextTurn();
@@ -59,11 +59,11 @@ public class TestBattlePointCalculator {
 	@Test
 	public void testWeaponCalculations() {
 		pm = new PlayerManager(5, new UIPlayer[] {}, null, RIGGED.ONE);
-		Player p1 = new Player(0, new UIPlayer("", ""));
-		Player p2 = new Player(1, new UIPlayer("", ""));
-		Player p3 = new Player(2, new UIPlayer("", ""));
-		Player p4 = new Player(3, new UIPlayer("", ""));
-		Player p5 = new Player(4, new UIPlayer("", ""));
+		Player p1 = new Player(0, new UIPlayer("", "",1));
+		Player p2 = new Player(1, new UIPlayer("", "",1));
+		Player p3 = new Player(2, new UIPlayer("", "",1));
+		Player p4 = new Player(3, new UIPlayer("", "",1));
+		Player p5 = new Player(4, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		pm.players[1] = p2;
 		pm.players[2] = p3;

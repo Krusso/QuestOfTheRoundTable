@@ -54,7 +54,7 @@ public class QuestSequenceManager extends SequenceManager {
 			if(racing) {
 				qm.sponsorLatch().await(60, TimeUnit.SECONDS);	
 			} else {
-				qm.sponsorLatch();
+				qm.sponsorLatch().await();
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -79,7 +79,7 @@ public class QuestSequenceManager extends SequenceManager {
 			if(racing) {
 				qm.participateLatch().await(60, TimeUnit.SECONDS);	
 			} else {
-				qm.participateLatch();
+				qm.participateLatch().await();
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -117,12 +117,17 @@ public class QuestSequenceManager extends SequenceManager {
 		joinQuest(sponsor);
 		
 		List<Player> participants = qm.playerWhoJoined();
+		// reordering participants
+		if(participants.size() != 0 && participants.get(participants.size() - 1).getID() > sponsor.getID()) {
+			while(participants.get(0).getID() < sponsor.getID()) {
+				participants.add(participants.remove(0));
+			}
+		}
 		List<Player> winners = new ArrayList<Player>(participants);
 		
 		handleQuest(participants, winners);
 
 		// handle resolution of the quest
-		
 		if(winners.size() > 0) {
 			if(bm.isSetKingRecognition()) {
 				bm.setSetKingRecognition(false);
@@ -181,7 +186,7 @@ public class QuestSequenceManager extends SequenceManager {
 			if(racing) {
 				qm.bidLatch().await(60, TimeUnit.SECONDS);	
 			} else {
-				qm.bidLatch();
+				qm.bidLatch().await();
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -214,7 +219,7 @@ public class QuestSequenceManager extends SequenceManager {
 			if(racing) {
 				qm.cardsLatch().await(60, TimeUnit.SECONDS);	
 			} else {
-				qm.cardsLatch();
+				qm.cardsLatch().await();;
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();

@@ -10,7 +10,7 @@ public class GameJoinClient extends Message {
 	private UUID uuid;
 	private String playerName;
 	private String gameName;
-
+	private int shieldNumber;
 	
 	public GameJoinClient() {}
 	
@@ -46,5 +46,13 @@ public class GameJoinClient extends Message {
 
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
+	}
+
+	public int getShieldNumber() {
+		return shieldNumber;
+	}
+
+	public void setShieldNumber(int shieldNumber) {
+		this.shieldNumber = shieldNumber;
 	}
 }

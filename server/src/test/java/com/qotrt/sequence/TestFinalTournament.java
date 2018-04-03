@@ -57,7 +57,7 @@ public class TestFinalTournament {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(2, "hello", RIGGED.GAMEEND, new AIPlayer[] {}, false));
+						new GameCreateClient(2, "hello", RIGGED.GAMEEND, new AIPlayer[] {}, false, true));
 
 				p.take(FinalTournamentNotifyServer.class);
 				p.sendMessage("/app/game.finishSelectingFinalTournament", new FinalTournamentFinishPickingClient(0));
@@ -95,7 +95,7 @@ public class TestFinalTournament {
 				PlayerTestCreator p = new PlayerTestCreator();
 				p.connect(WEBSOCKET_URI);
 				p.sendMessage("/app/game.createGame", 
-						new GameCreateClient(2, "hello", RIGGED.GAMEEND, new AIPlayer[] {}, false));
+						new GameCreateClient(2, "hello", RIGGED.GAMEEND, new AIPlayer[] {}, false, true));
 
 				p.take(FinalTournamentNotifyServer.class);
 				p.sendMessage("/app/game.finishSelectingFinalTournament", new FinalTournamentFinishPickingClient(0));

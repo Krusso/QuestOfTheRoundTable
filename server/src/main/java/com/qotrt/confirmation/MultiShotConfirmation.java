@@ -4,8 +4,8 @@ import com.qotrt.gameplayer.Player;
 
 public class MultiShotConfirmation extends Confirmation {
 
-	public MultiShotConfirmation(String eventName, String acceptEventName, String declineEventName) {
-		super(eventName, acceptEventName, declineEventName);
+	public MultiShotConfirmation(String eventName, String acceptEventName, String declineEventName, boolean racing) {
+		super(eventName, acceptEventName, declineEventName, racing);
 	}
 
 	@Override
@@ -19,6 +19,7 @@ public class MultiShotConfirmation extends Confirmation {
 				fireEvent(acceptEventName, null, player);
 			}
 			checkIfCanOpenLatch(cdl, backingInt);
+			racer.nextPlayerToAsk();
 			return true;
 		} else {
 			logger.info(failure);

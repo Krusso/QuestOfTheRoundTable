@@ -1,6 +1,6 @@
 //Container is used to fix the vh/vw scaling issue
 #container {
-    position: absolute;
+    position: relative;
     width: 100vw;
     height: 100vh;
     overflow: scroll;
@@ -15,16 +15,31 @@
     background-image: url("../gameResources/gameboardbg3.jpg");
     background-size: contain;
     background-repeat: no-repeat;
-    top: 0;
+    z-index: 10;
+    /* top: 0;
     bottom: 0;
-    /* vertical center */
+    // vertical center
     left: 0;
-    right: 0;
+    right: 0; */
+}
+
+#opaquelayer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.0;
+    top: 0;
+    left: 0;
+    z-index: 1000;
 }
 
 /********************************
 * Player Zone, Hand and Card CSS
 *********************************/
+
+.mordredCards {
+    z-index: 9000;
+}
 
 .playerZone {
     position: absolute;
@@ -85,11 +100,38 @@
     float: left;
 }
 
+.displayContainer .card1 {
+    position: relative;
+    width: 60%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+}
+
 .displayContainer .shieldBpContainer {
     position: relative;
     width: 40%;
     height: 100%;
     float: left;
+}
+
+.shieldBpContainer .card1 {
+    position: relative;
+    width: 100%;
+    height: 75%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+}
+
+.shieldBpContainer h2 {
+    text-align: center;
+    font-size: 1vw;
+    width: 100%;
+    height: 25%;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
 }
 
 .playerHand .card1 {
@@ -99,6 +141,15 @@
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
+}
+
+.card1 h2 {
+    text-align: center;
+    font-size: 1vw;
+    top: 50%;
+    width: 100%;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
 }
 
 .playerHand .card1:hover {
@@ -358,6 +409,10 @@ height: 8vw;
     width: 4vw;
     height: 5.2vw;
     float: left;
+}
+
+.hiddenStage .card1 {
+    position: absolute;
 }
 
 .stageContainer .card1:hover {

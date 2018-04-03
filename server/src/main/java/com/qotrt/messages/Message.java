@@ -32,6 +32,8 @@ import com.qotrt.messages.quest.QuestSponsorServer;
 import com.qotrt.messages.quest.QuestUpServer;
 import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.rank.RankServer;
+import com.qotrt.messages.special.MerlinServer;
+import com.qotrt.messages.special.MordredServer;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
 import com.qotrt.messages.tournament.TournamentAcceptedDeclinedServer;
 import com.qotrt.messages.tournament.TournamentPickCardsServer;
@@ -75,6 +77,8 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = FaceUpDiscardServer.class, name ="DISCARDFACEUP"),
 	    @Type(value = FinalTournamentNotifyServer.class, name = "JOINEDFINALTOURNAMENT"),
 	    @Type(value = GameOverServer.class, name = "GAMEOVER"),
+	    @Type(value = MordredServer.class, name = "MORDRED"),
+	    @Type(value = MerlinServer.class, name = "MERLIN"),
 	    @Type(value = BidDiscardFinishPickingServer.class, name = "FINISHBIDDISCARD"),
 	    @Type(value = FinishPickingStagesServer.class, name = "FINISHSTAGESETUP")
 	    })  
@@ -132,7 +136,9 @@ public abstract class Message {
 		GAMEOVER, 
 		FINISHFINALTOURNAMENT, 
 		FINISHBIDDISCARD, 
-		FINISHSTAGESETUP
+		FINISHSTAGESETUP,
+		MORDRED,
+		MERLIN
 	};
 	
 //	@Override

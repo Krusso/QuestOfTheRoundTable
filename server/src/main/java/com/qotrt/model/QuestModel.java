@@ -25,44 +25,33 @@ import com.qotrt.util.PlayerUtil;
 public class QuestModel extends Observable implements PropertyChangeListener , CanPick{
 
 	private int toDiscard;
+	private int merlinUses = 0;
 	
-	private Confirmation sponsor = new SingleShotConfirmation("questionSponsor", 
-			"acceptSponsorQuest", 
-			"declineSponsorQuest");
+	private Confirmation sponsor;
 	
 	public synchronized CountDownLatch sponsorLatch() { return sponsor.getCountDownLatch();}
 	
 	
-	private Confirmation stageSetup = new SingleShotConfirmation("questStage",
-			null,
-			null);
+	private Confirmation stageSetup;
 	
 	public synchronized CountDownLatch stageSetupLatch() { return stageSetup.getCountDownLatch(); }
 	
-	private Confirmation participate = new MultiShotConfirmation("questionQuest", 
-			"joinQuest", 
-			"declineQuest");
+	private Confirmation participate;
 	
 	public synchronized CountDownLatch participateLatch() { return participate.getCountDownLatch();}
 
-	private Confirmation cards = new MultiShotConfirmation("questionCardQuest", 
-			"cardQuest", 
-			null);
+	private Confirmation cards;
 	
 	public synchronized CountDownLatch cardsLatch() { return cards.getCountDownLatch();}
 	
-	private Confirmation discard = new SingleShotConfirmation("discardQuest",
-			"discardQuestFinish",
-			null);
-	
+	private Confirmation discard;
+
 	public synchronized CountDownLatch discardLatch() { return discard.getCountDownLatch();}
 	
 	private int maxBid = -1;
 	private BidCalculator bc;
 	private QuestCard card;
-	private Confirmation bid = new NeverEndingConfirmation(null, 
-			null, 
-			null);
+	private Confirmation bid;
 	
 	public synchronized CountDownLatch bidLatch() { return bid.getCountDownLatch();}
 	
@@ -70,7 +59,30 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	private Quest quest;
 	private List<AdventureCard> discardCards;
 	
-	public QuestModel() {
+	public QuestModel(boolean racing) {
+		sponsor = new SingleShotConfirmation("questionSponsor", 
+				"acceptSponsorQuest", 
+				"declineSponsorQuest", racing);
+		
+		stageSetup = new SingleShotConfirmation("questStage",
+				null,
+				null, racing);
+		
+		participate = new MultiShotConfirmation("questionQuest", 
+				"joinQuest", 
+				"declineQuest", racing);
+		
+		cards = new MultiShotConfirmation("questionCardQuest", 
+				"cardQuest", 
+				null, racing);
+		
+		discard = new SingleShotConfirmation("discardQuest",
+				"discardQuestFinish",
+				null, racing);
+		
+		bid = new NeverEndingConfirmation(null, 
+				null, 
+				null, racing);
 		sponsor.subscribe(this);
 		participate.subscribe(this);
 		cards.subscribe(this);
@@ -80,11 +92,11 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 	
 	public synchronized void setQuest(Quest quest, List<Player> sponsors) {
-		System.out.println("starting quest setup sponsor: " + sponsors + " quest: " + quest);
-		System.out.println("quest stages: " + quest.getNumStages());
-		System.out.println("setting quest: " + quest);
+		logger.info("starting quest setup sponsor: " + sponsors + " quest: " + quest);
+		logger.info("quest stages: " + quest.getNumStages());
+		logger.info("setting quest: " + quest);
 		this.quest = quest;
-		System.out.println("quests: " + this.quest);
+		logger.info("quests: " + this.quest);
 		stageSetup.start(sponsors, quest.getNumStages());
 	}
 	
@@ -111,6 +123,8 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 						quest.getQuestCard());
 			}
 		}
+		
+		merlinUses = 1;
 		return stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
 				"player: " + player + " finished selecting cards", 
 				"player: " + player + " finish selecting cards too late");
@@ -297,7 +311,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized String attemptMove(Integer zoneTo, AdventureCard card) {
-		System.out.println("Quest: " + quest);
+		logger.info("Quest: " + quest);
 		Stage to = quest.getStage(zoneTo);
 		if(to == null) {
 			return "not a playable zone currently";
@@ -331,5 +345,15 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 
 	public synchronized Quest getQuest() {
 		return quest;
+	}
+
+	public GenericPair[] merlinCan(int stage) {
+		if((cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
+			merlinUses -= 1;
+			return quest.getStage(stage).getStageCards().
+					stream().map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new);
+		}
+		
+		return null;
 	}
 }

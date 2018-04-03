@@ -1,5 +1,7 @@
 package com.qotrt.confirmation;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -9,11 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.qotrt.gameplayer.Player;
-import com.qotrt.model.GenericPair;
 import com.qotrt.model.Observable;
-import com.qotrt.util.PlayerUtil;
 
-public abstract class Confirmation extends Observable {
+public abstract class Confirmation extends Observable implements PropertyChangeListener {
 	
 	final static Logger logger = LogManager.getLogger(Confirmation.class);
 	
@@ -22,33 +22,43 @@ public abstract class Confirmation extends Observable {
 	protected String acceptEventName;
 	protected String declineEventName;
 	protected int backingInt;
-	protected List<Player> toAsk;
+	protected Mode racer;
 	protected List<Player> accepted = new ArrayList<Player>();
 
-	public Confirmation(String eventName, String acceptEventName, String declineEventName) {
+	
+	@Override
+	//propagating events up
+	public void propertyChange(PropertyChangeEvent arg0) {
+		fireEvent(arg0.getPropertyName(), arg0.getOldValue(), arg0.getNewValue());
+	}
+	
+	public Confirmation(String eventName, 
+			String acceptEventName, 
+			String declineEventName,
+			boolean racing) {
 		this.eventName = eventName;
 		this.acceptEventName = acceptEventName;
 		this.declineEventName = declineEventName;
+		if(racing) {
+			racer = new Racer();
+		} else {
+			racer = new HotSeat();
+		}
+		racer.subscribe(this);
 	}
 
 	public void start(List<Player> toAsk) {
 		cdl = new CountDownLatch(1);
 		accepted = new ArrayList<Player>();
-		this.toAsk = toAsk;
-		backingInt = this.toAsk.size();
-		if(eventName != null) {
-			fireEvent(eventName, null, PlayerUtil.playersToIDs(toAsk));
-		}
+		backingInt = toAsk.size();
+		racer.start(toAsk, eventName);
 	}
 
 	public void start(List<Player> toAsk, Object obj) {
 		cdl = new CountDownLatch(1);
 		accepted = new ArrayList<Player>();
-		this.toAsk = toAsk;
-		backingInt = this.toAsk.size();
-		if(eventName != null) {
-			fireEvent(eventName, null, new GenericPair(PlayerUtil.playersToIDs(toAsk), obj));
-		}
+		backingInt = toAsk.size();
+		racer.start(toAsk, obj, eventName);
 	}
 	
 	public abstract boolean accept(Player player, String attempt, String success, String failure);
@@ -56,7 +66,7 @@ public abstract class Confirmation extends Observable {
 	public void decline(Player player, String attempt, String success, String failure) {
 		logger.info(attempt);
 		if(backingInt > 0) {
-			toAsk.remove(player);
+			racer.remove(player);
 			backingInt--;
 			logger.info(success);
 			if(declineEventName != null) {
@@ -69,9 +79,7 @@ public abstract class Confirmation extends Observable {
 	}
 	
 	public void forAllPlayers(Consumer<Player> c) {
-		for(Player player: toAsk) {
-			c.accept(player);
-		}
+		racer.forAllPlayers(c);
 	}
 
 	public boolean can() {

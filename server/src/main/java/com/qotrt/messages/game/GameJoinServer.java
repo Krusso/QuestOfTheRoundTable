@@ -1,17 +1,18 @@
 package com.qotrt.messages.game;
 
 import com.qotrt.messages.Message;
+import com.qotrt.model.GenericPair;
 
 // Server
 public class GameJoinServer extends Message  {
 
-	private String[] players;
+	private GenericPair[] players;
 
-	public String[] getPlayers() {
+	public GenericPair[] getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(String[] players) {
+	public void setPlayers(GenericPair[] players) {
 		this.players = players;
 	}
 

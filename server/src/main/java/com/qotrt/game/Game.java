@@ -83,6 +83,10 @@ public class Game extends Observable {
 		subscribe(hv);
 	}
 
+	public Player[] getPlayers() {
+		return pm.players;
+	}
+	
 	public Player getPlayerBySessionID(String sessionID) {
 		for(Player player: pm.players) {
 			if(player.compareSessionID(sessionID)) {
@@ -99,8 +103,9 @@ public class Game extends Observable {
 				logger.info("Starting game");
 				fireEvent("gameStart", null, 1);
 
+			
 				for(int i = 0; i < aiplayers.size(); i++) {
-					players.add(new UIPlayer("none-matching-session-id", "ai player " + i));
+					players.add(new UIPlayer("none-matching-session-id", "ai player " + i, 1));
 				}
 				
 				// model creation
@@ -111,11 +116,11 @@ public class Game extends Observable {
 						players.toArray(new UIPlayer[players.size()]), 
 						dm, 
 						rigged);
-				TournamentModel tm = new TournamentModel();
-				QuestModel qm = new QuestModel();
-				DiscardModel dmm = new DiscardModel();
-				EventModel em = new EventModel();
-				FinalTournamentModel ftm = new FinalTournamentModel();
+				TournamentModel tm = new TournamentModel(racing);
+				QuestModel qm = new QuestModel(racing);
+				DiscardModel dmm = new DiscardModel(racing);
+				EventModel em = new EventModel(racing);
+				FinalTournamentModel ftm = new FinalTournamentModel(racing);
 				bmm = new BoardModelMediator(tm, qm, bm, dmm, em, ftm);
 
 				// view creation
@@ -183,7 +188,7 @@ public class Game extends Observable {
 						break;
 					}
 
-					logger.info("Waiting for player to continue to next turn");
+					logger.info("Waiting a bit then proceeding to next turn");
 					// wait for a bit of time then proceed with next turn
 					try {
 						Thread.sleep(10000);

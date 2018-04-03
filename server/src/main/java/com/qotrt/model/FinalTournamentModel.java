@@ -11,11 +11,12 @@ import com.qotrt.gameplayer.Player;
 
 public class FinalTournamentModel extends Observable implements PropertyChangeListener, CanPick {
 
-	private Confirmation questionCards = new MultiShotConfirmation("questionFinalTournament", 
-			null, 
-			null);
+	private Confirmation questionCards;
 	
-	public FinalTournamentModel() {
+	public FinalTournamentModel(boolean racing) {
+		questionCards = new MultiShotConfirmation("questionFinalTournament", 
+				null, 
+				null, racing);
 		questionCards.subscribe(this);
 	}
 

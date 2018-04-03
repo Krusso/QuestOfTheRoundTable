@@ -39,7 +39,7 @@ public class TestEvent {
 	@Test
 	public void testKingsCallToArms() throws InterruptedException {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Call to Arms", new KingsCallToArms()));
-		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm);	} };
+		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm, false);	} };
 		new Thread(thread2).start();
 		Thread.sleep(500);
 		em.playCard(pm.players[0], 170, pm.players[0].hand);
@@ -54,7 +54,7 @@ public class TestEvent {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Call to Arms", new KingsCallToArms()));
 		pm.players[0].changeShields(20);
 		pm.players[0].increaseLevel();
-		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm);	} };
+		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm, false);	} };
 		new Thread(thread2).start();
 		Thread.sleep(500);
 		logger.info(em.playCard(pm.players[0], 170, pm.players[0].hand));
@@ -75,7 +75,7 @@ public class TestEvent {
 		pm.players[0].increaseLevel();
 		pm.players[0].hand.getDeck().removeIf(i -> i.getType() == TYPE.WEAPONS);
 		pm.players[1].hand.getDeck().removeIf(i -> i.getType() == TYPE.WEAPONS);
-		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm);	} };
+		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm, false);	} };
 		new Thread(thread2).start();
 		Thread.sleep(500);
 		logger.info(em.playCard(pm.players[0], 165, pm.players[0].hand));
@@ -98,7 +98,7 @@ public class TestEvent {
 		pm.players[0].increaseLevel();
 		pm.players[0].hand.getDeck().removeIf(i -> i.getType() == TYPE.WEAPONS || i.getType() == TYPE.FOES);
 		pm.players[1].hand.getDeck().removeIf(i -> i.getType() == TYPE.WEAPONS || i.getType() == TYPE.FOES);
-		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm);	} };
+		Runnable thread2 = new Runnable() { @Override public void run() {	esm.start(pm, bmm, false);	} };
 		new Thread(thread2).start();
 		Thread.sleep(500);
 		pm.round().forEachRemaining(i -> {
@@ -116,7 +116,7 @@ public class TestEvent {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(12, i.getCardCount());
 		});
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		pm.round().forEachRemaining(i -> {
 			assertEquals(14, i.getCardCount());
 		});
@@ -134,7 +134,7 @@ public class TestEvent {
 		});
 		player.remove(0);
 		pm.changeShields(player, 10);
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(3, players.get(0).getShields());
 		assertEquals(10, players.get(1).getShields());
 	}
@@ -151,7 +151,7 @@ public class TestEvent {
 		});
 		player.remove(1);
 		pm.changeShields(player, 10);
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(10, players.get(0).getShields());
 		assertEquals(3, players.get(1).getShields());
 	}
@@ -168,7 +168,7 @@ public class TestEvent {
 		});
 		pm.changeShields(player, 10);
 		pm.round().forEachRemaining(i -> i.increaseLevel());
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(8, players.get(0).getShields());
 		assertEquals(8, players.get(1).getShields());
 	}
@@ -184,7 +184,7 @@ public class TestEvent {
 			assertEquals(0, i.getShields());
 		});
 		pm.changeShields(player, 10);
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(13, players.get(0).getShields());
 		assertEquals(13, players.get(1).getShields());
 	}
@@ -199,7 +199,7 @@ public class TestEvent {
 			players.add(i);
 			assertEquals(0, i.getShields());
 		});
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(3, players.get(0).getShields());
 		assertEquals(3, players.get(1).getShields());
 	}
@@ -214,7 +214,7 @@ public class TestEvent {
 			assertEquals(true, i.getShields() == 0);
 		});
 		pm.changeShields(player, 10);
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(8, player.get(0).getShields());
 		assertEquals(10, player.get(1).getShields());
 	}
@@ -228,7 +228,7 @@ public class TestEvent {
 			assertEquals(true, i.getShields() == 0);
 		});
 		pm.changeShields(player, 10);
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(10, player.get(0).getShields());
 		assertEquals(9, player.get(1).getShields());
 	}
@@ -244,7 +244,7 @@ public class TestEvent {
 		assertEquals(1, pm.players[0].getFaceUp().size());
 		assertEquals("King Arthur", pm.players[0].getFaceUp().getDeck().get(0).getName());
 
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(0, pm.players[0].getFaceUp().size());
 	}
 	
@@ -261,7 +261,7 @@ public class TestEvent {
 		assertEquals("King Arthur", pm.players[0].getFaceUp().getDeck().get(0).getName());
 		assertEquals("King Arthur", pm.players[0].getFaceUp().getDeck().get(1).getName());
 
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(0, pm.players[0].getFaceUp().size());
 	}
 	
@@ -270,7 +270,7 @@ public class TestEvent {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("Court Called to Camelot", new CourtCalledToCamelot()));
 		assertEquals(0, pm.players[0].getFaceUp().size());
 
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(0, pm.players[0].getFaceUp().size());
 	}
 
@@ -280,7 +280,7 @@ public class TestEvent {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(true, i.getCardCount() == 12);
 		});
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		pm.round().forEachRemaining(i -> {
 			assertEquals(true, i.getCardCount() == 14);
 		});
@@ -294,7 +294,7 @@ public class TestEvent {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(12, i.getCardCount());
 		});
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		pm.round().forEachRemaining(i -> {
 			if(i.getID() == 0) {
 				assertEquals(12, i.getCardCount());
@@ -314,7 +314,7 @@ public class TestEvent {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(12, i.getCardCount());
 		});
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		pm.round().forEachRemaining(i -> {
 			assertEquals(14, i.getCardCount());
 		});
@@ -328,7 +328,7 @@ public class TestEvent {
 		pm.round().forEachRemaining(i -> {
 			assertEquals(12, i.getCardCount());
 		});
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		pm.round().forEachRemaining(i -> {
 			if(i.getID() == 1) {
 				assertEquals(12, i.getCardCount());
@@ -342,7 +342,7 @@ public class TestEvent {
 	public void testKingsRecognition() {
 		EventSequenceManager esm = new EventSequenceManager(new EventCard("King's Recognition", new KingRecognition()));
 		assertEquals(false, bm.isSetKingRecognition());
-		esm.start(pm, bmm);
+		esm.start(pm, bmm, false);
 		assertEquals(true, bm.isSetKingRecognition());
 	}
 
@@ -357,9 +357,9 @@ public class TestEvent {
 	public void before() {
 		output = new LinkedBlockingQueue<String>();
 		dm = new DeckManager();
-		pm = new PlayerManager(2, new UIPlayer[] {new UIPlayer("", ""), new UIPlayer("", "")}, dm, RIGGED.ONE);
+		pm = new PlayerManager(2, new UIPlayer[] {new UIPlayer("","",1), new UIPlayer("","",1)}, dm, RIGGED.ONE);
 		bm = new BoardModel();
-		em = new EventModel();
+		em = new EventModel(false);
 		bmm = new BoardModelMediator(null, null, bm, null, em, null);
 		pm.start();
 		pm.nextTurn();
