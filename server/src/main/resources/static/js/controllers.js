@@ -1301,6 +1301,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playCardTournament);
         }
+        if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.HAND, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+        }
     }
 
     $scope.dropCallback_hand = function (event, ui) {
@@ -1377,8 +1380,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             });
         }
         //hella raunchy
-        if ($scope.currentState == $scope.GAME_STATE.SPONSORQUEST) {
-            console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
+        console.log("Current state: " + $scope.currentState);
+        if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
+            console.log("SPonsoring");
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.HAND, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
         }
         if ($scope.currentState == $scope.GAME_STATE.PICKQUEST) {
@@ -1423,6 +1427,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         if ($scope.currentState == $scope.GAME_STATE.HANDDISCARD) {
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_discardFullHand);
+        }
+        if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
         }
     }
 

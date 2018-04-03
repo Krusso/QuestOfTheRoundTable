@@ -411,6 +411,10 @@ height: 8vw;
     float: left;
 }
 
+.hiddenStage .card1 {
+    position: absolute;
+}
+
 .stageContainer .card1:hover {
     margin-top: -1vw;
     margin-left: -1vw;
