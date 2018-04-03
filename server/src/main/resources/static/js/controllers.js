@@ -161,7 +161,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         JOINTOURNAMENT: 20,
         PICKTOURNAMENT: 21,
         HANDDISCARD: 22,
-        WINTOURNAMENT: 23
+        WINTOURNAMENT: 23,
+        JOINEDFINALTOURNAMENT: 24
     };
 
 
@@ -187,6 +188,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_discardBid = "/app/game.discardBid";
     $scope.ep_discardFinish = "/app/game.finishDiscard";
     $scope.ep_finishSelectingDiscardHand = "/app/game.finishSelectingDiscardHand";
+    $scope.ep_finishSelectingFinalTournament = "/app/game.finishSelectingFinalTournament";
+    $scope.ep_playForFinalTournament = "/app/game.playForFinalTournament";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -268,7 +271,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     //Tell server if we accept/decline the story (in this case it's quest) TODO: make it work for Tournaments as well, should be dependent on the state of the game
     $scope.sendStoryResponse = function (isAccept) {
-        console.log($scope.currentState)
+        console.log("CURRENT STATE------->" + $scope.currentState)
         // console.log($scope.GAME_STATE.SPONSORQUEST);
         // console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST);
         if ($scope.currentState == $scope.GAME_STATE.SPONSORQUEST) {
@@ -327,6 +330,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         };
         $scope.addMessage($scope.ep_finishSelectingTournament);
     };
+
+    $scope.sendFinalTournamentPickCardsClient = function() {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.PICKSTAGES,
+            java_class: "FinalTournamentFinishPickingClient"
+        };
+        $scope.addMessage($scope.ep_finishSelectingFinalTournament);
+    }
 
     //Send this message when player is finished picking stages
     $scope.sendQuestPickStagesClient = function () {
@@ -433,6 +445,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         isSponsoring: false,
                         joinedQuest: false,
                         joinedTourn: false,
+                        joinedFinalTourn: false,
                         discardPile: [],
                         needToDiscard: 0,
                         revealStage: [false, false, false, false, false]
@@ -705,7 +718,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "WINTOURNAMENT") {
-                $scope.toast = "Player "+message.player+" won the tournament";
+                if(message.players.length > 0) {
+                    $scope.toast = "Player "+message.players+" won the tournament";
+                } else {
+                    $scope.toast = "No one joined the tournament";
+                }
                 $scope.currentState = $scope.GAME_STATE.WINTOURNAMENT;
             }  
             //move cards from facedown to faceup for player
@@ -730,6 +747,19 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 if (message.player == $scope.myPlayerId && message.success == false) {
                     $scope.toast = message.response;
                 }
+            }
+            if (message.messageType === "JOINEDFINALTOURNAMENT") {
+                // if (message.players.find(function(e){console.log("found player:::::: "+ (e == $scope.myPlayerId)); return e == $scope.myPlayerId;})) {
+                for(var i=0; i<message.players.length; i++){
+                    if ($scope.myPlayerId == message.players[i]){
+                        $scope.toast = "Select cards for final tournament";
+                        $scope.players[$scope.myPlayerId].joinedFinalTourn = true;
+                        $scope.currentState = $scope.GAME_STATE.JOINEDFINALTOURNAMENT;
+                    }
+                }
+            }
+            if (message.messageType === "GAMEOVER") {
+                $scope.toast = "GAME OVER, PLAYER "+message.players+" WON";
             }
 
             console.log("done parsing");
@@ -1247,6 +1277,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playCardTournament);
         }
+        if ($scope.currentState == $scope.GAME_STATE.JOINEDFINALTOURNAMENT) {
+            console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playForFinalTournament);
+        }
+
     }
     //can only discard cards from your hand
     $scope.dropCallback_discard = function (event, ui) {
@@ -1285,6 +1320,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     $scope.showDonePickingTournamentCards = function () {
         if ($scope.currentState == $scope.GAME_STATE.PICKTOURNAMENT && $scope.players[$scope.myPlayerId].joinedTourn) {
+            return true;
+        }
+        return false;
+    }
+
+    $scope.showDonePickingFinalTournamentCards = function() {
+        if ($scope.currentState == $scope.GAME_STATE.JOINEDFINALTOURNAMENT && $scope.players[$scope.myPlayerId].joinedFinalTourn) {
             return true;
         }
         return false;
