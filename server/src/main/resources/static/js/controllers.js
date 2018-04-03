@@ -545,6 +545,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 //if your player is picking stages, that means he's sponsoring
                 $scope.players[message.player].isSponsoring = true;
                 $scope.numStages = message.numStages;
+                //sponsorer should be the only guy who had drag on
+                if ($scope.myPlayerId == message.player) {
+                    $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+                    console.log($scope.players[message.player].hand);
+                    for (var i = 0; i < message.numStages; i++) {
+
+                    }
+                }
             }
             if (message.messageType === "PICKQUEST") {
                 $scope.currentState = $scope.GAME_STATE.PICKQUEST;
@@ -1422,7 +1430,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.showAcceptDecline = function () {
         // console.log("checking showAcceptDecline");
         //        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
-        $scope.setDragOff();
+        //        $scope.setDragOff();
         return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT || $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
     }
 
