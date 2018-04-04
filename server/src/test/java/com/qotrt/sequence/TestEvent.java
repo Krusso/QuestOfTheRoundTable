@@ -359,7 +359,7 @@ public class TestEvent {
 		dm = new DeckManager();
 		pm = new PlayerManager(2, new UIPlayer[] {new UIPlayer("","",1), new UIPlayer("","",1)}, dm, RIGGED.ONE);
 		bm = new BoardModel();
-		em = new EventModel(false);
+		em = new EventModel();
 		bmm = new BoardModelMediator(null, null, bm, null, em, null);
 		pm.start();
 		pm.nextTurn();

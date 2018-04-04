@@ -26,8 +26,8 @@ public class EventModel extends Observable implements Discard {
 	private Map<Player, AdventureDeck> cards = new HashMap<Player, AdventureDeck>();
 
 	
-	public EventModel(Boolean racing) {
-		discard = new MultiShotConfirmation(null, "finishDiscard", null, racing);
+	public EventModel() {
+		discard = new MultiShotConfirmation(null, "finishDiscard", null, true);
 	}
 	
 	public synchronized void start(ArrayList<Player> highest) {

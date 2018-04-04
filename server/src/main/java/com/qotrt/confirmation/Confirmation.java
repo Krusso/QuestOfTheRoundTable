@@ -66,12 +66,12 @@ public abstract class Confirmation extends Observable implements PropertyChangeL
 	public void decline(Player player, String attempt, String success, String failure) {
 		logger.info(attempt);
 		if(backingInt > 0) {
-			racer.remove(player);
 			backingInt--;
 			logger.info(success);
 			if(declineEventName != null) {
 				fireEvent(declineEventName, null, player);
 			}
+			racer.nextPlayerToAsk();
 			checkIfCanOpenLatch(cdl, backingInt);
 		} else {
 			logger.info(failure);
