@@ -16,10 +16,6 @@ public abstract class Mode extends Observable {
 	
 	public abstract void nextPlayerToAsk();
 
-	public void remove(Player player) {
-		toAsk.remove(player);
-	}
-
 	public void forAllPlayers(Consumer<Player> c) {
 		for(Player player: toAsk) {
 			c.accept(player);

@@ -118,9 +118,9 @@ public class Game extends Observable {
 						rigged);
 				TournamentModel tm = new TournamentModel(racing);
 				QuestModel qm = new QuestModel(racing);
-				DiscardModel dmm = new DiscardModel(racing);
-				EventModel em = new EventModel(racing);
-				FinalTournamentModel ftm = new FinalTournamentModel(racing);
+				DiscardModel dmm = new DiscardModel();
+				EventModel em = new EventModel();
+				FinalTournamentModel ftm = new FinalTournamentModel();
 				bmm = new BoardModelMediator(tm, qm, bm, dmm, em, ftm);
 
 				// view creation
