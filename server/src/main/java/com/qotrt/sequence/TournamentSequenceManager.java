@@ -40,7 +40,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			if(racing) {
 				tm.join().await(60, TimeUnit.SECONDS);	
 			} else {
-				tm.join();
+				tm.join().await();
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -71,7 +71,7 @@ public class TournamentSequenceManager extends SequenceManager {
 			if(racing) {
 				tm.questionCards().await(60, TimeUnit.SECONDS);	
 			} else {
-				tm.questionCards();
+				tm.questionCards().await();
 			}
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -109,7 +109,7 @@ public class TournamentSequenceManager extends SequenceManager {
 				if(racing) {
 					tm.questionCards().await(60, TimeUnit.SECONDS);	
 				} else {
-					tm.questionCards();
+					tm.questionCards().await();
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

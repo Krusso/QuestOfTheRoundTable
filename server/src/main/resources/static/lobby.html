@@ -3,11 +3,15 @@
         <p id="status">{{status}}</p>
         <button class="btn menubtn" ng-click="sendListGamesClient()">REFRESH LOBBY</button></br></br>
         <div id="createGame">
-            <button class="btn menubtn" ng-click="sendCreateGameClient(numPlayers, rigOptions, gName, ais)">CREATE A GAME</button>
+            <button class="btn menubtn" ng-click="sendCreateGameClient(numPlayers, rigOptions, gName, ais, racing)">CREATE A GAME</button>
         </div>
         </br>
         <p class="createGameText">Game Name</p>
         <input class="createGameInp" ng-model="gName"></input>
+        <p class="createGameText">Mode</p>
+        <select ng-model="racing" 
+            ng-options="o.v as o.n for o in [{ n: 'Hotseat', v: false }, { n: 'Racing', v: true }]">
+    	</select>
         <p class="createGameText">Num Players</p>
         <select class="createGameInp" ng-init="numPlayers = np[0]" ng-model="numPlayers" ng-options="n for n in np"></select><br><br>
         <p class="createGameText">Scenario</p>

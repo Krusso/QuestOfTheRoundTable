@@ -15,15 +15,19 @@ import com.qotrt.messages.tournament.TournamentWinServer.WINTYPES;
 
 public class TournamentModel extends Observable implements PropertyChangeListener, CanPick {
 
-	private Confirmation join = new MultiShotConfirmation("questiontournament", 
-			"jointournament", 
-			"declinetournament");
+	private Confirmation join;
 	
-	private Confirmation questionCards = new MultiShotConfirmation("questioncardtournament", 
-			null, 
-			null);
+	private Confirmation questionCards;
 	
-	public TournamentModel() {
+	public TournamentModel(Boolean racing) {
+		
+		questionCards = new MultiShotConfirmation("questioncardtournament", 
+				null, null, racing);
+		
+		join = new MultiShotConfirmation("questiontournament", 
+				"jointournament", 
+				"declinetournament", racing);
+		
 		join.subscribe(this);
 		questionCards.subscribe(this);
 	}

@@ -2,11 +2,13 @@ package com.qotrt.calculator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,13 +24,13 @@ import com.qotrt.gameplayer.Rank.RANKS;
 public class BattlePointCalculator {
 
 	final static Logger logger = LogManager.getLogger(BattlePointCalculator.class);
-	
+
 	private PlayerManager pm;
 
 	public BattlePointCalculator(PlayerManager pm) {
 		this.pm = pm;
 	}
-	
+
 	public ArrayList<Integer> calculatePoints(List<Player> participants, StoryCard card){
 		ArrayList<Integer> scores = new ArrayList<Integer>();
 		participants.forEach(player -> {
@@ -65,18 +67,18 @@ public class BattlePointCalculator {
 				max = scores.get(i);
 			}
 		}
-		
+
 		logger.info("Highest: " + winning);
 		return winning;
 	}
 
 
 	public List<AdventureCard> listOfTypeDecreasingBp(Player player, TYPE type, QuestCard card, Boolean othersHaveIseult){
-		
+
 		for(AdventureCard c: player.hand.getDeck()) {
 			if(c.getName().equals("Queen Iseult")) othersHaveIseult = true;
 		}
-		
+
 		// p1 and p2 being flipped is not a typo :)
 		final boolean foundIseult1 = othersHaveIseult;
 		return player.hand.getDeck().stream().
@@ -84,7 +86,7 @@ public class BattlePointCalculator {
 				sorted((p1,p2) -> Integer.compare(getPoints(p2, foundIseult1, card), getPoints(p1, foundIseult1, card))).
 				collect(Collectors.toList());
 	}
-	
+
 	public int getPoints(AdventureCard c, Boolean foundIseult, QuestCard card) {
 		if(card != null) {
 			logger.info("Card name: " + card.getName());
@@ -96,7 +98,7 @@ public class BattlePointCalculator {
 			logger.info(c.getName() + " named " + c.getNamedBattlePoints());
 			return c.getNamedBattlePoints();
 		}
-		
+
 		logger.info(c.getName() + " not named " + c.getBattlePoints());
 		return c.getBattlePoints();
 	}
@@ -114,7 +116,7 @@ public class BattlePointCalculator {
 		for(AdventureCard c: player.hand.getDeck()) {
 			if(c.getName().equals("Queen Iseult")) iseultExists = true;
 		}
-		
+
 		// p1 and p2 being flipped is not a typo :)
 		final boolean foundIseult1 = iseultExists;
 		return player.hand.getDeck().stream().
@@ -131,7 +133,7 @@ public class BattlePointCalculator {
 				sorted((p1,p2) -> Integer.compare(getPoints(p2, foundIseult1, card), getPoints(p1, foundIseult1, card))).
 				collect(Collectors.toList());
 	}
-	
+
 	public int calculatePlayer(Player player, StoryCard storyCard) {
 		logger.info("Calculating score for player id: " + player);
 		if(storyCard != null) {
@@ -155,8 +157,11 @@ public class BattlePointCalculator {
 		while(players.hasNext()) {
 			if(players.next().iseult == true) foundIseult = true;
 		}
+
 		
-		for(AdventureCard c: player.getFaceUp().getDeck()) {
+		for(AdventureCard c: Stream.of(player.getFaceDownDeck().getDeck(), player.getFaceUp().getDeck()).
+				flatMap(Collection::stream).
+				collect(Collectors.toList())) {
 			logger.info("Card: " + c);
 
 			if(storyCard != null && storyCard.getType() == StoryCard.TYPE.QUEST && 
@@ -167,18 +172,20 @@ public class BattlePointCalculator {
 				logger.info("Plus: " + c.getBattlePoints());
 				score += c.getBattlePoints();
 			}
-			
+
 			if(c.getName().equals("Queen Iseult")) {
 				foundIseult = true;
 			}
 		}
-		
-		for(AdventureCard c: player.getFaceUp().getDeck()) {
+
+		for(AdventureCard c: Stream.of(player.getFaceDownDeck().getDeck(), player.getFaceUp().getDeck()).
+				flatMap(Collection::stream).
+				collect(Collectors.toList())) {
 			if(c.getName().equals("Sir Tristan") && foundIseult) {
 				score += 10;
 			}
 		}
-		
+
 		logger.info("Player score is: " + score);
 		return score;
 	}
@@ -188,7 +195,7 @@ public class BattlePointCalculator {
 		if(storyCard.getType() != StoryCard.TYPE.QUEST) {
 			return 0;
 		}
-		
+
 		int score = 0;
 		logger.info("Cards in stage: " + Arrays.toString(cards.stream().map(i -> i.getName()).toArray(String[]::new)));
 		for(AdventureCard card: cards) {
@@ -200,7 +207,7 @@ public class BattlePointCalculator {
 				logger.info("Card: " + card + " score: " + card.getBattlePoints());
 			}
 		}
-		
+
 		logger.info("Score is: " + score);
 		return score;
 	}
@@ -219,11 +226,11 @@ public class BattlePointCalculator {
 				minBp = getPoints(c,false,card);
 			}
 		}
-		
+
 		if(tests.size() != 0) {
 			uniqueBpFoes++;
 		}
-		
+
 		logger.info("Player: " + next.getID() + " can sponsor: " + (uniqueBpFoes + 1 >= card.getNumStages()));
 		return uniqueBpFoes >= card.getNumStages();
 	}
