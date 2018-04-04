@@ -104,19 +104,19 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		return stageSetup.can();
 	}
 	
-	public synchronized boolean finishSelectingStages(Player player) {
+	public synchronized String finishSelectingStages(Player player) {
 		int min = Integer.MIN_VALUE;
 		BattlePointCalculator bpc = new BattlePointCalculator(null);
 		for(int i = 0; i < quest.getNumStages(); i++) {
 			if(!(quest.getStage(i).isFoeStage() || quest.getStage(i).isTestStage())) {
 				logger.info("is foe: " + quest.getStage(i).isFoeStage());
 				logger.info("is test: " + quest.getStage(i).isTestStage());
-				return false;
+				return "each stages needs 1 test or 1 foe card";
 			}
 			if(quest.getStage(i).isFoeStage()) {
 				if(bpc.calculateStage(quest.getStage(i).getStageCards(), 
 						quest.getQuestCard()) <= min){
-					return false;
+					return "each stage needs an increasing amount of bp";
 				}
 
 				min = bpc.calculateStage(quest.getStage(i).getStageCards(), 
@@ -125,9 +125,10 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		}
 		
 		merlinUses = 1;
-		return stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
+		stageSetup.accept(player, "player: " + player + " attempted to finish selecting cards", 
 				"player: " + player + " finished selecting cards", 
 				"player: " + player + " finish selecting cards too late");
+		return "";
 	}
 	
 	@Override
