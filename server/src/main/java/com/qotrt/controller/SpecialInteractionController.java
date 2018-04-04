@@ -43,13 +43,13 @@ public class SpecialInteractionController {
 				p.getFaceUp().findCardByID(chatMessage.opponent);
 				player.getCardByID(chatMessage.mordred);
 				game.sendMessageToAllPlayers("/queue/response", new MordredServer(player.getID(),
-						chatMessage.mordred, chatMessage.opponent, ""));
+						p.getID(),chatMessage.mordred, chatMessage.opponent, ""));
 				return;
 			}
 		}
 		
 		game.sendMessageToAllPlayers("/queue/response", new MordredServer(player.getID(),
-				chatMessage.mordred, chatMessage.opponent, "Mordred can only kill Allies"));
+				-1, chatMessage.mordred, chatMessage.opponent, "Mordred can only kill Allies"));
 		
 	}
 	

@@ -74,7 +74,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		
 		cards = new MultiShotConfirmation("questionCardQuest", 
 				"cardQuest", 
-				null, racing);
+				null, true);
 		
 		discard = new SingleShotConfirmation("discardQuest",
 				"discardQuestFinish",
@@ -330,7 +330,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		return response;
 	}
 	
-	private boolean questContainsTest() {
+	private synchronized boolean questContainsTest() {
 		for(int i = 0; i < quest.getNumStages(); i++) {
 			if(quest.getStage(i).isTestStage()) {
 				return true;
@@ -347,7 +347,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		return quest;
 	}
 
-	public GenericPair[] merlinCan(int stage) {
+	public synchronized GenericPair[] merlinCan(int stage) {
 		if((cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
 			merlinUses -= 1;
 			return quest.getStage(stage).getStageCards().
