@@ -164,7 +164,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         JOINTOURNAMENT: 20,
         PICKTOURNAMENT: 21,
         HANDDISCARD: 22,
-        WINTOURNAMENT: 23
+        WINTOURNAMENT: 23,
+        WAITING: 24
     };
 
 
@@ -493,7 +494,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             //and making sure everything starts at default again
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
-
                 console.log($scope.middleCard);
                 console.log("clearing all cards from the stages");
                 //we are setting the length to 0 as this will clear the array the most efficient way 
@@ -533,11 +533,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
 
             if (message.messageType === "SPONSERQUEST") {
-                $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
-                console.log($scope.currentState + " " +
-                    $scope.GAME_STATE.SPONSORQUEST);
-                $scope.toast = "Sponsor " + $scope.middleCard + " ?";
-                $scope.$apply();
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
+                    $scope.toast = "Sponsor " + $scope.middleCard + " ?";
+                    $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+                } else {
+                    $scope.currentState = $scope.GAME_STATE.WAITING;
+                    $scope.toast = "Waiting for player " + message.players + " to sponsor";
+                    $scope.setDragOff();
+                }
             }
             if (message.messageType === "PICKSTAGES") {
                 $scope.currentState = $scope.GAME_STATE.PICKSTAGES;
