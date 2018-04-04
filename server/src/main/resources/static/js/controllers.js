@@ -749,12 +749,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "JOINEDFINALTOURNAMENT") {
-                // if (message.players.find(function(e){console.log("found player:::::: "+ (e == $scope.myPlayerId)); return e == $scope.myPlayerId;})) {
                 for(var i=0; i<message.players.length; i++){
                     if ($scope.myPlayerId == message.players[i]){
                         $scope.toast = "Select cards for final tournament";
                         $scope.players[$scope.myPlayerId].joinedFinalTourn = true;
                         $scope.currentState = $scope.GAME_STATE.JOINEDFINALTOURNAMENT;
+                    } else if (i == message.players.length-1) {
+                        $scope.toast = "Waiting for players to finish final tournament";
                     }
                 }
             }
