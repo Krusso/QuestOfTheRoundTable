@@ -366,6 +366,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             bid: $scope.bidSlider.value
         };
         $scope.addMessage($scope.ep_bid);
+        //after player bids, set the state to waiting, this is only really necessary for hot-seat 
+        //since in racing mode, every player will receive a BidQuest message rather than 1 by 1
+        $scope.currentState = $scope.currentState.WAITING;
+        $scope.toast = "Waiting for other players to bid".
     };
     $scope.sendFinishDiscard = function () {
         console.log("hello");
@@ -705,12 +709,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.players[$scope.myPlayerId].discardPile.length = 0;
             }
             if (message.messageType === "BIDQUEST") {
-                $scope.currentState = $scope.GAME_STATE.BIDQUEST;
-                $scope.players[message.player].joinedQuest = true; //if the player is bidding, he's in the quest
-                $scope.bidSlider.value = message.minBidValue;
-                $scope.bidSlider.options.floor = message.minBidValue;
-                $scope.bidSlider.options.ceil = message.maxBidValue;
                 $scope.toast = "Players are currently bidding";
+                if (message.player == $scope.myPlayerId) {
+                    $scope.currentState = $scope.GAME_STATE.BIDQUEST;
+                    $scope.players[message.player].joinedQuest = true; //if the player is bidding, he's in the quest
+                    $scope.bidSlider.value = message.minBidValue;
+                    $scope.bidSlider.options.floor = message.minBidValue;
+                    $scope.bidSlider.options.ceil = message.maxBidValue;
+                    $scope.toast = "You are bidding";
+                }
+
             }
             if (message.messageType === "DISCARDQUEST") {
                 $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
@@ -726,6 +734,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[$scope.myPlayerId].needToDiscard = message.toDiscard; //every player only needs to know how many cards they need to discard themselves (not other players) 
                     $scope.toast = "Hand too full, select " + $scope.players[$scope.myPlayerId].needToDiscard + " cards to discard";
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+                } else {
+                    $scope.toast = "Waiting for players to finish discarding cards";
                 }
             }
             if (message.messageType === "FINISHDISCARD") {
@@ -748,6 +758,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[message.player].faceUp.push($scope.players[message.player].faceDown[i]);
                 }
                 $scope.players[message.player].faceDown.length = 0;
+                $scope.toast = "Everyone flip face down to face up";
             }
             if (message.messageType === "DISCARDFACEUP") {
                 //remove cards from faceup
