@@ -18,7 +18,6 @@ import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
 import com.qotrt.messages.game.PlayCardClient;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
-import com.qotrt.model.Discard;
 import com.qotrt.model.DiscardModel;
 import com.qotrt.model.EventModel;
 

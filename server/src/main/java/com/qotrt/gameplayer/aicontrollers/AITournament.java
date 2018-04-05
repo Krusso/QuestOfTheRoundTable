@@ -9,6 +9,8 @@ import com.qotrt.cards.AdventureCard;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.AbstractAI;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.messages.game.PlayCardClient;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.model.GenericPairTyped;
 
 public class AITournament extends AIController {
@@ -28,7 +30,9 @@ public class AITournament extends AIController {
 
 	private void questioncardtournament() {
 		List<AdventureCard> cards = ai.playCardsForTournament();
-		cards.forEach(i -> player.setFaceDown(player.getCardByID(i.id)));
+		
+		cards.forEach(i -> pc.playCard(game, player, game.bmm.getTournamentModel(),
+				new PlayCardClient(player.getID(), i.id, ZONE.HAND, ZONE.FACEDOWN)));
 		game.bmm.getTournamentModel().finishSelectingCards(player);
 	}
 
