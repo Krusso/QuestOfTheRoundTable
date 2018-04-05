@@ -60,25 +60,25 @@ public class TournamentView extends Observer {
 	
 	private void questionTournament(int[] players) {
 		for(int i: players) {
-			sendMessage("/queue/response", new TournamentAcceptDeclineServer(i));
+			sendMessage(new TournamentAcceptDeclineServer(i, players));
 		}
 	}
 	
 	private void joinTournament(Player player) {
-		sendMessage("/queue/response", new TournamentAcceptedDeclinedServer(player.getID(), true));
+		sendMessage(new TournamentAcceptedDeclinedServer(player.getID(), true));
 	}
 	
 	private void declineTournament(Player player) {
-		sendMessage("/queue/response", new TournamentAcceptedDeclinedServer(player.getID(), false));
+		sendMessage(new TournamentAcceptedDeclinedServer(player.getID(), false));
 	}
 	
 	private void setWinners(GenericPair e) {
-		sendMessage("/queue/response", new TournamentWinServer((int[]) e.key, (WINTYPES) e.value));
+		sendMessage(new TournamentWinServer((int[]) e.key, (WINTYPES) e.value));
 	}
 	
 	private void questionCardTournament(int[] players) {
 		for(int i: players) {
-			sendMessage("/queue/response", new TournamentPickCardsServer(i, players));	
+			sendMessage(new TournamentPickCardsServer(i, players));	
 		}
 	}
 }

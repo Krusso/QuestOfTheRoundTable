@@ -208,7 +208,7 @@
             <div class="cardZones">
                 <div class="playerFaceUp">
                     <div ng-repeat="card in players[myPlayerId].faceUp" ng-model="players[myPlayerId].faceUp">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="false" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" ng-click="merlinFunction($event, card)" card1="{{card.key}}" data-drag="false" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <div class="playerFaceDown btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_myfd'}">
@@ -218,7 +218,7 @@
                 </div>
                 <div class="playerHand btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_hand'}">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
-                        <div c1 class="card1 mordredCards" ng-click="mordredFunction($event, card)" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1 mordredCards" ng-click="mordredFunction($event, card); merlinFunction($event, card)" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <!--

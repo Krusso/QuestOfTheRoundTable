@@ -156,7 +156,7 @@ public class PlayCardController {
 				player.getCardByID(chatMessage.card);
 			}
 		} else if(chatMessage.zoneTo.equals(ZONE.HAND) && map.containsKey(chatMessage.zoneFrom) && game.bmm.getQuestModel().canPickCardsForStage()){
-			AdventureCard c = game.bmm.getQuestModel().getCard(chatMessage.card, map.get(chatMessage.zoneTo));
+			AdventureCard c = game.bmm.getQuestModel().getCard(chatMessage.card, map.get(chatMessage.zoneFrom));
 			player.hand.addCard(c);
 		} else {
 			response = "not a playable zone currently";

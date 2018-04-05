@@ -106,6 +106,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	
 	public synchronized String finishSelectingStages(Player player) {
 		int min = Integer.MIN_VALUE;
+		int testStages = 0;
 		BattlePointCalculator bpc = new BattlePointCalculator(null);
 		for(int i = 0; i < quest.getNumStages(); i++) {
 			if(!(quest.getStage(i).isFoeStage() || quest.getStage(i).isTestStage())) {
@@ -121,6 +122,12 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 
 				min = bpc.calculateStage(quest.getStage(i).getStageCards(), 
 						quest.getQuestCard());
+			} else {
+				testStages++;
+			}
+			
+			if(testStages > 1) {
+				return "each stages needs 1 test or 1 foe card";
 			}
 		}
 		

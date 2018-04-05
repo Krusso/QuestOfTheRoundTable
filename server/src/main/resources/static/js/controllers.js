@@ -798,7 +798,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
                         if (message.mordred == $scope.players[message.player].hand[i].value) {
                             console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
-                            $scope.players[message.player].faceUp.splice(i, 1);
+                            $scope.players[message.player].hand.splice(i, 1);
                         }
                     }
                 }
@@ -1527,6 +1527,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         } else if ($scope.mordred != -1) {
             $scope.sendMordred(card.value);
         }
+    }
+    
+    $scope.merlinFunction = function($event, card){
+    	// TODO
     }
 
     $scope.setDragOff = function () {
