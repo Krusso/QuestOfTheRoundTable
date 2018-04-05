@@ -369,7 +369,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         //after player bids, set the state to waiting, this is only really necessary for hot-seat 
         //since in racing mode, every player will receive a BidQuest message rather than 1 by 1
         $scope.currentState = $scope.currentState.WAITING;
-        $scope.toast = "Waiting for other players to bid".
+        $scope.toast = "Waiting for other players to bid";
     };
     $scope.sendFinishDiscard = function () {
         console.log("hello");
@@ -520,8 +520,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
             }
             if (message.messageType === "JOINTOURNAMENT") {
-                $scope.currentState = $scope.GAME_STATE.JOINTOURNAMENT;
-                $scope.toast = "Join Tournament ?";
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.currentState = $scope.GAME_STATE.JOINTOURNAMENT;
+                    $scope.toast = "Join Tournament ?";
+                } else {
+                    $scope.toast = "Waiting for player " + message.players + " to join tournament";
+                }
             }
 
             if (message.messageType === "JOINEDTOURNAMENT") {
@@ -530,9 +534,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
 
             if (message.messageType === "PICKTOURNAMENT") {
-                if ($scope.players[message.player].joinedTourn) {
+                if (_.contains(message.players, $scope.myPlayerId)) {
                     $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
                     $scope.toast = "Select cards for tournament";
+                } else {
+                    $scope.toast = "Waiting for players " + message.players + " to pick cards for tournament";
                 }
             }
 
@@ -1528,9 +1534,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.sendMordred(card.value);
         }
     }
-    
-    $scope.merlinFunction = function($event, card){
-    	// TODO
+
+    $scope.merlinFunction = function ($event, card) {
+        // TODO
     }
 
     $scope.setDragOff = function () {

@@ -1,9 +1,8 @@
 //Container is used to fix the vh/vw scaling issue
-#container {
-    position: relative;
+.gameContainer {
+    position: absolute;
     width: 100vw;
-    height: 100vh;
-    overflow: scroll;
+    height: 80vh;
 }
 
 #gameboard {
@@ -15,7 +14,6 @@
     background-image: url("../gameResources/gameboardbg3.jpg");
     background-size: contain;
     background-repeat: no-repeat;
-    z-index: 10;
     /* top: 0;
     bottom: 0;
     // vertical center
