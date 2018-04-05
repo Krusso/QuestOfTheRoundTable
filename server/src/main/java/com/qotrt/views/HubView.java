@@ -41,7 +41,7 @@ public class HubView extends Observer implements PropertyChangeListener {
 				map(i -> new GenericPair(i.getPlayerName(), i.getShieldNumber())).
 				toArray(GenericPair[]::new));
 
-		sendMessage("/queue/response", gjs);
+		sendMessage(gjs);
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -49,7 +49,7 @@ public class HubView extends Observer implements PropertyChangeListener {
 	}
 
 	private void startGame() {
-		sendMessage("/queue/response", new GameStartServer());
+		sendMessage(new GameStartServer());
 	}
 
 }

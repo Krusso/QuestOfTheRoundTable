@@ -54,7 +54,7 @@ public class BattlePointsView extends Observer {
 		}
 		logger.info("Story card not empty: " + sc + " calculating bp");
 		int points = bpc.calculatePlayer(p, sc);
-		sendMessage("/queue/response", new BattlePointsServer(p.getID(), points, ZONE.HAND));
+		sendMessage(new BattlePointsServer(p.getID(), points, ZONE.HAND));
 	}
 	
 	private void battlePointsStage(QuestModel quest){
@@ -68,7 +68,7 @@ public class BattlePointsView extends Observer {
 		Player p = quest.getPlayerWhoSponsor().get(0);
 		for(int i = 0; i < quest.getQuest().getNumCards(); i++){
 			int points = bpc.calculateStage(quest.getQuest().getStage(i).getStageCards(), sc);
-			sendMessage("/queue/response", new BattlePointsServer(p.getID(), points, map.get(i)));	
+			sendMessage(new BattlePointsServer(p.getID(), points, map.get(i)));	
 		}
 	}
 
