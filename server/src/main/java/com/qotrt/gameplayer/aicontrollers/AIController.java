@@ -4,12 +4,14 @@ import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 
 import com.qotrt.game.Game;
+import com.qotrt.game.PlayCard;
 import com.qotrt.gameplayer.AbstractAI;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.views.EventHandler;
 
 public abstract class AIController extends EventHandler {
 
+	protected PlayCard pc;
 	protected Game game;
 	protected Player player;
 	protected AbstractAI ai;
@@ -18,6 +20,7 @@ public abstract class AIController extends EventHandler {
 		this.game = game;
 		this.player = player;
 		this.ai = ai;
+		this.pc = new PlayCard();
 	}
 	
 	

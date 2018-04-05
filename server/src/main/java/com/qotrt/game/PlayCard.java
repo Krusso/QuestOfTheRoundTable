@@ -2,16 +2,17 @@ package com.qotrt.game;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.qotrt.cards.AdventureCard;
-import com.qotrt.controller.PlayCardController;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.messages.game.PlayCardClient;
-import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.messages.game.PlayCardClient.ZONE;
+import com.qotrt.messages.game.PlayCardServer;
 import com.qotrt.model.CanPick;
 import com.qotrt.model.Discard;
 
+@Component
 public class PlayCard {
 
 	final static Logger logger = LogManager.getLogger(PlayCard.class);
