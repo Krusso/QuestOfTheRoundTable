@@ -1,6 +1,7 @@
 package com.qotrt.gameplayer.aicontrollers;
 
 import java.beans.PropertyChangeEvent;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -11,6 +12,8 @@ import com.qotrt.cards.QuestCard;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.AbstractAI;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.messages.game.PlayCardClient;
+import com.qotrt.messages.game.PlayCardClient.ZONE;
 import com.qotrt.model.GenericPair;
 import com.qotrt.model.GenericPairTyped;
 
@@ -65,11 +68,20 @@ public class AIQuest extends AIController {
 	}
 
 	private void questStage() {
+		HashMap<Integer, ZONE> map = new HashMap<Integer, ZONE>();
+		map.put(0, ZONE.STAGE1);
+		map.put(1, ZONE.STAGE2);
+		map.put(2, ZONE.STAGE3);
+		map.put(3, ZONE.STAGE4);
+		map.put(4, ZONE.STAGE5);
+		
 		List<List<AdventureCard>> cards = ai.doISponsorAQuest((QuestCard) game.bmm.getBoardModel().getCard());
 		for(int i = 0; i < cards.size(); i++) {
 			for(AdventureCard c: cards.get(i)) {
-				game.bmm.getQuestModel().attemptMove(i, player.findCardByID(c.id));
-				player.getCardByID(c.id);
+				game.bmm.getQuestModel().attemptMove(i, player.getCardByID(c.id));
+
+				pc.checkValidityAndSend(game, player, new PlayCardClient(player.getID(),
+						c.id, ZONE.HAND, map.get(i)), "");
 			}
 		}
 		game.bmm.getQuestModel().finishSelectingStages(player);

@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.qotrt.gameplayer.Player;
 import com.qotrt.messages.quest.BidDiscardFinishPickingServer;
+import com.qotrt.messages.quest.FinishPickingStagesServer;
 import com.qotrt.messages.quest.QuestBidServer;
 import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinServer;
@@ -82,6 +83,14 @@ public class QuestView extends Observer {
 						
 		Consumer<PropertyChangeEvent> funcC9 = 
 				x -> finishDiscard(mapper.convertValue(x.getNewValue(), Player.class));		
+		
+		Function<PropertyChangeEvent, Boolean> funcF10 = 
+						x -> x.getPropertyName().equals("questStageDone");
+						
+		Consumer<PropertyChangeEvent> funcC10 = 
+				x -> questStageDone(mapper.convertValue(x.getNewValue(), Player.class));		
+				
+		
 				
 		events.add(new GenericPairTyped<>(funcF, funcC));
 		events.add(new GenericPairTyped<>(funcF1, funcC1));
@@ -93,7 +102,12 @@ public class QuestView extends Observer {
 		events.add(new GenericPairTyped<>(funcF7, funcC7));
 		events.add(new GenericPairTyped<>(funcF8, funcC8));
 		events.add(new GenericPairTyped<>(funcF9, funcC9));
+		events.add(new GenericPairTyped<>(funcF10, funcC10));
 
+	}
+
+	private void questStageDone(Player player) {
+			sendMessage(new FinishPickingStagesServer(player.getID(), true, ""));
 	}
 
 	private void finishDiscard(Player p) {

@@ -65,7 +65,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 				"declineSponsorQuest", racing);
 		
 		stageSetup = new SingleShotConfirmation("questStage",
-				null,
+				"questStageDone",
 				null, racing);
 		
 		participate = new MultiShotConfirmation("questionQuest", 
