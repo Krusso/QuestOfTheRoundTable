@@ -22,6 +22,7 @@ public class EventHandler {
 		events.stream().filter(i -> {
 			return i.key.apply(x);
 		}).forEach(i -> {
+			logger.info("event got consumed: " + x.getPropertyName() + " lambda: " + i.value);
 			i.value.accept(x);
 		});
 	}

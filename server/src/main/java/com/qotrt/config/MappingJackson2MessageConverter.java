@@ -215,7 +215,7 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 		Object payload = message.getPayload();
 		Class<?> view = getSerializationView(conversionHint);
 		// Note: in the view case, calling withType instead of forType for compatibility with Jackson <2.5
-		logger.info("raw json received: " + new String((byte[]) payload));
+		logger.info("raw json : " + new String((byte[]) payload));
 		try {
 			if (payload instanceof byte[]) {
 				if (view != null) {

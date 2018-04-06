@@ -65,7 +65,7 @@ public abstract class AbstractAI {
 	}
 	
 	public boolean winPlayer(Player p) {
-		logger.info("Player i rank: " + p.getRank() + " shields: " + p.getShields());
+		logger.info("Player " + p.getID() + " rank: " + p.getRank() + " shields: " + p.getShields());
 		if((p.getRank()  == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) || 
 				(p.getRank()  == Rank.RANKS.CHAMPION && p.getShields() >= (10 - pm.players.length)) ||
 				(p.getRank()  == Rank.RANKS.KNIGHT && p.getShields() >= (7 - pm.players.length)) ||

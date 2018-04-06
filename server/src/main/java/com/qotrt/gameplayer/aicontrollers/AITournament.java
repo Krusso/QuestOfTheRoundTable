@@ -19,10 +19,10 @@ public class AITournament extends AIController {
 		super(game, player, ai);
 		
 		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("questiontournament");
-		Consumer<PropertyChangeEvent> func1 = x -> questiontournament();
-
+		Consumer<PropertyChangeEvent> func1 = x ->  wrapEvent(x, y -> questiontournament()).accept(x);
+		
 		Function<PropertyChangeEvent, Boolean> func2 = x -> x.getPropertyName().equals("questioncardtournament") && contains((int[]) x.getNewValue());
-		Consumer<PropertyChangeEvent> func3 = x -> questioncardtournament();
+		Consumer<PropertyChangeEvent> func3 = x -> wrapEvent(x, y -> questioncardtournament()).accept(x);
 		
 		events.add(new GenericPairTyped<>(func, func1));
 		events.add(new GenericPairTyped<>(func2, func3));
