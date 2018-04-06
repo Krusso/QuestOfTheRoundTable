@@ -377,11 +377,11 @@ public class TestQuest {
 		p.waitForThenSend(QuestSponsorServer.class, 1,
 				"/app/game.sponsorQuest", new QuestSponsorClient(1, true));
 		p.waitForThenSend(QuestPickStagesServer.class, 1, "/app/game.playCardQuestSetup",
-				new PlayCardClient(1, 134, ZONE.HAND, ZONE.STAGE1));
+				new PlayCardClient(1, 156, ZONE.HAND, ZONE.STAGE1));
 		PlayCardServer pcs = p.take(PlayCardServer.class);
 		assertEquals("", pcs.response);
 		assertEquals(ZONE.STAGE1, pcs.zoneTo);
-		p.sendMessage("/app/game.playCardQuestSetup", new PlayCardClient(1, 131, ZONE.HAND, ZONE.STAGE1));
+		p.sendMessage("/app/game.playCardQuestSetup", new PlayCardClient(1, 152, ZONE.HAND, ZONE.STAGE1));
 		pcs = p.take(PlayCardServer.class);
 		assertNotEquals("", pcs.response);
 		assertEquals(ZONE.HAND, pcs.zoneTo);
@@ -424,7 +424,7 @@ public class TestQuest {
 					PlayerTestCreator p = new PlayerTestCreator();
 					p.connect(WEBSOCKET_URI);
 					p.sendMessage("/app/game.createGame", 
-							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false));
+							new GameCreateClient(2, "hello", RIGGED.ONESTAGETOURNAMENT, new AIPlayer[] {}, false, false));
 
 					p.waitForThenSend(QuestSponsorServer.class, 0,
 							"/app/game.sponsorQuest", new QuestSponsorClient(0, false));

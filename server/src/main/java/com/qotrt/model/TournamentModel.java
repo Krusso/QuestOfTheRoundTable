@@ -26,7 +26,7 @@ public class TournamentModel extends Observable implements PropertyChangeListene
 		
 		join = new MultiShotConfirmation("questiontournament", 
 				"jointournament", 
-				"declinetournament", racing);
+				"declinetournament", true);
 		
 		join.subscribe(this);
 		questionCards.subscribe(this);

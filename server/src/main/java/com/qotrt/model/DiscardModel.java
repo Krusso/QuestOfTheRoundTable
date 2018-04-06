@@ -18,8 +18,8 @@ public class DiscardModel extends Observable implements PropertyChangeListener, 
 	private Confirmation discard;
 	private Map<Player, AdventureDeck> cards = new HashMap<Player, AdventureDeck>();
 
-	public DiscardModel(boolean racing) {
-		discard = new MultiShotConfirmation(null, "finishHandDiscard", null, racing);
+	public DiscardModel() {
+		discard = new MultiShotConfirmation(null, "finishHandDiscard", null, true);
 		discard.subscribe(this);
 	} 
 	

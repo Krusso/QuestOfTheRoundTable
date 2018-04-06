@@ -7,12 +7,14 @@ public class MordredServer extends Message {
 
 	public int mordred;
 	public int opponent;
+	public int otherPlayer;
 	public String response;
 	
 	public MordredServer() {}
 	
-	public MordredServer(int player, int mordred, int opponent, String response) {
+	public MordredServer(int player, int otherPlayer, int mordred, int opponent, String response) {
 		super(player);
+		this.otherPlayer = otherPlayer;
 		this.mordred = mordred;
 		this.opponent = opponent;
 		this.response = response;
