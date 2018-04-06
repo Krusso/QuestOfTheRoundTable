@@ -19,15 +19,18 @@ public class HotSeat extends Mode {
 	
 	@Override
 	public void start(List<Player> toAsk, String eventName) {
+		this.toAsk = toAsk;
 		next = toAsk.iterator();
 		this.eventName = eventName;
-		logger.info("Starting: " + toAsk + " next: " + next + " eventName: " + eventName);
+		logger.info("Starting: " + this.toAsk + " size: " + this.toAsk.size() +  " next: " + next + " eventName: " + this.eventName);
 		nextPlayerToAsk();
 	}
 
 	@Override
 	public void start(List<Player> toAsk, Object obj, String eventName)  {
 		this.toAsk = toAsk;
+		next = toAsk.iterator();
+		next.next();
 		if(eventName != null) {
 			fireEvent(eventName, null, new GenericPair(PlayerUtil.playersToIDs(toAsk), obj));
 		}
@@ -39,6 +42,7 @@ public class HotSeat extends Mode {
 		logger.info("Next: " + next.hasNext());
 		if(next.hasNext()) {
 			temp.add(next.next());
+			logger.info(temp + " has next: " + next.hasNext());
 			if(eventName != null) {
 				fireEvent(eventName, null, PlayerUtil.playersToIDs(temp));
 			}

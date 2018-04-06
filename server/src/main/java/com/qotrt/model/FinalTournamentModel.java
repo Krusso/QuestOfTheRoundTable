@@ -13,10 +13,10 @@ public class FinalTournamentModel extends Observable implements PropertyChangeLi
 
 	private Confirmation questionCards;
 	
-	public FinalTournamentModel(boolean racing) {
+	public FinalTournamentModel() {
 		questionCards = new MultiShotConfirmation("questionFinalTournament", 
 				null, 
-				null, racing);
+				null, true);
 		questionCards.subscribe(this);
 	}
 
