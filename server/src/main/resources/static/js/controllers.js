@@ -1544,7 +1544,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             // -1 = false otherwise its the ID of mordred
             if ($scope.mordred != -1) {
                 $scope.mordred = -1;
-                $scope.mordred = -1;
             } else {
                 $scope.mordred = card.value;
                 $scope.toast = "Click on opponent ally to kill or click Mordred again";
