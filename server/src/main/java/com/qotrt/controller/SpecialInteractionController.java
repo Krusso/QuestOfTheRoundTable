@@ -64,14 +64,15 @@ public class SpecialInteractionController {
 		GenericPair[] e = game.bmm.getQuestModel().merlinCan(chatMessage.stage);
 		
 		if(e != null) {
-			
-			if(player.hand.findCardByID(chatMessage.id) != null) {
-				player.getFaceUp().addCard(player.hand.getCardByID(chatMessage.id));
+			// TODO: probably need to reset merlin power in different places
+			if(player.hand.findCardByID(chatMessage.merlin) != null) {
+				player.getFaceUp().addCard(player.hand.getCardByID(chatMessage.merlin));
 			}
 			
-			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), e, ""));
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.stage, e, ""));
 		} else {
-			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), new GenericPair[] {}, "Can only use merlin once per quest"));
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.stage, 
+					new GenericPair[] {}, "Can only use merlin once per quest"));
 		}
 		
 	}

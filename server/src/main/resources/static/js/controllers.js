@@ -191,6 +191,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_discardFinish = "/app/game.finishDiscard";
     $scope.ep_finishSelectingDiscardHand = "/app/game.finishSelectingDiscardHand";
     $scope.ep_mordred = "/app/game.playMordred";
+    $scope.ep_merlin = "/app/game.playMerlin";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -395,6 +396,17 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             player: $scope.myPlayerId
         };
         $scope.addMessage($scope.ep_mordred);
+    };
+    $scope.sendMerlin = function (stage) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.MERLIN,
+            java_class: "MerlinClient",
+            merlin: $scope.merlin,
+            stage: i,
+            player: $scope.myPlayerId
+        };
+        $scope.addMessage($scope.playMerlin);
     };
 
     /***************************************************************/
@@ -804,6 +816,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
 				}
 				$scope.mordred = -1;
+			}
+			
+			if(message.messageType === "MERLIN"){
+				if(message.response !== "" && message.player == $scope.myPlayerId){
+					$scope.toast = message.response;
+				} else if(message.response === "" && message.player == $scope.myPlayerId){
+					$scope.players[$scope.myPlayerId].revealStage[message.stage] = true
+				}
+				$scope.merlin = -1;
 			}
 
             console.log("done parsing");
@@ -1547,7 +1568,18 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
     
     $scope.merlinFunction = function($event, card){
-    	// TODO
+    	console.log("merlin stuff");
+    	if(card.key === "Merlin"){
+    		// -1 = false otherwise its the ID of mordred
+            if ($scope.merlin != -1) {
+                $scope.merlin = -1;
+            } else {
+                $scope.merlin = card.value;
+                $scope.toast = "Click on a stage to reveal";
+            }
+    	} else if($scope.merlin != -1){
+    		$scope.sendMerlin(card);
+    	}
     }
 
     $scope.setDragOff = function () {
