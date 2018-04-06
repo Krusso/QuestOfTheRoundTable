@@ -113,7 +113,7 @@ public class Player extends Observable {
 	}
 
 	public void setBackToHandFromFaceDown(int card) {
-		faceUp.addCard(faceDown.getCardByID(card));
+		hand.addCard(faceDown.getCardByID(card));
 		fireEvent("battlePoints", null, this);
 	}
 	
@@ -162,6 +162,7 @@ public class Player extends Observable {
 				new GenericPair(removedCards.stream().
 						map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new), 
 						ID));
+		fireEvent("battlePoints", null, this);
 	}
 
 	public int getShields() {

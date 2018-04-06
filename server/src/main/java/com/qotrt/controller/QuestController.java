@@ -70,10 +70,11 @@ public class QuestController {
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		logger.info("finish selecting cards: " + chatMessage.player);
-		if(game.bmm.getQuestModel().finishSelectingStages(player)) {
+		String response = game.bmm.getQuestModel().finishSelectingStages(player);
+		if(response.equals("")) {
 			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), true, ""));
 		} else {
-			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), false, "each stages needs 1 test or 1 foe card"));
+			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), false, response));
 		}
 	}
 	

@@ -19,7 +19,7 @@
 <body>
 -->
 
-<div id="container">
+<div class="gameContainer" style="height:100vh; width:100vw">
     <div id="opaquelayer" ng-show="showSpecialInteractions()"></div>
     <div id="gameboard">
         <!--    OPPONENT HAND ZONES        -->
@@ -30,14 +30,14 @@
                         <div c1 class="card1" card1="{{player.rank}}">
                             <!--  RANK CARD IMAGE GOES HERE  -->
                         </div>
-                        <div c1 class="card1" card1="S{{player.shield}}">
+                        <div c1 class="card1" card1="S{{player.shield}}" ng-style="{'top': '50%'}">
                             <h2><br/>Shields<br/>{{player.shieldCount}}</h2>
                         </div>
                     </div>
                     <div class="cardZones">
                         <div class="opponentHand" ng-model="player.hand">
                             <div ng-repeat="card in player.hand">
-                                <div c1 class="card1" card1="Adventure Back"></div>
+                                <div c1 class="card1" card1="Adventure Back" ng-style="card.css"></div>
                             </div>
                         </div>
                         <div class="opponentFaceUp">
@@ -96,7 +96,7 @@
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
                         </div>
-                        <div ng-show="showHiddenStage(1)">
+                        <div ng-show="showHiddenStage(1)" class="hiddenStage">
                             <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
                                 <div c1 class="card1" card1="Adventure Back"></div>
                             </div>
@@ -113,7 +113,7 @@
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
                         </div>
-                        <div ng-show="showHiddenStage(2)">
+                        <div ng-show="showHiddenStage(2)" class="hiddenStage">
                             <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
                                 <div c1 class="card1" card1="Adventure Back"></div>
                             </div>
@@ -130,7 +130,7 @@
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
                         </div>
-                        <div ng-show="showHiddenStage(3)">
+                        <div ng-show="showHiddenStage(3)" class="hiddenStage">
                             <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
                                 <div c1 class="card1" card1="Adventure Back"></div>
                             </div>
@@ -147,7 +147,7 @@
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
                         </div>
-                        <div ng-show="showHiddenStage(4)">
+                        <div ng-show="showHiddenStage(4)" class="hiddenStage">
                             <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
                                 <div c1 class="card1" card1="Adventure Back"></div>
                             </div>
@@ -189,26 +189,31 @@
         <div class="playerZone">
 
             <div class="displayContainer">
-                <div c1 class="card1" card1="{{players[myPlayerId].rank}}">
-                    <!--  RANK CARD IMAGE GOES HERE  -->
+                <div>
+                    <div c1 class="card1" card1="{{players[myPlayerId].rank}}">
+                        <!--  RANK CARD IMAGE GOES HERE  -->
 
-                    <div ng-model="myPlayerId">
-                        <h1>{{myPlayerId}}</h1>
+                        <div ng-model="myPlayerId">
+                            <h1>{{myPlayerId}}</h1>
+                        </div>
+                    </div>
+                    <div class="shieldBpContainer">
+                        <!--   BP VALUE GOES HERE       -->
+                        <h2>My BP<br/>{{players[myPlayerId].battlePoints}}</h2>
+                        <!--  SHIELD IMAGE GOES HERE    -->
+                        <div c1 class="card1" card1="S{{players[myPlayerId].shield}}">
+                            <h2><br/>Shields<br/>{{players[myPlayerId].shieldCount}}</h2>
+                        </div>
                     </div>
                 </div>
-                <div class="shieldBpContainer">
-                    <!--   BP VALUE GOES HERE       -->
-                    <h2>Current BP<br/>{{players[myPlayerId].battlePoints}}</h2>
-                    <!--  SHIELD IMAGE GOES HERE    -->
-                    <div c1 class="card1" card1="S{{players[myPlayerId].shield}}">
-                        <h2><br/>Shields<br/>{{players[myPlayerId].shieldCount}}</h2>
-                    </div>
+                <div class="playerNameContainer">
+                    <h2>{{players[myPlayerId].name}}</h2>
                 </div>
             </div>
             <div class="cardZones">
                 <div class="playerFaceUp">
                     <div ng-repeat="card in players[myPlayerId].faceUp" ng-model="players[myPlayerId].faceUp">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="false" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" ng-click="merlinFunction($event, card)" card1="{{card.key}}" data-drag="false" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                     </div>
                 </div>
                 <div class="playerFaceDown btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_myfd'}">
@@ -218,7 +223,7 @@
                 </div>
                 <div class="playerHand btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_hand'}">
                     <div ng-repeat="card in players[myPlayerId].hand" ng-model="players[myPlayerId].hand">
-                        <div c1 class="card1 mordredCards" ng-click="mordredFunction($event, card)" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1 mordredCards" ng-click="mordredFunction($event, card); merlinFunction($event, card)" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                     </div>
                 </div>
                 <!--

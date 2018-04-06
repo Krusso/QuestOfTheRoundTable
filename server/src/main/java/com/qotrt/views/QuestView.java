@@ -27,11 +27,9 @@ public class QuestView extends Observer {
 	public QuestView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
 		super(messagingTemplate, players);
 
-		Function<PropertyChangeEvent, Boolean> funcF = 
-				x -> x.getPropertyName().equals("questionSponsor");
+		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("questionSponsor");
 
-		Consumer<PropertyChangeEvent> funcC = 
-				x -> questionSponsor(mapper.convertValue(x.getNewValue(), int[].class));
+		Consumer<PropertyChangeEvent> funcC = x -> questionSponsor(mapper.convertValue(x.getNewValue(), int[].class));
 		
 		Function<PropertyChangeEvent, Boolean> funcF1 = 
 						x -> x.getPropertyName().equals("questStage");
@@ -99,7 +97,7 @@ public class QuestView extends Observer {
 	}
 
 	private void finishDiscard(Player p) {
-		sendMessage("/queue/response", new BidDiscardFinishPickingServer(p.getID(), true, ""));
+		sendMessage(new BidDiscardFinishPickingServer(p.getID(), true, ""));
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -108,44 +106,44 @@ public class QuestView extends Observer {
 
 	private void questionSponsor(int[] players) {
 		if(players.length == 0) {
-			sendMessage("/queue/response", new QuestSponsorServer(-1, players));
+			sendMessage(new QuestSponsorServer(-1, players));
 		}
 
 		for(int i: players) {
-			sendMessage("/queue/response", new QuestSponsorServer(i, players));
+			sendMessage(new QuestSponsorServer(i, players));
 		}
 	}
 
 	private void questStage(GenericPair e) {
-		sendMessage("/queue/response", new QuestPickStagesServer(((int[])e.key)[0], (int)e.value));
+		sendMessage(new QuestPickStagesServer(((int[])e.key)[0], (int)e.value));
 	}
 
 	private void questionQuest(int[] players) {
 		for(int i: players) {
-			sendMessage("/queue/response", new QuestJoinServer(i, players));
+			sendMessage(new QuestJoinServer(i, players));
 		}
 	}
 
 	private void questionCardQuest(int[] players) {
 		for(int i: players) {
-			sendMessage("/queue/response", new QuestPickCardsServer(i, players));
+			sendMessage(new QuestPickCardsServer(i, players));
 		}
 	}
 
 	private void questWinners(GenericPair e) {
-		sendMessage("/queue/response", new QuestWinServer((int[]) e.key, (WINTYPES) e.value));
+		sendMessage(new QuestWinServer((int[]) e.key, (WINTYPES) e.value));
 	}
 
 	private void bid(int[] e) {
-		sendMessage("/queue/response", new QuestBidServer(e[0], e[1], e[2], e[3]));
+		sendMessage(new QuestBidServer(e[0], e[1], e[2], e[3]));
 	}
 
 	private void discardQuest(GenericPair e) {
-		sendMessage("/queue/response", new QuestDiscardCardsServer(((int[])e.key)[0], (int) e.value));
+		sendMessage(new QuestDiscardCardsServer(((int[])e.key)[0], (int) e.value));
 	}
 
 	private void flipStage(GenericPair e) {
-		sendMessage("/queue/response", new QuestUpServer((String[]) e.key, (int) e.value));
+		sendMessage(new QuestUpServer((String[]) e.key, (int) e.value));
 	}
 
 

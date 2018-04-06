@@ -33,10 +33,10 @@ public class FinalTournamentView extends Observer {
 	}
 
 	private void setWinners(int[] players) {
-		sendMessage("/queue/response", new GameOverServer(players));
+		sendMessage(new GameOverServer(players));
 	}
 
 	private void questionCardTournament(int[] players) {
-		sendMessage("/queue/response", new FinalTournamentNotifyServer(players));
+		sendMessage(new FinalTournamentNotifyServer(players));
 	}
 }

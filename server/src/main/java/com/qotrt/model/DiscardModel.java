@@ -59,8 +59,8 @@ public class DiscardModel extends Observable implements PropertyChangeListener, 
 	}
 
 	public synchronized String finishDiscarding(Player player) {
-		if(player.hand.size() > 12) {
-			return "Please discard: " + (player.hand.size() - 12) + " more cards";
+		if(player.hand.size() != 12) {
+			return "Please discard until you have 12 cards in your hand";
 		} else {
 			discard.accept(player, "player: " + player + " attempting to finish discarding",
 					"player: " + player.getID() + " finished discarding",

@@ -25,7 +25,7 @@ public class BoardView extends Observer {
 
 	private void middleCardFlipped(StoryCard s) {
 		MiddleCardServer mcs = new MiddleCardServer(s.getName());
-		sendMessage("/queue/response", mcs);
+		sendMessage(mcs);
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
