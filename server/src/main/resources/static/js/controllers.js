@@ -165,7 +165,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         PICKTOURNAMENT: 21,
         HANDDISCARD: 22,
         WINTOURNAMENT: 23,
-        JOINEDFINALTOURNAMENT: 24
+        WAITING: 24,
+        JOINEDFINALTOURNAMENT: 25
     };
 
 
@@ -759,11 +760,19 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "WINTOURNAMENT") {
-                if(message.players.length > 0) {
-                    $scope.toast = "Player "+message.players+" won the tournament";
-                } else {
+                if (message.type == "NOJOIN") {
                     $scope.toast = "No one joined the tournament";
                 }
+                if (message.type == "ONEJOIN") {
+                    $scope.toast = "Only player " + message.players + " joined the tournament";
+                }
+                if (message.type == "TIE") {
+                    $scope.toast = "Players " + message.players + " tied";
+                }
+                if (message.type == "WON") {
+                    $scope.toast = "Player " + message.players + " won the tournament";
+                }
+
                 $scope.currentState = $scope.GAME_STATE.WINTOURNAMENT;
             }
             //move cards from facedown to faceup for player
@@ -790,14 +799,22 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "JOINEDFINALTOURNAMENT") {
-                for(var i=0; i<message.players.length; i++){
-                    if ($scope.myPlayerId == message.players[i]){
-                        $scope.toast = "Select cards for final tournament";
-                        $scope.players[$scope.myPlayerId].joinedFinalTourn = true;
-                        $scope.currentState = $scope.GAME_STATE.JOINEDFINALTOURNAMENT;
-                    } else if (i == message.players.length-1) {
-                        $scope.toast = "Waiting for players to finish final tournament";
-                    }
+                // for(var i=0; i<message.players.length; i++){
+                //     if ($scope.myPlayerId == message.players[i]){
+                //         $scope.toast = "Select cards for final tournament";
+                //         $scope.players[$scope.myPlayerId].joinedFinalTourn = true;
+                //         $scope.currentState = $scope.GAME_STATE.JOINEDFINALTOURNAMENT;
+                //     } else if (i == message.players.length-1) {
+                //         $scope.toast = "Waiting for players to finish final tournament";
+                //     }
+                // }
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.currentState = $scope.GAME_STATE.JOINEDFINALTOURNAMENT;
+                    $scope.toast = "Select cards for final tournament";
+                } else {
+                    $scope.currentState = $scope.GAME_STATE.WAITING;
+                    $scope.toast = "Waiting for players to finish final tournament";
+                    $scope.setDragOff();
                 }
             }
             if (message.messageType === "GAMEOVER") {
