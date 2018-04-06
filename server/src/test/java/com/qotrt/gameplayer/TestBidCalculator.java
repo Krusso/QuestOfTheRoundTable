@@ -13,6 +13,7 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.AllyCard;
 import com.qotrt.cards.AmourCard;
 import com.qotrt.cards.QuestCard;
+import com.qotrt.deck.AdventureDeck;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
@@ -22,17 +23,20 @@ public class TestBidCalculator {
 	PlayerManager pm;
 	Player p1;
 	ArrayList<AdventureCard> cards;
+	AdventureDeck ad;
 	@Before
 	public void before() {
 		pm = new PlayerManager(1, new UIPlayer[] {}, null, RIGGED.ONE);
 		p1 = new Player(0, new UIPlayer("", "",1));
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();
+		ad = new AdventureDeck();
+		ad.populate();
 	}
 	
 	@Test
 	public void testKingPellinore() {
-		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
+		cards.add(ad.getCardByName("Sir Tristan"));
 		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
 		cards.add(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES));
 		p1.addCards(cards);

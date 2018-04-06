@@ -158,7 +158,7 @@ public class BattlePointCalculator {
 			if(players.next().iseult == true) foundIseult = true;
 		}
 
-		
+
 		for(AdventureCard c: Stream.of(player.getFaceDownDeck().getDeck(), player.getFaceUp().getDeck()).
 				flatMap(Collection::stream).
 				collect(Collectors.toList())) {
