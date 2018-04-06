@@ -3,10 +3,10 @@ package com.qotrt.cards;
 import com.qotrt.deck.AdventureDeck;
 
 public class AllyCard extends AdventureCard {
-	
+
 	private int bids;
 	private int namedBids;
-	
+
 	public AllyCard(String name, TYPE type) {
 		super(name, type);
 		this.battlePoints = 0;
@@ -14,22 +14,22 @@ public class AllyCard extends AdventureCard {
 		this.bids = 0;
 		this.namedBids = 0;
 	}
-	
+
 	public AllyCard(String name, int battlePoints, TYPE type) {
 		super(name, battlePoints, type);
 		this.namedBattlePoints = battlePoints;
 	}
-	
+
 	public AllyCard(String name, int battlePoints, int namedBattlePoints, TYPE type) {
 		super(name, battlePoints, type);
 		this.namedBattlePoints = namedBattlePoints;
 	}
-	
+
 	public AllyCard(String name, int battlePoints, int namedBattlePoints, int bids, TYPE type) {
 		this(name, battlePoints, namedBattlePoints, type);
 		this.bids = bids;
 	}
-	
+
 	public AllyCard(String name, int battlePoints, int namedBattlePoints, int bids, int namedBids, TYPE type) {
 		this(name, battlePoints, namedBattlePoints, bids, type);
 		this.namedBids = namedBids;

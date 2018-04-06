@@ -9,9 +9,6 @@ import org.junit.Test;
 
 import com.qotrt.calculator.BidCalculator;
 import com.qotrt.cards.AdventureCard;
-import com.qotrt.cards.AdventureCard.TYPE;
-import com.qotrt.cards.AllyCard;
-import com.qotrt.cards.AmourCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -37,8 +34,8 @@ public class TestBidCalculator {
 	@Test
 	public void testKingPellinore() {
 		cards.add(ad.getCardByName("Sir Tristan"));
-		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AllyCard("King Pellinore",10,10,0,4, TYPE.ALLIES));
+		cards.add(ad.getCardByName("Queen Iseult"));
+		cards.add(ad.getCardByName("King Pellinore"));
 		p1.addCards(cards);
 		cards.stream().filter(i -> i.getName().equals("King Pellinore")).forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
 		p1.flipCards();
@@ -52,9 +49,9 @@ public class TestBidCalculator {
 	
 	@Test
 	public void testAmour() {
-		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
-		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AmourCard("Amour",10,1, TYPE.AMOUR));
+		cards.add(ad.getCardByName("Sir Tristan"));
+		cards.add(ad.getCardByName("Queen Iseult"));
+		cards.add(ad.getCardByName("Amour"));
 		p1.addCards(cards);
 		cards.stream().filter(i -> i.getName().equals("Amour")).forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
 		p1.flipCards();
@@ -68,9 +65,9 @@ public class TestBidCalculator {
 	
 	@Test
 	public void testKingArthur() {
-		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
-		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AllyCard("King Arthur",10,1, TYPE.AMOUR));
+		cards.add(ad.getCardByName("Sir Tristan"));
+		cards.add(ad.getCardByName("Queen Iseult"));
+		cards.add(ad.getCardByName("King Arthur"));
 		p1.addCards(cards);
 		cards.stream().filter(i -> i.getName().equals("King Arthur")).forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
 		p1.flipCards();
@@ -84,9 +81,9 @@ public class TestBidCalculator {
 	
 	@Test
 	public void testQueenGuinevere() {
-		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
-		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AllyCard("Queen Guinevere",10,1, TYPE.AMOUR));
+		cards.add(ad.getCardByName("Sir Tristan"));
+		cards.add(ad.getCardByName("Queen Iseult"));
+		cards.add(ad.getCardByName("Queen Guinevere"));
 		p1.addCards(cards);
 		cards.stream().filter(i -> i.getName().equals("Queen Guinevere")).forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
 		p1.flipCards();
@@ -100,8 +97,8 @@ public class TestBidCalculator {
 	
 	@Test
 	public void testQueenIseult() {
-		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AllyCard("Queen Guinevere",10,1, TYPE.AMOUR));
+		cards.add(ad.getCardByName("Queen Iseult"));
+		cards.add(ad.getCardByName("Queen Guinevere"));
 		p1.addCards(cards);
 		cards.stream().filter(i -> i.getName().equals("Queen Iseult")).forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
 		p1.flipCards();
@@ -116,9 +113,9 @@ public class TestBidCalculator {
 	
 	@Test
 	public void testQueenIseultAndTristan() {
-		cards.add(new AllyCard("Queen Iseult",0,0,2,4, TYPE.ALLIES));
-		cards.add(new AllyCard("Sir Tristan",10,20, TYPE.ALLIES));
-		cards.add(new AllyCard("Queen Guinevere",10,1, TYPE.AMOUR));
+		cards.add(ad.getCardByName("Queen Iseult"));
+		cards.add(ad.getCardByName("Sir Tristan"));
+		cards.add(ad.getCardByName("Queen Guinevere"));
 		p1.addCards(cards);
 		cards.stream().filter(i -> i.getName().equals("Queen Iseult") || i.getName().equals("Sir Tristan")).forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
 		p1.flipCards();

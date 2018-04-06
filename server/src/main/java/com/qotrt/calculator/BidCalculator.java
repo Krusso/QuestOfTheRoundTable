@@ -5,7 +5,10 @@ import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.qotrt.cards.Card;
+import com.qotrt.cards.AdventureCard;
+import com.qotrt.cards.AdventureCard.TYPE;
+import com.qotrt.cards.AllyCard;
+import com.qotrt.cards.AmourCard;
 import com.qotrt.cards.QuestCard;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.gameplayer.PlayerManager;
@@ -30,21 +33,15 @@ public class BidCalculator {
 
 	private int freeBids(Player player, QuestCard quest) {
 		int freeBids = 0;
-		for(Card c : player.getFaceUp().getDeck()) {
+		for(AdventureCard c : player.getFaceUp().getDeck()) {
 			logger.info("Card name: " + c.getName() + " free bids so far: " + freeBids);
 			if(c.getName().equals("King Pellinore") && 
 					quest.getName().equals("Search for the Questing Beast")) {
 				logger.info("King Pellinore and search for the questing beast");
 				freeBids += 4;
-			} else if(c.getName().equals("Amour")) {
+			} else if(c.getType().equals(TYPE.AMOUR)) {
 				logger.info("Amour");
-				freeBids += 1;
-			} else if(c.getName().equals("King Arthur")) {
-				logger.info("King Arthur");
-				freeBids += 2;
-			} else if(c.getName().equals("Queen Guinevere")) {
-				logger.info("Queen Guinevere");
-				freeBids += 3;
+				freeBids += ((AmourCard) c).getBids();
 			} else if(c.getName().equals("Queen Iseult")) {
 				boolean foundTristan = false;
 				Iterator<Player> players = pm.round();
@@ -58,6 +55,9 @@ public class BidCalculator {
 					logger.info("Queen Iseult only");
 					freeBids += 2;
 				}
+			} else if(c.getType().equals(TYPE.ALLIES)) {
+				logger.info("Ally: " + c.getName());
+				freeBids += ((AllyCard) c).getBids();
 			}
 		}
 		
