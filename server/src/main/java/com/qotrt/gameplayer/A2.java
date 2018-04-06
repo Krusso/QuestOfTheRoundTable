@@ -50,7 +50,7 @@ public class A2 extends AbstractAI implements AICommonImplementation {
 
 	@Override
 	public List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard) {
-		return this.doISponsorAQuest(questCard, logger, pm, player, playerCanWinOrEvolve(pm), bpc);
+		return this.doISponsorAQuest(questCard, logger, pm, player, playerCanWinOrEvolve(pm), bpc, 40);
 	}
 
 	@Override

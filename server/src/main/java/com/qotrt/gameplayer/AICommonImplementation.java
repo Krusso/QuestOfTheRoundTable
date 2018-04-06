@@ -17,13 +17,13 @@ import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.StoryCard;
 
 public interface AICommonImplementation  {
-	public default List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard, Logger logger, PlayerManager pm, Player player, Boolean canWinOrEvolve, BattlePointCalculator bpc) {
+	public default List<List<AdventureCard>> doISponsorAQuest(QuestCard questCard, Logger logger, PlayerManager pm, Player player, Boolean canWinOrEvolve, BattlePointCalculator bpc, int bpRequired) {
 		logger.info("Asking if want to sponsor quest");
 		if(questCard != null) {
 			logger.info("Quest card: " + questCard.getName());
 		}
 		if(canWinOrEvolve) {
-			logger.info("Someone can win dont sponsor tournament");
+			logger.info("Someone can win dont sponsor quest");
 			return null;
 		}
 
@@ -36,7 +36,7 @@ public interface AICommonImplementation  {
 
 		IntStream.range(0, stages + 1).forEach(i -> cards.add(new ArrayList<AdventureCard>()));
 
-		//set up last stage to be atleast 40
+		//set up last stage to be atleast bpRequired
 		if(sortedfoes.size() <= 0) {
 			logger.info("Not enough foes to sponsor quest");
 			return null;
@@ -45,14 +45,14 @@ public interface AICommonImplementation  {
 		AdventureCard biggestFoe = sortedfoes.remove(0);
 		int bp = biggestFoe.getBattlePoints();
 		cards.get(stages).add(biggestFoe);
-		while(sortedweapons.size() != 0 && bp < 40) {
+		while(sortedweapons.size() != 0 && bp < bpRequired) {
 				AdventureCard biggestWeapon = sortedweapons.remove(0);
 				bp += biggestWeapon.getBattlePoints();
 				cards.get(stages).add(biggestWeapon);
 		}
 
-		if(bp < 40) {
-			logger.info("Cant make last stage atleast 40 dont sponsor");
+		if(bp < bpRequired) {
+			logger.info("Cant make last stage atleast " + bpRequired + "  dont sponsor");
 			return null;
 		}
 
@@ -89,7 +89,7 @@ public interface AICommonImplementation  {
 		int min = Integer.MIN_VALUE;
 		for(List<AdventureCard> i: cards) {
 			if(i.size() == 0) {
-				logger.info("A3 doesnt want to sponsor tournament not enough different bp foes/tests");
+				logger.info("AI doesnt want to sponsor sponsor not enough different bp foes/tests");
 				return null;
 			}
 			int pointsInStage = bc.calculateStage(i,(StoryCard) questCard);

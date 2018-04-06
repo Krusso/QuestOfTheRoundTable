@@ -2,8 +2,6 @@ package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -18,15 +16,11 @@ public class DiscardView extends Observer {
 	public DiscardView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
 		super(messagingTemplate, players);
 
-		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("discard");
-		Consumer<PropertyChangeEvent> funcC = x -> discard(mapper.convertValue(x.getNewValue(), Player[].class));
-
-		Function<PropertyChangeEvent, Boolean> funcF1 =	x -> x.getPropertyName().equals("finishHandDiscard");
-		Consumer<PropertyChangeEvent> funcC1 = 	x -> finishDiscard(mapper.convertValue(x.getNewValue(), Player.class));
-
-
-		events.add(new GenericPairTyped<>(funcF, funcC));
-		events.add(new GenericPairTyped<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("discard"), 
+				x -> discard(mapper.convertValue(x.getNewValue(), Player[].class))));
+		
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("finishHandDiscard"), 
+				x -> finishDiscard(mapper.convertValue(x.getNewValue(), Player.class))));
 
 	}
 

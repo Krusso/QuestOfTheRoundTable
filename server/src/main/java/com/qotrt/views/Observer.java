@@ -16,6 +16,9 @@ public abstract class Observer extends EventHandler implements PropertyChangeLis
 
 	final static Logger logger = LogManager.getLogger(Observer.class);
 	
+	private SimpMessagingTemplate messagingTemplate;
+	private ArrayList<UIPlayer> sendList;
+	
 	protected Observer() {}
 	
 	protected ObjectMapper mapper;
@@ -26,9 +29,6 @@ public abstract class Observer extends EventHandler implements PropertyChangeLis
 		this.sendList = new ArrayList<UIPlayer>();
 		players.forEach(i -> this.addWebSocket(i));
 	}
-	
-	private SimpMessagingTemplate messagingTemplate;
-	private ArrayList<UIPlayer> sendList;
 	
 	public void addWebSocket(UIPlayer player) {
 		sendList.add(player);
