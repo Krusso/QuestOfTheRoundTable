@@ -468,6 +468,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         revealStage: [false, false, false, false, false],
                         battlePoints: 0,
 
+
                     };
                     console.log("playerInfo");
                     console.log(playerInfo);
@@ -489,8 +490,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     } else {
                         message.cards[i].drag = false;
                     }
-                    $scope.players[playerNum].hand.push(message.cards[i]);
+                    var card = message.cards[i];
+                    card.css = {
+                        "position": "absolute",
+                        "left": "0%",
+                        "z-index": $scope.players[playerNum].hand.length + "",
+                    }
+                    $scope.players[playerNum].hand.push(card);
                     console.log("Adding card: " + message.cards[i].key + " " + message.cards[i].value);
+                    $scope.repositionCardsHorizontally($scope.players[playerNum].hand)
                 }
                 console.log($scope.playerZoneToListMap);
             }
@@ -524,7 +532,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.currentState = $scope.GAME_STATE.JOINTOURNAMENT;
                     $scope.toast = "Join Tournament ?";
                 } else {
-                    $scope.toast = "Waiting for player " + message.players + " to join tournament";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for " + pnames + " to join tournament";
                 }
             }
 
@@ -538,7 +547,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
                     $scope.toast = "Select cards for tournament";
                 } else {
-                    $scope.toast = "Waiting for players " + message.players + " to pick cards for tournament";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for players " + pnames + " to pick cards for tournament";
                 }
             }
 
@@ -548,7 +558,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.toast = "Sponsor " + $scope.middleCard + " ?";
                 } else {
                     $scope.currentState = $scope.GAME_STATE.WAITING;
-                    $scope.toast = "Waiting for player " + message.players + " to sponsor";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for player " + pnames + " to sponsor";
                 }
                 $scope.setDragOff();
             }
@@ -560,7 +571,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[$scope.myPlayerId].isSponsoring = true;
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
                 } else {
-                    $scope.toast = "Waiting for player " + message.player + " to finish setting up quest stages";
+
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for player " + pnames + " to finish setting up quest stages";
                     $scope.players[$scope.myPlayerId].isSponsoring = false;
                     $scope.setDragOff();
                 }
@@ -573,7 +586,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[$scope.myPlayerId].joinedQuest = true;
                 } else {
                     $scope.setDragOff();
-                    $scope.toast = "Did not join quest. Waiting for players " + message.players + " to finish picking cards";
+
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Did not join quest. Waiting for players " + pnames + " to finish picking cards";
                     $scope.players[$scope.myPlayerId].joinedQuest = false;
                 }
             }
@@ -678,7 +693,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.toast = "Would you like to join the quest?";
                 } else {
                     $scope.currentState = $scope.GAME_STATE.WAITING;
-                    $scope.toast = "Waiting for player " + message.players + " to join or decline quest";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for player " + pnames + " to join or decline quest";
                 }
                 $scope.setDragOff();
             }
@@ -701,13 +717,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 if (message.players.length != 0) {
 
-                    $scope.toast = "Players " + message.players.toString() + " passed the stage";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Players " + pnames + " passed the stage";
                 } else {
 
                     $scope.toast = "No players has passed the stage";
                 }
                 if (message.type === "WON") {
-                    $scope.toast = "Players " + message.players.toString() + " won the quest!";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Players " + pnames + " won the quest!";
                 }
                 if (message.type === "NOSPONSOR") {
                     $scope.toast = "No players sponsored the quest";
@@ -1526,6 +1544,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             // -1 = false otherwise its the ID of mordred
             if ($scope.mordred != -1) {
                 $scope.mordred = -1;
+                $scope.mordred = -1;
             } else {
                 $scope.mordred = card.value;
                 $scope.toast = "Click on opponent ally to kill or click Mordred again";
@@ -1558,5 +1577,29 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         list.forEach(function (value, key) {
             list[key].drag = true;
         });
+    }
+    $scope.repositionCardsHorizontally = function (cards) {
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].css.left = (90 / cards.length * i) + "%";
+        }
+    }
+
+    $scope.getPlayerName = function (idArr) {
+        console.log(idArr);
+        if (idArr.length == 0) {
+            return "";
+        }
+        var pNames = ""
+        for (var i = 0; i < idArr.length; i++) {
+            pNames += $scope.players[idArr[i]].name + ", ";
+        }
+        pNames = pNames.substr(0, pNames.lastIndexOf(','));
+        console.log(pNames);
+        var lastIdx = pNames.lastIndexOf(',');
+        if (lastIdx == -1) {
+            return pNames;
+        }
+        pNames = pNames.substr(0, lastIdx) + " and" + pNames.substr(lastIdx);
+        return pNames;
     }
 });
