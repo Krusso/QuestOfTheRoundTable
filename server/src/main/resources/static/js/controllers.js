@@ -164,7 +164,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         JOINTOURNAMENT: 20,
         PICKTOURNAMENT: 21,
         HANDDISCARD: 22,
-        WINTOURNAMENT: 23
+        WINTOURNAMENT: 23,
+        WAITING: 24
     };
 
 
@@ -366,6 +367,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             bid: $scope.bidSlider.value
         };
         $scope.addMessage($scope.ep_bid);
+        //after player bids, set the state to waiting, this is only really necessary for hot-seat 
+        //since in racing mode, every player will receive a BidQuest message rather than 1 by 1
+        $scope.currentState = $scope.currentState.WAITING;
+        $scope.toast = "Waiting for other players to bid";
     };
     $scope.sendFinishDiscard = function () {
         console.log("hello");
@@ -475,6 +480,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         revealStage: [false, false, false, false, false],
                         battlePoints: 0,
 
+
                     };
                     console.log("playerInfo");
                     console.log(playerInfo);
@@ -496,8 +502,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     } else {
                         message.cards[i].drag = false;
                     }
-                    $scope.players[playerNum].hand.push(message.cards[i]);
+                    var card = message.cards[i];
+                    card.css = {
+                        "position": "absolute",
+                        "left": "0%",
+                        "z-index": $scope.players[playerNum].hand.length + "",
+                    }
+                    $scope.players[playerNum].hand.push(card);
                     console.log("Adding card: " + message.cards[i].key + " " + message.cards[i].value);
+                    $scope.repositionCardsHorizontally($scope.players[playerNum].hand)
                 }
                 console.log($scope.playerZoneToListMap);
             }
@@ -505,7 +518,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             //and making sure everything starts at default again
             if (message.messageType === "SHOWMIDDLECARD") {
                 $scope.middleCard = message.card;
-
                 console.log($scope.middleCard);
                 console.log("clearing all cards from the stages");
                 //we are setting the length to 0 as this will clear the array the most efficient way 
@@ -528,8 +540,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
             }
             if (message.messageType === "JOINTOURNAMENT") {
-                $scope.currentState = $scope.GAME_STATE.JOINTOURNAMENT;
-                $scope.toast = "Join Tournament ?";
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.currentState = $scope.GAME_STATE.JOINTOURNAMENT;
+                    $scope.toast = "Join Tournament ?";
+                } else {
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for " + pnames + " to join tournament";
+                }
             }
 
             if (message.messageType === "JOINEDTOURNAMENT") {
@@ -538,52 +555,65 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
 
             if (message.messageType === "PICKTOURNAMENT") {
-                if ($scope.players[message.player].joinedTourn) {
+                if (_.contains(message.players, $scope.myPlayerId)) {
                     $scope.currentState = $scope.GAME_STATE.PICKTOURNAMENT;
                     $scope.toast = "Select cards for tournament";
+                } else {
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for players " + pnames + " to pick cards for tournament";
                 }
             }
 
             if (message.messageType === "SPONSERQUEST") {
-                $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
-                console.log($scope.currentState + " " +
-                    $scope.GAME_STATE.SPONSORQUEST);
-                $scope.toast = "Sponsor " + $scope.middleCard + " ?";
-                $scope.$apply();
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.currentState = $scope.GAME_STATE.SPONSORQUEST;
+                    $scope.toast = "Sponsor " + $scope.middleCard + " ?";
+                } else {
+                    $scope.currentState = $scope.GAME_STATE.WAITING;
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for player " + pnames + " to sponsor";
+                }
+                $scope.setDragOff();
             }
             if (message.messageType === "PICKSTAGES") {
                 $scope.currentState = $scope.GAME_STATE.PICKSTAGES;
-                $scope.toast = "Player " + message.player + " is picking stage cards";
-                //if your player is picking stages, that means he's sponsoring
-                $scope.players[message.player].isSponsoring = true;
                 $scope.numStages = message.numStages;
-                //sponsorer should be the only guy who had drag on
-                if ($scope.myPlayerId == message.player) {
+                if (message.player == $scope.myPlayerId) {
+                    $scope.toast = "You are setting up " + message.numStages + " stages for the quest";
+                    $scope.players[$scope.myPlayerId].isSponsoring = true;
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
-                    console.log($scope.players[message.player].hand);
-                    for (var i = 0; i < message.numStages; i++) {
+                } else {
 
-                    }
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for player " + pnames + " to finish setting up quest stages";
+                    $scope.players[$scope.myPlayerId].isSponsoring = false;
+                    $scope.setDragOff();
                 }
             }
             if (message.messageType === "PICKQUEST") {
                 $scope.currentState = $scope.GAME_STATE.PICKQUEST;
-                $scope.toast = "Players " + message.players.toString() + " are picking quest cards";
-                $scope.players[message.player].joinedQuest = true;
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+                    $scope.toast = "Choose cards to battle in the upcoming quest.";
+                    $scope.players[$scope.myPlayerId].joinedQuest = true;
+                } else {
+                    $scope.setDragOff();
+
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Did not join quest. Waiting for players " + pnames + " to finish picking cards";
+                    $scope.players[$scope.myPlayerId].joinedQuest = false;
+                }
             }
             // TODO all combinations here
             if (message.messageType === "PLAYCARD") {
-                console.log("trying to play card");
-                console.log("trying to play: ");
-                console.log($scope.tryingToPlay);
                 //trying to add only works for this player. 
                 //if we are trying to see the result from another client, we must search for this card and add it to the respective pane
                 if ($scope.myPlayerId == message.player) {
                     for (var i = 0; i < $scope.tryingToPlay.length; i++) {
-                        console.log("looping through cards: " + $scope.tryingToPlay[i].value + " " + message.card);
                         if ($scope.tryingToPlay[i].value === message.card) {
-                            console.log("same id");
-                            console.log(message.zoneTo);
+                            if (message.response != "") {
+                                $scope.toast = message.response;
+                            }
                             if (message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.HAND;
                                 $scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
@@ -642,10 +672,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
                 } else {
                     //move the opponents card from pane to pane
-                    console.log(message.zoneFrom + message.player);
-                    console.log(message.zoneTo + message.player);
-                    console.log($scope.playerZoneToListMap);
-                    console.log($scope.playerZoneToListMap['STAGE1']);
                     var fromZone;
                     var toZone;
                     var cardToMove;
@@ -664,28 +690,25 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     for (var i = 0; i < fromZone.length; i++) {
                         if (fromZone[i].value == message.card) {
                             cardToMove = fromZone[i];
-                            console.log("removing from zone");
-                            console.log(fromZone.toString());
                             fromZone.splice(i, 1); // remove card from the fromZone
-                            console.log(fromZone);
                             break;
                         }
                     }
                     //move the card
                     toZone.push(cardToMove);
                 }
-
             }
 
             if (message.messageType === "JOINQUEST") {
-                $scope.currentState = $scope.GAME_STATE.JOINQUEST;
-                $scope.toast = "Waiting for players " + message.players.toString() + " to join/decline";
-                for (var i = 0; i < message.players.length; i++) {
-                    if (message.players[i] == $scope.myPlayerId) {
-                        $scope.toast = "Would you like to join the quest? ";
-                        break;
-                    }
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.currentState = $scope.GAME_STATE.JOINQUEST;
+                    $scope.toast = "Would you like to join the quest?";
+                } else {
+                    $scope.currentState = $scope.GAME_STATE.WAITING;
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Waiting for player " + pnames + " to join or decline quest";
                 }
+                $scope.setDragOff();
             }
             //TODO:: show the stage card
             if (message.messageType === "UPQUEST") {
@@ -706,14 +729,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 if (message.players.length != 0) {
 
-                    $scope.toast = "Players " + message.players.toString() + " passed the stage";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Players " + pnames + " passed the stage";
                 } else {
 
                     $scope.toast = "No players has passed the stage";
                 }
-                console.log($scope.players);
                 if (message.type === "WON") {
-                    $scope.toast = "Players " + message.players.toString() + " won the quest!";
+                    var pnames = $scope.getPlayerName(message.players);
+                    $scope.toast = "Players " + pnames + " won the quest!";
                 }
                 if (message.type === "NOSPONSOR") {
                     $scope.toast = "No players sponsored the quest";
@@ -721,18 +745,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.players[$scope.myPlayerId].discardPile.length = 0;
             }
             if (message.messageType === "BIDQUEST") {
-                $scope.currentState = $scope.GAME_STATE.BIDQUEST;
-                $scope.players[message.player].joinedQuest = true; //if the player is bidding, he's in the quest
-                $scope.bidSlider.value = message.minBidValue;
-                $scope.bidSlider.options.floor = message.minBidValue;
-                $scope.bidSlider.options.ceil = message.maxBidValue;
                 $scope.toast = "Players are currently bidding";
-                console.log($scope.currentState + " " + $scope.GAME_STATE.BIDQUEST);
-                console.log($scope.players[$scope.myPlayerId].joinedQuest);
-                if ($scope.currentState === $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest) {
-                    console.log("I should be showing the bidslider");
+                if (message.player == $scope.myPlayerId) {
+                    $scope.currentState = $scope.GAME_STATE.BIDQUEST;
+                    $scope.players[message.player].joinedQuest = true; //if the player is bidding, he's in the quest
+                    $scope.bidSlider.value = message.minBidValue;
+                    $scope.bidSlider.options.floor = message.minBidValue;
+                    $scope.bidSlider.options.ceil = message.maxBidValue;
+                    $scope.toast = "You are bidding";
                 }
-                console.log($scope.currentState === $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest);
+
             }
             if (message.messageType === "DISCARDQUEST") {
                 $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
@@ -747,14 +769,19 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 if (message.player == $scope.myPlayerId) {
                     $scope.players[$scope.myPlayerId].needToDiscard = message.toDiscard; //every player only needs to know how many cards they need to discard themselves (not other players) 
                     $scope.toast = "Hand too full, select " + $scope.players[$scope.myPlayerId].needToDiscard + " cards to discard";
+                    $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+                } else {
+                    $scope.toast = "Waiting for players to finish discarding cards";
                 }
-                //                else {
-                //                    $scope.toast = "A Player's hand is too full. Waiting for them to finish discarding";
-                //                }
             }
             if (message.messageType === "FINISHDISCARD") {
                 if (message.player == $scope.myPlayerId) {
-                    $scope.players[$scope.myPlayerId].discardPile.length = 0;
+                    if (message.successful == true) {
+                        $scope.players[$scope.myPlayerId].discardPile.length = 0;
+                        $scope.toast = "Finished discarding. Waiting for other players";
+                    } else {
+                        $scope.toast = message.response;
+                    }
                 }
             }
             if (message.messageType === "WINTOURNAMENT") {
@@ -767,48 +794,44 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[message.player].faceUp.push($scope.players[message.player].faceDown[i]);
                 }
                 $scope.players[message.player].faceDown.length = 0;
+                $scope.toast = "Everyone flip face down to face up";
             }
             if (message.messageType === "DISCARDFACEUP") {
                 //remove cards from faceup
                 for (var j = 0; j < message.cards.length; j++) {
                     for (var i = 0; i < $scope.players[message.player].faceUp.length; i++) {
                         if (message.cards[j].value == $scope.players[message.player].faceUp[i].value) {
-                            console.log("Removing " + $scope.players[message.player].faceUp[i].key + " from faceup");
                             $scope.players[message.player].faceUp.splice(i, 1);
                         }
                     }
                 }
             }
             if (message.messageType === "FINISHSTAGESETUP") {
-                if (message.player == $scope.myPlayerId && message.success == false) {
+                if (message.player == $scope.myPlayerId && !message.success) {
                     $scope.toast = message.response;
                 }
             }
             if (message.messageType === "BATTLEPOINTS") {
                 if (message.zone == "HAND") {
                     $scope.players[message.player].battlePoints = message.battlePoints;
-                    console.log("player " + message.player + " bpc:" + $scope.players[message.player].battlePoints);
                 }
             }
             if (message.messageType === "SHIELDCOUNT") {
                 $scope.players[message.player].shieldCount = message.shields;
-                console.log("Player " + message.player + " has " + $scope.players[message.player].shieldCount + " shields");
             }
-
-
-			if(message.messageType === "MORDRED"){
-				if(message.otherPlayer == -1 && message.player == $scope.myPlayerId){
-					$scope.toast = message.response;
-				} else if(message.otherPlayer != -1){
-					//remove ally 
-					for (var i = 0; i < $scope.players[message.otherPlayer].faceUp.length; i++) {
+            if (message.messageType === "MORDRED") {
+                if (message.otherPlayer == -1 && message.player == $scope.myPlayerId) {
+                    $scope.toast = message.response;
+                } else if (message.otherPlayer != -1) {
+                    //remove ally 
+                    for (var i = 0; i < $scope.players[message.otherPlayer].faceUp.length; i++) {
                         if (message.opponent == $scope.players[message.otherPlayer].faceUp[i].value) {
                             console.log("Removing " + $scope.players[message.otherPlayer].faceUp[i].key + " from faceup");
                             $scope.players[message.otherPlayer].faceUp.splice(i, 1);
                         }
                     }
                     //remove mordred 
-					for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
+                    for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
                         if (message.mordred == $scope.players[message.player].hand[i].value) {
                             console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
                             $scope.players[message.player].hand.splice(i, 1);
@@ -1424,9 +1447,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             });
         }
         //hella raunchy
-        console.log("Current state: " + $scope.currentState);
         if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
-            console.log("SPonsoring");
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.HAND, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
         }
         if ($scope.currentState == $scope.GAME_STATE.PICKQUEST) {
@@ -1458,8 +1479,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.players[$scope.myPlayerId].hand = $scope.players[$scope.myPlayerId].hand.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
                     $scope.tryingToPlay.push(e);
-                    console.log($scope.tryingToPlay);
-                    console.log("hand| added" + e.toString() + "to trying To Play");
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
@@ -1479,9 +1498,6 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     //returns true/false if it should show the accept/decline
     $scope.showAcceptDecline = function () {
-        // console.log("checking showAcceptDecline");
-        //        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
-        //        $scope.setDragOff();
         return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT || $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
     }
 
@@ -1494,31 +1510,22 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
 
     $scope.testShow = function () {
-        // console.log("Checking display");
-        // console.log($scope.currentState);
-        // console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST);
         return $scope.currentState == $scope.GAME_STATE.SPONSORQUEST;
     }
 
     //Only show the done setting up button if the player is sponsoring and the state is picking stages
     $scope.showDoneSettingUp = function () {
-        // console.log("Checking display");
-        // console.log("player: " + $scope.myPlayerId + " is sponsoring? " + $scope.players[$scope.myPlayerId].isSponsoring);
-        //        console.log("current state: " + $scope.currentState);
         return $scope.players[$scope.myPlayerId].isSponsoring && $scope.currentState == $scope.GAME_STATE.PICKSTAGES;
     }
     //only show the bid slider if the player is in a quest and the state is GAME_STATE.BIDQUEST
     $scope.showBidSlider = function () {
-        // console.log("Showing bid slider");
         console.log($scope.currentState == $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest == true);
         return $scope.currentState == $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest == true;
     }
     $scope.showDonePickingQuestCards = function () {
-        // console.log("Check display for show down picking cards");
         return $scope.currentState == $scope.GAME_STATE.PICKQUEST && $scope.players[$scope.myPlayerId].joinedQuest;
     }
     $scope.showBidButton = function () {
-        // console.log("check dispaly for show bid button");
         return $scope.currentState == $scope.GAME_STATE.BIDQUEST && $scope.players[$scope.myPlayerId].joinedQuest == true;
     }
     $scope.showDiscardButton = function () {
@@ -1601,5 +1608,29 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         list.forEach(function (value, key) {
             list[key].drag = true;
         });
+    }
+    $scope.repositionCardsHorizontally = function (cards) {
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].css.left = (90 / cards.length * i) + "%";
+        }
+    }
+
+    $scope.getPlayerName = function (idArr) {
+        console.log(idArr);
+        if (idArr.length == 0) {
+            return "";
+        }
+        var pNames = ""
+        for (var i = 0; i < idArr.length; i++) {
+            pNames += $scope.players[idArr[i]].name + ", ";
+        }
+        pNames = pNames.substr(0, pNames.lastIndexOf(','));
+        console.log(pNames);
+        var lastIdx = pNames.lastIndexOf(',');
+        if (lastIdx == -1) {
+            return pNames;
+        }
+        pNames = pNames.substr(0, lastIdx) + " and" + pNames.substr(lastIdx);
+        return pNames;
     }
 });
