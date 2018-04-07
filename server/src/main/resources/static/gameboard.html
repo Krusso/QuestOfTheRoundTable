@@ -27,7 +27,7 @@
             <div ng-repeat="player in players" ng-hide="$index == myPlayerId">
                 <div class="opponentHandZone">
                     <div class="displayContainer" ng-model="player.shieldIcon">
-                        <div c1 class="card1" card1="{{player.rank}}">
+                        <div c1 class="card1" card1="{{player.rank}}" ng-style="player.rankcss">
                             <!--  RANK CARD IMAGE GOES HERE  -->
                         </div>
                         <div c1 class="card1" card1="S{{player.shield}}" ng-style="{'top': '50%'}">
@@ -74,6 +74,7 @@
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s1'}" ng-hide="numStages<1" ng-click="merlinFunction($event, 0)">
                         <!--                        Only revealed to sponsorer-->
                         <div ng-show="players[myPlayerId].isSponsoring == true">
+                        	<h2><br/>{{stageZones.stage1bp}}</h2>
                             <div ng-repeat="card in stageZones.stage1" ng-model="stageZones.stage1">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
@@ -92,6 +93,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s2'}" ng-hide="numStages<2" ng-click="merlinFunction($event, 1)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
+                        	<h2><br/>{{stageZones.stage2bp}}</h2>
                             <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
@@ -109,6 +111,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s3'}" ng-hide="numStages<3" ng-click="merlinFunction($event, 2)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
+                        	<h2><br/>{{stageZones.stage3bp}}</h2>
                             <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
@@ -126,6 +129,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s4'}" ng-hide="numStages<4" ng-click="merlinFunction($event, 3)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
+                        	<h2><br/>{{stageZones.stage4bp}}</h2>
                             <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
@@ -143,6 +147,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s5'}" ng-hide="numStages<5" ng-click="merlinFunction($event, 4)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
+                        	<h2><br/>{{stageZones.stage5bp}}</h2>
                             <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
                             </div>
@@ -190,11 +195,11 @@
 
             <div class="displayContainer">
                 <div>
-                    <div c1 class="card1" card1="{{players[myPlayerId].rank}}">
+                    <div c1 class="card1" card1="{{players[myPlayerId].rank}}" ng-style="players[myPlayerId].rankcss">
                         <!--  RANK CARD IMAGE GOES HERE  -->
 
                         <div ng-model="myPlayerId">
-                            <h1>{{myPlayerId}}</h1>
+                            <h1>{{myPlayerId + 1}}</h1>
                         </div>
                     </div>
                     <div class="shieldBpContainer">

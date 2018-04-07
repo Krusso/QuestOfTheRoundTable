@@ -11,8 +11,8 @@ public class WeaponCard extends AdventureCard{
 	@Override
 	public String playForStage(AdventureDeck stage) {
 		if(stage.findCardByName(this.getName()) != null || stage.typeCount(TYPE.TESTS) != 0) {
-			logger.info("cant play duplicate weapon cards");
-			return "Cant play duplicate weapons";
+			logger.info("cant play duplicate weapon cards or with tests");
+			return "Cant play duplicate weapons or with tests";
 		}
 		logger.info("can play this card");
 		return "";

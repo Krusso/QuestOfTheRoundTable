@@ -101,12 +101,14 @@ public class Game extends Observable {
 			@Override
 			public void run() {
 				logger.info("Starting game");
-				fireEvent("gameStart", null, 1);
-
-			
+				
+				
 				for(int i = 0; i < aiplayers.size(); i++) {
 					players.add(new UIPlayer("none-matching-session-id", "ai player " + i, 1));
 				}
+				
+				fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
+				fireEvent("gameStart", null, 1);
 				
 				// model creation
 				logger.info("creating models");

@@ -42,11 +42,13 @@ public class QuestSequenceManager extends SequenceManager {
 		List<Player> potentialSponsors = new ArrayList<Player>();
 		players.forEachRemaining(i -> {
 			if(bc.canSponsor(i, card)) {
+				logger.info("Potential sponsor: " + i.getID() + " player: " + i + " list: " + potentialSponsors);
 				potentialSponsors.add(i);
+				logger.info("Potential sponsor: " + i.getID() + " player: " + i + " list: " + potentialSponsors);
 			}
 		});
 
-
+		logger.info("Players asking to sponsor: " + potentialSponsors);
 		qm.questionSponsorPlayers(potentialSponsors);
 
 		// Wait for responses

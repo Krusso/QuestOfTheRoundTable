@@ -315,6 +315,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			to.addCard(from.getCardByID(card));
 		}
 		
+		fireEvent("battlePointsStage", null, this);
 		return response;
 	}
 
@@ -335,6 +336,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			to.addCard(card);
 		}
 		
+		fireEvent("battlePointsStage", null, this);
 		return response;
 	}
 	
@@ -348,6 +350,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized AdventureCard getCard(int card, Integer integer) {
+		fireEvent("battlePointsStage", null, this);
 		return quest.getStage(integer).getCardByID(card);
 	}
 

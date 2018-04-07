@@ -54,7 +54,7 @@ public class BattlePointsView extends Observer {
 		map.put(4, ZONE.STAGE5);
 
 		Player p = quest.getPlayerWhoSponsor().get(0);
-		for(int i = 0; i < quest.getQuest().getNumCards(); i++){
+		for(int i = 0; i < quest.getQuest().getNumStages(); i++){
 			int points = bpc.calculateStage(quest.getQuest().getStage(i).getStageCards(), sc);
 			sendMessage(new BattlePointsServer(p.getID(), points, map.get(i)));	
 		}

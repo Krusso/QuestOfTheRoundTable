@@ -39,7 +39,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /*=========================================   *
      *        Controller Variables: GameData    *
      *=========================================== */
-    $scope.toast = "Just Chilling";
+    $scope.toast = "Waiting";
     $scope.joinedGame = false;
     $scope.myPlayerId = 0;
     $scope.inGamePlayers;
@@ -49,7 +49,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         stage2: [],
         stage3: [],
         stage4: [],
-        stage5: []
+        stage5: [],
+        stage1bp: 0,
+        stage2bp: 0,
+        stage3bp: 0,
+        stage4bp: 0,
+        stage5bp: 0,
     };
 
     $scope.playerZoneToListMap = {
@@ -59,6 +64,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         'STAGE4': $scope.stageZones.stage4,
         'STAGE5': $scope.stageZones.stage5
     }; // eg {"hand0" : players[0].hand,}
+    
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
     $scope.numStages = 0;
@@ -479,6 +485,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         needToDiscard: 0,
                         revealStage: [false, false, false, false, false],
                         battlePoints: 0,
+                        rankcss: {},
 
 
                     };
@@ -535,6 +542,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[i].joinedQuest = false;
                     $scope.players[i].discardPile.length = 0;
                     $scope.players[i].revealStage = [false, false, false, false, false];
+                    $scope.players[i].rankcss = { };
+                        
                 }
                 // console.log(players);
 
@@ -549,8 +558,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
 
-            if (message.messageType === "JOINEDTOURNAMENT") {
+            if (message.messageType === "JOINEDTOURNAMENT" && message.joined) {
                 $scope.players[message.player].joinedTourn = true;
+                $scope.players[message.player].rankcss = { "box-shadow": "rgb(0, 255, 255) 0px 0px 16px 6px" };
+                $scope.toast = "Player: " + $scope.getPlayerName([message.player]) + " joined the tournament";
                 console.log("Player joined tourn? : " + $scope.players[message.player].joinedTourn);
             }
 
@@ -577,6 +588,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "PICKSTAGES") {
                 $scope.currentState = $scope.GAME_STATE.PICKSTAGES;
+                $scope.players[message.player].rankcss = { "box-shadow": "#c71515 0px 0px 16px 6px" };
                 $scope.numStages = message.numStages;
                 if (message.player == $scope.myPlayerId) {
                     $scope.toast = "You are setting up " + message.numStages + " stages for the quest";
@@ -584,11 +596,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
                 } else {
 
-                    var pnames = $scope.getPlayerName(message.players);
+                    var pnames = $scope.getPlayerName([message.player]);
                     $scope.toast = "Waiting for player " + pnames + " to finish setting up quest stages";
                     $scope.players[$scope.myPlayerId].isSponsoring = false;
                     $scope.setDragOff();
                 }
+            }
+            if (message.messageType === "JOINEDQUEST" && message.joined) {
+                $scope.players[message.player].rankcss = { "box-shadow": "rgb(0, 255, 255) 0px 0px 16px 6px" };
+                $scope.toast = "Player: " + $scope.getPlayerName([message.player]) + " joined the quest";
             }
             if (message.messageType === "PICKQUEST") {
                 $scope.currentState = $scope.GAME_STATE.PICKQUEST;
@@ -753,6 +769,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.bidSlider.options.floor = message.minBidValue;
                     $scope.bidSlider.options.ceil = message.maxBidValue;
                     $scope.toast = "You are bidding";
+                    if(message.playerWithHighestBid != -1){
+                    	$scope.toast = "Your are bidding, player with highest bid: " + $scope.getPlayerName([message.playerWithHighestBid]);
+                    }
                 }
 
             }
@@ -814,6 +833,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType === "BATTLEPOINTS") {
                 if (message.zone == "HAND") {
                     $scope.players[message.player].battlePoints = message.battlePoints;
+                } else if(message.zone == "STAGE1"){
+                	$scope.stageZones.stage1bp = message.battlePoints;
+                } else if(message.zone == "STAGE2"){
+                	$scope.stageZones.stage2bp = message.battlePoints;
+                } else if(message.zone == "STAGE3"){
+                	$scope.stageZones.stage3bp = message.battlePoints;
+                } else if(message.zone == "STAGE4"){
+                	$scope.stageZones.stage4bp = message.battlePoints;
+                } else if(message.zone == "STAGE5"){
+                	$scope.stageZones.stage5bp = message.battlePoints;
                 }
             }
             if (message.messageType === "SHIELDCOUNT") {
@@ -1622,7 +1651,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         var pNames = ""
         for (var i = 0; i < idArr.length; i++) {
-            pNames += $scope.players[idArr[i]].name + ", ";
+            pNames += $scope.players[idArr[i]].name + "#" + ($scope.players[idArr[i]].id + 1) + ", ";
         }
         pNames = pNames.substr(0, pNames.lastIndexOf(','));
         console.log(pNames);
