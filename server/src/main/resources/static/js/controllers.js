@@ -763,14 +763,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 if (message.type == "NOJOIN") {
                     $scope.toast = "No one joined the tournament";
                 }
+                var pnames = $scope.getPlayerName(message.players);
                 if (message.type == "ONEJOIN") {
-                    $scope.toast = "Only player " + message.players + " joined the tournament";
+                    $scope.toast = "Only player " + pnames + " joined the tournament";
                 }
                 if (message.type == "TIE") {
-                    $scope.toast = "Players " + message.players + " tied";
+                    $scope.toast = "Players " + pnames + " tied";
                 }
                 if (message.type == "WON") {
-                    $scope.toast = "Player " + message.players + " won the tournament";
+                    $scope.toast = "Player " + pnames + " won the tournament";                    
                 }
 
                 $scope.currentState = $scope.GAME_STATE.WINTOURNAMENT;
@@ -1504,7 +1505,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         // console.log("checking showAcceptDecline");
         //        console.log($scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring));
         //        $scope.setDragOff();
-        return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT || $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
+        return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT ||
+                                      $scope.currentState == $scope.GAME_STATE.SPONSORQUEST ||
+                                      ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
     }
 
     $scope.showDonePickingTournamentCards = function () {
@@ -1615,5 +1618,29 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         list.forEach(function (value, key) {
             list[key].drag = true;
         });
+    }
+    $scope.repositionCardsHorizontally = function (cards) {
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].css.left = (90 / cards.length * i) + "%";
+        }
+    }
+
+    $scope.getPlayerName = function (idArr) {
+        console.log(idArr);
+        if (idArr.length == 0) {
+            return "";
+        }
+        var pNames = ""
+        for (var i = 0; i < idArr.length; i++) {
+            pNames += $scope.players[idArr[i]].name + ", ";
+        }
+        pNames = pNames.substr(0, pNames.lastIndexOf(','));
+        console.log(pNames);
+        var lastIdx = pNames.lastIndexOf(',');
+        if (lastIdx == -1) {
+            return pNames;
+        }
+        pNames = pNames.substr(0, lastIdx) + " and" + pNames.substr(lastIdx);
+        return pNames;
     }
 });
