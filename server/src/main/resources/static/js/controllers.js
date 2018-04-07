@@ -121,7 +121,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         FINISHBIDDISCARD: 30,
         FINISHSTAGESETUP: 31,
         MORDRED: 32,
-        MERLIN: 33
+        MERLIN: 33,
+        FINISHPICKEVENT: 34
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -165,7 +166,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         PICKTOURNAMENT: 21,
         HANDDISCARD: 22,
         WINTOURNAMENT: 23,
-        WAITING: 24
+        WAITING: 24,
+        EVENTDISCARD: 30 // 30 cause i think there's a branch with a 25 and i don't want anything to fuck up in merge
     };
 
 
@@ -192,6 +194,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_discardFinish = "/app/game.finishDiscard";
     $scope.ep_finishSelectingDiscardHand = "/app/game.finishSelectingDiscardHand";
     $scope.ep_mordred = "/app/game.playMordred";
+    $scope.ep_finishSelectingEvent = "/app/game.finishSelectingEvent";
+    $scope.ep_discardEvent = "/app/game.discardEvent";
 
     /*  IMPORTANT - do not use this function directly. Make a wrapper function that calls this method when you wish to send a message to the server */
     /*  Parameters: endpoints - the endpoint to which we are sending a message to  */
@@ -371,6 +375,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.currentState = $scope.currentState.WAITING;
         $scope.toast = "Waiting for other players to bid";
     };
+    $scope.sendEventFinishDiscard = function () {
+        if ($scope.currentState === $scope.GAME_STATE.EVENTDISCARD) {
+            $scope.messsage = {
+                TYPE: $scope.TYPE_GAME,
+                messageType: $scope.MESSAGETYPES.FINISHPICKEVENT,
+                java_class: "EventDiscardFinishPickingClient"
+            };
+            $scope.addMessage($scope.ep_finishSelectingEvent);
+        }
+    }
     $scope.sendFinishDiscard = function () {
         console.log("hello");
         if ($scope.currentState === $scope.GAME_STATE.HANDDISCARD) {
@@ -827,6 +841,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
                 }
                 $scope.mordred = -1;
+            }
+            if (message.messageType == "EVENTDISCARD") {
+                if (_.contains(message.players, $scope.myPlayerId)) {
+                    $scope.players[$scope.myPlayerId].inEvent = true;
+                    $scope.toast = message.instructions;
+                    $scope.currentState = $scope.GAME_STATE.EVENTDISCARD;
+                } else {
+                    $scope.players[$scope.myPlayerId].inEvent = false;
+                    $scope.toast = "Waiting for event to finish";
+                }
             }
 
             console.log("done parsing");
@@ -1473,11 +1497,22 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
         }
+        if ($scope.currentState == $scope.GAME_STATE.EVENTDISCARD) {
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.HAND, ui.draggable.scope().card.value, $scope.ep_discardEvent);
+        }        
     }
 
     //returns true/false if it should show the accept/decline
     $scope.showAcceptDecline = function () {
         return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT || $scope.currentState == $scope.GAME_STATE.SPONSORQUEST || ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
+    }
+
+    $scope.showDiscardEventCards = function() {
+        if ($scope.currentState == $scope.GAME_STATE.EVENTDISCARD && $scope.players[$scope.myPlayerId].inEvent) {
+            $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
+            return true;
+        }
+        return false;
     }
 
     $scope.showDonePickingTournamentCards = function () {
