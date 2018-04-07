@@ -304,7 +304,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             };
             $scope.addMessage($scope.ep_joinQuest);
         } else if ($scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT) {
-            $scope.currentState = $scope.GAME_STATE.NONE;
+            $scope.currentState = $scope.GAME_STATE.WAITING;
             $scope.message = {
                 TYPE: $scope.TYPE_GAME,
                 messageType: $scope.MESSAGETYPES.JOINTOURNAMENT,
