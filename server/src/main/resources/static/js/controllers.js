@@ -493,6 +493,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     var card = message.cards[i];
                     card.css = {
                         "position": "absolute",
+                        "top": "0%",
                         "left": "0%",
                         "z-index": $scope.players[playerNum].hand.length + "",
                     }
@@ -605,36 +606,45 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                             if (message.zoneTo === $scope.ZONE.HAND || message.zoneTo === "HAND") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.HAND;
                                 $scope.players[$scope.myPlayerId].hand.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
+                                console.log($scope.players[$scope.myPlayerId].hand);
                                 $scope.tryingToPlay.splice(i, 1);
                                 break;
                             }
                             if (message.zoneTo === $scope.ZONE.STAGE1 || message.zoneTo === "STAGE1") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE1;
                                 $scope.stageZones.stage1.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsVertically($scope.stageZones.stage1);
                                 $scope.tryingToPlay.splice(i, 1);
+
                                 break;
                             }
                             if (message.zoneTo === $scope.ZONE.STAGE2 || message.zoneTo === "STAGE2") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE2;
                                 $scope.stageZones.stage2.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsVertically($scope.stageZones.stage2);
+                                console.log($scope.stageZones.stage2);
                                 $scope.tryingToPlay.splice(i, 1);
                                 break;
                             }
                             if (message.zoneTo === $scope.ZONE.STAGE3 || message.zoneTo === "STAGE3") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE3;
                                 $scope.stageZones.stage3.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsVertically($scope.stageZones.stage3);
                                 $scope.tryingToPlay.splice(i, 1);
                                 break;
                             }
                             if (message.zoneTo === $scope.ZONE.STAGE4 || message.zoneTo === "STAGE4") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE4;
                                 $scope.stageZones.stage4.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsVertically($scope.stageZones.stage4);
                                 $scope.tryingToPlay = $scope.tryingToPlay.slice(i);
                                 break;
                             }
                             if (message.zoneTo === $scope.ZONE.STAGE5 || message.zoneTo === "STAGE5") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.STAGE5;
                                 $scope.stageZones.stage5.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsVertically($scope.stageZones.stage5);
                                 $scope.tryingToPlay.splice(i, 1);
                                 console.log("STAGE5: ");
                                 console.log($scope.stageZones.stage5);
@@ -643,6 +653,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                             if (message.zoneTo === $scope.ZONE.FACEDOWN || message.zoneTo === "FACEDOWN") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.FACEDOWN;
                                 $scope.players[$scope.myPlayerId].faceDown.push($scope.tryingToPlay[i]);
+                                $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].faceDown);
                                 $scope.tryingToPlay.splice(i, 1);
                                 console.log("MY FACEDOWN CARDS: ");
                                 console.log($scope.players[$scope.myPlayerId].faceDown);
@@ -651,6 +662,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                             if (message.zoneTo === "DISCARD") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.DISCARD;
                                 $scope.players[$scope.myPlayerId].discardPile.push($scope.tryingToPlay[i]);
+                                //                                $scope.repositionCardsVertically($scope.players[$scope.myPlayerId].discardPile);
                                 $scope.tryingToPlay.splice(i, 1);
                                 console.log("MY DISCARD PILE: ");
                                 console.log($scope.players[$scope.myPlayerId].discardPile);
@@ -684,6 +696,18 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
                     //move the card
                     toZone.push(cardToMove);
+
+                    if (!message.zoneFrom.includes("STAGE")) {
+                        $scope.repositionCardsHorizontally(fromZone);
+                    } else {
+                        //position vertically
+                    }
+                    if (!message.zoneTo.includes("STAGE")) {
+                        $scope.repositionCardsHorizontally(toZone);
+                    } else {
+                        //position vertically
+                    }
+
                 }
             }
 
@@ -780,6 +804,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType === "FACEUPCARDS") {
                 for (var i = 0; i < $scope.players[message.player].faceDown.length; i++) {
                     $scope.players[message.player].faceUp.push($scope.players[message.player].faceDown[i]);
+                    $scope.repositionCardsHorizontally($scope.players[message.player].faceUp);
                 }
                 $scope.players[message.player].faceDown.length = 0;
                 $scope.toast = "Everyone flip face down to face up";
@@ -816,6 +841,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         if (message.opponent == $scope.players[message.otherPlayer].faceUp[i].value) {
                             console.log("Removing " + $scope.players[message.otherPlayer].faceUp[i].key + " from faceup");
                             $scope.players[message.otherPlayer].faceUp.splice(i, 1);
+                            $scope.repositionCardsHorizontally($scope.players[message.otherPlayer].faceUp);
                         }
                     }
                     //remove mordred 
@@ -823,12 +849,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         if (message.mordred == $scope.players[message.player].hand[i].value) {
                             console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
                             $scope.players[message.player].hand.splice(i, 1);
+                            $scope.repositionCardsHorizontally($scope.players[message.player].hand);
                         }
                     }
                 }
                 $scope.mordred = -1;
             }
-
             console.log("done parsing");
             $scope.$apply();
         });
@@ -1035,6 +1061,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1043,6 +1070,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage1);
         } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1051,6 +1079,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage2);
         } else if (cardFrom == $scope.ZONE.STAGE3) {
             $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1059,6 +1088,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage3);
         } else if (cardFrom == $scope.ZONE.STAGE4) {
             $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1067,6 +1097,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage4);
         } else if (cardFrom == $scope.ZONE.STAGE5) {
             $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1075,6 +1106,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage5);
         }
         $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE1, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
@@ -1096,6 +1128,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1104,6 +1137,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+
+            $scope.repositionCardsVertically($scope.stageZones.stage1);
         } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1112,6 +1147,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage2);
         } else if (cardFrom == $scope.ZONE.STAGE3) {
             $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1120,6 +1156,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage3);
         } else if (cardFrom == $scope.ZONE.STAGE4) {
             $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1128,6 +1165,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage4);
         } else if (cardFrom == $scope.ZONE.STAGE5) {
             $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1136,6 +1174,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage5);
         }
         $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE2, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
@@ -1157,6 +1196,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1165,6 +1205,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage1);
         } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1173,6 +1214,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage2);
         } else if (cardFrom == $scope.ZONE.STAGE3) {
             $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1181,6 +1223,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage3);
         } else if (cardFrom == $scope.ZONE.STAGE4) {
             $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1189,6 +1232,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage4);
         } else if (cardFrom == $scope.ZONE.STAGE5) {
             $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1197,6 +1241,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+
+            $scope.repositionCardsVertically($scope.stageZones.stage5);
         }
         $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE3, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
@@ -1218,6 +1264,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1226,6 +1273,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage1);
         } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1234,6 +1282,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage2);
         } else if (cardFrom == $scope.ZONE.STAGE3) {
             $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1242,6 +1291,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage3);
         } else if (cardFrom == $scope.ZONE.STAGE4) {
             $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1250,6 +1300,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage4);
         } else if (cardFrom == $scope.ZONE.STAGE5) {
             $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1258,6 +1309,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage5);
         }
         $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE4, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
@@ -1279,6 +1331,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1287,6 +1340,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage1);
         } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1295,6 +1349,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage2);
         } else if (cardFrom == $scope.ZONE.STAGE3) {
             $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1303,6 +1358,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage3);
         } else if (cardFrom == $scope.ZONE.STAGE4) {
             $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1311,6 +1367,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage4);
         } else if (cardFrom == $scope.ZONE.STAGE5) {
             $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1319,6 +1376,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage5);
         }
         $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.STAGE5, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
     }
@@ -1338,6 +1396,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         }
         if ($scope.currentState == $scope.GAME_STATE.PICKQUEST) {
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
@@ -1348,7 +1407,11 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playCardTournament);
         }
         if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
-            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.HAND, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
+        }
+        if ($scope.currentState == $scope.GAME_STATE.HANDDISCARD) {
+            console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.FACEDOWN, ui.draggable.scope().card.value, $scope.ep_discardFullHand);
         }
     }
 
@@ -1368,6 +1431,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         } else if (cardFrom == $scope.ZONE.FACEDOWN) {
             $scope.players[$scope.myPlayerId].faceDown = $scope.players[$scope.myPlayerId].faceDown.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1376,6 +1440,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].faceDown);
         } else if (cardFrom == $scope.ZONE.DISCARD) {
             $scope.players[$scope.myPlayerId].discardPile = $scope.players[$scope.myPlayerId].discardPile.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1392,6 +1457,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage1);
         } else if (cardFrom == $scope.ZONE.STAGE2) {
             $scope.stageZones.stage2 = $scope.stageZones.stage2.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1400,6 +1466,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage2);
         } else if (cardFrom == $scope.ZONE.STAGE3) {
             $scope.stageZones.stage3 = $scope.stageZones.stage3.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1408,6 +1475,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage3);
         } else if (cardFrom == $scope.ZONE.STAGE4) {
             $scope.stageZones.stage4 = $scope.stageZones.stage4.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1416,6 +1484,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage4);
         } else if (cardFrom == $scope.ZONE.STAGE5) {
             $scope.stageZones.stage5 = $scope.stageZones.stage5.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1424,6 +1493,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.stageZones.stage5);
         }
         //hella raunchy
         if ($scope.currentState == $scope.GAME_STATE.PICKSTAGES) {
@@ -1461,6 +1531,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsHorizontally($scope.players[$scope.myPlayerId].hand);
         }
         if ($scope.currentState == $scope.GAME_STATE.DISCARDQUEST) {
             console.log(ui.draggable.scope().card.zone.toString() + " " + $scope.ZONE.FACEDOWN.toString());
@@ -1580,6 +1651,15 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.repositionCardsHorizontally = function (cards) {
         for (var i = 0; i < cards.length; i++) {
             cards[i].css.left = (90 / cards.length * i) + "%";
+            cards[i].css.top = "0%";
+            cards[i].css['z-index'] = i + "";
+        }
+    }
+    $scope.repositionCardsVertically = function (cards) {
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].css.left = "0%";
+            cards[i].css.top = (90 / cards.length * i) + "%";
+            cards[i].css['z-index'] = i + "";
         }
     }
 

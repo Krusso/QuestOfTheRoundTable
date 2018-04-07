@@ -55,6 +55,7 @@
 }
 
 .playerFaceDown {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -66,6 +67,7 @@
 }
 
 .playerZone .playerFaceUp {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -164,22 +166,19 @@ h2 {
 }
 
 .cardZones .card1:hover {
-    top: -2vw;
     width: 6vw;
     height: 8vw;
     animation-name: cardhover;
-    animation-duration: 0.5s;
+    animation-duration: 0.1s;
     z-index: 1000 !important;
 }
 
 @keyframes cardhover {
     from {
-        top: 0vw;
         width: 4vw;
         height: 5.2vw;
     }
     to {
-        top: -2vw;
         width: 6vw;
         height: 8vw;
     }
@@ -216,6 +215,7 @@ h2 {
 }
 
 .opponentHandsContainer .opponentHand {
+    position: relative;
     width: 100%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -223,6 +223,7 @@ h2 {
 }
 
 .opponentHandsContainer .opponentFaceUp {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -230,6 +231,7 @@ h2 {
 }
 
 .opponentHandsContainer .opponentFaceDown {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -383,6 +385,7 @@ h2 {
 }
 
 .stageContainer .card1 {
+    position: absolute;
     width: 4vw;
     height: 5.2vw;
     float: left;
