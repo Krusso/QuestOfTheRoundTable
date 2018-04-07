@@ -852,6 +852,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.toast = "Waiting for event to finish";
                 }
             }
+            if (message.messageType === "FINISHPICKEVENT") {
+                if (message.player == $scope.myPlayerId) {
+                    if (message.successful == true) {
+                        $scope.players[$scope.myPlayerId].discardPile.length = 0;
+                        $scope.toast = "Finished discarding. Waiting for other players";
+                    } else {
+                        $scope.toast = message.response;
+                    }
+                }
+            }
             if (message.messageType == "EVENTDISCARDOVER") {
                 $scope.toast = "Event over";
             }
