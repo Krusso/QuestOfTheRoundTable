@@ -414,10 +414,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             messageType: $scope.MESSAGETYPES.MERLIN,
             java_class: "MerlinClient",
             merlin: $scope.merlin,
-            stage: i,
+            stage: stage,
             player: $scope.myPlayerId
         };
-        $scope.addMessage($scope.playMerlin);
+        $scope.addMessage($scope.ep_merlin);
     };
 
     /***************************************************************/
@@ -513,7 +513,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     card.css = {
                         "position": "absolute",
                         "left": "0%",
-                        "z-index": $scope.players[playerNum].hand.length + "",
+                        "z-index": ($scope.players[playerNum].hand.length + 9000) + "",
                     }
                     $scope.players[playerNum].hand.push(card);
                     console.log("Adding card: " + message.cards[i].key + " " + message.cards[i].value);
@@ -1594,6 +1594,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             // -1 = false otherwise its the ID of mordred
             if ($scope.mordred != -1) {
                 $scope.mordred = -1;
+                $scope.toast = "";
             } else {
                 $scope.mordred = card.value;
                 $scope.toast = "Click on opponent ally to kill or click Mordred again";
@@ -1609,6 +1610,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     		// -1 = false otherwise its the ID of mordred
             if ($scope.merlin != -1) {
                 $scope.merlin = -1;
+                $scope.toast = "";
             } else {
                 $scope.merlin = card.value;
                 $scope.toast = "Click on a stage to reveal";

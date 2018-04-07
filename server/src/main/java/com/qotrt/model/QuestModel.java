@@ -359,7 +359,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized GenericPair[] merlinCan(int stage) {
-		if((cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
+		if((participate.can() || cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
 			merlinUses -= 1;
 			return quest.getStage(stage).getStageCards().
 					stream().map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new);

@@ -364,6 +364,7 @@ h2 {
     height: 100%;
     left: 25%;
     background-color: rgba(66, 50, 50, 0.57);
+    z-index: 7000;
 }
 
 .stageZone .stageContainer {
@@ -380,6 +381,7 @@ h2 {
     margin-left: 1vw;
     display: inline-block;
     background-color: rgb(116, 84, 51);
+    z-index: 7000;
 }
 
 .stageContainer .card1 {
