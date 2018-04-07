@@ -26,6 +26,7 @@
         <div class="opponentHandsContainer">
             <div ng-repeat="player in players" ng-hide="$index == myPlayerId">
                 <div class="opponentHandZone">
+                    <h2 class="playername" ng-model="player.name"></h2>
                     <div class="displayContainer" ng-model="player.shieldIcon">
                         <div c1 class="card1" card1="{{player.rank}}">
                             <!--  RANK CARD IMAGE GOES HERE  -->
