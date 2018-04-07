@@ -151,6 +151,13 @@ public class QuestSequenceManager extends SequenceManager {
 			qm.setWinners(new ArrayList<Player>());
 		}
 
+		// sleep 5 seconds so that users can see who won or lost
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
 		logger.info("finished quest sequence: " + this.card.getName());
 	}
 
@@ -167,6 +174,13 @@ public class QuestSequenceManager extends SequenceManager {
 			quest.advanceStage();
 			qm.setMessage(WINTYPES.PASSSTAGE);
 			qm.passStage(winners);
+			
+			// sleep 5 seconds so that users can see who won or lost
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

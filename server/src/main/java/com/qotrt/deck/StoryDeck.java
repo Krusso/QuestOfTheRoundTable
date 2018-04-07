@@ -22,6 +22,7 @@ public class StoryDeck extends Deck<StoryCard> {
 	}
 	
 	public ArrayList<StoryCard> discards = new ArrayList<StoryCard>();
+<<<<<<< HEAD
 
 	void populate() {
 		addCard(new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"}),1);
@@ -48,7 +49,6 @@ public class StoryDeck extends Deck<StoryCard> {
 		addCard(new EventCard("Chivalrous Deed", new ChivalrousDeed()),1);
 		addCard(new EventCard("Prosperity Throughout the Realm", new ProsperityThroughoutTheRealm()),1);
 		addCard(new EventCard("King's Call to Arms", new KingsCallToArms()),1);
-
 	}
 
 	public void reshuffle() {

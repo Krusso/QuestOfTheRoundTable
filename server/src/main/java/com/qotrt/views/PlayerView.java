@@ -48,7 +48,7 @@ public class PlayerView extends Observer {
 	private void playerIncreasedLevel(GenericPair e) {
 		int player = mapper.convertValue(e.value, Integer.class);
 		Rank.RANKS rank = mapper.convertValue(e.key, Rank.RANKS.class);
-		sendMessage("/queue/response", new RankServer(player, rank));
+		sendMessage(new RankServer(player, rank));
 	}
 	
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -58,22 +58,22 @@ public class PlayerView extends Observer {
 	private void playerChangeShields(GenericPair e) {
 		int player = mapper.convertValue(e.value, Integer.class);
 		int shields = mapper.convertValue(e.key, Integer.class);
-		sendMessage("/queue/response", new ShieldCountServer(player, shields));
+		sendMessage(new ShieldCountServer(player, shields));
 	}
 	
 	private void playerAddCards(GenericPair e) {
 		GenericPair[] cards = mapper.convertValue(e.key, GenericPair[].class);
 		int player = mapper.convertValue(e.value, Integer.class);
-		sendMessage("/queue/response", new AddCardsServer(player, cards));
+		sendMessage(new AddCardsServer(player, cards));
 	}
 	
 	private void playerDiscardType(GenericPair e) {
 		GenericPair[] cards = mapper.convertValue(e.key, GenericPair[].class);
 		int player = mapper.convertValue(e.value, Integer.class);
-		sendMessage("/queue/response", new FaceUpDiscardServer(player, cards));
+		sendMessage(new FaceUpDiscardServer(player, cards));
 	}
 	
 	private void flipCards(Player p) {
-		sendMessage("/queue/response", new FaceUpServer(p.getID()));
+		sendMessage(new FaceUpServer(p.getID()));
 	}
 }

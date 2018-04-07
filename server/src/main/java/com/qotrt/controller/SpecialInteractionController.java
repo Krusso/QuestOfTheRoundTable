@@ -64,6 +64,11 @@ public class SpecialInteractionController {
 		GenericPair[] e = game.bmm.getQuestModel().merlinCan(chatMessage.stage);
 		
 		if(e != null) {
+			
+			if(player.hand.findCardByID(chatMessage.id) != null) {
+				player.getFaceUp().addCard(player.hand.getCardByID(chatMessage.id));
+			}
+			
 			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), e, ""));
 		} else {
 			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), new GenericPair[] {}, "Can only use merlin once per quest"));

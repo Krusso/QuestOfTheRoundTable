@@ -38,22 +38,22 @@ public class EventView extends Observer {
 
 	
 	private void finishEvent(Integer i) {
-		sendMessage("/queue/response", new EventDiscardOverServer());
+		sendMessage(new EventDiscardOverServer());
 	}
 	
 	private void finish(Player p) {
-		sendMessage("/queue/response", new EventDiscardFinishPickingServer(p.getID(), true, ""));
+		sendMessage(new EventDiscardFinishPickingServer(p.getID(), true, ""));
 	}
 	
 	private void discard(Player[] players) {
 		for(Player p: players){
 			if(p.getTypeCount(TYPE.WEAPONS) >= 1) {
-				sendMessage("/queue/response", new EventDiscardCardsServer(p.getID(),
+				sendMessage(new EventDiscardCardsServer(p.getID(),
 						"Discard: 1 WEAPON card",
 						Arrays.stream(players).mapToInt(i -> i.getID()).toArray()
 						));
 			} else if(p.getTypeCount(TYPE.FOES) >= 1) {
-				sendMessage("/queue/response", new EventDiscardCardsServer(p.getID(),
+				sendMessage(new EventDiscardCardsServer(p.getID(),
 						"Discard: " + Math.min(2, p.getTypeCount(TYPE.FOES)) + " FOE cards",
 						Arrays.stream(players).mapToInt(i -> i.getID()).toArray()
 						));
