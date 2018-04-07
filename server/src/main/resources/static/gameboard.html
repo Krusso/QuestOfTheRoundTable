@@ -177,7 +177,7 @@
             <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">
                 <div class="discardPile">
                     <div ng-repeat="card in players[myPlayerId].discardPile" ng-model="players[myPlayerId].discardPile">
-                        <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable></div>
+                        <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                     </div>
                 </div>
                 <!--                Only show discard button if player needs to discard cards-->

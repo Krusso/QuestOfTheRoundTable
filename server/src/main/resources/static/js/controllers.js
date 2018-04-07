@@ -344,7 +344,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         $scope.addMessage($scope.ep_finishSelectingTournament);
     };
 
-    $scope.sendFinalTournamentPickCardsClient = function() {
+    $scope.sendFinalTournamentPickCardsClient = function () {
         $scope.message = {
             TYPE: $scope.TYPE_GAME,
             messageType: $scope.MESSAGETYPES.PICKSTAGES,
@@ -676,7 +676,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                             if (message.zoneTo === "DISCARD") {
                                 $scope.tryingToPlay[i].zone = $scope.ZONE.DISCARD;
                                 $scope.players[$scope.myPlayerId].discardPile.push($scope.tryingToPlay[i]);
-                                //                                $scope.repositionCardsVertically($scope.players[$scope.myPlayerId].discardPile);
+                                $scope.repositionCardsVertically($scope.players[$scope.myPlayerId].discardPile);
                                 $scope.tryingToPlay.splice(i, 1);
                                 console.log("MY DISCARD PILE: ");
                                 console.log($scope.players[$scope.myPlayerId].discardPile);
@@ -822,7 +822,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.toast = "Players " + pnames + " tied";
                 }
                 if (message.type == "WON") {
-                    $scope.toast = "Player " + pnames + " won the tournament";                    
+                    $scope.toast = "Player " + pnames + " won the tournament";
                 }
 
                 $scope.currentState = $scope.GAME_STATE.WINTOURNAMENT;
@@ -862,8 +862,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "GAMEOVER") {
-            	var pnames = $scope.getPlayerName(message.players);
-                $scope.toast = "GAME OVER, PLAYER "+pnames+" WON";
+                var pnames = $scope.getPlayerName(message.players);
+                $scope.toast = "GAME OVER, PLAYER " + pnames + " WON";
             }
             if (message.messageType === "BATTLEPOINTS") {
                 if (message.zone == "HAND") {
@@ -1494,6 +1494,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
                 return ui.draggable.scope().card.value !== e.value;
             });
+            $scope.repositionCardsVertically($scope.players[$scope.myPlayerId].discardPile);
         } else if (cardFrom == $scope.ZONE.STAGE1) {
             $scope.stageZones.stage1 = $scope.stageZones.stage1.filter(function (e) {
                 if (ui.draggable.scope().card.value === e.value) {
@@ -1594,8 +1595,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     //returns true/false if it should show the accept/decline
     $scope.showAcceptDecline = function () {
         return $scope.currentState == $scope.GAME_STATE.JOINTOURNAMENT ||
-                                      $scope.currentState == $scope.GAME_STATE.SPONSORQUEST ||
-                                      ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
+            $scope.currentState == $scope.GAME_STATE.SPONSORQUEST ||
+            ($scope.currentState == $scope.GAME_STATE.JOINQUEST && !$scope.players[$scope.myPlayerId].isSponsoring);
 
     }
 
@@ -1607,7 +1608,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         return false;
     }
 
-    $scope.showDonePickingFinalTournamentCards = function() {
+    $scope.showDonePickingFinalTournamentCards = function () {
         if ($scope.currentState == $scope.GAME_STATE.JOINEDFINALTOURNAMENT && $scope.players[$scope.myPlayerId].joinedFinalTourn) {
             return true;
         }
@@ -1713,7 +1714,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.repositionCardsVertically = function (cards) {
         for (var i = 0; i < cards.length; i++) {
             cards[i].css.left = "0%";
-            cards[i].css.top = (90 / cards.length * i) + "%";
+            cards[i].css.top = (70 / cards.length * i) + "%";
             cards[i].css['z-index'] = i + "";
         }
     }
