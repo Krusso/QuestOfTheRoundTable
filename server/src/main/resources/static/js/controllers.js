@@ -981,6 +981,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 					$scope.currentState = $scope.GAME_STATE.WAITING;
 				}
 			}
+			if(message.messageType === "RANKUPDATE"){
+				$scope.players[message.player].rank = message.newrank;
+			}
             console.log("done parsing");
             $scope.$apply();
         });
