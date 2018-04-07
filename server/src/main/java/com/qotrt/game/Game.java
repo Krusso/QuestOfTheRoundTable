@@ -67,7 +67,7 @@ public class Game extends Observable {
 			com.qotrt.messages.game.AIPlayer[] aiPlayers2, 
 			Boolean discard, 
 			Boolean racing) {
-		
+
 		this.messagingTemplate = messagingTemplate;
 		this.gameName = gameName;
 		this.rigged = rigged;
@@ -107,7 +107,7 @@ public class Game extends Observable {
 				for(int i = 0; i < aiplayers.size(); i++) {
 					players.add(new UIPlayer("none-matching-session-id", "ai player " + i, 1));
 				}
-				
+
 				// model creation
 				logger.info("creating models");
 				BoardModel bm = new BoardModel();
@@ -155,10 +155,10 @@ public class Game extends Observable {
 				if(discard) {
 					pm.setDiscardSequenceManager(new DiscardSequenceManager(bmm));
 				}
-				
+
 				logger.info("starting pm");
 				pm.start();
-				
+
 				logger.info("starting AI players");
 				for(int i = 0; i < aiplayers.size(); i++) {
 					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm,  bmm);
@@ -166,9 +166,9 @@ public class Game extends Observable {
 					tm.subscribe(aiplayers.get(i));
 					qm.subscribe(aiplayers.get(i));
 				}
-				
+
 				logger.info("finished setup");
-				
+
 				GameSequenceSimpleFactory gsm = new GameSequenceSimpleFactory();
 				while(true) {
 					logger.info("Next Turn");
@@ -176,13 +176,18 @@ public class Game extends Observable {
 					StoryCard s = dm.getStoryCard(1).get(0);
 					logger.info("Next card being played: " + s.getName());
 					bm.setCard(s);
-					
+
 					SequenceManager sm = gsm.createStoryManager(bm.getCard());
 					logger.info("Running: " + sm);
 					sm.start(pm, bmm, racing);
 
 					boolean winners = pm.rankUp();
-					if(winners) {
+					if(winners) {					
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 						sm = gsm.createStoryManager(GameOverStoryCard.GAMEOVER);
 						sm.start(pm, bmm, racing);
 						break;
@@ -243,8 +248,8 @@ public class Game extends Observable {
 		return this.gameName;
 	}
 
-	
-	
+
+
 	public int getAICount() {
 		return aiplayers.size();
 	}

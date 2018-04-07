@@ -20,7 +20,7 @@ public class StoryDeck extends Deck<StoryCard> {
 	public StoryDeck() {
 		super();
 	}
-	
+
 	public ArrayList<StoryCard> discards = new ArrayList<StoryCard>();
 
 	void populate() {
@@ -48,7 +48,6 @@ public class StoryDeck extends Deck<StoryCard> {
 		addCard(new EventCard("Chivalrous Deed", new ChivalrousDeed()),1);
 		addCard(new EventCard("Prosperity Throughout the Realm", new ProsperityThroughoutTheRealm()),1);
 		addCard(new EventCard("King's Call to Arms", new KingsCallToArms()),1);
-
 	}
 
 	public void reshuffle() {
