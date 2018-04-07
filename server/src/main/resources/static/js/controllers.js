@@ -837,7 +837,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
             if (message.messageType === "GAMEOVER") {
-                $scope.toast = "GAME OVER, PLAYER "+message.players+" WON";
+            	var pnames = $scope.getPlayerName(message.players);
+                $scope.toast = "GAME OVER, PLAYER "+pnames+" WON";
             }
             if (message.messageType === "BATTLEPOINTS") {
                 if (message.zone == "HAND") {
