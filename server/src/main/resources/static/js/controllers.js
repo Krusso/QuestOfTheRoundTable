@@ -377,12 +377,14 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     };
     $scope.sendEventFinishDiscard = function () {
         if ($scope.currentState === $scope.GAME_STATE.EVENTDISCARD) {
+            console.log($scope.message);
             $scope.messsage = {
                 TYPE: $scope.TYPE_GAME,
                 messageType: $scope.MESSAGETYPES.FINISHPICKEVENT,
                 java_class: "EventDiscardFinishPickingClient"
             };
             $scope.addMessage($scope.ep_finishSelectingEvent);
+            console.log($scope.message);
         }
     }
     $scope.sendFinishDiscard = function () {
@@ -1498,7 +1500,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_playCardQuestSetup);
         }
         if ($scope.currentState == $scope.GAME_STATE.EVENTDISCARD) {
-            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.HAND, ui.draggable.scope().card.value, $scope.ep_discardEvent);
+            $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_discardEvent);
         }        
     }
 
