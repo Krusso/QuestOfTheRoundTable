@@ -1,5 +1,7 @@
 package com.qotrt.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +19,7 @@ import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.deck.AdventureDeck;
 import com.qotrt.gameplayer.Player;
 
-public class EventModel extends Observable implements Discard {
+public class EventModel extends Observable implements Discard, PropertyChangeListener {
 
 	final static Logger logger = LogManager.getLogger(EventModel.class);
 	
@@ -28,6 +30,13 @@ public class EventModel extends Observable implements Discard {
 	
 	public EventModel() {
 		discard = new MultiShotConfirmation(null, "finishDiscard", null, true);
+		discard.subscribe(this);
+	} 
+	
+	@Override
+	//propagating events up
+	public void propertyChange(PropertyChangeEvent arg0) {
+		fireEvent(arg0.getPropertyName(), arg0.getOldValue(), arg0.getNewValue());
 	}
 	
 	public synchronized void start(ArrayList<Player> highest) {

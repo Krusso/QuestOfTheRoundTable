@@ -20,7 +20,7 @@ public class StoryDeck extends Deck<StoryCard> {
 	public StoryDeck() {
 		super();
 	}
-	
+
 	public ArrayList<StoryCard> discards = new ArrayList<StoryCard>();
 
 	void populate() {
@@ -39,7 +39,7 @@ public class StoryDeck extends Deck<StoryCard> {
 		addCard(new TournamentCard("Tournament at Orkney",2),1);
 		addCard(new TournamentCard("Tournament at Tintagel",1),1);
 		addCard(new TournamentCard("Tournament at York",0),1);
-//		
+		
 		addCard(new EventCard("King's Recognition", new KingRecognition()),2);
 		addCard(new EventCard("Queen's Favor", new QueenFavor()),2);
 		addCard(new EventCard("Court Called to Camelot", new CourtCalledToCamelot()),2);
@@ -48,6 +48,16 @@ public class StoryDeck extends Deck<StoryCard> {
 		addCard(new EventCard("Chivalrous Deed", new ChivalrousDeed()),1);
 		addCard(new EventCard("Prosperity Throughout the Realm", new ProsperityThroughoutTheRealm()),1);
 		addCard(new EventCard("King's Call to Arms", new KingsCallToArms()),1);
+
+		addCard(new EventCard("King's Recognition", new KingRecognition()),2);
+		addCard(new EventCard("Queen's Favor", new QueenFavor()),2);
+		addCard(new EventCard("Court Called to Camelot", new CourtCalledToCamelot()),2);
+		addCard(new EventCard("Pox", new Pox()),1);
+		addCard(new EventCard("Plague", new Plague()),1);
+		addCard(new EventCard("Chivalrous Deed", new ChivalrousDeed()),1);
+		addCard(new EventCard("Prosperity Throughout the Realm", new ProsperityThroughoutTheRealm()),1);
+		addCard(new EventCard("King's Call to Arms", new KingsCallToArms()),1);
+
 	}
 
 	public void reshuffle() {
