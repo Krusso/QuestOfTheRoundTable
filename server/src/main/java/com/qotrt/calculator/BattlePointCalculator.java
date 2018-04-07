@@ -231,6 +231,8 @@ public class BattlePointCalculator {
 					if(getPoints(c, false, card) + getPoints(weapons.get(i), false, card) > minBp) {
 						uniqueBpFoes++;
 						minBp = getPoints(c,false,card) + getPoints(weapons.get(i), false, card);
+						weapons.remove(i);
+						break;
 					}
 				}
 			}
