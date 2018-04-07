@@ -21,7 +21,7 @@ public class AIQuest extends AIController {
 	public AIQuest(Game game, Player player, AbstractAI ai) {
 		super(game, player, ai);
 
-		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("questionSponsor");
+		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("questionSponsor") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func1 = x ->wrapEvent(x, y -> questionSponsor()).accept(x);
 
 		Function<PropertyChangeEvent, Boolean> func2 = x -> x.getPropertyName().equals("questStage");
@@ -33,7 +33,7 @@ public class AIQuest extends AIController {
 		Function<PropertyChangeEvent, Boolean> func6 = x -> x.getPropertyName().equals("questionCardQuest") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func7 = x ->wrapEvent(x, y -> questionCardQuest()).accept(x);
 
-		Function<PropertyChangeEvent, Boolean> func8 = x -> x.getPropertyName().equals("bid");
+		Function<PropertyChangeEvent, Boolean> func8 = x -> x.getPropertyName().equals("bid") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func9 = x -> wrapEvent(x, y -> bid(y)).accept(x);
 
 		Function<PropertyChangeEvent, Boolean> func10 = x -> x.getPropertyName().equals("discardQuest") && contains((int[]) x.getNewValue());
@@ -57,6 +57,10 @@ public class AIQuest extends AIController {
 	}
 
 	private void questStage() {
+		if(game.bmm.getQuestModel().getPlayerWhoSponsor().size() != 0 &&
+				game.bmm.getQuestModel().getPlayerWhoSponsor().get(0).getID() != player.getID()) {
+			return;
+		}
 		HashMap<Integer, ZONE> map = new HashMap<Integer, ZONE>();
 		map.put(0, ZONE.STAGE1);
 		map.put(1, ZONE.STAGE2);

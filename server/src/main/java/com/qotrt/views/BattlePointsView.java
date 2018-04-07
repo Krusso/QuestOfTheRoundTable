@@ -20,13 +20,20 @@ public class BattlePointsView extends Observer {
 
 	private BattlePointCalculator bpc;
 	private StoryCard sc;
+	private PlayerManager pm;
 
 	public BattlePointsView(SimpMessagingTemplate messagingTemplate, PlayerManager pm, ArrayList<UIPlayer> players) {
 		super(messagingTemplate, players);
 		this.bpc = new BattlePointCalculator(pm);
-
+		this.pm = pm;
+		
 		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("middlecard"), 
-				x -> sc = (mapper.convertValue(x.getNewValue(), StoryCard.class))));
+				x -> {
+					sc = (mapper.convertValue(x.getNewValue(), StoryCard.class));
+					for(Player p: this.pm.players) {
+						battlePoints(p);
+					}
+				}));
 
 		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("battlePoints"), 
 				x -> battlePoints(mapper.convertValue(x.getNewValue(), Player.class))));

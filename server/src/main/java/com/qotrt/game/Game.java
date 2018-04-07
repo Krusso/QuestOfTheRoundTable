@@ -104,7 +104,7 @@ public class Game extends Observable {
 				
 				
 				for(int i = 0; i < aiplayers.size(); i++) {
-					players.add(new UIPlayer("none-matching-session-id", "ai player " + i, 1));
+					players.add(new UIPlayer("none-matching-session-id", "ai_player_" + i, 1));
 				}
 				
 				fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
@@ -119,7 +119,7 @@ public class Game extends Observable {
 						dm, 
 						rigged);
 				TournamentModel tm = new TournamentModel(racing);
-				QuestModel qm = new QuestModel(racing);
+				QuestModel qm = new QuestModel(racing, pm);
 				DiscardModel dmm = new DiscardModel();
 				EventModel em = new EventModel();
 				FinalTournamentModel ftm = new FinalTournamentModel();
@@ -167,6 +167,10 @@ public class Game extends Observable {
 					bm.subscribe(aiplayers.get(i));
 					tm.subscribe(aiplayers.get(i));
 					qm.subscribe(aiplayers.get(i));
+					dmm.subscribe(aiplayers.get(i));
+					em.subscribe(aiplayers.get(i));
+					ftm.subscribe(aiplayers.get(i));
+					logger.info("subscribed");
 				}
 				
 				logger.info("finished setup");

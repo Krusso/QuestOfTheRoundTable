@@ -125,8 +125,9 @@ public class QuestSequenceManager extends SequenceManager {
 				participants.add(participants.remove(0));
 			}
 		}
-		List<Player> winners = new ArrayList<Player>(participants);
 		
+		List<Player> winners = new ArrayList<Player>(participants);
+		pm.drawCards(new ArrayList<Player>(), 0);
 		handleQuest(participants, winners);
 
 		// handle resolution of the quest
@@ -166,7 +167,6 @@ public class QuestSequenceManager extends SequenceManager {
 	private void handleQuest(List<Player> participants, List<Player> winners) {
 		while(participants.size() != 0 && winners.size() > 0 && quest.getCurrentStage() < quest.getNumStages()) {
 			logger.info("Stage: " + quest.getCurrentStage() + " participants: " + winners.size());
-			pm.drawCards(winners, 1);
 			if (quest.currentStageType() == TYPE.FOES) {
 				handleFoe(participants, winners);
 			} else if (quest.currentStageType() == TYPE.TESTS) {
@@ -183,6 +183,8 @@ public class QuestSequenceManager extends SequenceManager {
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
+			
+			pm.drawCards(winners, 1);
 		}
 	}
 

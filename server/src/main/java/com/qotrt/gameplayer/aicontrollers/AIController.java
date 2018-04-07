@@ -16,7 +16,7 @@ import com.qotrt.views.EventHandler;
 
 public abstract class AIController extends EventHandler {
 
-	final static Logger logger = LogManager.getLogger(TestTournament.class);
+	final static Logger logger = LogManager.getLogger(AIController.class);
 	
 	protected PlayCard pc;
 	protected Game game;
@@ -28,10 +28,12 @@ public abstract class AIController extends EventHandler {
 		this.player = player;
 		this.ai = ai;
 		this.pc = new PlayCard();
+		logger.info("Created AIController");
 	}
 
 
 	protected boolean contains(int[] newValue) {
+		logger.info("Checking if contains: "+ newValue);
 		for(int i: newValue) {
 			if(i == player.getID()) {
 				return true;
@@ -43,6 +45,7 @@ public abstract class AIController extends EventHandler {
 
 
 	protected boolean contains(Player[] newValue) {
+		logger.info("Checking if contains: "+ newValue);
 		return this.contains(Arrays.stream(newValue).
 				mapToInt(i -> i.getID()).toArray());
 	}

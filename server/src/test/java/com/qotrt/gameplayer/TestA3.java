@@ -150,7 +150,7 @@ public class TestA3 {
 		pm.players[1] = p2;
 		pm.nextTurn();
 		
-		QuestModel tm = new QuestModel(false);
+		QuestModel tm = new QuestModel(false, pm);
 		Quest quest = new Quest(new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"}), tm);
 		tm.setQuest(quest, new ArrayList<Player>());
 		tm.questionJoinQuest(Arrays.asList(pm.players));
@@ -184,7 +184,7 @@ public class TestA3 {
 		pm.players[1] = p2;
 		pm.nextTurn();
 		
-		QuestModel tm = new QuestModel(false);
+		QuestModel tm = new QuestModel(false, pm);
 		Quest quest = new Quest(new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"}), tm);
 		tm.setQuest(quest, new ArrayList<Player>());
 		tm.questionJoinQuest(Arrays.asList(pm.players));

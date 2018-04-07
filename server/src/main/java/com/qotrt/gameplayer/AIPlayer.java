@@ -41,10 +41,15 @@ public class AIPlayer extends Observer {
 			ai = new A3(player, pm, bmm); 
 		}
 		
+		logger.info("Adding controller tournament");
 		controllers.add(new AITournament(game, player, ai));
+		logger.info("Adding controller quest");
 		controllers.add(new AIQuest(game, player, ai));
+		logger.info("Adding controller discard");
 		controllers.add(new AIDiscard(game, player, ai));
+		logger.info("Adding controller event");
 		controllers.add(new AIEvent(game, player, ai));
+		logger.info("Started ai: " + player.getID() + " strat: " + strat);
 	}
 
 	@Override

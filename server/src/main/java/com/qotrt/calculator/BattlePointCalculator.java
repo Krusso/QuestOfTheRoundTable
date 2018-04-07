@@ -215,15 +215,24 @@ public class BattlePointCalculator {
 	public boolean canSponsor(Player next, QuestCard card) {
 		List<AdventureCard> foes = this.uniqueListOfTypeDecreasingBp(next, TYPE.FOES, card, false);
 		List<AdventureCard> tests = this.uniqueListOfTypeDecreasingBp(next, TYPE.TESTS, card, false);
+		List<AdventureCard> weapons = this.uniqueListOfTypeDecreasingBp(next, TYPE.WEAPONS, card, false);
 		logger.info("Foes: " + foes);
 		logger.info("Tests: " + tests);
 		int uniqueBpFoes = 0;
 		int minBp = Integer.MIN_VALUE;
 		Collections.reverse(foes);
+		Collections.reverse(weapons);
 		for(AdventureCard c: foes) {
 			if(getPoints(c, false, card) > minBp) {
 				uniqueBpFoes++;
 				minBp = getPoints(c,false,card);
+			} else {
+				for(int i = 0; i < weapons.size(); i++) {
+					if(getPoints(c, false, card) + getPoints(weapons.get(i), false, card) > minBp) {
+						uniqueBpFoes++;
+						minBp = getPoints(c,false,card) + getPoints(weapons.get(i), false, card);
+					}
+				}
 			}
 		}
 
@@ -231,7 +240,7 @@ public class BattlePointCalculator {
 			uniqueBpFoes++;
 		}
 
-		logger.info("Player: " + next.getID() + " can sponsor: " + (uniqueBpFoes + 1 >= card.getNumStages()));
+		logger.info("Player: " + next.getID() + " can sponsor: " + (uniqueBpFoes >= card.getNumStages()));
 		return uniqueBpFoes >= card.getNumStages();
 	}
 

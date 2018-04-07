@@ -27,7 +27,7 @@ public class AIDiscard extends AIController {
 	private void discardHand() {
 		List<AdventureCard> cards = ai.discardWhenHandFull(player.hand.size() - 12);
 		cards.forEach(i -> {
-			pc.discardCard(game, player, game.bmm.getEventModel(), new PlayCardClient(player.getID(),
+			pc.discardCard(game, player, game.bmm.getDiscardModel(), new PlayCardClient(player.getID(),
 					i.id, ZONE.HAND, ZONE.DISCARD));
 			pc.checkValidityAndSend(game, player, new PlayCardClient(player.getID(),
 					i.id, ZONE.HAND, ZONE.DISCARD), "");

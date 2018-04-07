@@ -325,6 +325,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             };
             $scope.addMessage($scope.ep_playCardTournament);
         }
+        $scope.currentState = $scope.currentState.WAITING;
     };
 
     $scope.sendJoinTournamentClient = function (isAccept) {
@@ -336,6 +337,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "TournamentAcceptDeclineClient"
         };
         $scope.addMessage($scope.ep_joinTournament);
+        $scope.currentState = $scope.currentState.WAITING;
     }
 
     $scope.sendTournamentPickCardsClient = function () {
@@ -364,6 +366,20 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "QuestPickCardsClient"
         };
         $scope.addMessage($scope.ep_finishSelectingQuestCards);
+        $scope.currentState = $scope.currentState.WAITING;
+    };
+    $scope.sendQuestBidDecline = function () {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.BIDQUEST,
+            java_class: "QuestBidClient",
+            bid: -1
+        };
+        $scope.addMessage($scope.ep_bid);
+        //after player bids, set the state to waiting, this is only really necessary for hot-seat 
+        //since in racing mode, every player will receive a BidQuest message rather than 1 by 1
+        $scope.currentState = $scope.currentState.WAITING;
+        $scope.toast = "Waiting for other players to bid";
     };
     $scope.sendQuestBidClient = function () {
         $scope.message = {
@@ -391,7 +407,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.message = {
                 TYPE: $scope.TYPE_GAME,
                 messageType: $scope.MESSAGETYPES.FINISHBIDDISCARD,
-                java_class: "QuestDiscardCardsClient"
+                java_class: "BidDiscardFinishPickingClient"
             };
             console.log("quest bid discarding");
             $scope.addMessage($scope.ep_discardFinish);
@@ -599,6 +615,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     var pnames = $scope.getPlayerName([message.player]);
                     $scope.toast = "Waiting for player " + pnames + " to finish setting up quest stages";
                     $scope.players[$scope.myPlayerId].isSponsoring = false;
+                    $scope.players[message.player].isSponsoring = true;
                     $scope.setDragOff();
                 }
             }
@@ -610,13 +627,13 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 $scope.currentState = $scope.GAME_STATE.PICKQUEST;
                 if (_.contains(message.players, $scope.myPlayerId)) {
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
-                    $scope.toast = "Choose cards to battle in the upcoming quest.";
+                    $scope.toast = "Choose cards to battle in the upcoming stage.";
                     $scope.players[$scope.myPlayerId].joinedQuest = true;
                 } else {
                     $scope.setDragOff();
 
                     var pnames = $scope.getPlayerName(message.players);
-                    $scope.toast = "Did not join quest. Waiting for players " + pnames + " to finish picking cards";
+                    $scope.toast = "Waiting for players " + pnames + " to finish picking cards";
                     $scope.players[$scope.myPlayerId].joinedQuest = false;
                 }
             }
@@ -743,20 +760,34 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
 
                 }
-                if (message.players.length != 0) {
+               	
+				for (var i = 0; i < $scope.players.length; i++) {
+                	if (!message.players.includes(i) && !$scope.players[i].isSponsoring) {
+	            		 $scope.players[i].rankcss = { };
+               		}
+               	}
+                
 
+                if (message.players.length != 0) {
                     var pnames = $scope.getPlayerName(message.players);
                     $scope.toast = "Players " + pnames + " passed the stage";
                 } else {
-
                     $scope.toast = "No players has passed the stage";
                 }
+                
                 if (message.type === "WON") {
-                    var pnames = $scope.getPlayerName(message.players);
-                    $scope.toast = "Players " + pnames + " won the quest!";
+                	if(message.players.length != 0){
+                    	var pnames = $scope.getPlayerName(message.players);
+                    	$scope.toast = "Players " + pnames + " won the quest!";                	
+                	} else {
+                		$scope.toast = "No player won the quest";
+                	}
                 }
                 if (message.type === "NOSPONSOR") {
                     $scope.toast = "No players sponsored the quest";
+                }
+                if(message.type === "NOJOIN"){
+                	$scope.toast = "No one joined the quest";
                 }
                 $scope.players[$scope.myPlayerId].discardPile.length = 0;
             }
@@ -798,6 +829,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     if (message.successful == true) {
                         $scope.players[$scope.myPlayerId].discardPile.length = 0;
                         $scope.toast = "Finished discarding. Waiting for other players";
+        				$scope.currentState = $scope.currentState.WAITING;
                     } else {
                         $scope.toast = message.response;
                     }
@@ -874,11 +906,40 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 				if(message.response !== "" && message.player == $scope.myPlayerId){
 					$scope.toast = message.response;
 				} else if(message.response === "" && message.player == $scope.myPlayerId){
-					$scope.players[$scope.myPlayerId].revealStage[message.stage] = true
+					$scope.players[$scope.myPlayerId].revealStage[message.stage] = true;
+					
+					// moving merlin faceup
+					for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
+                        if (message.merlin == $scope.players[message.player].hand[i].value) {
+                            console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
+                            $scope.players[message.player].faceUp.push($scope.players[message.player].hand[i]);
+                            $scope.players[message.player].hand.splice(i, 1);
+                        }
+                    }
+                    
+                    $scope.toast = "";
+					
+				} else if(message.response === "" && message.player !== $scope.myPlayerId){
+				
+					// moving merlin faceup
+					for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
+                        if (message.merlin == $scope.players[message.player].hand[i].value) {
+                            console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
+                            $scope.players[message.player].faceUp.push($scope.players[message.player].hand[i]);
+                            $scope.players[message.player].hand.splice(i, 1);
+                        }
+                    }
+				
 				}
 				$scope.merlin = -1;
 			}
-
+			if(message.messageType === "FINISHBIDDISCARD"){
+				if(message.player === $scope.myPlayerId && !message.successful){
+					$scope.toast = message.response;
+				} else if(message.player === $scope.myPlayerId){
+					$scope.currentState = $scope.GAME_STATE.WAITING;
+				}
+			}
             console.log("done parsing");
             $scope.$apply();
         });

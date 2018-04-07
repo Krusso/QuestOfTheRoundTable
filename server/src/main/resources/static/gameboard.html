@@ -42,7 +42,7 @@
                         </div>
                         <div class="opponentFaceUp">
                             <div ng-repeat="card in player.faceUp">
-                                <div c1 class="card1 mordredCards" card1="{{card.key}}"></div>
+                                <div c1 class="card1 mordredCards" card1="{{card.key}}" ng-click="mordredFunction($event, card)"></div>
                             </div>
                         </div>
 
@@ -175,6 +175,7 @@
                     <button class="brown-button" ng-click="sendQuestPickStagesClient()" ng-show="showDoneSettingUp()">Done Setting Up</button>
                     <button class="brown-button" ng-click="sendQuestPickCardsClient()" ng-show="showDonePickingQuestCards()">Done Picking Cards</button>
                     <button class="brown-button" ng-click="sendQuestBidClient()" ng-show="showBidButton()">Bid {{bidSlider.value}}</button>
+                    <button class="brown-button" ng-click="sendQuestBidDecline()" ng-show="showBidButton()">Decline To Bid</button>
                     <!--                    <button class="brown-button">End Turn</button>-->
                 </div>
             </div>

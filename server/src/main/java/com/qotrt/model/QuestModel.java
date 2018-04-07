@@ -17,6 +17,7 @@ import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.confirmation.NeverEndingConfirmation;
 import com.qotrt.confirmation.SingleShotConfirmation;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.sequence.Quest;
 import com.qotrt.sequence.Stage;
@@ -58,8 +59,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	private List<Player> participatents = new ArrayList<Player>();
 	private Quest quest;
 	private List<AdventureCard> discardCards;
+	private PlayerManager pm;
 	
-	public QuestModel(boolean racing) {
+	public QuestModel(boolean racing, PlayerManager pm) {
 		sponsor = new SingleShotConfirmation("questionSponsor", 
 				"acceptSponsorQuest", 
 				"declineSponsorQuest", racing);
@@ -89,6 +91,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		bid.subscribe(this);
 		stageSetup.subscribe(this);
 		discard.subscribe(this);
+		this.pm = pm;
 	}
 	
 	public synchronized void setQuest(Quest quest, List<Player> sponsors) {
@@ -184,9 +187,11 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized void acceptQuest(Player player) {
-		participate.accept(player, "player: " + player + " attempting to accept quest",
+		if(participate.accept(player, "player: " + player + " attempting to accept quest",
 				"player: " + player.getID() + " accept quest",
-				"player: " + player + " attempted to accept quest too late");
+				"player: " + player + " attempted to accept quest too late")) {
+			pm.drawCards(player, 1);
+		}
 	}
 	
 	public synchronized void declineQuest(Player player) {
@@ -277,7 +282,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	
 	public synchronized String finishDiscard(Player player) {
 		if(toDiscard != discardCards.size()) {
-			return "Need to discard: " + (toDiscard - discardCards.size()) + " more cards";
+			return "Need to discard " + toDiscard + " cards in total";
 		}
 		discard.accept(player, "player: " + player + " attempted to finish discard", 
 				"player: " + player + " finished discard", 
@@ -350,8 +355,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized AdventureCard getCard(int card, Integer integer) {
+		AdventureCard c = quest.getStage(integer).getCardByID(card);
 		fireEvent("battlePointsStage", null, this);
-		return quest.getStage(integer).getCardByID(card);
+		return c;
 	}
 
 	public synchronized Quest getQuest() {

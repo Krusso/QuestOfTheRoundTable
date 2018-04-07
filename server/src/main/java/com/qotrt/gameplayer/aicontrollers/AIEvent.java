@@ -19,7 +19,7 @@ public class AIEvent extends AIController {
 	public AIEvent(Game game, Player player, AbstractAI ai) {
 		super(game, player, ai);
 		
-		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("discardEvent");
+		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("discardEvent") && contains((Player[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func1 = x -> wrapEvent(x, y -> discardEvent()).accept(x);
 		
 		events.add(new GenericPairTyped<>(func, func1));

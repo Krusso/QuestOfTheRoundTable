@@ -40,10 +40,11 @@ public class SpecialInteractionController {
 					player.findCardByID(chatMessage.mordred) != null &&
 					p.getFaceUp().findCardByID(chatMessage.opponent).getType() == TYPE.ALLIES) {
 				// remove card
-				p.getFaceUp().findCardByID(chatMessage.opponent);
+				p.getFaceUp().getCardByID(chatMessage.opponent);
 				player.getCardByID(chatMessage.mordred);
 				game.sendMessageToAllPlayers("/queue/response", new MordredServer(player.getID(),
 						p.getID(),chatMessage.mordred, chatMessage.opponent, ""));
+				game.bmm.getBoardModel().fireMordred();
 				return;
 			}
 		}
@@ -64,14 +65,13 @@ public class SpecialInteractionController {
 		GenericPair[] e = game.bmm.getQuestModel().merlinCan(chatMessage.stage);
 		
 		if(e != null) {
-			// TODO: probably need to reset merlin power in different places
 			if(player.hand.findCardByID(chatMessage.merlin) != null) {
 				player.getFaceUp().addCard(player.hand.getCardByID(chatMessage.merlin));
 			}
 			
-			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.stage, e, ""));
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.merlin, chatMessage.stage, e, ""));
 		} else {
-			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.stage, 
+			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.merlin, chatMessage.stage, 
 					new GenericPair[] {}, "Can only use merlin once per quest"));
 		}
 		
