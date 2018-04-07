@@ -55,6 +55,7 @@
 }
 
 .playerFaceDown {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -66,9 +67,11 @@
 }
 
 .playerZone .playerFaceUp {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
+    border: 0.5% solid rgba(66, 50, 50, 0.70);
     border: 0.5% solid rgba(66, 50, 50, 0.70);
     display: inline-block;
     float: right;
@@ -164,22 +167,22 @@ h2 {
 }
 
 .cardZones .card1:hover {
-    top: -2vw;
     width: 6vw;
     height: 8vw;
     animation-name: cardhover;
-    animation-duration: 0.5s;
+    animation-duration: 0.1s;
     z-index: 1000 !important;
+    margin-top: -40px;
 }
+
+
 
 @keyframes cardhover {
     from {
-        top: 0vw;
         width: 4vw;
         height: 5.2vw;
     }
     to {
-        top: -2vw;
         width: 6vw;
         height: 8vw;
     }
@@ -216,6 +219,7 @@ h2 {
 }
 
 .opponentHandsContainer .opponentHand {
+    position: relative;
     width: 100%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -223,6 +227,7 @@ h2 {
 }
 
 .opponentHandsContainer .opponentFaceUp {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -230,6 +235,7 @@ h2 {
 }
 
 .opponentHandsContainer .opponentFaceDown {
+    position: relative;
     width: 50%;
     height: 50%;
     background-color: rgba(66, 50, 50, 0.57);
@@ -248,13 +254,14 @@ h2 {
     z-index: 100;
 }
 
-.opponentHandsContainer .card:hover {
+.opponentHandsContainer .cardZones .card:hover {
     margin-left: -1vw;
     width: 6vw;
     height: 8vw;
     animation-name: cardhoveropponent;
     animation-duration: 0.25s;
     z-index: 9000;
+    margin-top: 0px !important;
 }
 
 
@@ -383,9 +390,18 @@ h2 {
 }
 
 .stageContainer .card1 {
+    position: absolute;
     width: 4vw;
     height: 5.2vw;
     float: left;
+}
+
+.stageContainer .card1:hover {
+    width: 6vw;
+    height: 8vw;
+    animation-name: discardcardhover;
+    animation-duration: 0.1s;
+    z-index: 1000 !important;
 }
 
 .hiddenStage .card1 {
@@ -456,6 +472,7 @@ h2 {
 }
 
 .discardContainer .discardPile {
+    position: relative;
     width: 100%;
     height: 67%;
     background-image: url("../gameResources/discardTray.png");
@@ -467,6 +484,25 @@ h2 {
     width: 4vw;
     height: 5.2vw;
     float: left;
+}
+
+.discardPile .card1:hover {
+    width: 6vw;
+    height: 8vw;
+    animation-name: discardcardhover;
+    animation-duration: 0.1s;
+    z-index: 1000 !important;
+}
+
+@keyframes discardcardhover {
+    from {
+        width: 4vw;
+        height: 5.2vw;
+    }
+    to {
+        width: 6vw;
+        height: 8vw;
+    }
 }
 
 .brown-button {
