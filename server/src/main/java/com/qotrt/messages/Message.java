@@ -33,6 +33,7 @@ import com.qotrt.messages.quest.QuestSponsorServer;
 import com.qotrt.messages.quest.QuestUpServer;
 import com.qotrt.messages.quest.QuestWinServer;
 import com.qotrt.messages.rank.RankServer;
+import com.qotrt.messages.special.CheatServer;
 import com.qotrt.messages.special.MerlinServer;
 import com.qotrt.messages.special.MordredServer;
 import com.qotrt.messages.tournament.TournamentAcceptDeclineServer;
@@ -83,6 +84,7 @@ import com.qotrt.messages.tournament.TournamentWinServer;
 	    @Type(value = BidDiscardFinishPickingServer.class, name = "FINISHBIDDISCARD"),
 	    @Type(value = FinishPickingStagesServer.class, name = "FINISHSTAGESETUP"),
 	    @Type(value = QuestJoinedServer.class, name = "JOINEDQUEST"),
+	    @Type(value = CheatServer.class, name ="CHEATS")
 	    })  
 public abstract class Message {
 
@@ -141,7 +143,8 @@ public abstract class Message {
 		FINISHSTAGESETUP,
 		MORDRED,
 		MERLIN, 
-		JOINEDQUEST
+		JOINEDQUEST, 
+		CHEAT
 	};
 	
 //	@Override

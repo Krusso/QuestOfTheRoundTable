@@ -12,11 +12,14 @@ import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.game.Game;
 import com.qotrt.gameplayer.Player;
 import com.qotrt.hub.Hub;
+import com.qotrt.messages.special.CheatClient;
+import com.qotrt.messages.special.CheatServer;
 import com.qotrt.messages.special.MerlinClient;
 import com.qotrt.messages.special.MerlinServer;
 import com.qotrt.messages.special.MordredClient;
 import com.qotrt.messages.special.MordredServer;
 import com.qotrt.model.GenericPair;
+import com.qotrt.sequence.Quest;
 
 
 @Controller
@@ -74,6 +77,24 @@ public class SpecialInteractionController {
 			game.sendMessageToAllPlayers("/queue/response", new MerlinServer(player.getID(), chatMessage.merlin, chatMessage.stage, 
 					new GenericPair[] {}, "Can only use merlin once per quest"));
 		}
+		
+	}
+	
+	@MessageMapping("/game.cheat")
+	public void cheat(SimpMessageHeaderAccessor headerAccessor, 
+			@Payload CheatClient chatMessage) {
+
+
+		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
+		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
+		
+		Quest quest = game.bmm.getQuestModel().getQuest();
+		int[] cards = new int[quest.getNumStages()];
+		for(int i = 0; i < quest.getNumStages(); i++) {
+			cards[i] = quest.getStage(i).getStageCards().size();
+		}
+		
+		game.sendMessageToAllPlayers("/queue/response", new CheatServer(player.getID(), cards));
 		
 	}
 

@@ -128,7 +128,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         FINISHSTAGESETUP: 31,
         MORDRED: 32,
         MERLIN: 33,
-        FINISHPICKEVENT: 34
+        FINISHPICKEVENT: 34,
+        CHEAT: 35
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -204,6 +205,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_playForFinalTournament = "/app/game.playForFinalTournament";
     $scope.ep_mordred = "/app/game.playMordred";
     $scope.ep_merlin = "/app/game.playMerlin";
+    $scope.ep_cheat = "/app/game.cheat";
     $scope.ep_finishSelectingEvent = "/app/game.finishSelectingEvent";
     $scope.ep_discardEvent = "/app/game.discardEvent";
 
@@ -467,6 +469,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             player: $scope.myPlayerId
         };
         $scope.addMessage($scope.ep_merlin);
+    };
+    $scope.sendCheat = function () {
+   		console.log("sending cheat");
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.CHEAT,
+            java_class: "CheatClient",
+            player: $scope.myPlayerId
+        };
+        $scope.addMessage($scope.ep_cheat);
     };
 
     /***************************************************************/
@@ -864,6 +876,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     if(message.playerWithHighestBid != -1){
                     	$scope.toast = "Your are bidding, player with highest bid: " + $scope.getPlayerName([message.playerWithHighestBid]);
                     }
+                } else if(message.playerWithHighestBid != -1){
+                	$scope.toast = "Players are currently bidding highest bid by: " + $scope.getPlayerName([message.playerWithHighestBid]) + " bid: "+ (message.minBidValue - 1);
                 }
 
             }
@@ -1065,7 +1079,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType == "EVENTDISCARDOVER") {
                 $scope.toast = "Event over";
             }
-
+			if(message.messageType == "CHEAT"){
+				$scope.toast = "Card# in each stage: " + message.cards;
+			}
             console.log("done parsing");
             $scope.$apply();
         });
@@ -1920,6 +1936,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             cards[i].css.top = (70 / cards.length * i) + "%";
             cards[i].css['z-index'] = (9000 + i) + "";
         }
+    }
+    
+    $scope.cheat = function($event){
+    	$scope.sendCheat();
     }
 
     $scope.getPlayerName = function (idArr) {

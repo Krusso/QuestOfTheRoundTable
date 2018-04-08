@@ -132,7 +132,7 @@ public class DeckManager {
 		
 		if(rigged.equals(RIGGED.AIQUEST) || rigged.equals(RIGGED.AIQUEST1)) {
 			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
-					"Repel the Saxon Raiders",
+					"Search for the Questing Beast",
 					"Boar Hunt");
 			storyDeck.discards.add(toReturn.get(0));
 			

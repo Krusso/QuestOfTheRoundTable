@@ -208,7 +208,7 @@ public class ScenarioMaker {
 				cards.add(dm.getAdventureCard("Thieves"));
 			}
 			if(x.value == 1) {
-				cards.add(dm.getAdventureCard("Test of Valor"));
+				cards.add(dm.getAdventureCard("Test of the Questing Beast"));
 			} else {
 				cards.add(dm.getAdventureCard("Test of Morgan Le Fey"));
 			}

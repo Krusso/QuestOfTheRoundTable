@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qotrt.calculator.BidCalculator;
 import com.qotrt.cards.AdventureCard;
@@ -14,9 +17,10 @@ import com.qotrt.deck.AdventureDeck;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestBidCalculator {
 
-	
 	PlayerManager pm;
 	Player p1;
 	ArrayList<AdventureCard> cards;

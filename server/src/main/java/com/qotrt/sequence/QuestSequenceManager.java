@@ -196,10 +196,11 @@ public class QuestSequenceManager extends SequenceManager {
 		qm.flipStage();
 
 		if(winners.size() == 1) {
-			qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") &&
+			qm.questionBid(winners, new BidCalculator(pm), card, (quest.getCurrentStageCards().get(0).getName().equals("Test of the Questing Beast") &&
 					card.getName().equals("Search for the Questing Beast") ? 4 : 3));	
 		} else {
-			qm.questionBid(winners, new BidCalculator(pm), card, (card.getName().equals("Test of the Questing Beast") && card.getName().equals("Search for the Questing Beast")
+			qm.questionBid(winners, new BidCalculator(pm), card, (quest.getCurrentStageCards().get(0).getName().equals("Test of the Questing Beast") && 
+					card.getName().equals("Search for the Questing Beast")
 					? 4 : (card.getName().equals("Test of Morgan Le Fey") ? 3 : 1)));
 		}
 		

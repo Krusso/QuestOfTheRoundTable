@@ -6,15 +6,21 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
 import com.qotrt.cards.AllyCard;
+import com.qotrt.cards.QuestCard;
 import com.qotrt.cards.WeaponCard;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestBattlePointCalculator {
 	
 	PlayerManager pm;
@@ -27,6 +33,46 @@ public class TestBattlePointCalculator {
 		pm.players[0] = p1;
 		cards = new ArrayList<AdventureCard>();
 		pm.nextTurn();
+	}
+	
+	@Test
+	public void testLancelot() {
+		cards.add(new AllyCard("Sir Lancelot",15,25, TYPE.ALLIES));
+		p1.addCards(cards);
+		cards.stream().forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
+		p1.flipCards();
+		ArrayList<Player> participants = new ArrayList<Player>();
+		participants.add(p1);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants, new QuestCard("Test of the Green Knight",4,new String[] {"Green Knight", "Sir Gawain"}));
+		assertEquals(20,scores.get(0).intValue());
+		scores = new BattlePointCalculator(pm).calculatePoints(participants, new QuestCard("Defend the Queen's Honor",4,new String[] {"All", "Sir Lancelot"}));
+		assertEquals(30,scores.get(0).intValue());
+	}
+	
+	@Test
+	public void testGawain() {
+		cards.add(new AllyCard("Sir Gawain",10,20, TYPE.ALLIES));
+		p1.addCards(cards);
+		cards.stream().forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
+		p1.flipCards();
+		ArrayList<Player> participants = new ArrayList<Player>();
+		participants.add(p1);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants, new QuestCard("Test of the Green Knight",4,new String[] {"Green Knight", "Sir Gawain"}));
+		assertEquals(25,scores.get(0).intValue());
+		scores = new BattlePointCalculator(pm).calculatePoints(participants, new QuestCard("Defend the Queen's Honor",4,new String[] {"All", "Sir Lancelot"}));
+		assertEquals(15,scores.get(0).intValue());
+	}
+	
+	@Test
+	public void testPercival() {
+		cards.add(new AllyCard("Sir Percival",5,20, TYPE.ALLIES));
+		p1.addCards(cards);
+		cards.stream().forEach(i -> p1.setFaceDown(p1.getCardByID(i.id)));
+		p1.flipCards();
+		ArrayList<Player> participants = new ArrayList<Player>();
+		participants.add(p1);
+		ArrayList<Integer> scores = new BattlePointCalculator(pm).calculatePoints(participants, new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"}));
+		assertEquals(25,scores.get(0).intValue());
 	}
 	
 	@Test
