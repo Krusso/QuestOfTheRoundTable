@@ -175,7 +175,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         WINTOURNAMENT: 23,
         WAITING: 24,
         JOINEDFINALTOURNAMENT: 25,
-        EVENTDISCARD: 30 
+        EVENTDISCARD: 30
     };
 
 
@@ -787,16 +787,23 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     }
                     //move the card
                     toZone.push(cardToMove);
-
+                    console.log(fromZone);
+                    console.log(toZone);
                     if (!message.zoneFrom.includes("STAGE")) {
+                        console.log("hello1");
                         $scope.repositionCardsHorizontally(fromZone);
                     } else {
                         //position vertically
+                        console.log("hello2");
+                        $scope.repositionCardsVertically(fromZone);
                     }
                     if (!message.zoneTo.includes("STAGE")) {
+                        console.log("hello3");
                         $scope.repositionCardsHorizontally(toZone);
                     } else {
                         //position vertically
+                        console.log("hello4");
+                        $scope.repositionCardsVertically(toZone);
                     }
 
                 }
@@ -1781,7 +1788,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         if ($scope.currentState == $scope.GAME_STATE.EVENTDISCARD) {
             $scope.sendPlayCardClient(ui.draggable.scope().card.zone, $scope.ZONE.DISCARD, ui.draggable.scope().card.value, $scope.ep_discardEvent);
-        }        
+        }
     }
 
     //returns true/false if it should show the accept/decline
@@ -1792,7 +1799,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     }
 
-    $scope.showDiscardEventCards = function() {
+    $scope.showDiscardEventCards = function () {
         if ($scope.currentState == $scope.GAME_STATE.EVENTDISCARD && $scope.players[$scope.myPlayerId].inEvent) {
             $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
             return true;
@@ -1943,6 +1950,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
 
     $scope.getPlayerName = function (idArr) {
+        if (idArr == undefined) {
+            return "";
+        }
         console.log(idArr);
         if (idArr.length == 0) {
             return "";

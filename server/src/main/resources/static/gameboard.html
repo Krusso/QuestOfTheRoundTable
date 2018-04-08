@@ -21,11 +21,16 @@
 
 <div class="gameContainer" style="height:100vh; width:100vw" ng-keydown="cheat($event)" tabindex="1">
     <div id="opaquelayer" ng-show="showSpecialInteractions()"></div>
+
     <div id="gameboard">
         <!--    OPPONENT HAND ZONES        -->
         <div class="opponentHandsContainer">
             <div ng-repeat="player in players" ng-hide="$index == myPlayerId">
+
                 <div class="opponentHandZone">
+                    <div class="opponentNameContainer">
+                        <h2>{{player.name}}</h2>
+                    </div>
                     <div class="displayContainer" ng-model="player.shieldIcon">
                         <div c1 class="card1" card1="{{player.rank}}" ng-style="player.rankcss">
                             <!--  RANK CARD IMAGE GOES HERE  -->
@@ -199,10 +204,6 @@
                 <div>
                     <div c1 class="card1" card1="{{players[myPlayerId].rank}}" ng-style="players[myPlayerId].rankcss">
                         <!--  RANK CARD IMAGE GOES HERE  -->
-
-                        <div ng-model="myPlayerId">
-                            <h1>{{myPlayerId + 1}}</h1>
-                        </div>
                     </div>
                     <div class="shieldBpContainer">
                         <!--   BP VALUE GOES HERE       -->
