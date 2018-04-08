@@ -74,7 +74,7 @@ public class BattlePointCalculator {
 
 
 	public List<AdventureCard> listOfTypeDecreasingBp(Player player, TYPE type, QuestCard card, Boolean othersHaveIseult){
-
+		logger.info("players: " + player.getID() + " hand: " + player.hand.getDeck().stream().map(i -> i.getName()).collect(Collectors.toList()));
 		for(AdventureCard c: player.hand.getDeck()) {
 			if(c.getName().equals("Queen Iseult")) othersHaveIseult = true;
 		}

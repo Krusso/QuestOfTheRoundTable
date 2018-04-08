@@ -34,6 +34,13 @@ public class BattlePointsView extends Observer {
 						battlePoints(p);
 					}
 				}));
+		
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("fakebp"), 
+				x -> {
+					for(Player p: this.pm.players) {
+						battlePoints(p);
+					}
+				}));
 
 		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("battlePoints"), 
 				x -> battlePoints(mapper.convertValue(x.getNewValue(), Player.class))));

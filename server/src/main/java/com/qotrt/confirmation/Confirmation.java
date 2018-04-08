@@ -23,6 +23,7 @@ public abstract class Confirmation extends Observable implements PropertyChangeL
 	protected String declineEventName;
 	protected int backingInt;
 	protected Mode racer;
+	protected Boolean racing;
 	protected List<Player> accepted = new ArrayList<Player>();
 
 	
@@ -45,6 +46,7 @@ public abstract class Confirmation extends Observable implements PropertyChangeL
 			racer = new HotSeat();
 		}
 		racer.subscribe(this);
+		this.racing = racing;
 	}
 
 	public void start(List<Player> toAsk) {

@@ -84,8 +84,10 @@ public class DeckManager {
 			storyDeck.getCardByName("Boar Hunt");
 			ArrayList<StoryCard> toReturn = firstNotNull(StoryCard.class, n, storyDeck,
 					"Boar Hunt",
+					"Chivalrous Deed",
 					"Prosperity Throughout the Realm",
-					"Chivalrous Deed");
+					"Tournament at York",
+					"Slay the Dragon");
 			storyDeck.discards.add(toReturn.get(0));
 			
 			return toReturn;

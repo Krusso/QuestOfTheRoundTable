@@ -26,6 +26,6 @@ public class BoardModel extends Observable{
 	}
 
 	public void fireMordred() {
-		fireEvent("middlecard", null, card);
+		fireEvent("fakebp", null, card);
 	}
 }

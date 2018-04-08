@@ -74,7 +74,7 @@
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s1'}" ng-hide="numStages<1" ng-click="merlinFunction($event, 0)">
                         <!--                        Only revealed to sponsorer-->
                         <div ng-show="players[myPlayerId].isSponsoring == true">
-                        	<h2><br/>{{stageZones.stage1bp}}</h2>
+                        	<h2 class="bp"><br/>{{stageZones.stage1bp}}</h2>
                             <div ng-repeat="card in stageZones.stage1" ng-model="stageZones.stage1">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                             </div>
@@ -93,7 +93,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s2'}" ng-hide="numStages<2" ng-click="merlinFunction($event, 1)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
-                        	<h2><br/>{{stageZones.stage2bp}}</h2>
+                        	<h2 class="bp"><br/>{{stageZones.stage2bp}}</h2>
                             <div ng-repeat="card in stageZones.stage2" ng-model="stageZones.stage2">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                             </div>
@@ -111,7 +111,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s3'}" ng-hide="numStages<3" ng-click="merlinFunction($event, 2)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
-                        	<h2><br/>{{stageZones.stage3bp}}</h2>
+                        	<h2 class="bp"><br/>{{stageZones.stage3bp}}</h2>
                             <div ng-repeat="card in stageZones.stage3" ng-model="stageZones.stage3">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                             </div>
@@ -129,7 +129,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s4'}" ng-hide="numStages<4" ng-click="merlinFunction($event, 3)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
-                        	<h2><br/>{{stageZones.stage4bp}}</h2>
+                        	<h2 class="bp"><br/>{{stageZones.stage4bp}}</h2>
                             <div ng-repeat="card in stageZones.stage4" ng-model="stageZones.stage4">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                             </div>
@@ -147,7 +147,7 @@
                     </div>
                     <div class="stage btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_s5'}" ng-hide="numStages<5" ng-click="merlinFunction($event, 4)">
                         <div ng-show="players[myPlayerId].isSponsoring == true">
-                        	<h2><br/>{{stageZones.stage5bp}}</h2>
+                        	<h2 class="bp"><br/>{{stageZones.stage5bp}}</h2>
                             <div ng-repeat="card in stageZones.stage5" ng-model="stageZones.stage5">
                                 <div c1 class="card1" card1="{{card.key}}" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>
                             </div>
@@ -180,7 +180,7 @@
                     <!--                    <button class="brown-button">End Turn</button>-->
                 </div>
             </div>
-            <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}">
+            <div class="discardContainer btn-droppable" data-drop="true" jqyoui-droppable="{onDrop:'dropCallback_discard'}" ng-show="showDiscardButton() || showDiscardEventCards()">
                 <div class="discardPile">
                     <div ng-repeat="card in players[myPlayerId].discardPile" ng-model="players[myPlayerId].discardPile">
                         <div c1 class="card1" card1="{{card.key}}" data-drag="{{card.drag}}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable ng-style="card.css"></div>

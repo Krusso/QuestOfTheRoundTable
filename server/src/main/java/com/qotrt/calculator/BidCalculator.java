@@ -31,12 +31,12 @@ public class BidCalculator {
 		return freeBids(player, quest) + player.hand.size();
 	}
 
-	private int freeBids(Player player, QuestCard quest) {
+	public int freeBids(Player player, QuestCard quest) {
 		int freeBids = 0;
 		for(AdventureCard c : player.getFaceUp().getDeck()) {
 			logger.info("Card name: " + c.getName() + " free bids so far: " + freeBids);
 			if(c.getName().equals("King Pellinore") && 
-					quest.getName().equals("Search for the Questing Beast")) {
+					quest != null && quest.getName().equals("Search for the Questing Beast")) {
 				logger.info("King Pellinore and search for the questing beast");
 				freeBids += 4;
 			} else if(c.getType().equals(TYPE.AMOUR)) {

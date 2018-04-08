@@ -10,6 +10,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.cards.AdventureCard.TYPE;
@@ -26,6 +29,8 @@ import com.qotrt.model.TournamentModel;
 import com.qotrt.model.UIPlayer;
 import com.qotrt.sequence.Quest;
 
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestA3 {
 	final static Logger logger = LogManager.getLogger(TestA3.class);
 	@Test
@@ -38,6 +43,8 @@ public class TestA3 {
 		pm.players[1] = p2;
 		//what a great test good job me
 		assertEquals(true, player.doIParticipateInTournament());
+		
+		logger.info("Next test");
 		
 		pm.nextTurn();
 		p2.hand.addCard(new WeaponCard("Excalibur",30, TYPE.WEAPONS));
@@ -63,7 +70,7 @@ public class TestA3 {
 		p1.hand.addCard(new WeaponCard("Lance",20, TYPE.WEAPONS));
 		AbstractAI player = new A3(p1, pm, new BoardModelMediator(tm, null, null, null, null, null));
 		assertTrue(compare(player.playCardsForTournament(),  new String[] {"Excalibur", "Lance"}));
-		
+		logger.info("Next test");
 		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new WeaponCard("Sword",10, TYPE.WEAPONS));
 		p1.hand.addCard(new WeaponCard("Dagger",5, TYPE.WEAPONS));
@@ -72,7 +79,7 @@ public class TestA3 {
 		p1.hand.addCard(new WeaponCard("Battle-ax",15, TYPE.WEAPONS));
 		player = new A3(p1, pm, new BoardModelMediator(tm, null, null, null, null, null));
 		assertTrue(compare(player.playCardsForTournament(),  new String[] {"Excalibur", "Lance", "Sword", "Dagger", "Battle-ax"}));
-		
+		logger.info("Next test");
 		p1 = new Player(0, new UIPlayer("", "",1));
 		p1.hand.addCard(new FoeCard("Thieves",5, TYPE.FOES));
 		p1.hand.addCard(new FoeCard("Boar",5,15, TYPE.FOES));

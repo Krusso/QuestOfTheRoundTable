@@ -4,14 +4,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qotrt.cards.StoryCard;
 import com.qotrt.model.RiggedModel.RIGGED;
 
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestStoryDeck {
 
 	final static Logger logger = LogManager.getLogger(TestStoryDeck.class);
@@ -26,6 +32,8 @@ public class TestStoryDeck {
 			logger.info("Ensuring card: " + c.getName() + " is in the deck");
 			assertTrue(contains(c.getName()));
 		}
+		
+		logger.info("all cards: " + cards.stream().map(i -> i.getName()).collect(Collectors.toList()));
 		
 		cards = dm.getStoryCard(28);
 		assertEquals(0,dm.storySize()); 

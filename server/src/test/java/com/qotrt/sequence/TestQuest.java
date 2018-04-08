@@ -60,10 +60,6 @@ public class TestQuest {
 	public void setup() {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
-
-	// TODO:
-	// testDontNeedToBidAnything
-	// testKingRecognition
 	
 	@Test
 	public void test2PlayerBidding() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {

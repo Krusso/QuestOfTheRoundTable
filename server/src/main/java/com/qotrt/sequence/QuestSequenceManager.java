@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,6 +75,15 @@ public class QuestSequenceManager extends SequenceManager {
 		});
 
 		logger.info("questioning players about joining");
+		// reordering participants
+		logger.info("order: " + potentialQuestPlayers.stream().map(i -> i.getID()).collect(Collectors.toList()));
+		logger.info("sponsor id: " + sponsor.getID());
+		if(potentialQuestPlayers.size() != 0 && potentialQuestPlayers.get(potentialQuestPlayers.size() - 1).getID() > sponsor.getID()) {
+			while(potentialQuestPlayers.get(0).getID() < sponsor.getID()) {
+				potentialQuestPlayers.add(potentialQuestPlayers.remove(0));
+			}
+		}
+		logger.info("order: " + potentialQuestPlayers.stream().map(i -> i.getID()).collect(Collectors.toList()));
 		qm.questionJoinQuest(potentialQuestPlayers);
 
 		// Wait for responses
@@ -119,13 +129,7 @@ public class QuestSequenceManager extends SequenceManager {
 		joinQuest(sponsor);
 		
 		List<Player> participants = qm.playerWhoJoined();
-		// reordering participants
-		if(participants.size() != 0 && participants.get(participants.size() - 1).getID() > sponsor.getID()) {
-			while(participants.get(0).getID() < sponsor.getID()) {
-				participants.add(participants.remove(0));
-			}
-		}
-		
+
 		List<Player> winners = new ArrayList<Player>(participants);
 		pm.drawCards(new ArrayList<Player>(), 0);
 		handleQuest(participants, winners);

@@ -78,28 +78,11 @@ public class Quest {
 		return Arrays.stream(quest).mapToInt(i -> i.getStageCards().size()).sum();
 	}
 
-	public int getFoeBP() {
-		int fbp = 0;
-		for(AdventureCard advCard : quest[currentStage].getStageCards()) {
-			if (advCard.getType() == AdventureCard.TYPE.FOES) {
-				if (advCard.isNamed()) {
-					fbp += advCard.getNamedBattlePoints();
-				} else {
-					fbp += advCard.getBattlePoints();
-				}
-			} else {
-				fbp += advCard.getBattlePoints();
-			}
-		}
-		logger.info("Foe BP: " + fbp);
-		return fbp;
-	}
-
 	public void battleFoe(List<Player> participants, PlayerManager pm) {
 		Iterator<Player> players = participants.iterator();
 		pm.flipCards(players);	
 
 		BattlePointCalculator bpc = new BattlePointCalculator(pm);
-		bpc.getFoeWinners(participants, this.questCard, getFoeBP());
+		bpc.getFoeWinners(participants, this.questCard, bpc.calculateStage(quest[currentStage].getStageCards(), questCard));
 	}
 }
