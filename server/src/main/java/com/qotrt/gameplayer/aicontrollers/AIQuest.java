@@ -36,7 +36,7 @@ public class AIQuest extends AIController {
 		Function<PropertyChangeEvent, Boolean> func8 = x -> x.getPropertyName().equals("bid") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func9 = x -> wrapEvent(x, y -> bid(y)).accept(x);
 
-		Function<PropertyChangeEvent, Boolean> func10 = x -> x.getPropertyName().equals("discardQuest") && contains((int[]) x.getNewValue());
+		Function<PropertyChangeEvent, Boolean> func10 = x -> x.getPropertyName().equals("discardQuest");
 		Consumer<PropertyChangeEvent> func11 = x -> wrapEvent(x, y -> discardQuest(y)).accept(x);
 
 		events.add(new GenericPairTyped<>(func, func1));
@@ -113,6 +113,10 @@ public class AIQuest extends AIController {
 	}
 
 	private void discardQuest(PropertyChangeEvent evt) {
+		GenericPair e = (GenericPair) evt.getNewValue();
+		if(((int[])e.key)[0] != player.getID()) {
+			return;
+		}
 		List<AdventureCard> cards = ai.discardAfterWinningTest();
 		for(int i = 0; i < (int)((GenericPair) evt.getNewValue()).value; i++) {
 			game.bmm.getQuestModel().addDiscard(player.getCardByID(cards.get(i).id));
