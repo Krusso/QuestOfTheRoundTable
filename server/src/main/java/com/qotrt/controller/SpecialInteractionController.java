@@ -87,8 +87,11 @@ public class SpecialInteractionController {
 
 		Game game = hub.getGameBySessionID(headerAccessor.getSessionId());
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
-		
-		Quest quest = game.bmm.getQuestModel().getQuest();
+
+		Quest quest = game.bmm.getQuestModel().getQuest();	
+		if(quest == null) {
+			return;
+		}
 		int[] cards = new int[quest.getNumStages()];
 		for(int i = 0; i < quest.getNumStages(); i++) {
 			cards[i] = quest.getStage(i).getStageCards().size();

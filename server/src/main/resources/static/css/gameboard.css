@@ -138,8 +138,8 @@ h2 {
 }
 
 .bp {
-	z-index: 11000;
-	position: relative;
+    z-index: 11000;
+    position: relative;
 }
 
 .playerHand .card1 {
@@ -419,7 +419,7 @@ h2 {
     height: 8vw;
     animation-name: discardcardhover;
     animation-duration: 0.1s;
-    z-index: 10000 !important;
+    z-index: 100000 !important;
 }
 
 .hiddenStage .card1 {
