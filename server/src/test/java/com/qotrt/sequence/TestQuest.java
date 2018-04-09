@@ -30,13 +30,11 @@ import com.qotrt.messages.quest.BidDiscardFinishPickingClient;
 import com.qotrt.messages.quest.FinishPickingStagesClient;
 import com.qotrt.messages.quest.QuestBidClient;
 import com.qotrt.messages.quest.QuestBidServer;
-import com.qotrt.messages.quest.QuestDiscardCardsClient;
 import com.qotrt.messages.quest.QuestDiscardCardsServer;
 import com.qotrt.messages.quest.QuestJoinClient;
 import com.qotrt.messages.quest.QuestJoinServer;
 import com.qotrt.messages.quest.QuestPickCardsClient;
 import com.qotrt.messages.quest.QuestPickCardsServer;
-import com.qotrt.messages.quest.FinishPickingStagesClient;
 import com.qotrt.messages.quest.QuestPickStagesServer;
 import com.qotrt.messages.quest.QuestSponsorClient;
 import com.qotrt.messages.quest.QuestSponsorServer;
@@ -62,10 +60,6 @@ public class TestQuest {
 	public void setup() {
 		WEBSOCKET_URI = "ws://localhost:" + port + "/ws";
 	}
-
-	// TODO:
-	// testDontNeedToBidAnything
-	// testKingRecognition
 	
 	@Test
 	public void test2PlayerBidding() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {

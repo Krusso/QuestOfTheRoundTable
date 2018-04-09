@@ -2,8 +2,6 @@ package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -23,26 +21,20 @@ public class PlayerView extends Observer {
 	public PlayerView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
 		super(messagingTemplate, players);
 		
-		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("increaseLevel");
-		Consumer<PropertyChangeEvent> funcC = x -> playerIncreasedLevel(mapper.convertValue(x.getNewValue(), GenericPair.class));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("increaseLevel"), 
+				x -> playerIncreasedLevel(mapper.convertValue(x.getNewValue(), GenericPair.class))));
 		
-		Function<PropertyChangeEvent, Boolean> funcF1 = x -> x.getPropertyName().equals("addCards");
-		Consumer<PropertyChangeEvent> funcC1 = x -> playerAddCards(mapper.convertValue(x.getNewValue(), GenericPair.class));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("addCards"), 
+				 x -> playerAddCards(mapper.convertValue(x.getNewValue(), GenericPair.class))));
 		
-		Function<PropertyChangeEvent, Boolean> funcF2 = x -> x.getPropertyName().equals("changeShields");
-		Consumer<PropertyChangeEvent> funcC2 = x -> playerChangeShields(mapper.convertValue(x.getNewValue(), GenericPair.class));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("changeShields"), 
+				x -> playerChangeShields(mapper.convertValue(x.getNewValue(), GenericPair.class))));
 		
-		Function<PropertyChangeEvent, Boolean> funcF3 = x -> x.getPropertyName().equals("discardType");
-		Consumer<PropertyChangeEvent> funcC3 = x -> playerDiscardType(mapper.convertValue(x.getNewValue(), GenericPair.class));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("discardType"), 
+				x -> playerDiscardType(mapper.convertValue(x.getNewValue(), GenericPair.class))));
 		
-		Function<PropertyChangeEvent, Boolean> funcF4 = x -> x.getPropertyName().equals("flipCards");
-		Consumer<PropertyChangeEvent> funcC4 = x -> flipCards(mapper.convertValue(x.getNewValue(), Player.class));
-		
-		events.add(new GenericPairTyped<>(funcF, funcC));
-		events.add(new GenericPairTyped<>(funcF1, funcC1));
-		events.add(new GenericPairTyped<>(funcF2, funcC2));
-		events.add(new GenericPairTyped<>(funcF3, funcC3));
-		events.add(new GenericPairTyped<>(funcF4, funcC4));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("flipCards"), 
+				x -> flipCards(mapper.convertValue(x.getNewValue(), Player.class))));
 	}
 
 	private void playerIncreasedLevel(GenericPair e) {

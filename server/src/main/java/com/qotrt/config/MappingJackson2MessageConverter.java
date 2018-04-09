@@ -215,7 +215,7 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 		Object payload = message.getPayload();
 		Class<?> view = getSerializationView(conversionHint);
 		// Note: in the view case, calling withType instead of forType for compatibility with Jackson <2.5
-		logger.info("raw json received: " + new String((byte[]) payload));
+		logger.info("raw json that was received by the server websocket or junit websocket : " + new String((byte[]) payload));
 		try {
 			if (payload instanceof byte[]) {
 				if (view != null) {
@@ -273,6 +273,7 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 					this.objectMapper.writeValue(generator, payload);
 				}
 				payload = out.toByteArray();
+				logger.info("raw json that was converted and sent: " + new String(out.toByteArray()));
 			}
 			else {
 				Writer writer = new StringWriter();
@@ -283,11 +284,13 @@ public class MappingJackson2MessageConverter extends AbstractMessageConverter {
 					this.objectMapper.writeValue(writer, payload);
 				}
 				payload = writer.toString();
+				logger.info("raw json that was converted and sent: " + writer.toString());
 			}
 		}
 		catch (IOException ex) {
 			throw new MessageConversionException("Could not write JSON: " + ex.getMessage(), ex);
 		}
+		
 		return payload;
 	}
 

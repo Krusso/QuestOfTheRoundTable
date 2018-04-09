@@ -14,7 +14,6 @@ import com.qotrt.model.EventModel;
 public class KingsCallToArms implements EventImplementation {
 
 	@Override
-	// TODO finish this
 	// The highest ranked players must place 1 weapon in the discard pile. 
 	// If unable to do so, 2 Foe cards must be discarded
 	public void perform(Logger logger, PlayerManager pm, BoardModelMediator bmm) {

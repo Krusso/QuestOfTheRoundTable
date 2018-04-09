@@ -30,10 +30,10 @@ public class TestCard extends AdventureCard {
 
 	@Override
 	public String playForStage(AdventureDeck stage) {
-		if(stage.typeCount(TYPE.FOES) == 0 && stage.typeCount(TYPE.TESTS) == 0) {
+		if(stage.typeCount(TYPE.FOES) == 0 && stage.typeCount(TYPE.TESTS) == 0 && stage.typeCount(TYPE.WEAPONS) == 0) {
 			return "";
 		}
-		return "Cannot play more than 1 foe or test per stage";
+		return "Cannot play more than 1 foe and weapons, or test per stage";
 	}
 
 	@Override

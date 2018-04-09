@@ -101,12 +101,15 @@ public class Game extends Observable {
 			@Override
 			public void run() {
 				logger.info("Starting game");
-				fireEvent("gameStart", null, 1);
-
-			
+				
+				
 				for(int i = 0; i < aiplayers.size(); i++) {
-					players.add(new UIPlayer("none-matching-session-id", "ai player " + i, 1));
+					players.add(new UIPlayer("none-matching-session-id", "ai_player_" + i, 1));
 				}
+				
+				fireEvent("players", null, players.toArray(new UIPlayer[players.size()]));
+				fireEvent("gameStart", null, 1);
+				
 
 				// model creation
 				logger.info("creating models");
@@ -117,7 +120,7 @@ public class Game extends Observable {
 						dm, 
 						rigged);
 				TournamentModel tm = new TournamentModel(racing);
-				QuestModel qm = new QuestModel(racing);
+				QuestModel qm = new QuestModel(racing, pm);
 				DiscardModel dmm = new DiscardModel();
 				EventModel em = new EventModel();
 				FinalTournamentModel ftm = new FinalTournamentModel();
@@ -161,10 +164,14 @@ public class Game extends Observable {
 
 				logger.info("starting AI players");
 				for(int i = 0; i < aiplayers.size(); i++) {
-					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - 1 - i], pm,  bmm);
+					aiplayers.get(i).startAIPlayer(pm.players[pm.players.length - aiplayers.size() + i], pm,  bmm);
 					bm.subscribe(aiplayers.get(i));
 					tm.subscribe(aiplayers.get(i));
 					qm.subscribe(aiplayers.get(i));
+					dmm.subscribe(aiplayers.get(i));
+					em.subscribe(aiplayers.get(i));
+					ftm.subscribe(aiplayers.get(i));
+					logger.info("subscribed");
 				}
 
 				logger.info("finished setup");

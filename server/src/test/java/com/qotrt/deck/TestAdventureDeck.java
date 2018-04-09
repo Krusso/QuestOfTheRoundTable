@@ -10,6 +10,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qotrt.cards.AdventureCard;
 import com.qotrt.gameplayer.Player;
@@ -17,6 +20,8 @@ import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestAdventureDeck {
 
 	final static Logger logger = LogManager.getLogger(TestAdventureDeck.class);

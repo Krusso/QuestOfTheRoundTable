@@ -4,8 +4,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,14 +22,11 @@ public class HubView extends Observer implements PropertyChangeListener {
 	public HubView(SimpMessagingTemplate messagingTemplate) {
 		super(messagingTemplate, new ArrayList<UIPlayer>());
 
-		Function<PropertyChangeEvent, Boolean> funcF = x -> x.getPropertyName().equals("players");
-		Consumer<PropertyChangeEvent> funcC = x -> playerJoinedGame(mapper.convertValue(x.getNewValue(), UIPlayer[].class));
-
-		Function<PropertyChangeEvent, Boolean> funcF1 = x -> x.getPropertyName().equals("gameStart");
-		Consumer<PropertyChangeEvent> funcC1 = x -> startGame();
-
-		events.add(new GenericPairTyped<>(funcF, funcC));
-		events.add(new GenericPairTyped<>(funcF1, funcC1));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("players"), 
+				x -> playerJoinedGame(mapper.convertValue(x.getNewValue(), UIPlayer[].class))));
+		
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("gameStart"), 
+				x -> startGame()));
 	}
 
 	public void playerJoinedGame(UIPlayer[] UIPlayers) {

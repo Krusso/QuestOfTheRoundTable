@@ -4,14 +4,14 @@ import com.qotrt.messages.Message;
 
 //from Client
 public class MerlinClient extends Message {
-	public int id;
+	public int merlin;
 	public int stage;
 	
 	public MerlinClient() {}
 	
-	public MerlinClient(int player, int id, int stage) {
+	public MerlinClient(int player, int merlin, int stage) {
 		super(player);
-		this.id = id;
+		this.merlin = merlin;
 		this.stage = stage;
 	}
 	

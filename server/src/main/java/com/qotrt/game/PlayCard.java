@@ -75,6 +75,9 @@ public class PlayCard {
 	}
 
 	public void validMove(Game game, Player player, PlayCardClient chatMessage) {
+		if(game.bmm != null && game.bmm.getBoardModel() != null) {
+			game.bmm.getBoardModel().fireMordred();	
+		}
 		game.sendMessageToAllPlayers("/queue/response", 
 				new PlayCardServer(player.getID(), 
 						chatMessage.card, 

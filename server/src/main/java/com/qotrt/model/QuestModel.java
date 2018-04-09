@@ -4,8 +4,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.qotrt.calculator.BattlePointCalculator;
 import com.qotrt.calculator.BidCalculator;
@@ -17,6 +20,7 @@ import com.qotrt.confirmation.MultiShotConfirmation;
 import com.qotrt.confirmation.NeverEndingConfirmation;
 import com.qotrt.confirmation.SingleShotConfirmation;
 import com.qotrt.gameplayer.Player;
+import com.qotrt.gameplayer.PlayerManager;
 import com.qotrt.messages.quest.QuestWinServer.WINTYPES;
 import com.qotrt.sequence.Quest;
 import com.qotrt.sequence.Stage;
@@ -24,6 +28,7 @@ import com.qotrt.util.PlayerUtil;
 
 public class QuestModel extends Observable implements PropertyChangeListener , CanPick{
 
+	private boolean racing;
 	private int toDiscard;
 	private int merlinUses = 0;
 	
@@ -58,14 +63,15 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	private List<Player> participatents = new ArrayList<Player>();
 	private Quest quest;
 	private List<AdventureCard> discardCards;
+	private PlayerManager pm;
 	
-	public QuestModel(boolean racing) {
+	public QuestModel(boolean racing, PlayerManager pm) {
 		sponsor = new SingleShotConfirmation("questionSponsor", 
 				"acceptSponsorQuest", 
 				"declineSponsorQuest", racing);
 		
 		stageSetup = new SingleShotConfirmation("questStage",
-				null,
+				"questStageDone",
 				null, racing);
 		
 		participate = new MultiShotConfirmation("questionQuest", 
@@ -89,6 +95,8 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		bid.subscribe(this);
 		stageSetup.subscribe(this);
 		discard.subscribe(this);
+		this.pm = pm;
+		this.racing = racing;
 	}
 	
 	public synchronized void setQuest(Quest quest, List<Player> sponsors) {
@@ -184,9 +192,11 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized void acceptQuest(Player player) {
-		participate.accept(player, "player: " + player + " attempting to accept quest",
+		if(participate.accept(player, "player: " + player + " attempting to accept quest",
 				"player: " + player.getID() + " accept quest",
-				"player: " + player + " attempted to accept quest too late");
+				"player: " + player + " attempted to accept quest too late")) {
+			pm.drawCards(player, 1);
+		}
 	}
 	
 	public synchronized void declineQuest(Player player) {
@@ -232,25 +242,54 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 				quest.getCurrentStage()));
 	}
 
+	private List<Player> ps = new ArrayList<Player>();
+	private List<Integer> p = new ArrayList<Integer>();
+	private Iterator<Integer> itr;
+	private int maxBidPlayer = -1;
+	
 	public synchronized void questionBid(List<Player> participants, BidCalculator bc, QuestCard card, int minBid) {
 		bid.start(participants);
+		this.p = participants.stream().map(i -> i.getID()).collect(Collectors.toList());
+		this.ps = participants;
+		this.itr = p.iterator();
+		itr.next();
 		maxBid = minBid - 1;
 		this.bc = bc;
 		this.card = card;
-		for(Player player: participants) {
-			fireEvent("bid", null, new int[] {player.getID(), bc.maxBid(player, card), minBid, -1});
+		if(racing) {
+			for(Player player: participants) {
+				fireEvent("bid", null, new int[] {player.getID(), bc.maxBid(player, card), minBid, -1});
+			}
+		} else {
+			fireEvent("bid", null, new int[] {p.get(0), bc.maxBid(ps.get(0), card), minBid, -1});
 		}
 	}
 
+	private Player getWhere(int i) {
+		for(Player pl: ps) {
+			if(pl.getID() == i) {
+				return pl;
+			}
+		}
+		return null;
+	}
+	
 	public synchronized void bid(Player player, int bidAmount) {
 		if(maxBid < bidAmount && bc.maxBid(player, card) >= bidAmount) {
 			if(bid.accept(player, "player: " + player + " attempted to bid higher", 
 				"player: " + player + " finished bidding higher", 
 				"player: " + player + " finished bidding higher too late")) {
 				maxBid = bidAmount;
-				bid.forAllPlayers(i -> {
-					fireEvent("bid", null, new int[] {i.getID(), bc.maxBid(i, card), maxBid + 1, player.getID()});
-				});
+				maxBidPlayer = player.getID();
+				if(racing) {
+					p.forEach(i -> {
+						fireEvent("bid", null, new int[] {i, bc.maxBid(getWhere(i), card), maxBid + 1, player.getID()});
+					});	
+				} else {
+					if(!itr.hasNext()) itr = p.iterator();
+					Integer tmp = itr.next();
+					fireEvent("bid", null, new int[] {tmp, bc.maxBid(getWhere(tmp), card), maxBid + 1, player.getID()});
+				}
 			}
 		}
 	}
@@ -259,6 +298,17 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 		bid.decline(player, "player: " + player + " attempting to decline bid",
 				"player: " + player + " decline bid", 
 				"player: " + player + " decline bid too late");
+		int index = p.indexOf(player.getID());
+		if(p.removeIf(i -> i == player.getID())) {
+			itr = p.iterator();
+			IntStream.range(0, index).forEach(i -> itr.next());
+			if(itr.hasNext()) {
+				Integer tmp = itr.next();
+				fireEvent("bid", null, new int[] {tmp, bc.maxBid(getWhere(tmp), card), maxBid + 1, maxBidPlayer});	
+			} else if(p.size() == 1){
+				declineBid(getWhere(p.get(0)));
+			}
+		}
 	}
 	
 	public synchronized List<Player> getBidWinner() {
@@ -277,7 +327,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	
 	public synchronized String finishDiscard(Player player) {
 		if(toDiscard != discardCards.size()) {
-			return "Need to discard: " + (toDiscard - discardCards.size()) + " more cards";
+			return "Need to discard " + toDiscard + " cards in total";
 		}
 		discard.accept(player, "player: " + player + " attempted to finish discard", 
 				"player: " + player + " finished discard", 
@@ -315,6 +365,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			to.addCard(from.getCardByID(card));
 		}
 		
+		fireEvent("battlePointsStage", null, this);
 		return response;
 	}
 
@@ -335,6 +386,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 			to.addCard(card);
 		}
 		
+		fireEvent("battlePointsStage", null, this);
 		return response;
 	}
 	
@@ -348,7 +400,9 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized AdventureCard getCard(int card, Integer integer) {
-		return quest.getStage(integer).getCardByID(card);
+		AdventureCard c = quest.getStage(integer).getCardByID(card);
+		fireEvent("battlePointsStage", null, this);
+		return c;
 	}
 
 	public synchronized Quest getQuest() {
@@ -356,7 +410,7 @@ public class QuestModel extends Observable implements PropertyChangeListener , C
 	}
 
 	public synchronized GenericPair[] merlinCan(int stage) {
-		if((cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
+		if((participate.can() || cards.can() || bid.can() || discard.can()) && merlinUses > 0) {
 			merlinUses -= 1;
 			return quest.getStage(stage).getStageCards().
 					stream().map(i -> new GenericPair(i.getName(), i.id)).toArray(GenericPair[]::new);

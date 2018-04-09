@@ -24,4 +24,8 @@ public class BoardModel extends Observable{
 	public void setSetKingRecognition(boolean setKingRecognition) {
 		this.setKingRecognition = setKingRecognition;
 	}
+
+	public void fireMordred() {
+		fireEvent("fakebp", null, card);
+	}
 }

@@ -19,7 +19,7 @@ import com.qotrt.model.TournamentModel;
 
 public class TournamentSequenceManager extends SequenceManager {
 
-	final static Logger logger = LogManager.getLogger(SequenceManager.class);
+	final static Logger logger = LogManager.getLogger(TournamentSequenceManager.class);
 
 	private TournamentCard card;
 
@@ -67,7 +67,7 @@ public class TournamentSequenceManager extends SequenceManager {
 		// more than one player (x > 1) joined tournament ask them to play cards
 		tm.questionCards(participants);
 		try {
-			logger.info("Waiting for 60 seconds for users to pick their cards");
+			logger.info("Waiting for users to pick their cards");
 			if(racing) {
 				tm.questionCards().await(60, TimeUnit.SECONDS);	
 			} else {

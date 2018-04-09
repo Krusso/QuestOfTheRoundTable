@@ -71,9 +71,7 @@ public class QuestController {
 		Player player = game.getPlayerBySessionID(headerAccessor.getSessionId());
 		logger.info("finish selecting cards: " + chatMessage.player);
 		String response = game.bmm.getQuestModel().finishSelectingStages(player);
-		if(response.equals("")) {
-			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), true, ""));
-		} else {
+		if(!response.equals("")) {
 			game.sendMessageToAllPlayers("/queue/response", new FinishPickingStagesServer(player.getID(), false, response));
 		}
 	}

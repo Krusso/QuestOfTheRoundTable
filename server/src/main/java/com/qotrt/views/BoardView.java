@@ -2,8 +2,6 @@ package com.qotrt.views;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -16,11 +14,9 @@ public class BoardView extends Observer {
 
 	public BoardView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
 		super(messagingTemplate, players);
-		
-		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("middlecard");
-		Consumer<PropertyChangeEvent> func1 = x -> middleCardFlipped(mapper.convertValue(x.getNewValue(), StoryCard.class));
-		
-		events.add(new GenericPairTyped<>(func, func1));
+
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("middlecard"), 
+				x -> middleCardFlipped(mapper.convertValue(x.getNewValue(), StoryCard.class))));
 	}
 
 	private void middleCardFlipped(StoryCard s) {

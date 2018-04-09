@@ -39,7 +39,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     /*=========================================   *
      *        Controller Variables: GameData    *
      *=========================================== */
-    $scope.toast = "Just Chilling";
+    $scope.toast = "Waiting";
     $scope.joinedGame = false;
     $scope.myPlayerId = 0;
     $scope.inGamePlayers;
@@ -49,7 +49,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         stage2: [],
         stage3: [],
         stage4: [],
-        stage5: []
+        stage5: [],
+        stage1bp: 0,
+        stage2bp: 0,
+        stage3bp: 0,
+        stage4bp: 0,
+        stage5bp: 0,
     };
 
     $scope.playerZoneToListMap = {
@@ -59,6 +64,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         'STAGE4': $scope.stageZones.stage4,
         'STAGE5': $scope.stageZones.stage5
     }; // eg {"hand0" : players[0].hand,}
+    
     $scope.middleCard = "";
     $scope.tryingToPlay = [];
     $scope.numStages = 0;
@@ -122,7 +128,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         FINISHSTAGESETUP: 31,
         MORDRED: 32,
         MERLIN: 33,
-        FINISHPICKEVENT: 34
+        FINISHPICKEVENT: 34,
+        CHEAT: 35
     };
     $scope.RIGGED = {
         ONE: 0,
@@ -197,6 +204,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     $scope.ep_finishSelectingFinalTournament = "/app/game.finishSelectingFinalTournament";
     $scope.ep_playForFinalTournament = "/app/game.playForFinalTournament";
     $scope.ep_mordred = "/app/game.playMordred";
+    $scope.ep_merlin = "/app/game.playMerlin";
+    $scope.ep_cheat = "/app/game.cheat";
     $scope.ep_finishSelectingEvent = "/app/game.finishSelectingEvent";
     $scope.ep_discardEvent = "/app/game.discardEvent";
 
@@ -282,6 +291,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         };
         console.log(message);
         console.log("current state: " + $scope.currentState);
+        $scope.merlin = -1;
+        $scope.mordred = -1;
         $scope.addMessage(endpoint);
     };
 
@@ -326,6 +337,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             };
             $scope.addMessage($scope.ep_playCardTournament);
         }
+        $scope.currentState = $scope.currentState.WAITING;
     };
 
     $scope.sendJoinTournamentClient = function (isAccept) {
@@ -337,6 +349,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "TournamentAcceptDeclineClient"
         };
         $scope.addMessage($scope.ep_joinTournament);
+        $scope.currentState = $scope.currentState.WAITING;
     }
 
     $scope.sendTournamentPickCardsClient = function () {
@@ -346,6 +359,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "TournamentFinishPickingClient"
         };
         $scope.addMessage($scope.ep_finishSelectingTournament);
+        $scope.currentState = $scope.currentState.WAITING;
+        $scope.setDragOff();
     };
 
     $scope.sendFinalTournamentPickCardsClient = function () {
@@ -355,6 +370,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "FinalTournamentFinishPickingClient"
         };
         $scope.addMessage($scope.ep_finishSelectingFinalTournament);
+        $scope.setDragOff();
     }
 
     //Send this message when player is finished picking stages
@@ -374,6 +390,21 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             java_class: "QuestPickCardsClient"
         };
         $scope.addMessage($scope.ep_finishSelectingQuestCards);
+        $scope.currentState = $scope.currentState.WAITING;
+        $scope.setDragOff();
+    };
+    $scope.sendQuestBidDecline = function () {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.BIDQUEST,
+            java_class: "QuestBidClient",
+            bid: -1
+        };
+        $scope.addMessage($scope.ep_bid);
+        //after player bids, set the state to waiting, this is only really necessary for hot-seat 
+        //since in racing mode, every player will receive a BidQuest message rather than 1 by 1
+        $scope.currentState = $scope.currentState.WAITING;
+        $scope.toast = "Waiting for other players to bid";
     };
     $scope.sendQuestBidClient = function () {
         $scope.message = {
@@ -411,7 +442,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.message = {
                 TYPE: $scope.TYPE_GAME,
                 messageType: $scope.MESSAGETYPES.FINISHBIDDISCARD,
-                java_class: "QuestDiscardCardsClient"
+                java_class: "BidDiscardFinishPickingClient"
             };
             console.log("quest bid discarding");
             $scope.addMessage($scope.ep_discardFinish);
@@ -427,6 +458,27 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             player: $scope.myPlayerId
         };
         $scope.addMessage($scope.ep_mordred);
+    };
+    $scope.sendMerlin = function (stage) {
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.MERLIN,
+            java_class: "MerlinClient",
+            merlin: $scope.merlin,
+            stage: stage,
+            player: $scope.myPlayerId
+        };
+        $scope.addMessage($scope.ep_merlin);
+    };
+    $scope.sendCheat = function () {
+   		console.log("sending cheat");
+        $scope.message = {
+            TYPE: $scope.TYPE_GAME,
+            messageType: $scope.MESSAGETYPES.CHEAT,
+            java_class: "CheatClient",
+            player: $scope.myPlayerId
+        };
+        $scope.addMessage($scope.ep_cheat);
     };
 
     /***************************************************************/
@@ -495,6 +547,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         needToDiscard: 0,
                         revealStage: [false, false, false, false, false],
                         battlePoints: 0,
+                        rankcss: {},
 
 
                     };
@@ -523,7 +576,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         "position": "absolute",
                         "top": "0%",
                         "left": "0%",
-                        "z-index": $scope.players[playerNum].hand.length + "",
+                        "z-index": ($scope.players[playerNum].hand.length + 9000) + "",
                     }
                     $scope.players[playerNum].hand.push(card);
                     console.log("Adding card: " + message.cards[i].key + " " + message.cards[i].value);
@@ -552,6 +605,8 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.players[i].joinedQuest = false;
                     $scope.players[i].discardPile.length = 0;
                     $scope.players[i].revealStage = [false, false, false, false, false];
+                    $scope.players[i].rankcss = { };
+                        
                 }
                 // console.log(players);
 
@@ -566,8 +621,10 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                 }
             }
 
-            if (message.messageType === "JOINEDTOURNAMENT") {
+            if (message.messageType === "JOINEDTOURNAMENT" && message.joined) {
                 $scope.players[message.player].joinedTourn = true;
+                $scope.players[message.player].rankcss = { "box-shadow": "rgb(0, 255, 255) 0px 0px 16px 6px" };
+                $scope.toast = "Player: " + $scope.getPlayerName([message.player]) + " joined the tournament";
                 console.log("Player joined tourn? : " + $scope.players[message.player].joinedTourn);
             }
 
@@ -594,6 +651,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             }
             if (message.messageType === "PICKSTAGES") {
                 $scope.currentState = $scope.GAME_STATE.PICKSTAGES;
+                $scope.players[message.player].rankcss = { "box-shadow": "#c71515 0px 0px 16px 6px" };
                 $scope.numStages = message.numStages;
                 if (message.player == $scope.myPlayerId) {
                     $scope.toast = "You are setting up " + message.numStages + " stages for the quest";
@@ -601,23 +659,28 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
                 } else {
 
-                    var pnames = $scope.getPlayerName(message.players);
+                    var pnames = $scope.getPlayerName([message.player]);
                     $scope.toast = "Waiting for player " + pnames + " to finish setting up quest stages";
                     $scope.players[$scope.myPlayerId].isSponsoring = false;
+                    $scope.players[message.player].isSponsoring = true;
                     $scope.setDragOff();
                 }
+            }
+            if (message.messageType === "JOINEDQUEST" && message.joined) {
+                $scope.players[message.player].rankcss = { "box-shadow": "rgb(0, 255, 255) 0px 0px 16px 6px" };
+                $scope.toast = "Player: " + $scope.getPlayerName([message.player]) + " joined the quest";
             }
             if (message.messageType === "PICKQUEST") {
                 $scope.currentState = $scope.GAME_STATE.PICKQUEST;
                 if (_.contains(message.players, $scope.myPlayerId)) {
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
-                    $scope.toast = "Choose cards to battle in the upcoming quest.";
+                    $scope.toast = "Choose cards to battle in the upcoming stage.";
                     $scope.players[$scope.myPlayerId].joinedQuest = true;
                 } else {
                     $scope.setDragOff();
 
                     var pnames = $scope.getPlayerName(message.players);
-                    $scope.toast = "Did not join quest. Waiting for players " + pnames + " to finish picking cards";
+                    $scope.toast = "Waiting for players " + pnames + " to finish picking cards";
                     $scope.players[$scope.myPlayerId].joinedQuest = false;
                 }
             }
@@ -765,33 +828,50 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                         $scope.players[i].revealStage[message.stage] = true;
                     }
                 }
-
+				$scope.setDragOff();
             }
             if (message.messageType === "WINQUEST") {
+            	$scope.setDragOff();
                 for (var i = 0; i < $scope.players.length; i++) {
                     if (!message.players.includes(i)) {
                         $scope.players[i].joinedQuest = false;
                     }
 
                 }
-                if (message.players.length != 0) {
+               	
+				for (var i = 0; i < $scope.players.length; i++) {
+                	if (!message.players.includes(i) && !$scope.players[i].isSponsoring) {
+	            		 $scope.players[i].rankcss = { };
+               		}
+               	}
+                
 
+                if (message.players.length != 0) {
                     var pnames = $scope.getPlayerName(message.players);
                     $scope.toast = "Players " + pnames + " passed the stage";
                 } else {
-
                     $scope.toast = "No players has passed the stage";
                 }
+                
                 if (message.type === "WON") {
-                    var pnames = $scope.getPlayerName(message.players);
-                    $scope.toast = "Players " + pnames + " won the quest!";
+                	if(message.players.length != 0){
+                    	var pnames = $scope.getPlayerName(message.players);
+                    	$scope.toast = "Players " + pnames + " won the quest!";                	
+                	} else {
+                		$scope.toast = "No player won the quest";
+                	}
                 }
                 if (message.type === "NOSPONSOR") {
                     $scope.toast = "No players sponsored the quest";
                 }
+                if(message.type === "NOJOIN"){
+                	$scope.toast = "No one joined the quest";
+                }
                 $scope.players[$scope.myPlayerId].discardPile.length = 0;
+                $scope.players[$scope.myPlayerId].needToDiscard = 0;
             }
             if (message.messageType === "BIDQUEST") {
+            	$scope.setDragOff();
                 $scope.toast = "Players are currently bidding";
                 if (message.player == $scope.myPlayerId) {
                     $scope.currentState = $scope.GAME_STATE.BIDQUEST;
@@ -800,24 +880,32 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     $scope.bidSlider.options.floor = message.minBidValue;
                     $scope.bidSlider.options.ceil = message.maxBidValue;
                     $scope.toast = "You are bidding";
+                    if(message.playerWithHighestBid != -1){
+                    	$scope.toast = "Your are bidding, player with highest bid: " + $scope.getPlayerName([message.playerWithHighestBid]);
+                    }
+                } else if(message.playerWithHighestBid != -1){
+                	$scope.toast = "Players are currently bidding highest bid by: " + $scope.getPlayerName([message.playerWithHighestBid]) + " bid: "+ (message.minBidValue - 1);
                 }
 
             }
             if (message.messageType === "DISCARDQUEST") {
-                $scope.currentState = $scope.GAME_STATE.DISCARDQUEST;
-                $scope.toast = "Players are currently discarding due to test";
                 if (message.player == $scope.myPlayerId) {
                     $scope.toast = "You need to discard " + message.cardsToDiscard;
-                    $scope.players[$scope.myPlayerId].needToDiscard = message.cardsToDiscard; //every player only needs to know how many cards they need to discard themselves (not other players) 
+                    $scope.players[$scope.myPlayerId].needToDiscard = message.cardsToDiscard; //every player only needs to know how many cards they need to discard themselves (not other players)
+                	$scope.currentState = $scope.GAME_STATE.DISCARDQUEST; 
+                } else if($scope.currentState != $scope.GAME_STATE.DISCARDQUEST) {
+					$scope.currentState = $scope.GAME_STATE.WAITING;
+                	$scope.toast = "Players are currently discarding due to test";
                 }
             }
             if (message.messageType === "HANDDISCARD") {
-                $scope.currentState = $scope.GAME_STATE.HANDDISCARD;
                 if (message.player == $scope.myPlayerId) {
                     $scope.players[$scope.myPlayerId].needToDiscard = message.toDiscard; //every player only needs to know how many cards they need to discard themselves (not other players) 
                     $scope.toast = "Hand too full, select " + $scope.players[$scope.myPlayerId].needToDiscard + " cards to discard";
                     $scope.setDragOn($scope.players[$scope.myPlayerId].hand);
-                } else {
+                	$scope.currentState = $scope.GAME_STATE.HANDDISCARD;
+                } else if($scope.currentState != $scope.GAME_STATE.HANDDISCARD){
+					$scope.currentState = $scope.GAME_STATE.WAITING;
                     $scope.toast = "Waiting for players to finish discarding cards";
                 }
             }
@@ -826,6 +914,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     if (message.successful == true) {
                         $scope.players[$scope.myPlayerId].discardPile.length = 0;
                         $scope.toast = "Finished discarding. Waiting for other players";
+        				$scope.currentState = $scope.currentState.WAITING;
+        				$scope.players[$scope.myPlayerId].needToDiscard = 0;
+        				$scope.setDragOff();
                     } else {
                         $scope.toast = message.response;
                     }
@@ -889,6 +980,16 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType === "BATTLEPOINTS") {
                 if (message.zone == "HAND") {
                     $scope.players[message.player].battlePoints = message.battlePoints;
+                } else if(message.zone == "STAGE1"){
+                	$scope.stageZones.stage1bp = message.battlePoints;
+                } else if(message.zone == "STAGE2"){
+                	$scope.stageZones.stage2bp = message.battlePoints;
+                } else if(message.zone == "STAGE3"){
+                	$scope.stageZones.stage3bp = message.battlePoints;
+                } else if(message.zone == "STAGE4"){
+                	$scope.stageZones.stage4bp = message.battlePoints;
+                } else if(message.zone == "STAGE5"){
+                	$scope.stageZones.stage5bp = message.battlePoints;
                 }
             }
             if (message.messageType === "SHIELDCOUNT") {
@@ -914,9 +1015,52 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                             $scope.repositionCardsHorizontally($scope.players[message.player].hand);
                         }
                     }
-                }
-                $scope.mordred = -1;
-            }
+				}
+				$scope.mordred = -1;
+			}
+			
+			if(message.messageType === "MERLIN"){
+				if(message.response !== "" && message.player == $scope.myPlayerId){
+					$scope.toast = message.response;
+				} else if(message.response === "" && message.player == $scope.myPlayerId){
+					$scope.players[$scope.myPlayerId].revealStage[message.stage] = true;
+					
+					// moving merlin faceup
+					for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
+                        if (message.merlin == $scope.players[message.player].hand[i].value) {
+                            console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
+                            $scope.players[message.player].faceUp.push($scope.players[message.player].hand[i]);
+                            $scope.players[message.player].hand.splice(i, 1);
+                        }
+                    }
+                    
+                    $scope.toast = "";
+					
+				} else if(message.response === "" && message.player !== $scope.myPlayerId){
+				
+					// moving merlin faceup
+					for (var i = 0; i < $scope.players[message.player].hand.length; i++) {
+                        if (message.merlin == $scope.players[message.player].hand[i].value) {
+                            console.log("Removing " + $scope.players[message.player].hand[i].key + " from hand");
+                            $scope.players[message.player].faceUp.push($scope.players[message.player].hand[i]);
+                            $scope.players[message.player].hand.splice(i, 1);
+                        }
+                    }
+				
+				}
+				$scope.merlin = -1;
+			}
+			if(message.messageType === "FINISHBIDDISCARD"){
+				if(message.player === $scope.myPlayerId && !message.successful){
+					$scope.toast = message.response;
+				} else if(message.player === $scope.myPlayerId){
+					$scope.currentState = $scope.GAME_STATE.WAITING;
+					$scope.players[$scope.myPlayerId].needToDiscard = 0;
+				}
+			}
+			if(message.messageType === "RANKUPDATE"){
+				$scope.players[message.player].rank = message.newrank;
+			}
 
             if (message.messageType == "EVENTDISCARD") {
                 if (_.contains(message.players, $scope.myPlayerId)) {
@@ -933,6 +1077,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
                     if (message.successful == true) {
                         $scope.players[$scope.myPlayerId].discardPile.length = 0;
                         $scope.toast = "Finished discarding. Waiting for other players";
+                        $scope.players[$scope.myPlayerId].needToDiscard = 0;
                     } else {
                         $scope.toast = message.response;
                     }
@@ -941,7 +1086,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             if (message.messageType == "EVENTDISCARDOVER") {
                 $scope.toast = "Event over";
             }
-
+			if(message.messageType == "CHEAT"){
+				$scope.toast = "Card# in each stage: " + message.cards;
+			}
             console.log("done parsing");
             $scope.$apply();
         });
@@ -1610,6 +1757,9 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
     }
     //can only discard cards from your hand
     $scope.dropCallback_discard = function (event, ui) {
+    	if(!$scope.showDiscardButton() && !$scope.showDiscardEventCards()){
+    		return;
+    	}
         var cardFrom = ui.draggable.scope().card.zone;
         // TODO: take it from the correct place based on ui.draggle.scope().card.zone
         console.log(cardFrom);
@@ -1678,6 +1828,12 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
 
     //Only show the done setting up button if the player is sponsoring and the state is picking stages
     $scope.showDoneSettingUp = function () {
+    	console.log("Done setting up");
+    	console.log($scope.players[$scope.myPlayerId].isSponsoring);
+    	console.log($scope.players);
+    	console.log($scope.myPlayerId);
+    	console.log($scope.currentState == $scope.GAME_STATE.PICKSTAGES);
+    	console.log($scope.currentState == $scope.GAME_STATE.PICKSTAGES);
         return $scope.players[$scope.myPlayerId].isSponsoring && $scope.currentState == $scope.GAME_STATE.PICKSTAGES;
     }
     //only show the bid slider if the player is in a quest and the state is GAME_STATE.BIDQUEST
@@ -1728,6 +1884,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             // -1 = false otherwise its the ID of mordred
             if ($scope.mordred != -1) {
                 $scope.mordred = -1;
+                $scope.toast = "";
             } else {
                 $scope.mordred = card.value;
                 $scope.toast = "Click on opponent ally to kill or click Mordred again";
@@ -1736,9 +1893,21 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
             $scope.sendMordred(card.value);
         }
     }
-
-    $scope.merlinFunction = function ($event, card) {
-        // TODO
+    
+    $scope.merlinFunction = function($event, card){
+    	console.log("merlin stuff");
+    	if(card.key === "Merlin"){
+    		// -1 = false otherwise its the ID of mordred
+            if ($scope.merlin != -1) {
+                $scope.merlin = -1;
+                $scope.toast = "";
+            } else {
+                $scope.merlin = card.value;
+                $scope.toast = "Click on a stage to reveal";
+            }
+    	} else if($scope.merlin != -1){
+    		$scope.sendMerlin(card);
+    	}
     }
 
     $scope.setDragOff = function () {
@@ -1765,15 +1934,19 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         for (var i = 0; i < cards.length; i++) {
             cards[i].css.left = (90 / cards.length * i) + "%";
             cards[i].css.top = "0%";
-            cards[i].css['z-index'] = i + "";
+            cards[i].css['z-index'] = (9000 + i) + "";
         }
     }
     $scope.repositionCardsVertically = function (cards) {
         for (var i = 0; i < cards.length; i++) {
             cards[i].css.left = "0%";
             cards[i].css.top = (70 / cards.length * i) + "%";
-            cards[i].css['z-index'] = i + "";
+            cards[i].css['z-index'] = (9000 + i) + "";
         }
+    }
+    
+    $scope.cheat = function($event){
+    	$scope.sendCheat();
     }
 
     $scope.getPlayerName = function (idArr) {
@@ -1786,7 +1959,7 @@ angular.module('gameApp.controllers').controller('gameController', function ($sc
         }
         var pNames = ""
         for (var i = 0; i < idArr.length; i++) {
-            pNames += $scope.players[idArr[i]].name + ", ";
+            pNames += $scope.players[idArr[i]].name + "#" + ($scope.players[idArr[i]].id + 1) + ", ";
         }
         pNames = pNames.substr(0, pNames.lastIndexOf(','));
         console.log(pNames);

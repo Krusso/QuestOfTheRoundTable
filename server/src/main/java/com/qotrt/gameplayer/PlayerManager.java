@@ -60,6 +60,12 @@ public class PlayerManager {
 		if(dsm != null) dsm.start(this, null, false);
 	}
 	
+	public void drawCards(Player player, int cards) {
+		if(dm != null) {
+			player.addCards(dm.getAdventureCard(cards));	
+		}
+	}
+	
 	public void setPlayer(Player playerFind) {
 		for(int i = 0; i < players.length; i++) {
 			if(players[i]== playerFind) {
@@ -67,7 +73,6 @@ public class PlayerManager {
 				currentPlayer = i;
 			}
 		}
-		//pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
 	}
 
 	public void nextTurn() {
@@ -76,7 +81,6 @@ public class PlayerManager {
 			actualPlayer = 0;
 		}
 		currentPlayer = actualPlayer;
-		//pvs.forEach(i -> i.update(currentPlayer, players[currentPlayer].hand.getDeck()));
 	}
 
 	public Iterator<Player> round(){
@@ -87,7 +91,6 @@ public class PlayerManager {
 
 	public void flipCards(Iterator<Player> players) {
 		players.forEachRemaining(i -> i.flipCards());
-		//pvs.forEach(i -> i.showFaceUp(this.round()));
 	}
 
 	public void changeShields(List<Player> winners, int shields) {
@@ -123,7 +126,6 @@ public class PlayerManager {
 		round().forEachRemaining(player ->{
 			player.increaseLevel();
 			if(player.getRank() == Rank.RANKS.KNIGHTOFTHEROUNDTABLE) {
-				//player.setState(Player.STATE.WINNING);
 				winners.set(true);
 			}
 		});
@@ -148,4 +150,5 @@ public class PlayerManager {
 		}
 		return false;
 	}
+
 }

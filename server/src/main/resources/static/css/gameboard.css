@@ -137,6 +137,11 @@ h2 {
     -webkit-margin-after: 0em;
 }
 
+.bp {
+	z-index: 11000;
+	position: relative;
+}
+
 .playerHand .card1 {
     width: 4vw;
     height: 5.2vw;
@@ -171,7 +176,7 @@ h2 {
     height: 8vw;
     animation-name: cardhover;
     animation-duration: 0.1s;
-    z-index: 1000 !important;
+    z-index: 10000 !important;
     margin-top: -40px;
 }
 
@@ -399,6 +404,7 @@ h2 {
     margin-left: 1vw;
     display: inline-block;
     background-color: rgb(116, 84, 51);
+    z-index: 7000;
 }
 
 .stageContainer .card1 {
@@ -413,7 +419,7 @@ h2 {
     height: 8vw;
     animation-name: discardcardhover;
     animation-duration: 0.1s;
-    z-index: 1000 !important;
+    z-index: 10000 !important;
 }
 
 .hiddenStage .card1 {
@@ -525,7 +531,7 @@ h2 {
     background-repeat: no-repeat;
     border: none;
     background-color: rgba(0, 0, 0, 0);
-    margin-top: 0.5vw
+    margin-top: 1.5vw
 }
 
 .brown-button:active {

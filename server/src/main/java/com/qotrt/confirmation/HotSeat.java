@@ -30,7 +30,7 @@ public class HotSeat extends Mode {
 	public void start(List<Player> toAsk, Object obj, String eventName)  {
 		this.toAsk = toAsk;
 		next = toAsk.iterator();
-		next.next();
+		if(next.hasNext()) { next.next(); }
 		if(eventName != null) {
 			fireEvent(eventName, null, new GenericPair(PlayerUtil.playersToIDs(toAsk), obj));
 		}

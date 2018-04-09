@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import com.qotrt.config.MappingJackson2MessageConverter;
 import com.qotrt.game.Game;
 import com.qotrt.messages.game.AIPlayer;
 import com.qotrt.model.RiggedModel.RIGGED;
@@ -19,6 +20,7 @@ public class Hub {
 
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
+	
 	private ArrayList<Game> games = new ArrayList<Game>();
 	
 	final static Logger logger = LogManager.getLogger(Hub.class);
@@ -42,6 +44,7 @@ public class Hub {
 	}
 
 	public synchronized UUID addGame(String gameName, int numPlayers, RIGGED rigged, AIPlayer[] aiPlayers, Boolean discard, Boolean racing) {
+		messagingTemplate.setMessageConverter(new MappingJackson2MessageConverter());
 		Game game = new Game(messagingTemplate, gameName, numPlayers, rigged, aiPlayers, discard, racing);
 		games.add(game);
 		logger.info("added game");

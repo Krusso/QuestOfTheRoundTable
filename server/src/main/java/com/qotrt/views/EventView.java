@@ -3,8 +3,6 @@ package com.qotrt.views;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -21,30 +19,25 @@ public class EventView extends Observer {
 	public EventView(SimpMessagingTemplate messagingTemplate, ArrayList<UIPlayer> players) {
 		super(messagingTemplate, players);
 
-		Function<PropertyChangeEvent, Boolean> func = x -> x.getPropertyName().equals("discardEvent");
-		Consumer<PropertyChangeEvent> func1 = x -> discard(mapper.convertValue(x.getNewValue(), Player[].class));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("discardEvent"), 
+				x -> discard(mapper.convertValue(x.getNewValue(), Player[].class))));
 
-		Function<PropertyChangeEvent, Boolean> funcC = x -> x.getPropertyName().equals("finishDiscard");
-		Consumer<PropertyChangeEvent> funcC1 = x -> finish(mapper.convertValue(x.getNewValue(), Player.class));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("finishDiscard"), 
+				x -> finish(mapper.convertValue(x.getNewValue(), Player.class))));
 
-		Function<PropertyChangeEvent, Boolean> funcC2 = x -> x.getPropertyName().equals("finishEvent");
-		Consumer<PropertyChangeEvent> funcC3 = x -> finishEvent(mapper.convertValue(x.getNewValue(), Integer.class));
-
-
-		events.add(new GenericPairTyped<>(func, func1));
-		events.add(new GenericPairTyped<>(funcC, funcC1));
-		events.add(new GenericPairTyped<>(funcC2, funcC3));
+		events.add(new GenericPairTyped<>(x -> x.getPropertyName().equals("finishEvent"), 
+				x -> finishEvent(mapper.convertValue(x.getNewValue(), Integer.class))));
 	}
 
-	
+
 	private void finishEvent(Integer i) {
 		sendMessage(new EventDiscardOverServer());
 	}
-	
+
 	private void finish(Player p) {
 		sendMessage(new EventDiscardFinishPickingServer(p.getID(), true, ""));
 	}
-	
+
 	private void discard(Player[] players) {
 		for(Player p: players){
 			if(p.getTypeCount(TYPE.WEAPONS) >= 1) {
