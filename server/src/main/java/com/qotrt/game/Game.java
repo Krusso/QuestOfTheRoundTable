@@ -88,6 +88,7 @@ public class Game extends Observable {
 	}
 	
 	public Player getPlayerBySessionID(String sessionID) {
+		if(pm == null) { return null;}
 		for(Player player: pm.players) {
 			if(player.compareSessionID(sessionID)) {
 				return player;

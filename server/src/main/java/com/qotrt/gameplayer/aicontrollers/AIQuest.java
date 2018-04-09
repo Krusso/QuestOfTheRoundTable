@@ -25,9 +25,9 @@ public class AIQuest extends AIController {
 		Consumer<PropertyChangeEvent> func1 = x ->wrapEvent(x, y -> questionSponsor()).accept(x);
 
 		Function<PropertyChangeEvent, Boolean> func2 = x -> x.getPropertyName().equals("questStage");
-		Consumer<PropertyChangeEvent> func3 = x -> wrapEvent(x, y -> questStage()).accept(x);
+		Consumer<PropertyChangeEvent> func3 = x -> wrapEvent(x, y -> questStage(y)).accept(x);
 
-		Function<PropertyChangeEvent, Boolean> func4 = x -> x.getPropertyName().equals("questQuestion") && contains((int[]) x.getNewValue());
+		Function<PropertyChangeEvent, Boolean> func4 = x -> x.getPropertyName().equals("questionQuest") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func5 = x -> wrapEvent(x, y -> questQuestion()).accept(x);
 
 		Function<PropertyChangeEvent, Boolean> func6 = x -> x.getPropertyName().equals("questionCardQuest") && contains((int[]) x.getNewValue());
@@ -56,7 +56,11 @@ public class AIQuest extends AIController {
 		}
 	}
 
-	private void questStage() {
+	private void questStage(PropertyChangeEvent a) {
+		GenericPair e = (GenericPair) a.getNewValue();
+		if(((int[])e.key)[0] != player.getID()) {
+			return;
+		}
 		if(game.bmm.getQuestModel().getPlayerWhoSponsor().size() != 0 &&
 				game.bmm.getQuestModel().getPlayerWhoSponsor().get(0).getID() != player.getID()) {
 			return;
@@ -90,7 +94,6 @@ public class AIQuest extends AIController {
 
 	private void questionCardQuest() {
 		List<AdventureCard> cards = ai.playCardsForFoeQuest((QuestCard) game.bmm.getBoardModel().getCard());
-		cards.forEach(i -> player.setFaceDown(player.getCardByID(i.id)));
 		cards.forEach(i -> {
 			pc.playCard(game, player, game.bmm.getQuestModel(), new PlayCardClient(player.getID(),
 					i.id, ZONE.HAND, ZONE.FACEDOWN));
