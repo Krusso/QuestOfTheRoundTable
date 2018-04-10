@@ -23,7 +23,7 @@ public class StoryDeck extends Deck<StoryCard> {
 
 	public ArrayList<StoryCard> discards = new ArrayList<StoryCard>();
 
-	void populate() {
+	public void populate() {
 		addCard(new QuestCard("Search for the Holy Grail",5,new String[] {"All", "Sir Percival"}),1);
 		addCard(new QuestCard("Test of the Green Knight",4,new String[] {"Green Knight", "Sir Gawain"}),1);
 		addCard(new QuestCard("Search for the Questing Beast",4,new String[] {}),1);
