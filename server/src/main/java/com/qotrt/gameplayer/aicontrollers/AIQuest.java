@@ -1,6 +1,7 @@
 package com.qotrt.gameplayer.aicontrollers;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -17,6 +18,8 @@ import com.qotrt.model.GenericPair;
 import com.qotrt.model.GenericPairTyped;
 
 public class AIQuest extends AIController {
+	
+	private List<AdventureCard> cards = new ArrayList<AdventureCard>();
 
 	public AIQuest(Game game, Player player, AbstractAI ai) {
 		super(game, player, ai);
@@ -104,6 +107,7 @@ public class AIQuest extends AIController {
 	}
 
 	private void bid(PropertyChangeEvent evt) {
+		cards = ai.discardAfterWinningTest();
 		int bid = ai.nextBid(((int[]) evt.getNewValue())[2]);
 		if(bid != -1) {
 			game.bmm.getQuestModel().bid(player, bid);
@@ -115,9 +119,11 @@ public class AIQuest extends AIController {
 	private void discardQuest(PropertyChangeEvent evt) {
 		GenericPair e = (GenericPair) evt.getNewValue();
 		if(((int[])e.key)[0] != player.getID()) {
+			logger.info(((int[])e.key)[0] + " " + player.getID());
 			return;
 		}
-		List<AdventureCard> cards = ai.discardAfterWinningTest();
+		
+
 		for(int i = 0; i < (int)((GenericPair) evt.getNewValue()).value; i++) {
 			game.bmm.getQuestModel().addDiscard(player.getCardByID(cards.get(i).id));
 			
