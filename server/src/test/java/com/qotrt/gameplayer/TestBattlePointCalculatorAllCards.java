@@ -19,8 +19,8 @@ import com.qotrt.model.RiggedModel.RIGGED;
 import com.qotrt.model.UIPlayer;
 
 
-//@SpringBootTest
-//@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestBattlePointCalculatorAllCards {
 	
 	PlayerManager pm;
@@ -69,33 +69,33 @@ public class TestBattlePointCalculatorAllCards {
 		testPoints(new int [] {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}, "Dagger");
 		
 		testPoints(new int [] {75, 55, 55, 75, 55, 55, 55, 75, 55, 55, 55, 55, 55, 55}, "Dragon");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Giant");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Mordred");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Green Knight");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Black Knight");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Evil Knight");
+		testPoints(new int [] {45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45}, "Giant");
+		testPoints(new int [] {35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35}, "Mordred");
+		testPoints(new int [] {45, 45, 30, 45, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30}, "Green Knight");
+		testPoints(new int [] {40, 30, 30, 40, 40, 30, 30, 30, 30, 30, 30, 30, 30, 30}, "Black Knight");
+		testPoints(new int [] {35, 25, 25, 35, 25, 35, 25, 25, 25, 25, 25, 25, 25, 25}, "Evil Knight");
 		
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Saxon Knight");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Robber Knight");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Saxons");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Boar");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Thieves");
+		testPoints(new int [] {30, 20, 20, 30, 20, 20, 20, 20, 20, 30, 20, 20, 20, 20}, "Saxon Knight");
+		testPoints(new int [] {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20}, "Robber Knight");
+		testPoints(new int [] {25, 15, 15, 25, 15, 15, 15, 15, 15, 25, 15, 15, 15, 15}, "Saxons");
+		testPoints(new int [] {20, 10, 10, 20, 10, 10, 10, 10, 20, 10, 10, 10, 10, 10}, "Boar");
+		testPoints(new int [] {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}, "Thieves");
 		
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Test of Valor");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Test of Temptation");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Test of Morgan Le Fey");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Test of the Questing Beast");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Test of Valor");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Test of Temptation");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Test of Morgan Le Fey");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Test of the Questing Beast");
 		
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Sir Galahad");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Sir Lancelot");
+		testPoints(new int [] {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20}, "Sir Galahad");
+		testPoints(new int [] {20, 20, 20, 30, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20}, "Sir Lancelot");
 		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "King Arthur");
 		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Sir Tristan");
 		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "King Pellinore");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Sir Gawain");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Sir Percival");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Queen Guinevere");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Queen Iseult");
-		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Merlin");
+		testPoints(new int [] {15, 25, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Sir Gawain");
+		testPoints(new int [] {25, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10}, "Sir Percival");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Queen Guinevere");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Queen Iseult");
+		testPoints(new int [] {5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5}, "Merlin");
 		
 		
 		testPoints(new int [] {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15}, "Amour");
