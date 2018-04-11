@@ -213,7 +213,7 @@ public class BattlePointCalculator {
 	}
 
 	public boolean canSponsor(Player next, QuestCard card) {
-		List<AdventureCard> foes = this.uniqueListOfTypeDecreasingBp(next, TYPE.FOES, card, false);
+		List<AdventureCard> foes = this.listOfTypeDecreasingBp(next, TYPE.FOES, card, false);
 		List<AdventureCard> tests = this.uniqueListOfTypeDecreasingBp(next, TYPE.TESTS, card, false);
 		List<AdventureCard> weapons = this.uniqueListOfTypeDecreasingBp(next, TYPE.WEAPONS, card, false);
 		logger.info("Foes: " + foes);
