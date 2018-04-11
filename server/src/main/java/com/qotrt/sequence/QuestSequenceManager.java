@@ -37,7 +37,7 @@ public class QuestSequenceManager extends SequenceManager {
 		this.card = card; 
 	}
 
-	private void getSponsor() {
+	private boolean getSponsor() {
 		// Finding player who wants to sponsor quest
 		Iterator<Player> players = pm.round();
 		List<Player> potentialSponsors = new ArrayList<Player>();
@@ -50,6 +50,9 @@ public class QuestSequenceManager extends SequenceManager {
 		});
 
 		logger.info("Players asking to sponsor: " + potentialSponsors);
+		if(potentialSponsors.size() == 0) {
+			return false;
+		}
 		qm.questionSponsorPlayers(potentialSponsors);
 
 		// Wait for responses
@@ -62,6 +65,8 @@ public class QuestSequenceManager extends SequenceManager {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		
+		return true;
 	}
 
 	private void joinQuest(Player sponsor) {
@@ -108,7 +113,10 @@ public class QuestSequenceManager extends SequenceManager {
 
 		this.pm = pm;
 
-		getSponsor();
+		if(!getSponsor()) {
+			logger.info("No one can sponsor: " + this.card.getName());
+			return;
+		}
 
 		// determining if anyone decided to sponsor
 		List<Player> sponsors = qm.getPlayerWhoSponsor();

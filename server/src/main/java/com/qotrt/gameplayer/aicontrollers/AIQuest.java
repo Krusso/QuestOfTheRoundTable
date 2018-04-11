@@ -1,6 +1,7 @@
 package com.qotrt.gameplayer.aicontrollers;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -17,6 +18,8 @@ import com.qotrt.model.GenericPair;
 import com.qotrt.model.GenericPairTyped;
 
 public class AIQuest extends AIController {
+	
+	private List<AdventureCard> cards = new ArrayList<AdventureCard>();
 
 	public AIQuest(Game game, Player player, AbstractAI ai) {
 		super(game, player, ai);
@@ -25,9 +28,9 @@ public class AIQuest extends AIController {
 		Consumer<PropertyChangeEvent> func1 = x ->wrapEvent(x, y -> questionSponsor()).accept(x);
 
 		Function<PropertyChangeEvent, Boolean> func2 = x -> x.getPropertyName().equals("questStage");
-		Consumer<PropertyChangeEvent> func3 = x -> wrapEvent(x, y -> questStage()).accept(x);
+		Consumer<PropertyChangeEvent> func3 = x -> wrapEvent(x, y -> questStage(y)).accept(x);
 
-		Function<PropertyChangeEvent, Boolean> func4 = x -> x.getPropertyName().equals("questQuestion") && contains((int[]) x.getNewValue());
+		Function<PropertyChangeEvent, Boolean> func4 = x -> x.getPropertyName().equals("questionQuest") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func5 = x -> wrapEvent(x, y -> questQuestion()).accept(x);
 
 		Function<PropertyChangeEvent, Boolean> func6 = x -> x.getPropertyName().equals("questionCardQuest") && contains((int[]) x.getNewValue());
@@ -36,7 +39,7 @@ public class AIQuest extends AIController {
 		Function<PropertyChangeEvent, Boolean> func8 = x -> x.getPropertyName().equals("bid") && contains((int[]) x.getNewValue());
 		Consumer<PropertyChangeEvent> func9 = x -> wrapEvent(x, y -> bid(y)).accept(x);
 
-		Function<PropertyChangeEvent, Boolean> func10 = x -> x.getPropertyName().equals("discardQuest") && contains((int[]) x.getNewValue());
+		Function<PropertyChangeEvent, Boolean> func10 = x -> x.getPropertyName().equals("discardQuest");
 		Consumer<PropertyChangeEvent> func11 = x -> wrapEvent(x, y -> discardQuest(y)).accept(x);
 
 		events.add(new GenericPairTyped<>(func, func1));
@@ -56,7 +59,11 @@ public class AIQuest extends AIController {
 		}
 	}
 
-	private void questStage() {
+	private void questStage(PropertyChangeEvent a) {
+		GenericPair e = (GenericPair) a.getNewValue();
+		if(((int[])e.key)[0] != player.getID()) {
+			return;
+		}
 		if(game.bmm.getQuestModel().getPlayerWhoSponsor().size() != 0 &&
 				game.bmm.getQuestModel().getPlayerWhoSponsor().get(0).getID() != player.getID()) {
 			return;
@@ -90,7 +97,6 @@ public class AIQuest extends AIController {
 
 	private void questionCardQuest() {
 		List<AdventureCard> cards = ai.playCardsForFoeQuest((QuestCard) game.bmm.getBoardModel().getCard());
-		cards.forEach(i -> player.setFaceDown(player.getCardByID(i.id)));
 		cards.forEach(i -> {
 			pc.playCard(game, player, game.bmm.getQuestModel(), new PlayCardClient(player.getID(),
 					i.id, ZONE.HAND, ZONE.FACEDOWN));
@@ -101,6 +107,7 @@ public class AIQuest extends AIController {
 	}
 
 	private void bid(PropertyChangeEvent evt) {
+		cards = ai.discardAfterWinningTest();
 		int bid = ai.nextBid(((int[]) evt.getNewValue())[2]);
 		if(bid != -1) {
 			game.bmm.getQuestModel().bid(player, bid);
@@ -110,7 +117,13 @@ public class AIQuest extends AIController {
 	}
 
 	private void discardQuest(PropertyChangeEvent evt) {
-		List<AdventureCard> cards = ai.discardAfterWinningTest();
+		GenericPair e = (GenericPair) evt.getNewValue();
+		if(((int[])e.key)[0] != player.getID()) {
+			logger.info(((int[])e.key)[0] + " " + player.getID());
+			return;
+		}
+		
+
 		for(int i = 0; i < (int)((GenericPair) evt.getNewValue()).value; i++) {
 			game.bmm.getQuestModel().addDiscard(player.getCardByID(cards.get(i).id));
 			

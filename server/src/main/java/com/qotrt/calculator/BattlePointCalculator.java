@@ -216,6 +216,7 @@ public class BattlePointCalculator {
 		List<AdventureCard> foes = this.listOfTypeDecreasingBp(next, TYPE.FOES, card, false);
 		List<AdventureCard> tests = this.uniqueListOfTypeDecreasingBp(next, TYPE.TESTS, card, false);
 		List<AdventureCard> weapons = this.uniqueListOfTypeDecreasingBp(next, TYPE.WEAPONS, card, false);
+		List<AdventureCard> temp = new ArrayList<AdventureCard>();
 		logger.info("Foes: " + foes);
 		logger.info("Tests: " + tests);
 		int uniqueBpFoes = 0;
@@ -227,12 +228,17 @@ public class BattlePointCalculator {
 				uniqueBpFoes++;
 				minBp = getPoints(c,false,card);
 			} else {
+				temp = new ArrayList<AdventureCard>();
 				for(int i = 0; i < weapons.size(); i++) {
-					if(getPoints(c, false, card) + getPoints(weapons.get(i), false, card) > minBp) {
+					if(getPoints(c, false, card) + getPoints(weapons.get(i), false, card) + temp.stream().mapToInt(a -> getPoints(a, false, card)).sum() > minBp) {
 						uniqueBpFoes++;
 						minBp = getPoints(c,false,card) + getPoints(weapons.get(i), false, card);
 						weapons.remove(i);
 						break;
+					} else {
+						temp.add(weapons.get(i));
+						weapons.remove(i);
+						i--;
 					}
 				}
 			}
